@@ -28,3 +28,57 @@
 
 // Interface header.
 #include "appleseedrenderer.h"
+
+// appleseed-max headers.
+#include "appleseedrendererparamdlg.h"
+
+RefResult AppleseedRenderer::NotifyRefChanged(
+    const Interval&         changeInt,
+    RefTargetHandle         hTarget,
+    PartID&                 partID,
+    RefMessage              message,
+    BOOL                    propagate)
+{
+    return REF_SUCCEED;
+}
+
+int AppleseedRenderer::Open(
+    INode*                  scene,
+    INode*                  vnode,
+    ViewParams*             viewPar,
+    RendParams&             rp,
+    HWND                    hwnd,
+    DefaultLight*           defaultLights,
+    int                     numDefLights,
+    RendProgressCallback*   prog)
+{
+    return 1;
+}
+
+int AppleseedRenderer::Render(
+    TimeValue               t,
+    Bitmap*                 tobm,
+    FrameRendParams&        frp,
+    HWND                    hwnd,
+    RendProgressCallback*   prog,
+    ViewParams*             viewPar)
+{
+    return 1;
+}
+
+void AppleseedRenderer::Close(
+    HWND                    hwnd,
+    RendProgressCallback*   prog)
+{
+}
+
+RendParamDlg* AppleseedRenderer::CreateParamDialog(
+    IRendParams*            ir,
+    BOOL                    prog)
+{
+    return new AppleseedRendererParamDlg();
+}
+
+void AppleseedRenderer::ResetParams()
+{
+}

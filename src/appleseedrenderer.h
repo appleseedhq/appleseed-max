@@ -29,12 +29,51 @@
 #ifndef APPLESEEDRENDERER_H
 #define APPLESEEDRENDERER_H
 
+// appleseed.foundation headers.
+#include "foundation/platform/compiler.h"
+#include "foundation/platform/windows.h"
+
 // 3ds Max headers.
 #include <max.h>
 
 class AppleseedRenderer
   : public Renderer
 {
+  public:
+    virtual RefResult NotifyRefChanged(
+        const Interval&         changeInt,
+        RefTargetHandle         hTarget,
+        PartID&                 partID,
+        RefMessage              message,
+        BOOL                    propagate) APPLESEED_OVERRIDE;
+
+    virtual int Open(
+        INode*                  scene,
+        INode*                  vnode,
+        ViewParams*             viewPar,
+        RendParams&             rp,
+        HWND                    hwnd,
+        DefaultLight*           defaultLights,
+        int                     numDefLights,
+        RendProgressCallback*   prog) APPLESEED_OVERRIDE;
+
+    virtual int Render(
+        TimeValue               t,
+        Bitmap*                 tobm,
+        FrameRendParams&        frp,
+        HWND                    hwnd,
+        RendProgressCallback*   prog,
+        ViewParams*             viewPar) APPLESEED_OVERRIDE;
+
+    virtual void Close(
+        HWND                    hwnd,
+        RendProgressCallback*   prog) APPLESEED_OVERRIDE;
+
+    virtual RendParamDlg* CreateParamDialog(
+        IRendParams*            ir,
+        BOOL                    prog) APPLESEED_OVERRIDE;
+
+    virtual void ResetParams() APPLESEED_OVERRIDE;
 };
 
 #endif	// !APPLESEEDRENDERER_H

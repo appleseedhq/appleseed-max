@@ -3,8 +3,11 @@
   <ItemGroup>
     <ClCompile Include="appleseedrenderer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="appleseedrendererparamdlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer.h" />
+    <ClInclude Include="appleseedrendererparamdlg.h" />
   </ItemGroup>
 </Project>

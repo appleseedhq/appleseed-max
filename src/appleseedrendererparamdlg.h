@@ -26,27 +26,22 @@
 // THE SOFTWARE.
 //
 
+#ifndef APPLESEEDRENDERERPARAMDLG_H
+#define APPLESEEDRENDERERPARAMDLG_H
+
 // appleseed.foundation headers.
-#include "foundation/platform/windows.h"
+#include "foundation/platform/compiler.h"
 
 // 3ds Max headers.
 #include <max.h>
 
-
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+class AppleseedRendererParamDlg
+  : public RendParamDlg
 {
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-    }
+  public:
+    virtual void AcceptParams() APPLESEED_OVERRIDE;
 
-    return TRUE;
-}
+    virtual void DeleteThis() APPLESEED_OVERRIDE;
+};
+
+#endif	// !APPLESEEDRENDERERPARAMDLG_H

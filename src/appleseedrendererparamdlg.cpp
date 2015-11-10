@@ -26,27 +26,13 @@
 // THE SOFTWARE.
 //
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"
+// Interface header.
+#include "appleseedrendererparamdlg.h"
 
-// 3ds Max headers.
-#include <max.h>
-
-
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+void AppleseedRendererParamDlg::AcceptParams()
 {
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-    }
+}
 
-    return TRUE;
+void AppleseedRendererParamDlg::DeleteThis()
+{
 }
