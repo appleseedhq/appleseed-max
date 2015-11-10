@@ -43,11 +43,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)2015</TargetName>
+    <TargetExt>.dlr</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)2015</TargetName>
+    <TargetExt>.dlr</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -68,8 +72,8 @@
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\$(TargetName)2015.dlr"
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\$(TargetName)2015.dlr"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,8 +102,8 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\$(Target
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\$(TargetName)2015.dlr"
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\$(TargetName)2015.dlr"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
