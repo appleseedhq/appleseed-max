@@ -41,45 +41,7 @@
 
 namespace
 {
-    //
-    // AppleseedRenderer class descriptor.
-    //
-
-    struct AppleseedRendererClassDesc
-      : public ClassDesc
-    {
-        virtual int IsPublic() APPLESEED_OVERRIDE
-        {
-            return TRUE;
-        }
-
-        virtual void* Create(BOOL loading) APPLESEED_OVERRIDE
-        {
-            return new AppleseedRenderer();
-        }
-
-        virtual const TCHAR* ClassName() APPLESEED_OVERRIDE
-        {
-            return _T("appleseed Renderer");
-        }
-
-        virtual SClass_ID SuperClassID() APPLESEED_OVERRIDE
-        {
-            return RENDERER_CLASS_ID;
-        }
-
-        virtual Class_ID ClassID() APPLESEED_OVERRIDE
-        {
-            return Class_ID(0x6170706c, 0x73656564);    // appl seed
-        }
-
-        virtual const TCHAR* Category() APPLESEED_OVERRIDE
-        {
-            return _T("");
-        }
-    };
-
-    static AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
+    AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 }
 
 extern "C"
@@ -101,9 +63,12 @@ extern "C"
     {
         switch (i)
         {
-          case 0: return &g_appleseed_renderer_classdesc;
           // Make sure to update LibNumberClasses() if you add classes.
-          default: return 0;
+          case 0:
+            return &g_appleseed_renderer_classdesc;
+
+          default:
+            return 0;
         }
     }
 

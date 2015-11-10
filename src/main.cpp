@@ -37,16 +37,19 @@
 // DLL entry point.
 //
 
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+extern "C"
 {
-    if (reason == DLL_PROCESS_ATTACH)
+    BOOL APIENTRY DllMain(
+        HINSTANCE   module,
+        DWORD       reason,
+        LPVOID      /*reserved*/)
     {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-    }
+        if (reason == DLL_PROCESS_ATTACH)
+        {
+            MaxSDK::Util::UseLanguagePackLocale();
+            DisableThreadLibraryCalls(module);
+        }
 
-    return TRUE;
+        return TRUE;
+    }
 }

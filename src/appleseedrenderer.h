@@ -36,10 +36,19 @@
 // 3ds Max headers.
 #include <max.h>
 
+// Windows headers.
+#include <tchar.h>
+
 class AppleseedRenderer
   : public Renderer
 {
   public:
+    virtual Class_ID ClassID() APPLESEED_OVERRIDE { return Class_ID(0x6170706c, 0x73656564); }
+
+    virtual void GetClassName(MSTR& s) APPLESEED_OVERRIDE;
+
+    virtual void DeleteThis() APPLESEED_OVERRIDE { delete this;  }
+
     virtual RefResult NotifyRefChanged(
         const Interval&         changeInt,
         RefTargetHandle         hTarget,
@@ -74,6 +83,23 @@ class AppleseedRenderer
         BOOL                    prog) APPLESEED_OVERRIDE;
 
     virtual void ResetParams() APPLESEED_OVERRIDE;
+};
+
+
+//
+// AppleseedRenderer class descriptor.
+//
+
+class AppleseedRendererClassDesc
+  : public ClassDesc
+{
+  public:
+    virtual int IsPublic() APPLESEED_OVERRIDE;
+    virtual void* Create(BOOL loading) APPLESEED_OVERRIDE;
+    virtual const TCHAR* ClassName() APPLESEED_OVERRIDE;
+    virtual SClass_ID SuperClassID() APPLESEED_OVERRIDE;
+    virtual Class_ID ClassID() APPLESEED_OVERRIDE;
+    virtual const TCHAR* Category() APPLESEED_OVERRIDE;
 };
 
 #endif	// !APPLESEEDRENDERER_H

@@ -32,6 +32,20 @@
 // appleseed-max headers.
 #include "appleseedrendererparamdlg.h"
 
+//
+// AppleseedRenderer class implementation.
+//
+
+namespace
+{
+    const TCHAR* AppleseedRendererClassName = _T("appleseed Renderer");
+}
+
+void AppleseedRenderer::GetClassName(MSTR& s)
+{
+    s = AppleseedRendererClassName;
+}
+
 RefResult AppleseedRenderer::NotifyRefChanged(
     const Interval&         changeInt,
     RefTargetHandle         hTarget,
@@ -81,4 +95,39 @@ RendParamDlg* AppleseedRenderer::CreateParamDialog(
 
 void AppleseedRenderer::ResetParams()
 {
+}
+
+
+//
+// AppleseedRendererClassDesc class implementation.
+//
+
+int AppleseedRendererClassDesc::IsPublic()
+{
+    return TRUE;
+}
+
+void* AppleseedRendererClassDesc::Create(BOOL loading)
+{
+    return new AppleseedRenderer();
+}
+
+const TCHAR* AppleseedRendererClassDesc::ClassName()
+{
+    return AppleseedRendererClassName;
+}
+
+SClass_ID AppleseedRendererClassDesc::SuperClassID()
+{
+    return RENDERER_CLASS_ID;
+}
+
+Class_ID AppleseedRendererClassDesc::ClassID()
+{
+    return Class_ID(0x6170706c, 0x73656564);    // appl seed
+}
+
+const TCHAR* AppleseedRendererClassDesc::Category()
+{
+    return _T("");
 }
