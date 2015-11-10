@@ -43,11 +43,11 @@ class AppleseedRenderer
   : public Renderer
 {
   public:
-    virtual Class_ID ClassID() APPLESEED_OVERRIDE { return Class_ID(0x6170706c, 0x73656564); }
+    virtual Class_ID ClassID() APPLESEED_OVERRIDE;
 
     virtual void GetClassName(MSTR& s) APPLESEED_OVERRIDE;
 
-    virtual void DeleteThis() APPLESEED_OVERRIDE { delete this;  }
+    virtual void DeleteThis() APPLESEED_OVERRIDE;
 
     virtual RefResult NotifyRefChanged(
         const Interval&         changeInt,

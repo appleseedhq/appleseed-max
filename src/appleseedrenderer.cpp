@@ -38,12 +38,23 @@
 
 namespace
 {
+    const Class_ID AppleseedRendererClassId(0x6170706c, 0x73656564);    // appl seed
     const TCHAR* AppleseedRendererClassName = _T("appleseed Renderer");
+}
+
+Class_ID AppleseedRenderer::ClassID()
+{
+    return AppleseedRendererClassId;
 }
 
 void AppleseedRenderer::GetClassName(MSTR& s)
 {
     s = AppleseedRendererClassName;
+}
+
+void AppleseedRenderer::DeleteThis()
+{
+    delete this;
 }
 
 RefResult AppleseedRenderer::NotifyRefChanged(
@@ -124,7 +135,7 @@ SClass_ID AppleseedRendererClassDesc::SuperClassID()
 
 Class_ID AppleseedRendererClassDesc::ClassID()
 {
-    return Class_ID(0x6170706c, 0x73656564);    // appl seed
+    return AppleseedRendererClassId;
 }
 
 const TCHAR* AppleseedRendererClassDesc::Category()
