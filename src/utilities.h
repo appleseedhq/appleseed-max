@@ -26,31 +26,66 @@
 // THE SOFTWARE.
 //
 
+#ifndef UTILITIES_H
+#define UTILITIES_H
+
 // appleseed.foundation headers.
+#include "foundation/math/matrix.h"
+#include "foundation/math/vector.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
-// appleseed.main headers.
-#include "main/allocator.h"
-
 // 3ds Max headers.
-#include <max.h>
+#include <matrix3.h>
 
+// Standard headers.
+#include <string>
 
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+inline foundation::Vector3d max_to_as(const Point3& p)
 {
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-        start_memory_tracking();
-    }
-
-    return TRUE;
+    return foundation::Vector3d(p.x, p.z, -p.y);
 }
+
+inline foundation::Matrix4d max_to_as(const Matrix3& input)
+{
+    foundation::Matrix4d output;
+
+    output(0, 0) =  input[0][0];
+    output(1, 0) =  input[0][2];
+    output(2, 0) = -input[0][1];
+    output(3, 0) =  0.0;
+
+    output(0, 1) =  input[1][0];
+    output(1, 1) =  input[1][2];
+    output(2, 1) = -input[1][1];
+    output(3, 1) =  0.0;
+
+    output(0, 2) =  input[2][0];
+    output(1, 2) =  input[2][2];
+    output(2, 2) = -input[2][1];
+    output(3, 2) =  0.0;
+
+    output(0, 3) =  input[3][0];
+    output(1, 3) =  input[3][2];
+    output(2, 3) = -input[3][1];
+    output(3, 3) =  1.0;
+
+    return output;
+}
+
+
+//
+// String conversion functions.
+//
+// Reference:
+//
+//   http://stackoverflow.com/a/3999597/393756
+//
+
+// Convert a wide Unicode string to an UTF8 string.
+std::string utf8_encode(const std::wstring& wstr);
+std::string utf8_encode(const TCHAR* wstr);
+
+// Convert an UTF8 string to a wide Unicode String.
+std::wstring utf8_decode(const std::string& str);
+
+#endif	// !UTILITIES_H

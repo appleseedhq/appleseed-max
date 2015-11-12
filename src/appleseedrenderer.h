@@ -29,9 +29,12 @@
 #ifndef APPLESEEDRENDERER_H
 #define APPLESEEDRENDERER_H
 
+// appleseed-max headers.
+#include "maxsceneentities.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/compiler.h"
-#include "foundation/platform/windows.h"
+#include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
 #include <max.h>
@@ -43,6 +46,8 @@ class AppleseedRenderer
   : public Renderer
 {
   public:
+    AppleseedRenderer();
+
     virtual Class_ID ClassID() APPLESEED_OVERRIDE;
 
     virtual void GetClassName(MSTR& s) APPLESEED_OVERRIDE;
@@ -83,6 +88,15 @@ class AppleseedRenderer
         BOOL                    prog) APPLESEED_OVERRIDE;
 
     virtual void ResetParams() APPLESEED_OVERRIDE;
+
+  private:
+    INode*              m_scene;
+    INode*              m_view_node;
+    ViewParams          m_view_params;
+    TimeValue           m_time;
+    MaxSceneEntities    m_entities;
+
+    void clear();
 };
 
 
@@ -100,6 +114,7 @@ class AppleseedRendererClassDesc
     virtual SClass_ID SuperClassID() APPLESEED_OVERRIDE;
     virtual Class_ID ClassID() APPLESEED_OVERRIDE;
     virtual const TCHAR* Category() APPLESEED_OVERRIDE;
+    virtual const TCHAR* InternalName() APPLESEED_OVERRIDE;
 };
 
 #endif	// !APPLESEEDRENDERER_H

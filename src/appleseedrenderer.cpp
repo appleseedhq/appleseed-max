@@ -31,6 +31,26 @@
 
 // appleseed-max headers.
 #include "appleseedrendererparamdlg.h"
+#include "projectbuilder.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/frame.h"
+#include "renderer/api/project.h"
+#include "renderer/api/rendering.h"
+
+// appleseed.foundation headers.
+#include "foundation/image/canvasproperties.h"
+#include "foundation/image/color.h"
+#include "foundation/image/image.h"
+#include "foundation/utility/autoreleaseptr.h"
+
+// 3ds Max headers.
+#include <bitmap.h>
+
+// Standard headers.
+#include <cassert>
+#include <cstddef>
+
 
 //
 // AppleseedRenderer class implementation.
@@ -40,6 +60,11 @@ namespace
 {
     const Class_ID AppleseedRendererClassId(0x6170706c, 0x73656564);    // appl seed
     const TCHAR* AppleseedRendererClassName = _T("appleseed Renderer");
+}
+
+AppleseedRenderer::AppleseedRenderer()
+{
+    clear();
 }
 
 Class_ID AppleseedRenderer::ClassID()
@@ -77,7 +102,80 @@ int AppleseedRenderer::Open(
     int                     numDefLights,
     RendProgressCallback*   prog)
 {
-    return 1;
+    m_scene = scene;
+    m_view_node = vnode;
+
+    if (viewPar)
+        m_view_params = *viewPar;
+
+    return 1;   // success
+}
+
+namespace
+{
+    class RenderBeginProc
+      : public RefEnumProc
+    {
+      public:
+        explicit RenderBeginProc(const TimeValue time)
+          : m_time(time)
+        {
+        }
+
+        virtual int proc(ReferenceMaker* rm) APPLESEED_OVERRIDE
+        {
+            rm->RenderBegin(m_time);
+            return REF_ENUM_CONTINUE;
+        }
+
+      private:
+        const TimeValue m_time;
+    };
+
+    class RenderEndProc
+      : public RefEnumProc
+    {
+      public:
+        explicit RenderEndProc(const TimeValue time)
+          : m_time(time)
+        {
+        }
+
+        virtual int proc(ReferenceMaker* rm) APPLESEED_OVERRIDE
+        {
+            rm->RenderEnd(m_time);
+            return REF_ENUM_CONTINUE;
+        }
+
+      private:
+        const TimeValue m_time;
+    };
+
+    void render_begin(
+        std::vector<INode*>&    nodes,
+        const TimeValue         time)
+    {
+        RenderBeginProc proc(time);
+        proc.BeginEnumeration();
+
+        for (size_t i = 0, e = nodes.size(); i < e; ++i)
+            nodes[i]->EnumRefHierarchy(proc);
+
+        proc.EndEnumeration();
+    }
+
+    void render_end(
+        std::vector<INode*>&    nodes,
+        const TimeValue         time)
+    {
+        RenderEndProc proc(time);
+        proc.BeginEnumeration();
+
+        for (size_t i = 0, e = nodes.size(); i < e; ++i)
+            nodes[i]->EnumRefHierarchy(proc);
+
+        proc.EndEnumeration();
+    }
 }
 
 int AppleseedRenderer::Render(
@@ -88,13 +186,102 @@ int AppleseedRenderer::Render(
     RendProgressCallback*   prog,
     ViewParams*             viewPar)
 {
-    return 1;
+    SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
+
+    if (viewPar)
+        m_view_params = *viewPar;
+
+    m_time = t;
+
+    if (prog)
+        prog->SetTitle(_T("Collecting entities..."));
+
+    // Collect the entities we're interested in.
+    MaxSceneEntityCollector collector(m_entities);
+    collector.collect(m_scene);
+
+    // Call RenderBegin() on all object instances.
+    render_begin(m_entities.m_instances, m_time);
+
+    if (prog)
+        prog->SetTitle(_T("Building scene..."));
+
+    // Build the project.
+    foundation::auto_release_ptr<renderer::Project> project(
+        build_project(
+            m_entities,
+            m_view_node,
+            m_view_params,
+            tobm,
+            t));
+
+    project->configurations()
+        .get_by_name("final")->get_parameters()
+            .insert_path("shading_engine.override_shading.mode", "shading_normal");
+
+#ifdef _DEBUG
+    renderer::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
+#endif
+
+    if (prog)
+        prog->SetTitle(_T("Rendering..."));
+
+    {
+        // Create the master renderer.
+        renderer::DefaultRendererController renderer_controller;
+        std::auto_ptr<renderer::MasterRenderer> renderer(
+            new renderer::MasterRenderer(
+                project.ref(),
+                project->configurations().get_by_name("final")->get_inherited_parameters(),
+                &renderer_controller));
+
+        // Render the frame.
+        renderer->render();
+
+        // Make sure the master renderer is deleted before the project.
+    }
+
+    // Copy the rendered frame to the output bitmap.
+    const renderer::Frame* frame = project->get_frame();
+    const foundation::Image& image = frame->image();
+    const foundation::CanvasProperties& props = image.properties();
+    assert(props.m_canvas_width == tobm->Width());
+    assert(props.m_canvas_height == tobm->Height());
+    assert(props.m_channel_count == 4);
+    for (int y = 0; y < tobm->Height(); ++y)
+    {
+        for (int x = 0; x < tobm->Width(); ++x)
+        {
+            foundation::Color4f source_color;
+            image.get_pixel(x, y, source_color);
+
+            BMM_Color_64 dest_color;
+            dest_color.r = foundation::truncate<WORD>(foundation::saturate(source_color[0]) * 65535.0f);
+            dest_color.g = foundation::truncate<WORD>(foundation::saturate(source_color[1]) * 65535.0f);
+            dest_color.b = foundation::truncate<WORD>(foundation::saturate(source_color[2]) * 65535.0f);
+            dest_color.a = foundation::truncate<WORD>(foundation::saturate(source_color[3]) * 65535.0f);
+
+            tobm->PutPixels(x, y, 1, &dest_color);
+        }
+    }
+
+    // Refresh the interior of the display window.
+    tobm->RefreshWindow();
+
+    if (prog)
+        prog->SetTitle(_T("Done."));
+
+    return 1;   // success
 }
 
 void AppleseedRenderer::Close(
     HWND                    hwnd,
     RendProgressCallback*   prog)
 {
+    // Call RenderEnd() on all object instances.
+    render_end(m_entities.m_instances, m_time);
+
+    clear();
 }
 
 RendParamDlg* AppleseedRenderer::CreateParamDialog(
@@ -106,6 +293,14 @@ RendParamDlg* AppleseedRenderer::CreateParamDialog(
 
 void AppleseedRenderer::ResetParams()
 {
+}
+
+void AppleseedRenderer::clear()
+{
+    m_scene = 0;
+    m_view_node = 0;
+    m_time = 0;
+    m_entities.clear();
 }
 
 
@@ -141,4 +336,10 @@ Class_ID AppleseedRendererClassDesc::ClassID()
 const TCHAR* AppleseedRendererClassDesc::Category()
 {
     return _T("");
+}
+
+const TCHAR* AppleseedRendererClassDesc::InternalName()
+{
+    // Parsable name used by MAXScript.
+    return _T("appleseed_renderer");
 }

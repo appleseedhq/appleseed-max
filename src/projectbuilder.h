@@ -26,31 +26,29 @@
 // THE SOFTWARE.
 //
 
+#ifndef PROJECTBUILDER_H
+#define PROJECTBUILDER_H
+
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// appleseed.main headers.
-#include "main/allocator.h"
+#include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
-#include <max.h>
+#include <maxtypes.h>
 
+// Forward declarations.
+namespace renderer  { class Project; }
+class Bitmap;
+class INode;
+class MaxSceneEntities;
+class ViewParams;
 
-//
-// DLL entry point.
-//
+// Build an appleseed project from the current 3ds Max scene.
+foundation::auto_release_ptr<renderer::Project> build_project(
+    const MaxSceneEntities& entities,
+    INode*                  view_node,
+    const ViewParams&       view_params,
+    Bitmap*                 bitmap,
+    const TimeValue         time);
 
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
-{
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-        start_memory_tracking();
-    }
-
-    return TRUE;
-}
+#endif	// !PROJECTBUILDER_H

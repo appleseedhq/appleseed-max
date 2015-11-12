@@ -26,31 +26,35 @@
 // THE SOFTWARE.
 //
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+#ifndef MAXSCENEENTITIES_H
+#define MAXSCENEENTITIES_H
 
-// appleseed.main headers.
-#include "main/allocator.h"
+// Standard headers.
+#include <vector>
 
-// 3ds Max headers.
-#include <max.h>
+// Forward declarations.
+class INode;
 
-
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+class MaxSceneEntities
 {
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-        start_memory_tracking();
-    }
+  public:
+    std::vector<INode*> m_instances;
+    std::vector<INode*> m_lights;
 
-    return TRUE;
-}
+    void clear();
+};
+
+class MaxSceneEntityCollector
+{
+  public:
+    explicit MaxSceneEntityCollector(MaxSceneEntities& entities);
+
+    void collect(INode* scene);
+
+  private:
+    MaxSceneEntities& m_entities;
+
+    void visit(INode* node);
+};
+
+#endif  // !MAXSCENEENTITIES_H

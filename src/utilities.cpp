@@ -26,31 +26,43 @@
 // THE SOFTWARE.
 //
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+// Interface header.
+#include "utilities.h"
 
-// appleseed.main headers.
-#include "main/allocator.h"
-
-// 3ds Max headers.
-#include <max.h>
-
-
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+std::string utf8_encode(const TCHAR* wstr)
 {
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-        start_memory_tracking();
-    }
+    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, 0, 0, 0, 0);
 
-    return TRUE;
+    std::string result(result_size - 1, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, &result[0], result_size - 1, 0, 0);
+
+    return result;
+}
+
+std::string utf8_encode(const std::wstring& wstr)
+{
+    if (wstr.empty())
+        return std::string();
+
+    const int wstr_size = static_cast<int>(wstr.size());
+    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, 0, 0, 0, 0);
+
+    std::string result(result_size, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, &result[0], result_size, 0, 0);
+
+    return result;
+}
+
+std::wstring utf8_decode(const std::string& str)
+{
+    if (str.empty())
+        return std::wstring();
+
+    const int str_size = static_cast<int>(str.size());
+    const int result_size = MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, 0, 0);
+
+    std::wstring result(result_size, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, &result[0], result_size);
+
+    return result;
 }
