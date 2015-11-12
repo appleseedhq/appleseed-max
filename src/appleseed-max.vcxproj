@@ -70,7 +70,10 @@
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
+
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+
 copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"
 copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\"
 copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\"</Command>
@@ -100,7 +103,10 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
+
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+
 copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"
 copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\"
 copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\"</Command>
