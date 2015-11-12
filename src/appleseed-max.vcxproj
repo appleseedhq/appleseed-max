@@ -62,7 +62,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;..\..\appleseed-dictoon-vc11\src\appleseed;..\..\boost_1_55_0-vc11</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,7 +89,6 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"</Comma
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
