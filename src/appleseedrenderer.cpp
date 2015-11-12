@@ -58,7 +58,7 @@
 
 namespace
 {
-    const Class_ID AppleseedRendererClassId(0x6170706c, 0x73656564);    // appl seed
+    const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
     const TCHAR* AppleseedRendererClassName = _T("appleseed Renderer");
 }
 
