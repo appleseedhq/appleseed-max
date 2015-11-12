@@ -57,7 +57,6 @@
 #include <cassert>
 #include <cstddef>
 #include <limits>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -69,11 +68,29 @@ namespace
     asf::auto_release_ptr<asr::Camera> build_camera(
         INode*                  view_node,
         const ViewParams&       view_params,
+        Bitmap*                 bitmap,
         const TimeValue         time)
     {
         asr::ParamArray params;
-        params.insert("film_dimensions", "0.024892 0.018669");
-        params.insert("focal_length", "0.035");
+
+        if (view_params.projType == PROJ_PERSPECTIVE)
+        {
+            params.insert("film_dimensions", "0.024892 0.018669");
+            params.insert("focal_length", "0.035");
+        }
+        else
+        {
+            assert(view_params.projType == PROJ_PARALLEL);
+
+            const float ViewDefaultWidth = 400.0f;
+            const float a = bitmap->Aspect();
+            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
+            const float hscale = bitmap->Width() / (ViewDefaultWidth * view_params.zoom);
+            const float vscale = hscale * aspect;
+            const float film_width = ViewDefaultWidth * view_params.zoom;
+            const float film_height = aspect * film_width;
+            params.insert("film_dimensions", make_vec_string(film_width, film_height));
+        }
 
         asf::Matrix4d camera_matrix = max_to_as(Inverse(view_params.affineTM));
 
@@ -112,8 +129,10 @@ namespace
             }
         }
 
-        asf::auto_release_ptr<renderer::Camera> camera(
-            asr::PinholeCameraFactory().create("camera", params));
+        asf::auto_release_ptr<renderer::Camera> camera =
+            view_params.projType == PROJ_PERSPECTIVE
+                ? asr::PinholeCameraFactory().create("camera", params)
+                : asr::OrthographicCameraFactory().create("camera", params);
 
         camera->transform_sequence().set_transform(
             0.0, asf::Transformd::from_local_to_parent(camera_matrix));
@@ -122,22 +141,21 @@ namespace
     }
 
     TriObject* get_tri_object_from_node(
-        INode*                  node,
+        const ObjectState&      object_state,
         const TimeValue         time,
         bool&                   must_delete)
     {
-        must_delete = false;
+        assert(object_state.obj);
 
-        Object* object = node->EvalWorldState(time).obj;
-        assert(object);
+        must_delete = false;
 
         const Class_ID TriObjectClassID(TRIOBJ_CLASS_ID, 0);
 
-        if (!object->CanConvertToType(TriObjectClassID))
+        if (!object_state.obj->CanConvertToType(TriObjectClassID))
             return 0;
 
-        TriObject* tri_object = static_cast<TriObject*>(object->ConvertToType(time, TriObjectClassID));
-        must_delete = tri_object != object;
+        TriObject* tri_object = static_cast<TriObject*>(object_state.obj->ConvertToType(time, TriObjectClassID));
+        must_delete = tri_object != object_state.obj;
 
         return tri_object;
     }
@@ -147,62 +165,75 @@ namespace
         INode*                  node,
         const TimeValue         time)
     {
+        // Retrieve the name of the referenced object.
         Object* max_object = node->GetObjectRef();
         const std::string object_name = utf8_encode(max_object->GetObjectName());
 
-        // Convert the object to a TriObject.
-        bool must_delete_tri_object;
-        TriObject* tri_object = get_tri_object_from_node(node, time, must_delete_tri_object);
-        if (tri_object == 0)
+        // Create the object if it doesn't already exist in the appleseed scene.
+        if (assembly.objects().get_by_name(object_name.c_str()) == 0)
         {
-            // todo: emit a message?
-            return;
-        }
+            // Retrieve the ObjectState at the desired time.
+            const ObjectState object_state = node->EvalWorldState(time);
 
-        // Create a new mesh object.
-        asf::auto_release_ptr<asr::MeshObject> object(
-            asr::MeshObjectFactory::create(object_name.c_str(), asr::ParamArray()));
-
-        {
-            Mesh& mesh = tri_object->GetMesh();
-
-            // Copy vertices to the mesh object.
-            object->reserve_vertices(mesh.getNumVerts());
-            for (int i = 0, e = mesh.getNumVerts(); i < e; ++i)
+            // Convert the object to a TriObject.
+            bool must_delete_tri_object;
+            TriObject* tri_object = get_tri_object_from_node(object_state, time, must_delete_tri_object);
+            if (tri_object == 0)
             {
-                const Point3& v = mesh.getVert(i);
-                object->push_vertex(max_to_as(v));
+                // todo: emit a message?
+                return;
             }
 
-            // Copy triangles to mesh object.
-            object->reserve_triangles(mesh.getNumFaces());
-            for (int i = 0, e = mesh.getNumFaces(); i < e; ++i)
+            // Create a new mesh object.
+            asf::auto_release_ptr<asr::MeshObject> object(
+                asr::MeshObjectFactory::create(object_name.c_str(), asr::ParamArray()));
             {
-                Face& face = mesh.faces[i];
-                const asr::Triangle triangle(
-                    face.getVert(0),
-                    face.getVert(1),
-                    face.getVert(2));
-                object->push_triangle(triangle);
+                Mesh& mesh = tri_object->GetMesh();
+
+                // Copy vertices to the mesh object.
+                object->reserve_vertices(mesh.getNumVerts());
+                for (int i = 0, e = mesh.getNumVerts(); i < e; ++i)
+                {
+                    const Point3& v = mesh.getVert(i);
+                    //object->push_vertex(max_to_as(v));
+                    object->push_vertex(asf::Vector3d(v.x, v.y, v.z));
+                }
+
+                // Copy triangles to mesh object.
+                object->reserve_triangles(mesh.getNumFaces());
+                for (int i = 0, e = mesh.getNumFaces(); i < e; ++i)
+                {
+                    Face& face = mesh.faces[i];
+                    const asr::Triangle triangle(
+                        face.getVert(0),
+                        face.getVert(1),
+                        face.getVert(2));
+                    object->push_triangle(triangle);
+                }
+
+                // Delete the TriObject if necessary.
+                if (must_delete_tri_object)
+                    tri_object->DeleteMe();
             }
 
-            // Delete the TriObject if necessary.
-            if (must_delete_tri_object)
-                tri_object->DeleteMe();
+            // Insert the object into the assembly.
+            assembly.objects().insert(asf::auto_release_ptr<asr::Object>(object));
         }
 
-        // Create an instance of this object and insert it into the assembly.
-        const std::string instance_name = object_name + "_inst";
+        // Figure out a unique name for this instance.
+        std::string instance_name = utf8_encode(node->GetName());
+        if (assembly.object_instances().get_by_name(instance_name.c_str()) != 0)
+            instance_name = asr::make_unique_name(instance_name, assembly.object_instances());
+
+        // Create an instance of the object and insert it into the assembly.
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
                 asr::ParamArray(),
                 object_name.c_str(),
-                asf::Transformd::identity(),
+                asf::Transformd::from_local_to_parent(
+                    max_to_as(node->GetObjTMAfterWSM(time))),
                 asf::StringDictionary()));
-
-        // Insert the object into the assembly.
-        assembly.objects().insert(asf::auto_release_ptr<asr::Object>(object));
     }
 
     void populate_assembly(
@@ -267,17 +298,16 @@ asf::auto_release_ptr<asr::Project> build_project(
         build_camera(
             view_node,
             view_params,
+            bitmap,
             time));
 
     // Create a frame and bind it to the project.
-    std::stringstream resolution_sstr;
-    resolution_sstr << bitmap->Width() << ' ' << bitmap->Height();
     project->set_frame(
         asr::FrameFactory::create(
             "beauty",
             asr::ParamArray()
                 .insert("camera", scene->get_camera()->get_name())
-                .insert("resolution", resolution_sstr.str())
+                .insert("resolution", make_vec_string(bitmap->Width(), bitmap->Height()))
                 .insert("color_space", "linear_rgb")));
 
     // Bind the scene to the project.

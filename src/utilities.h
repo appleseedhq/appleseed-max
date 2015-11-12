@@ -38,6 +38,7 @@
 #include <matrix3.h>
 
 // Standard headers.
+#include <sstream>
 #include <string>
 
 inline foundation::Vector3d max_to_as(const Point3& p)
@@ -70,6 +71,14 @@ inline foundation::Matrix4d max_to_as(const Matrix3& input)
     output(3, 3) =  1.0;
 
     return output;
+}
+
+template <typename T>
+std::string make_vec_string(const T& v1, const T& v2)
+{
+    std::stringstream sstr;
+    sstr << v1 << ' ' << v2;
+    return sstr.str();
 }
 
 
