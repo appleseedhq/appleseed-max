@@ -1,6 +1,5 @@
 bin/
 build/
-tests/
 *.opensdf
 *.sdf
 *.suo
