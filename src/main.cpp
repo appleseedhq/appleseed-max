@@ -29,9 +29,6 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
-// appleseed.main headers.
-#include "main/allocator.h"
-
 // 3ds Max headers.
 #include <max.h>
 
@@ -49,7 +46,6 @@ BOOL APIENTRY DllMain(
     {
         MaxSDK::Util::UseLanguagePackLocale();
         DisableThreadLibraryCalls(module);
-        start_memory_tracking();
     }
 
     return TRUE;
