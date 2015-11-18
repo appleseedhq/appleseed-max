@@ -43,7 +43,7 @@
 
 void MaxSceneEntities::clear()
 {
-    foundation::clear_release_memory(m_instances);
+    foundation::clear_release_memory(m_objects);
     foundation::clear_release_memory(m_lights);
 }
 
@@ -100,7 +100,7 @@ void MaxSceneEntityCollector::visit(INode* node)
                 return;
 
             // Collect this instance.
-            m_entities.m_instances.push_back(node);
+            m_entities.m_objects.push_back(node);
         }
         break;
     }

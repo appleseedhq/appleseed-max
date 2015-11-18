@@ -53,6 +53,8 @@
 
 // 3ds Max headers.
 #include <bitmap.h>
+#include <iInstanceMgr.h>
+#include <INodeTab.h>
 #include <object.h>
 #include <render.h>
 #include <triobj.h>
@@ -61,6 +63,7 @@
 #include <cassert>
 #include <cstddef>
 #include <limits>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -126,140 +129,144 @@ namespace
         return tri_object;
     }
 
-    void add_object(
+    bool create_mesh_object(
         asr::Assembly&          assembly,
-        INode*                  node,
-        const TimeValue         time)
+        INode*                  object_node,
+        const TimeValue         time,
+        std::string&            object_name)
     {
-        // Retrieve the name of the referenced object.
-        Object* max_object = node->GetObjectRef();
-        std::string object_name = utf8_encode(max_object->GetObjectName());
-
-        // todo: handle instancing.
+        // Compute a unique name for the instantiated object.
+        Object* max_object = object_node->GetObjectRef();
+        object_name = utf8_encode(max_object->GetObjectName());
         if (assembly.objects().get_by_name(object_name.c_str()) != 0)
             object_name = asr::make_unique_name(object_name, assembly.objects());
 
-        // Create the object if it doesn't already exist in the appleseed scene.
-        if (assembly.objects().get_by_name(object_name.c_str()) == 0)
-        {
-            // Retrieve the ObjectState at the desired time.
-            const ObjectState object_state = node->EvalWorldState(time);
+        // Retrieve the ObjectState at the desired time.
+        const ObjectState object_state = object_node->EvalWorldState(time);
 
-            // Convert the object to a TriObject.
-            bool must_delete_tri_object;
-            TriObject* tri_object = get_tri_object_from_node(object_state, time, must_delete_tri_object);
-            if (tri_object == 0)
+        // Convert the object to a TriObject.
+        bool must_delete_tri_object;
+        TriObject* tri_object = get_tri_object_from_node(object_state, time, must_delete_tri_object);
+        if (tri_object == 0)
+        {
+            // todo: emit a message?
+            return false;
+        }
+
+        // Create a new mesh object.
+        asf::auto_release_ptr<asr::MeshObject> object(
+            asr::MeshObjectFactory::create(object_name.c_str(), asr::ParamArray()));
+        {
+            Mesh& mesh = tri_object->GetMesh();
+
+            // Make sure the input mesh has vertex normals.
+            mesh.checkNormals(TRUE);
+
+            // Copy vertices to the mesh object.
+            object->reserve_vertices(mesh.getNumVerts());
+            for (int i = 0, e = mesh.getNumVerts(); i < e; ++i)
             {
-                // todo: emit a message?
-                return;
+                const Point3& v = mesh.getVert(i);
+                object->push_vertex(asr::GVector3(v.x, v.y, v.z));
             }
 
-            // Create a new mesh object.
-            asf::auto_release_ptr<asr::MeshObject> object(
-                asr::MeshObjectFactory::create(object_name.c_str(), asr::ParamArray()));
+            // Copy vertex normals and triangles to mesh object.
+            object->reserve_vertex_normals(mesh.getNumFaces() * 3);
+            object->reserve_triangles(mesh.getNumFaces());
+            for (int i = 0, e = mesh.getNumFaces(); i < e; ++i)
             {
-                Mesh& mesh = tri_object->GetMesh();
+                Face& face = mesh.faces[i];
+                const DWORD face_smgroup = face.getSmGroup();
+                const MtlID face_mat = face.getMatID();
 
-                // Make sure the input mesh has vertex normals.
-                mesh.checkNormals(TRUE);
-
-                // Copy vertices to the mesh object.
-                object->reserve_vertices(mesh.getNumVerts());
-                for (int i = 0, e = mesh.getNumVerts(); i < e; ++i)
+                asf::uint32 normal_indices[3];
+                if (face_smgroup == 0)
                 {
-                    const Point3& v = mesh.getVert(i);
-                    object->push_vertex(asr::GVector3(v.x, v.y, v.z));
+                    // No smooth group for this face, use the face normal.
+                    const Point3& n = mesh.getFaceNormal(i);
+                    const asf::uint32 normal_index =
+                        static_cast<asf::uint32>(
+                            object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                    normal_indices[0] = normal_index;
+                    normal_indices[1] = normal_index;
+                    normal_indices[2] = normal_index;
                 }
-
-                // Copy vertex normals and triangles to mesh object.
-                object->reserve_vertex_normals(mesh.getNumFaces() * 3);
-                object->reserve_triangles(mesh.getNumFaces());
-                for (int i = 0, e = mesh.getNumFaces(); i < e; ++i)
+                else
                 {
-                    Face& face = mesh.faces[i];
-                    const DWORD face_smgroup = face.getSmGroup();
-                    const MtlID face_mat = face.getMatID();
-
-                    asf::uint32 normal_indices[3];
-                    if (face_smgroup == 0)
+                    for (int j = 0; j < 3; ++j)
                     {
-                        // No smooth group for this face, use the face normal.
-                        const Point3& n = mesh.getFaceNormal(i);
-                        const asf::uint32 normal_index =
-                            static_cast<asf::uint32>(
-                                object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
-                        normal_indices[0] = normal_index;
-                        normal_indices[1] = normal_index;
-                        normal_indices[2] = normal_index;
-                    }
-                    else
-                    {
-                        for (int j = 0; j < 3; ++j)
+                        RVertex& rvertex = mesh.getRVert(face.getVert(j));
+                        const size_t normal_count = rvertex.rFlags & NORCT_MASK;
+                        if (normal_count == 1)
                         {
-                            RVertex& rvertex = mesh.getRVert(face.getVert(j));
-                            const size_t normal_count = rvertex.rFlags & NORCT_MASK;
-                            if (normal_count == 1)
+                            // This vertex has a single normal.
+                            const Point3& n = rvertex.rn.getNormal();
+                            normal_indices[j] =
+                                static_cast<asf::uint32>(
+                                    object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                        }
+                        else
+                        {
+                            // This vertex has multiple normals.
+                            for (size_t k = 0; k < normal_count; ++k)
                             {
-                                // This vertex has a single normal.
-                                const Point3& n = rvertex.rn.getNormal();
-                                normal_indices[j] =
-                                    static_cast<asf::uint32>(
-                                        object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
-                            }
-                            else
-                            {
-                                // This vertex has multiple normals.
-                                for (size_t k = 0; k < normal_count; ++k)
+                                // Find the normal for this smooth group and material.
+                                RNormal& rn = rvertex.ern[k];
+                                if ((face_smgroup & rn.getSmGroup()) && face_mat == rn.getMtlIndex())
                                 {
-                                    // Find the normal for this smooth group and material.
-                                    RNormal& rn = rvertex.ern[k];
-                                    if ((face_smgroup & rn.getSmGroup()) && face_mat == rn.getMtlIndex())
-                                    {
-                                        const Point3& n = rn.getNormal();
-                                        normal_indices[j] =
-                                            static_cast<asf::uint32>(
-                                                object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
-                                        break;
-                                    }
+                                    const Point3& n = rn.getNormal();
+                                    normal_indices[j] =
+                                        static_cast<asf::uint32>(
+                                            object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                                    break;
                                 }
                             }
                         }
                     }
-
-                    BOOST_STATIC_ASSERT(sizeof(DWORD) == sizeof(asf::uint32));
-
-                    asr::Triangle triangle;
-                    triangle.m_v0 = face.getVert(0);
-                    triangle.m_v1 = face.getVert(1);
-                    triangle.m_v2 = face.getVert(2);
-                    triangle.m_n0 = normal_indices[0];
-                    triangle.m_n1 = normal_indices[1];
-                    triangle.m_n2 = normal_indices[2];
-                    triangle.m_a0 = asr::Triangle::None;
-                    triangle.m_a1 = asr::Triangle::None;
-                    triangle.m_a2 = asr::Triangle::None;
-
-                    object->push_triangle(triangle);
                 }
 
-                // Delete the TriObject if necessary.
-                if (must_delete_tri_object)
-                    tri_object->DeleteMe();
+                BOOST_STATIC_ASSERT(sizeof(DWORD) == sizeof(asf::uint32));
 
-                // todo: optimize the object.
+                asr::Triangle triangle;
+                triangle.m_v0 = face.getVert(0);
+                triangle.m_v1 = face.getVert(1);
+                triangle.m_v2 = face.getVert(2);
+                triangle.m_n0 = normal_indices[0];
+                triangle.m_n1 = normal_indices[1];
+                triangle.m_n2 = normal_indices[2];
+                triangle.m_a0 = asr::Triangle::None;
+                triangle.m_a1 = asr::Triangle::None;
+                triangle.m_a2 = asr::Triangle::None;
+
+                object->push_triangle(triangle);
             }
 
-            // Insert the object into the assembly.
-            assembly.objects().insert(asf::auto_release_ptr<asr::Object>(object));
+            // Delete the TriObject if necessary.
+            if (must_delete_tri_object)
+                tri_object->DeleteMe();
+
+            // todo: optimize the object.
         }
 
-        // Figure out a unique name for this instance.
-        std::string instance_name = utf8_encode(node->GetName());
+        // Insert the object into the assembly.
+        assembly.objects().insert(asf::auto_release_ptr<asr::Object>(object));
+
+        return true;
+    }
+
+    void create_object_instance(
+        asr::Assembly&          assembly,
+        INode*                  instance_node,
+        const std::string&      object_name,
+        const TimeValue         time)
+    {
+        // Compute a unique name for this instance.
+        std::string instance_name = object_name + "_inst";  //utf8_encode(instance_node->GetName());
         if (assembly.object_instances().get_by_name(instance_name.c_str()) != 0)
             instance_name = asr::make_unique_name(instance_name, assembly.object_instances());
 
-        // Create an instance of the object and insert it into the assembly.
-        const Matrix3 obj_to_world = node->GetObjTMAfterWSM(time);
+        // Create the instance and insert it into the assembly.
+        const Matrix3 obj_to_world = instance_node->GetObjTMAfterWSM(time);
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
@@ -269,13 +276,76 @@ namespace
                 asf::StringDictionary()));
     }
 
+    void add_object(
+        asr::Assembly&          assembly,
+        INode*                  node,
+        const TimeValue         time,
+        std::set<INode*>&       visited)
+    {
+#if 1
+        // Skip nodes that we already visited as instances of other objects.
+        if (visited.find(node) != visited.end())
+            return;
+
+        // Collect the instances.
+        INodeTab instances;
+        const unsigned long instance_count =
+            IInstanceMgr::GetInstanceMgr()->GetInstances(*node, instances);
+        assert(instances.Count() > 0);
+
+        // Mark all the instance nodes as visited.
+        for (int i = 0, e = instances.Count(); i < e; ++i)
+            visited.insert(instances[i]);
+
+        // Create the object.
+        std::string object_name;
+        const bool success =
+            create_mesh_object(
+                assembly,
+                instances[0],
+                time,
+                object_name);
+
+        if (success)
+        {
+            // Create the instances.
+            for (int i = 0, e = instances.Count(); i < e; ++i)
+            {
+                create_object_instance(
+                    assembly,
+                    instances[i],
+                    object_name,
+                    time);
+            }
+        }
+#else
+        // Create the object.
+        std::string object_name;
+        const bool success =
+            create_mesh_object(
+                assembly,
+                node,
+                time,
+                object_name);
+
+        // Create an instance of the object.
+        create_object_instance(
+            assembly,
+            node,
+            object_name,
+            time);
+#endif
+    }
+
     void populate_assembly(
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
-        for (size_t i = 0, e = entities.m_instances.size(); i < e; ++i)
-            add_object(assembly, entities.m_instances[i], time);
+        std::set<INode*> visited;
+
+        for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
+            add_object(assembly, entities.m_objects[i], time, visited);
     }
 }
 

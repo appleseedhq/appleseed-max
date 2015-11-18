@@ -38,7 +38,7 @@ class INode;
 class MaxSceneEntities
 {
   public:
-    std::vector<INode*> m_instances;
+    std::vector<INode*> m_objects;
     std::vector<INode*> m_lights;
 
     void clear();

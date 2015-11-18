@@ -256,7 +256,7 @@ int AppleseedRenderer::Render(
     collector.collect(m_scene);
 
     // Call RenderBegin() on all object instances.
-    render_begin(m_entities.m_instances, m_time);
+    render_begin(m_entities.m_objects, m_time);
 
     if (prog)
         prog->SetTitle(_T("Building scene..."));
@@ -333,7 +333,7 @@ void AppleseedRenderer::Close(
     RendProgressCallback*   prog)
 {
     // Call RenderEnd() on all object instances.
-    render_end(m_entities.m_instances, m_time);
+    render_end(m_entities.m_objects, m_time);
 
     clear();
 }
