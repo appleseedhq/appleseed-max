@@ -102,6 +102,8 @@ int AppleseedRenderer::Open(
     int                     numDefLights,
     RendProgressCallback*   prog)
 {
+    SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
+
     m_scene = scene;
     m_view_node = vnode;
 
