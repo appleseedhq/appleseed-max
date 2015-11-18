@@ -84,12 +84,9 @@ namespace
             assert(view_params.projType == PROJ_PARALLEL);
 
             const float ViewDefaultWidth = 400.0f;
-            const float a = bitmap->Aspect();
             const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
-            const float hscale = bitmap->Width() / (ViewDefaultWidth * view_params.zoom);
-            const float vscale = hscale * aspect;
             const float film_width = ViewDefaultWidth * view_params.zoom;
-            const float film_height = aspect * film_width;
+            const float film_height = film_width * aspect;
             params.insert("film_dimensions", make_vec_string(film_width, film_height));
         }
 
