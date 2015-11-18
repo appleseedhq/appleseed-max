@@ -39,14 +39,12 @@
 // Forward declarations.
 namespace renderer  { class Project; }
 class Bitmap;
-class INode;
 class MaxSceneEntities;
 class ViewParams;
 
 // Build an appleseed project from the current 3ds Max scene.
 foundation::auto_release_ptr<renderer::Project> build_project(
     const MaxSceneEntities& entities,
-    INode*                  view_node,
     const ViewParams&       view_params,
     Bitmap*                 bitmap,
     const TimeValue         time);

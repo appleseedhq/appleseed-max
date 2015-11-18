@@ -70,7 +70,6 @@ namespace asr = renderer;
 namespace
 {
     asf::auto_release_ptr<asr::Camera> build_camera(
-        INode*                  view_node,
         const ViewParams&       view_params,
         Bitmap*                 bitmap,
         const TimeValue         time)
@@ -93,42 +92,7 @@ namespace
             params.insert("film_dimensions", make_vec_string(film_width, film_height));
         }
 
-        asf::Matrix4d camera_matrix = max_to_as(Inverse(view_params.affineTM));
-
-        if (view_node)
-        {
-            const ObjectState& os = view_node->EvalWorldState(time);
-            switch (os.obj->SuperClassID())
-            {
-              case CAMERA_CLASS_ID:
-                {
-                    CameraObject* cam = static_cast<CameraObject*>(os.obj);
-
-                    Interval validity_interval;
-                    validity_interval.SetInfinite();
-
-                    Matrix3 cam_to_world = view_node->GetObjTMAfterWSM(time, &validity_interval);
-                    cam_to_world.NoScale();
-                    camera_matrix = max_to_as(cam_to_world);
-
-                    CameraState cam_state;
-                    cam->EvalCameraState(time, validity_interval, &cam_state);
-
-                    if (cam_state.manualClip)
-                        params.insert("near_z", cam_state.hither);
-                }
-                break;
-
-              case LIGHT_CLASS_ID:
-                {
-                    // todo: implement.
-                }
-                break;
-
-              default:
-                assert(!"Unexpected super class ID  for camera.");
-            }
-        }
+        params.insert("near_z", view_params.hither);
 
         asf::auto_release_ptr<renderer::Camera> camera =
             view_params.projType == PROJ_PERSPECTIVE
@@ -136,7 +100,8 @@ namespace
                 : asr::OrthographicCameraFactory().create("camera", params);
 
         camera->transform_sequence().set_transform(
-            0.0, asf::Transformd::from_local_to_parent(camera_matrix));
+            0.0, asf::Transformd::from_local_to_parent(
+                max_to_as(Inverse(view_params.affineTM))));
 
         return camera;
     }
@@ -316,7 +281,6 @@ namespace
 
 asf::auto_release_ptr<asr::Project> build_project(
     const MaxSceneEntities&     entities,
-    INode*                      view_node,
     const ViewParams&           view_params,
     Bitmap*                     bitmap,
     const TimeValue             time)
@@ -364,7 +328,6 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Create a camera.
     scene->set_camera(
         build_camera(
-            view_node,
             view_params,
             bitmap,
             time));

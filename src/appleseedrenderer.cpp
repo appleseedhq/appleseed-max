@@ -113,6 +113,56 @@ int AppleseedRenderer::Open(
 
 namespace
 {
+    void get_view_params_from_view_node(
+        ViewParams&             view_params,
+        INode*                  view_node,
+        const TimeValue         time)
+    {
+        const ObjectState& os = view_node->EvalWorldState(time);
+        switch (os.obj->SuperClassID())
+        {
+          case CAMERA_CLASS_ID:
+            {
+                CameraObject* cam = static_cast<CameraObject*>(os.obj);
+
+                Interval validity_interval;
+                validity_interval.SetInfinite();
+
+                Matrix3 cam_to_world = view_node->GetObjTMAfterWSM(time, &validity_interval);
+                cam_to_world.NoScale();
+
+                view_params.affineTM = Inverse(cam_to_world);
+
+                CameraState cam_state;
+                cam->EvalCameraState(time, validity_interval, &cam_state);
+
+                view_params.projType = PROJ_PERSPECTIVE;
+                view_params.fov = cam_state.fov;
+
+                if (cam_state.manualClip)
+                {
+                    view_params.hither = cam_state.hither;
+                    view_params.yon = cam_state.yon;
+                }
+                else
+                {
+                    view_params.hither = 0.1f;
+                    view_params.yon = -1.0e38f;
+                }
+            }
+            break;
+
+          case LIGHT_CLASS_ID:
+            {
+                assert(!"Not implemented yet.");
+            }
+            break;
+
+          default:
+            assert(!"Unexpected super class ID for camera.");
+        }
+    }
+
     class RenderBeginProc
       : public RefEnumProc
     {
@@ -191,6 +241,9 @@ int AppleseedRenderer::Render(
     if (viewPar)
         m_view_params = *viewPar;
 
+    if (m_view_node)
+        get_view_params_from_view_node(m_view_params, m_view_node, t);
+
     m_time = t;
 
     if (prog)
@@ -210,7 +263,6 @@ int AppleseedRenderer::Render(
     foundation::auto_release_ptr<renderer::Project> project(
         build_project(
             m_entities,
-            m_view_node,
             m_view_params,
             tobm,
             t));
