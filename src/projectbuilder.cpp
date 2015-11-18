@@ -48,6 +48,9 @@
 #include "foundation/platform/compiler.h"
 #include "foundation/utility/containers/dictionary.h"
 
+// Boost headers.
+#include "boost/static_assert.hpp"
+
 // 3ds Max headers.
 #include <bitmap.h>
 #include <object.h>
@@ -192,30 +195,93 @@ namespace
             {
                 Mesh& mesh = tri_object->GetMesh();
 
+                // Make sure the input mesh has vertex normals.
+                mesh.checkNormals(TRUE);
+
                 // Copy vertices to the mesh object.
                 object->reserve_vertices(mesh.getNumVerts());
                 for (int i = 0, e = mesh.getNumVerts(); i < e; ++i)
                 {
                     const Point3& v = mesh.getVert(i);
-                    //object->push_vertex(max_to_as(v));
-                    object->push_vertex(asf::Vector3d(v.x, v.y, v.z));
+                    object->push_vertex(asr::GVector3(v.x, v.y, v.z));
                 }
 
-                // Copy triangles to mesh object.
+                // Copy vertex normals and triangles to mesh object.
+                object->reserve_vertex_normals(mesh.getNumFaces() * 3);
                 object->reserve_triangles(mesh.getNumFaces());
                 for (int i = 0, e = mesh.getNumFaces(); i < e; ++i)
                 {
                     Face& face = mesh.faces[i];
-                    const asr::Triangle triangle(
-                        face.getVert(0),
-                        face.getVert(1),
-                        face.getVert(2));
+                    const DWORD face_smgroup = face.getSmGroup();
+                    const MtlID face_mat = face.getMatID();
+
+                    asf::uint32 normal_indices[3];
+                    if (face_smgroup == 0)
+                    {
+                        // No smooth group for this face, use the face normal.
+                        const Point3& n = mesh.getFaceNormal(i);
+                        const asf::uint32 normal_index =
+                            static_cast<asf::uint32>(
+                                object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                        normal_indices[0] = normal_index;
+                        normal_indices[1] = normal_index;
+                        normal_indices[2] = normal_index;
+                    }
+                    else
+                    {
+                        for (int j = 0; j < 3; ++j)
+                        {
+                            RVertex& rvertex = mesh.getRVert(face.getVert(j));
+                            const size_t normal_count = rvertex.rFlags & NORCT_MASK;
+                            if (normal_count == 1)
+                            {
+                                // This vertex has a single normal.
+                                const Point3& n = rvertex.rn.getNormal();
+                                normal_indices[j] =
+                                    static_cast<asf::uint32>(
+                                        object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                            }
+                            else
+                            {
+                                // This vertex has multiple normals.
+                                for (size_t k = 0; k < normal_count; ++k)
+                                {
+                                    // Find the normal for this smooth group and material.
+                                    RNormal& rn = rvertex.ern[k];
+                                    if ((face_smgroup & rn.getSmGroup()) && face_mat == rn.getMtlIndex())
+                                    {
+                                        const Point3& n = rn.getNormal();
+                                        normal_indices[j] =
+                                            static_cast<asf::uint32>(
+                                                object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    BOOST_STATIC_ASSERT(sizeof(DWORD) == sizeof(asf::uint32));
+
+                    asr::Triangle triangle;
+                    triangle.m_v0 = face.getVert(0);
+                    triangle.m_v1 = face.getVert(1);
+                    triangle.m_v2 = face.getVert(2);
+                    triangle.m_n0 = normal_indices[0];
+                    triangle.m_n1 = normal_indices[1];
+                    triangle.m_n2 = normal_indices[2];
+                    triangle.m_a0 = asr::Triangle::None;
+                    triangle.m_a1 = asr::Triangle::None;
+                    triangle.m_a2 = asr::Triangle::None;
+
                     object->push_triangle(triangle);
                 }
 
                 // Delete the TriObject if necessary.
                 if (must_delete_tri_object)
                     tri_object->DeleteMe();
+
+                // todo: optimize the object.
             }
 
             // Insert the object into the assembly.
@@ -228,13 +294,13 @@ namespace
             instance_name = asr::make_unique_name(instance_name, assembly.object_instances());
 
         // Create an instance of the object and insert it into the assembly.
+        const Matrix3 obj_to_world = node->GetObjTMAfterWSM(time);
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
                 asr::ParamArray(),
                 object_name.c_str(),
-                asf::Transformd::from_local_to_parent(
-                    max_to_as(node->GetObjTMAfterWSM(time))),
+                asf::Transformd::from_local_to_parent(max_to_as(obj_to_world)),
                 asf::StringDictionary()));
     }
 
