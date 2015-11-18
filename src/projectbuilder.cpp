@@ -165,7 +165,11 @@ namespace
     {
         // Retrieve the name of the referenced object.
         Object* max_object = node->GetObjectRef();
-        const std::string object_name = utf8_encode(max_object->GetObjectName());
+        std::string object_name = utf8_encode(max_object->GetObjectName());
+
+        // todo: handle instancing.
+        if (assembly.objects().get_by_name(object_name.c_str()) != 0)
+            object_name = asr::make_unique_name(object_name, assembly.objects());
 
         // Create the object if it doesn't already exist in the appleseed scene.
         if (assembly.objects().get_by_name(object_name.c_str()) == 0)
