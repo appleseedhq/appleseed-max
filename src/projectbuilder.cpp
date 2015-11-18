@@ -43,6 +43,7 @@
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
+#include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
 #include "foundation/platform/compiler.h"
 #include "foundation/utility/containers/dictionary.h"
@@ -75,8 +76,8 @@ namespace
 
         if (view_params.projType == PROJ_PERSPECTIVE)
         {
-            params.insert("film_dimensions", "0.024892 0.018669");
-            params.insert("focal_length", "0.035");
+            params.insert("film_dimensions", make_vec_string(bitmap->Width(), bitmap->Height()));
+            params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
         }
         else
         {
