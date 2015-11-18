@@ -282,7 +282,6 @@ namespace
         const TimeValue         time,
         std::set<INode*>&       visited)
     {
-#if 1
         // Skip nodes that we already visited as instances of other objects.
         if (visited.find(node) != visited.end())
             return;
@@ -318,23 +317,6 @@ namespace
                     time);
             }
         }
-#else
-        // Create the object.
-        std::string object_name;
-        const bool success =
-            create_mesh_object(
-                assembly,
-                node,
-                time,
-                object_name);
-
-        // Create an instance of the object.
-        create_object_instance(
-            assembly,
-            node,
-            object_name,
-            time);
-#endif
     }
 
     void populate_assembly(
