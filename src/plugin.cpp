@@ -61,7 +61,7 @@ extern "C"
     }
 
     __declspec(dllexport)
-    ClassDesc* LibClassDesc(int i)
+    ClassDesc2* LibClassDesc(int i)
     {
         switch (i)
         {

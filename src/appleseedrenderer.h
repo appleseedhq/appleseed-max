@@ -37,7 +37,9 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include <iparamb2.h>
 #include <max.h>
+#undef base_type
 
 // Windows headers.
 #include <tchar.h>
@@ -105,7 +107,7 @@ class AppleseedRenderer
 //
 
 class AppleseedRendererClassDesc
-  : public ClassDesc
+  : public ClassDesc2
 {
   public:
     virtual int IsPublic() APPLESEED_OVERRIDE;
