@@ -345,7 +345,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Set the number of samples.
     project->configurations()
         .get_by_name("final")->get_parameters()
-            .insert_path("uniform_pixel_renderer.samples", "1");
+            .insert_path("uniform_pixel_renderer.samples", "16");
 
     // Create a scene.
     asf::auto_release_ptr<asr::Scene> scene(asr::SceneFactory::create());

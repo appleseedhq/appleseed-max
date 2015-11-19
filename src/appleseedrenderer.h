@@ -74,8 +74,8 @@ class AppleseedRenderer
         RendProgressCallback*   prog) APPLESEED_OVERRIDE;
 
     virtual int Render(
-        TimeValue               t,
-        Bitmap*                 tobm,
+        TimeValue               time,
+        Bitmap*                 bitmap,
         FrameRendParams&        frp,
         HWND                    hwnd,
         RendProgressCallback*   prog,

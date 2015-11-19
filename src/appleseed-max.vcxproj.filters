@@ -8,6 +8,8 @@
     <ClCompile Include="projectbuilder.cpp" />
     <ClCompile Include="maxsceneentities.cpp" />
     <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="tilecallback.cpp" />
+    <ClCompile Include="renderercontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer.h" />
@@ -15,5 +17,7 @@
     <ClInclude Include="utilities.h" />
     <ClInclude Include="projectbuilder.h" />
     <ClInclude Include="maxsceneentities.h" />
+    <ClInclude Include="tilecallback.h" />
+    <ClInclude Include="renderercontroller.h" />
   </ItemGroup>
 </Project>

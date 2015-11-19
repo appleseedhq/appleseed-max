@@ -32,6 +32,8 @@
 // appleseed-max headers.
 #include "appleseedrendererparamdlg.h"
 #include "projectbuilder.h"
+#include "renderercontroller.h"
+#include "tilecallback.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/frame.h"
@@ -39,9 +41,6 @@
 #include "renderer/api/rendering.h"
 
 // appleseed.foundation headers.
-#include "foundation/image/canvasproperties.h"
-#include "foundation/image/color.h"
-#include "foundation/image/image.h"
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
@@ -50,6 +49,9 @@
 // Standard headers.
 #include <cassert>
 #include <cstddef>
+
+namespace asf = foundation;
+namespace asr = renderer;
 
 
 //
@@ -231,8 +233,8 @@ namespace
 }
 
 int AppleseedRenderer::Render(
-    TimeValue               t,
-    Bitmap*                 tobm,
+    TimeValue               time,
+    Bitmap*                 bitmap,
     FrameRendParams&        frp,
     HWND                    hwnd,
     RendProgressCallback*   prog,
@@ -240,13 +242,13 @@ int AppleseedRenderer::Render(
 {
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
+    m_time = time;
+
     if (viewPar)
         m_view_params = *viewPar;
 
     if (m_view_node)
-        get_view_params_from_view_node(m_view_params, m_view_node, t);
-
-    m_time = t;
+        get_view_params_from_view_node(m_view_params, m_view_node, time);
 
     if (prog)
         prog->SetTitle(_T("Collecting entities..."));
@@ -262,19 +264,19 @@ int AppleseedRenderer::Render(
         prog->SetTitle(_T("Building scene..."));
 
     // Build the project.
-    foundation::auto_release_ptr<renderer::Project> project(
+    asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,
             m_view_params,
-            tobm,
-            t));
+            bitmap,
+            time));
 
     project->configurations()
         .get_by_name("final")->get_parameters()
             .insert_path("shading_engine.override_shading.mode", "shading_normal");
 
 #ifdef _DEBUG
-    renderer::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
+    asr::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
 #endif
 
     if (prog)
@@ -282,45 +284,20 @@ int AppleseedRenderer::Render(
 
     {
         // Create the master renderer.
-        renderer::DefaultRendererController renderer_controller;
-        std::auto_ptr<renderer::MasterRenderer> renderer(
-            new renderer::MasterRenderer(
+        RendererController renderer_controller(prog);
+        TileCallback tile_callback(bitmap);
+        std::auto_ptr<asr::MasterRenderer> renderer(
+            new asr::MasterRenderer(
                 project.ref(),
                 project->configurations().get_by_name("final")->get_inherited_parameters(),
-                &renderer_controller));
+                &renderer_controller,
+                &tile_callback));
 
         // Render the frame.
         renderer->render();
 
         // Make sure the master renderer is deleted before the project.
     }
-
-    // Copy the rendered frame to the output bitmap.
-    const renderer::Frame* frame = project->get_frame();
-    const foundation::Image& image = frame->image();
-    const foundation::CanvasProperties& props = image.properties();
-    assert(props.m_canvas_width == tobm->Width());
-    assert(props.m_canvas_height == tobm->Height());
-    assert(props.m_channel_count == 4);
-    for (int y = 0; y < tobm->Height(); ++y)
-    {
-        for (int x = 0; x < tobm->Width(); ++x)
-        {
-            foundation::Color4f source_color;
-            image.get_pixel(x, y, source_color);
-
-            BMM_Color_64 dest_color;
-            dest_color.r = foundation::truncate<WORD>(foundation::saturate(source_color[0]) * 65535.0f);
-            dest_color.g = foundation::truncate<WORD>(foundation::saturate(source_color[1]) * 65535.0f);
-            dest_color.b = foundation::truncate<WORD>(foundation::saturate(source_color[2]) * 65535.0f);
-            dest_color.a = foundation::truncate<WORD>(foundation::saturate(source_color[3]) * 65535.0f);
-
-            tobm->PutPixels(x, y, 1, &dest_color);
-        }
-    }
-
-    // Refresh the interior of the display window.
-    tobm->RefreshWindow();
 
     if (prog)
         prog->SetTitle(_T("Done."));
