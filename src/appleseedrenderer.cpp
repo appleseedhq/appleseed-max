@@ -148,7 +148,7 @@ namespace
                 }
                 else
                 {
-                    view_params.hither = 0.1f;
+                    view_params.hither = -0.001f;
                     view_params.yon = -1.0e38f;
                 }
             }
