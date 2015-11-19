@@ -136,10 +136,9 @@ namespace
         std::string&            object_name)
     {
         // Compute a unique name for the instantiated object.
-        Object* max_object = object_node->GetObjectRef();
-        object_name = utf8_encode(max_object->GetObjectName());
+        object_name = utf8_encode(object_node->GetName());
         if (assembly.objects().get_by_name(object_name.c_str()) != 0)
-            object_name = asr::make_unique_name(object_name, assembly.objects());
+            object_name = asr::make_unique_name(object_name + "_", assembly.objects());
 
         // Retrieve the ObjectState at the desired time.
         const ObjectState object_state = object_node->EvalWorldState(time);
@@ -261,9 +260,8 @@ namespace
         const TimeValue         time)
     {
         // Compute a unique name for this instance.
-        std::string instance_name = object_name + "_inst";  //utf8_encode(instance_node->GetName());
-        if (assembly.object_instances().get_by_name(instance_name.c_str()) != 0)
-            instance_name = asr::make_unique_name(instance_name, assembly.object_instances());
+        std::string instance_name =
+            asr::make_unique_name(object_name + "_inst", assembly.object_instances());
 
         // Create the instance and insert it into the assembly.
         const Matrix3 obj_to_world = instance_node->GetObjTMAfterWSM(time);
