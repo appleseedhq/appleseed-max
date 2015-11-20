@@ -41,11 +41,26 @@ namespace asr = renderer;
 
 RendererController::RendererController(RendProgressCallback* progress_cb)
   : m_progress_cb(progress_cb)
+  , m_status(ContinueRendering)
 {
+}
+
+void RendererController::on_rendering_begin()
+{
+    m_status = ContinueRendering;
 }
 
 void RendererController::on_progress()
 {
-    m_progress_cb->Progress(0, 10);
+    m_status =
+        m_progress_cb->Progress(0, 10) == RENDPROG_CONTINUE
+            ? ContinueRendering
+            : AbortRendering;
+
     asf::sleep(100);
+}
+
+asr::IRendererController::Status RendererController::get_status() const
+{
+    return m_status;
 }

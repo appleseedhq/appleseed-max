@@ -44,10 +44,15 @@ class RendererController
   public:
     explicit RendererController(RendProgressCallback* progress_cb);
 
+    virtual void on_rendering_begin() APPLESEED_OVERRIDE;
+
     virtual void on_progress() APPLESEED_OVERRIDE;
 
+    virtual Status get_status() const APPLESEED_OVERRIDE;
+
   private:
-    RendProgressCallback* m_progress_cb;
+    RendProgressCallback*   m_progress_cb;
+    Status                  m_status;
 };
 
 #endif	// !RENDERERCONTROLLER_H
