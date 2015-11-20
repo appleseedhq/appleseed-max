@@ -63,8 +63,9 @@
 #include <cassert>
 #include <cstddef>
 #include <limits>
-#include <set>
+#include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace asf = foundation;
@@ -274,46 +275,53 @@ namespace
                 asf::StringDictionary()));
     }
 
+    // Information about an appleseed object.
+    struct ObjectInfo
+    {
+        bool        m_valid;    // the object was successfully generated
+        std::string m_name;     // name of the object
+    };
+
+    typedef std::map<Object*, ObjectInfo> ObjectMap;
+
     void add_object(
         asr::Assembly&          assembly,
         INode*                  node,
         const TimeValue         time,
-        std::set<INode*>&       visited)
+        ObjectMap&              objects)
     {
-        // Skip nodes that we already visited as instances of other objects.
-        if (visited.find(node) != visited.end())
-            return;
+        // Retrieve the geometrical object referenced by this node.
+        Object* object = node->GetObjectRef();
 
-        // Collect the instances.
-        INodeTab instances;
-        const unsigned long instance_count =
-            IInstanceMgr::GetInstanceMgr()->GetInstances(*node, instances);
-        assert(instances.Count() > 0);
+        // Check if we already generated the corresponding appleseed object.
+        ObjectInfo object_info;
+        const ObjectMap::const_iterator it = objects.find(object);
 
-        // Mark all the instance nodes as visited.
-        for (int i = 0, e = instances.Count(); i < e; ++i)
-            visited.insert(instances[i]);
-
-        // Create the object.
-        std::string object_name;
-        const bool success =
-            create_mesh_object(
-                assembly,
-                instances[0],
-                time,
-                object_name);
-
-        if (success)
+        if (it == objects.end())
         {
-            // Create the instances.
-            for (int i = 0, e = instances.Count(); i < e; ++i)
-            {
-                create_object_instance(
+            // The appleseed object does not exist yet, create it.
+            object_info.m_valid =
+                create_mesh_object(
                     assembly,
-                    instances[i],
-                    object_name,
-                    time);
-            }
+                    node,
+                    time,
+                    object_info.m_name);
+            objects.insert(std::make_pair(object, object_info));
+        }
+        else
+        {
+            // The appleseed object exists, retrieve its info.
+            object_info = it->second;
+        }
+
+        // Create an instance of this object.
+        if (object_info.m_valid)
+        {
+            create_object_instance(
+                assembly,
+                node,
+                object_info.m_name,
+                time);
         }
     }
 
@@ -322,10 +330,10 @@ namespace
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
-        std::set<INode*> visited;
+        ObjectMap objects;
 
         for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
-            add_object(assembly, entities.m_objects[i], time, visited);
+            add_object(assembly, entities.m_objects[i], time, objects);
     }
 }
 
