@@ -148,8 +148,8 @@ namespace
 
                 if (cam_state.manualClip)
                 {
-                    view_params.hither = cam_state.hither;
-                    view_params.yon = cam_state.yon;
+                    view_params.hither = -cam_state.hither;
+                    view_params.yon = -cam_state.yon;
                 }
                 else
                 {
