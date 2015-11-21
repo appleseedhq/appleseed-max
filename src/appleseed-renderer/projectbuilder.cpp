@@ -37,6 +37,7 @@
 #include "renderer/api/camera.h"
 #include "renderer/api/environment.h"
 #include "renderer/api/frame.h"
+#include "renderer/api/material.h"
 #include "renderer/api/object.h"
 #include "renderer/api/project.h"
 #include "renderer/api/scene.h"
@@ -46,6 +47,7 @@
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
 #include "foundation/platform/compiler.h"
+#include "foundation/platform/types.h"
 #include "foundation/utility/containers/dictionary.h"
 
 // Boost headers.
@@ -162,6 +164,10 @@ namespace
             // Make sure the input mesh has vertex normals.
             mesh.checkNormals(TRUE);
 
+            // Create a material slot.
+            const asf::uint32 material_slot =
+                static_cast<asf::uint32>(object->push_material_slot("material"));
+
             // Copy vertices to the mesh object.
             object->reserve_vertices(mesh.getNumVerts());
             for (int i = 0, e = mesh.getNumVerts(); i < e; ++i)
@@ -237,6 +243,7 @@ namespace
                 triangle.m_a0 = asr::Triangle::None;
                 triangle.m_a1 = asr::Triangle::None;
                 triangle.m_a2 = asr::Triangle::None;
+                triangle.m_pa = material_slot;
 
                 object->push_triangle(triangle);
             }
@@ -261,18 +268,27 @@ namespace
         const TimeValue         time)
     {
         // Compute a unique name for this instance.
-        std::string instance_name =
+        const std::string instance_name =
             asr::make_unique_name(object_name + "_inst", assembly.object_instances());
 
+        // Compute the transform of this instance.
+        const asf::Transformd transform =
+            asf::Transformd::from_local_to_parent(
+                max_to_as(instance_node->GetObjTMAfterWSM(time)));
+
+        // Material-slots to materials mappings.
+        asf::StringDictionary material_mappings;
+        material_mappings.insert("material", "default_material");
+
         // Create the instance and insert it into the assembly.
-        const Matrix3 obj_to_world = instance_node->GetObjTMAfterWSM(time);
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
                 asr::ParamArray(),
                 object_name.c_str(),
-                asf::Transformd::from_local_to_parent(max_to_as(obj_to_world)),
-                asf::StringDictionary()));
+                transform,
+                material_mappings,
+                material_mappings));
     }
 
     // Information about an appleseed object.
@@ -325,7 +341,7 @@ namespace
         }
     }
 
-    void populate_assembly(
+    void add_objects(
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
         const TimeValue         time)
@@ -334,6 +350,19 @@ namespace
 
         for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
             add_object(assembly, entities.m_objects[i], time, objects);
+    }
+
+    void populate_assembly(
+        asr::Assembly&          assembly,
+        const MaxSceneEntities& entities,
+        const TimeValue         time)
+    {
+        assembly.materials().insert(
+            asr::DisneyMaterialFactory().create(
+                "default_material",
+                asr::ParamArray()));
+
+        add_objects(assembly, entities, time);
     }
 }
 
