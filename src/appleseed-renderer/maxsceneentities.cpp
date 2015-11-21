@@ -80,7 +80,7 @@ void MaxSceneEntityCollector::visit(INode* node)
 
     switch (object_state.obj->SuperClassID())
     {
-        case LIGHT_CLASS_ID:
+      case LIGHT_CLASS_ID:
         {
             // Hidden lights still emit light.
 
@@ -88,8 +88,8 @@ void MaxSceneEntityCollector::visit(INode* node)
         }
         break;
 
-        case SHAPE_CLASS_ID:
-        case GEOMOBJECT_CLASS_ID:
+      case SHAPE_CLASS_ID:
+      case GEOMOBJECT_CLASS_ID:
         {
             // Skip hidden objects.
             if (node->IsNodeHidden(TRUE))
