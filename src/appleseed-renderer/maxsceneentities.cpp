@@ -84,7 +84,8 @@ void MaxSceneEntityCollector::visit(INode* node)
         {
             // Hidden lights still emit light.
 
-            // todo: implement.
+            // Collect this light.
+            m_entities.m_lights.push_back(node);
         }
         break;
 
