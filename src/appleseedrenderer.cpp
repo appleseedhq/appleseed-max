@@ -41,6 +41,9 @@
 #include "renderer/api/rendering.h"
 
 // appleseed.foundation headers.
+#include "foundation/image/canvasproperties.h"
+#include "foundation/image/image.h"
+#include "foundation/platform/types.h"
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
@@ -283,9 +286,19 @@ int AppleseedRenderer::Render(
         prog->SetTitle(_T("Rendering..."));
 
     {
+        // Number of rendered tiles, shared counter accessed atomically.
+        asf::uint32 rendered_tile_count = 0;
+
+        // Create the renderer controller.
+        RendererController renderer_controller(
+            prog,
+            &rendered_tile_count,
+            project->get_frame()->image().properties().m_tile_count);
+
+        // Create the tile callback.
+        TileCallback tile_callback(bitmap, &rendered_tile_count);
+
         // Create the master renderer.
-        RendererController renderer_controller(prog);
-        TileCallback tile_callback(bitmap);
         std::auto_ptr<asr::MasterRenderer> renderer(
             new asr::MasterRenderer(
                 project.ref(),

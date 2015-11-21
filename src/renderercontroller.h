@@ -34,6 +34,10 @@
 
 // appleseed.foundation headers.
 #include "foundation/platform/compiler.h"
+#include "foundation/platform/types.h"
+
+// Standard headers.
+#include <cstddef>
 
 // Forward declarations.
 class RendProgressCallback;
@@ -42,7 +46,10 @@ class RendererController
   : public renderer::DefaultRendererController
 {
   public:
-    explicit RendererController(RendProgressCallback* progress_cb);
+    RendererController(
+        RendProgressCallback*   progress_cb,
+        foundation::uint32*     rendered_tile_count,
+        const size_t            total_tile_count);
 
     virtual void on_rendering_begin() APPLESEED_OVERRIDE;
 
@@ -51,8 +58,10 @@ class RendererController
     virtual Status get_status() const APPLESEED_OVERRIDE;
 
   private:
-    RendProgressCallback*   m_progress_cb;
-    Status                  m_status;
+    RendProgressCallback*       m_progress_cb;
+    foundation::uint32*         m_rendered_tile_count;
+    const size_t                m_total_tile_count;
+    Status                      m_status;
 };
 
 #endif	// !RENDERERCONTROLLER_H

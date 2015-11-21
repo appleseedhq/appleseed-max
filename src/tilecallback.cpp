@@ -37,7 +37,7 @@
 #include "foundation/image/color.h"
 #include "foundation/image/image.h"
 #include "foundation/image/tile.h"
-#include "foundation/platform/types.h"
+#include "foundation/platform/thread.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
@@ -146,8 +146,10 @@ namespace
 }
 
 TileCallback::TileCallback(
-    Bitmap*             bitmap)
+    Bitmap*             bitmap,
+    asf::uint32*        rendered_tile_count)
   : m_bitmap(bitmap)
+  , m_rendered_tile_count(rendered_tile_count)
 {
 }
 
@@ -204,6 +206,9 @@ void TileCallback::post_render_tile(
     // Partially refresh the display window.
     RECT rect = make_rect(x, y, tile.get_width(), tile.get_height());
     m_bitmap->RefreshWindow(&rect);
+
+    // Keep track of the number of rendered tiles.
+    boost_atomic::atomic_inc32(m_rendered_tile_count);
 }
 
 void TileCallback::post_render(

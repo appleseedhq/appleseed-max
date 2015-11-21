@@ -39,8 +39,13 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
-RendererController::RendererController(RendProgressCallback* progress_cb)
+RendererController::RendererController(
+    RendProgressCallback*   progress_cb,
+    asf::uint32*            rendered_tile_count,
+    const size_t            total_tile_count)
   : m_progress_cb(progress_cb)
+  , m_rendered_tile_count(rendered_tile_count)
+  , m_total_tile_count(total_tile_count)
   , m_status(ContinueRendering)
 {
 }
@@ -52,8 +57,12 @@ void RendererController::on_rendering_begin()
 
 void RendererController::on_progress()
 {
+    const int done =
+        static_cast<int>(boost_atomic::atomic_read32(m_rendered_tile_count));
+    const int total = static_cast<int>(m_total_tile_count);
+
     m_status =
-        m_progress_cb->Progress(0, 10) == RENDPROG_CONTINUE
+        m_progress_cb->Progress(done, total) == RENDPROG_CONTINUE
             ? ContinueRendering
             : AbortRendering;
 
