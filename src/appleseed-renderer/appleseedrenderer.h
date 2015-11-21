@@ -65,8 +65,8 @@ class AppleseedRenderer
 
     virtual int Open(
         INode*                  scene,
-        INode*                  vnode,
-        ViewParams*             viewPar,
+        INode*                  view_node,
+        ViewParams*             view_params,
         RendParams&             rp,
         HWND                    hwnd,
         DefaultLight*           defaultLights,
@@ -79,7 +79,7 @@ class AppleseedRenderer
         FrameRendParams&        frp,
         HWND                    hwnd,
         RendProgressCallback*   prog,
-        ViewParams*             viewPar) APPLESEED_OVERRIDE;
+        ViewParams*             view_params) APPLESEED_OVERRIDE;
 
     virtual void Close(
         HWND                    hwnd,

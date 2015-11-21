@@ -99,8 +99,8 @@ RefResult AppleseedRenderer::NotifyRefChanged(
 
 int AppleseedRenderer::Open(
     INode*                  scene,
-    INode*                  vnode,
-    ViewParams*             viewPar,
+    INode*                  view_node,
+    ViewParams*             view_params,
     RendParams&             rp,
     HWND                    hwnd,
     DefaultLight*           defaultLights,
@@ -110,10 +110,10 @@ int AppleseedRenderer::Open(
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
     m_scene = scene;
-    m_view_node = vnode;
+    m_view_node = view_node;
 
-    if (viewPar)
-        m_view_params = *viewPar;
+    if (view_params)
+        m_view_params = *view_params;
 
     return 1;   // success
 }
@@ -241,14 +241,14 @@ int AppleseedRenderer::Render(
     FrameRendParams&        frp,
     HWND                    hwnd,
     RendProgressCallback*   prog,
-    ViewParams*             viewPar)
+    ViewParams*             view_params)
 {
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
     m_time = time;
 
-    if (viewPar)
-        m_view_params = *viewPar;
+    if (view_params)
+        m_view_params = *view_params;
 
     if (m_view_node)
         get_view_params_from_view_node(m_view_params, m_view_node, time);
