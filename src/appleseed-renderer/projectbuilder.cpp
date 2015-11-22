@@ -441,8 +441,8 @@ namespace
 
         // Retrieve the light's color and intensity.
         LightObject* light_object = static_cast<LightObject*>(object_state.obj);
-        const asf::Color3f color = to_color3f(light_object->GetRGBColor(time, FOREVER));
-        const float intensity = light_object->GetIntensity(time, FOREVER);
+        const asf::Color3f color = to_color3f(light_object->GetRGBColor(time));
+        const float intensity = light_object->GetIntensity(time);
 
         // Create a color entity.
         const std::string light_color_name =
