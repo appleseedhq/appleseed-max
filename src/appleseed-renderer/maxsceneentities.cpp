@@ -84,6 +84,12 @@ void MaxSceneEntityCollector::visit(INode* node)
         {
             // Hidden lights still emit light.
 
+            LightObject* light_object = static_cast<LightObject*>(object_state.obj);
+
+            // Skip disabled lights.
+            if (!light_object->GetUseLight())
+                return;
+
             // Collect this light.
             m_entities.m_lights.push_back(node);
         }

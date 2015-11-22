@@ -103,9 +103,9 @@ int AppleseedRenderer::Open(
     ViewParams*             view_params,
     RendParams&             rp,
     HWND                    hwnd,
-    DefaultLight*           defaultLights,
-    int                     numDefLights,
-    RendProgressCallback*   prog)
+    DefaultLight*           default_lights,
+    int                     default_light_count,
+    RendProgressCallback*   progress_cb)
 {
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
@@ -114,6 +114,9 @@ int AppleseedRenderer::Open(
 
     if (view_params)
         m_view_params = *view_params;
+
+    m_default_lights = default_lights;
+    m_default_light_count = default_light_count;
 
     return 1;   // success
 }
@@ -240,7 +243,7 @@ int AppleseedRenderer::Render(
     Bitmap*                 bitmap,
     FrameRendParams&        frp,
     HWND                    hwnd,
-    RendProgressCallback*   prog,
+    RendProgressCallback*   progress_cb,
     ViewParams*             view_params)
 {
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
@@ -253,8 +256,8 @@ int AppleseedRenderer::Render(
     if (m_view_node)
         get_view_params_from_view_node(m_view_params, m_view_node, time);
 
-    if (prog)
-        prog->SetTitle(_T("Collecting entities..."));
+    if (progress_cb)
+        progress_cb->SetTitle(_T("Collecting entities..."));
 
     // Collect the entities we're interested in.
     MaxSceneEntityCollector collector(m_entities);
@@ -263,27 +266,31 @@ int AppleseedRenderer::Render(
     // Call RenderBegin() on all object instances.
     render_begin(m_entities.m_objects, m_time);
 
-    if (prog)
-        prog->SetTitle(_T("Building scene..."));
+    if (progress_cb)
+        progress_cb->SetTitle(_T("Building scene..."));
 
     // Build the project.
     asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,
+            m_default_lights,
+            m_default_light_count,
             m_view_params,
             bitmap,
             time));
 
+#if 0
     project->configurations()
         .get_by_name("final")->get_parameters()
             .insert_path("shading_engine.override_shading.mode", "shading_normal");
+#endif
 
 #ifdef _DEBUG
     asr::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
 #endif
 
-    if (prog)
-        prog->SetTitle(_T("Rendering..."));
+    if (progress_cb)
+        progress_cb->SetTitle(_T("Rendering..."));
 
     {
         // Number of rendered tiles, shared counter accessed atomically.
@@ -291,7 +298,7 @@ int AppleseedRenderer::Render(
 
         // Create the renderer controller.
         RendererController renderer_controller(
-            prog,
+            progress_cb,
             &rendered_tile_count,
             project->get_frame()->image().properties().m_tile_count);
 
@@ -312,15 +319,15 @@ int AppleseedRenderer::Render(
         // Make sure the master renderer is deleted before the project.
     }
 
-    if (prog)
-        prog->SetTitle(_T("Done."));
+    if (progress_cb)
+        progress_cb->SetTitle(_T("Done."));
 
     return 1;   // success
 }
 
 void AppleseedRenderer::Close(
     HWND                    hwnd,
-    RendProgressCallback*   prog)
+    RendProgressCallback*   progress_cb)
 {
     // Call RenderEnd() on all object instances.
     render_end(m_entities.m_objects, m_time);
@@ -330,7 +337,7 @@ void AppleseedRenderer::Close(
 
 RendParamDlg* AppleseedRenderer::CreateParamDialog(
     IRendParams*            ir,
-    BOOL                    prog)
+    BOOL                    progress_cb)
 {
     return new AppleseedRendererParamDlg();
 }
@@ -343,6 +350,8 @@ void AppleseedRenderer::clear()
 {
     m_scene = 0;
     m_view_node = 0;
+    m_default_lights = 0;
+    m_default_light_count = 0;
     m_time = 0;
     m_entities.clear();
 }

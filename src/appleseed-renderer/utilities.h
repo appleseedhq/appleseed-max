@@ -30,6 +30,7 @@
 #define UTILITIES_H
 
 // appleseed.foundation headers.
+#include "foundation/image/color.h"
 #include "foundation/math/matrix.h"
 #include "foundation/math/vector.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
@@ -40,12 +41,17 @@
 // Standard headers.
 #include <string>
 
-inline foundation::Vector3d max_to_as(const Point3& p)
+inline foundation::Color3f to_color3f(const Point3& p)
+{
+    return foundation::Color3f(p.x, p.y, p.z);
+}
+
+inline foundation::Vector3d to_vector3d(const Point3& p)
 {
     return foundation::Vector3d(p.x, p.z, -p.y);
 }
 
-inline foundation::Matrix4d max_to_as(const Matrix3& input)
+inline foundation::Matrix4d to_matrix4d(const Matrix3& input)
 {
     foundation::Matrix4d output;
 

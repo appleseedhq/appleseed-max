@@ -35,8 +35,10 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
+#include "renderer/api/color.h"
 #include "renderer/api/environment.h"
 #include "renderer/api/frame.h"
+#include "renderer/api/light.h"
 #include "renderer/api/material.h"
 #include "renderer/api/object.h"
 #include "renderer/api/project.h"
@@ -67,6 +69,7 @@
 #include <cstddef>
 #include <limits>
 #include <map>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -108,9 +111,37 @@ namespace
 
         camera->transform_sequence().set_transform(
             0.0, asf::Transformd::from_local_to_parent(
-                max_to_as(Inverse(view_params.affineTM))));
+                to_matrix4d(Inverse(view_params.affineTM))));
 
         return camera;
+    }
+
+    std::string fmt_color_expr(const asf::Color3f& c)
+    {
+        std::stringstream sstr;
+        sstr << '[';
+        sstr << c.r; sstr << ", ";
+        sstr << c.g; sstr << ", ";
+        sstr << c.b;
+        sstr << ']';
+        return sstr.str();
+    }
+
+    void add_default_material(
+        asr::Assembly&          assembly,
+        const std::string&      name,
+        const asf::Color3f&     color)
+    {
+        asf::auto_release_ptr<asr::Material> material(
+            asr::DisneyMaterialFactory().create(
+                name.c_str(),
+                asr::ParamArray()));
+
+        static_cast<asr::DisneyMaterial*>(material.get())->add_layer(
+            asr::DisneyMaterialLayer::get_default_values()
+                .insert("base_color", fmt_color_expr(color)));
+
+        assembly.materials().insert(material);
     }
 
     TriObject* get_tri_object_from_node(
@@ -152,7 +183,7 @@ namespace
         TriObject* tri_object = get_tri_object_from_node(object_state, time, must_delete_tri_object);
         if (tri_object == 0)
         {
-            // todo: emit a message?
+            // todo: emit warning message.
             return false;
         }
 
@@ -275,11 +306,19 @@ namespace
         // Compute the transform of this instance.
         const asf::Transformd transform =
             asf::Transformd::from_local_to_parent(
-                max_to_as(instance_node->GetObjTMAfterWSM(time)));
+                to_matrix4d(instance_node->GetObjTMAfterWSM(time)));
+
+        // Create a material for this instance.
+        const std::string material_name =
+            asr::make_unique_name(instance_name + "_mat", assembly.materials());
+        add_default_material(
+            assembly,
+            material_name,
+            to_color3f(Color(instance_node->GetWireColor())));
 
         // Material-slots to materials mappings.
         asf::StringDictionary material_mappings;
-        material_mappings.insert("material", "default_material");
+        material_mappings.insert("material", material_name);
 
         // Create the instance and insert it into the assembly.
         assembly.object_instances().insert(
@@ -353,22 +392,94 @@ namespace
             add_object(assembly, entities.m_objects[i], time, objects);
     }
 
-    void populate_assembly(
+    void add_light(
+        asr::Assembly&          assembly,
+        INode*                  light_node,
+        const TimeValue         time)
+    {
+        // Retrieve the ObjectState at the desired time.
+        const ObjectState object_state = light_node->EvalWorldState(time);
+
+        // Compute a unique name for this light.
+        std::string light_name = utf8_encode(light_node->GetName());
+        if (assembly.lights().get_by_name(light_name.c_str()) != 0)
+            light_name = asr::make_unique_name(light_name + "_", assembly.lights());
+
+        // Compute the transform of this light.
+        const asf::Transformd transform =
+            asf::Transformd::from_local_to_parent(
+                to_matrix4d(light_node->GetObjTMAfterWSM(time)));
+
+        LightObject* light_object = static_cast<LightObject*>(object_state.obj);
+
+        if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
+        {
+            const asf::Color3f color = to_color3f(light_object->GetRGBColor(time, FOREVER));
+            const float intensity = light_object->GetIntensity(time, FOREVER);
+
+            const std::string color_name = light_name + "_color";
+            assembly.colors().insert(
+                asr::ColorEntityFactory::create(
+                    color_name.c_str(),
+                    asr::ParamArray()
+                        .insert("color_space", "srgb")
+                        .insert("color", color)));
+
+            asf::auto_release_ptr<asr::Light> light(
+                asr::PointLightFactory().create(
+                    light_name.c_str(),
+                    asr::ParamArray()
+                        .insert("intensity", color_name)
+                        .insert("intensity_multiplier", intensity)));
+            light->set_transform(transform);
+            assembly.lights().insert(light);
+        }
+        else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0))
+        {
+        }
+        else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0))
+        {
+        }
+        else
+        {
+            // Unsupported light type.
+            // todo: emit warning message.
+        }
+    }
+
+    void add_lights(
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
-        assembly.materials().insert(
-            asr::DisneyMaterialFactory().create(
-                "default_material",
-                asr::ParamArray()));
+        for (size_t i = 0, e = entities.m_lights.size(); i < e; ++i)
+            add_light(assembly, entities.m_lights[i], time);
+    }
 
+    void add_default_lights(
+        DefaultLight*           default_lights,
+        const int               default_light_count)
+    {
+        // todo: implement.
+    }
+
+    void populate_assembly(
+        asr::Assembly&          assembly,
+        const MaxSceneEntities& entities,
+        DefaultLight*           default_lights,
+        const int               default_light_count,
+        const TimeValue         time)
+    {
         add_objects(assembly, entities, time);
+        add_lights(assembly, entities, time);
+        add_default_lights(default_lights, default_light_count);
     }
 }
 
 asf::auto_release_ptr<asr::Project> build_project(
     const MaxSceneEntities&     entities,
+    DefaultLight*               default_lights,
+    const int                   default_light_count,
     const ViewParams&           view_params,
     Bitmap*                     bitmap,
     const TimeValue             time)
@@ -383,6 +494,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Set the number of samples.
     project->configurations()
         .get_by_name("final")->get_parameters()
+            //.insert_path("rendering_threads", "1")
             .insert_path("uniform_pixel_renderer.samples", "16");
 
     // Create a scene.
@@ -393,7 +505,12 @@ asf::auto_release_ptr<asr::Project> build_project(
         asr::AssemblyFactory().create("assembly", asr::ParamArray()));
 
     // Populate the assembly with entities from the 3ds Max scene.
-    populate_assembly(assembly.ref(), entities, time);
+    populate_assembly(
+        assembly.ref(),
+        entities,
+        default_lights,
+        default_light_count,
+        time);
 
     // Create an instance of the assembly and insert it into the scene.
     asf::auto_release_ptr<asr::AssemblyInstance> assembly_instance(

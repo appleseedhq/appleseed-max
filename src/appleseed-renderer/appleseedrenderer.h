@@ -69,25 +69,25 @@ class AppleseedRenderer
         ViewParams*             view_params,
         RendParams&             rp,
         HWND                    hwnd,
-        DefaultLight*           defaultLights,
-        int                     numDefLights,
-        RendProgressCallback*   prog) APPLESEED_OVERRIDE;
+        DefaultLight*           default_lights,
+        int                     default_light_count,
+        RendProgressCallback*   progress_cb) APPLESEED_OVERRIDE;
 
     virtual int Render(
         TimeValue               time,
         Bitmap*                 bitmap,
         FrameRendParams&        frp,
         HWND                    hwnd,
-        RendProgressCallback*   prog,
+        RendProgressCallback*   progress_cb,
         ViewParams*             view_params) APPLESEED_OVERRIDE;
 
     virtual void Close(
         HWND                    hwnd,
-        RendProgressCallback*   prog) APPLESEED_OVERRIDE;
+        RendProgressCallback*   progress_cb) APPLESEED_OVERRIDE;
 
     virtual RendParamDlg* CreateParamDialog(
         IRendParams*            ir,
-        BOOL                    prog) APPLESEED_OVERRIDE;
+        BOOL                    progress_cb) APPLESEED_OVERRIDE;
 
     virtual void ResetParams() APPLESEED_OVERRIDE;
 
@@ -95,6 +95,8 @@ class AppleseedRenderer
     INode*              m_scene;
     INode*              m_view_node;
     ViewParams          m_view_params;
+    DefaultLight*       m_default_lights;
+    int                 m_default_light_count;
     TimeValue           m_time;
     MaxSceneEntities    m_entities;
 
