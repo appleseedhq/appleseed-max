@@ -65,8 +65,6 @@ void RendererController::on_progress()
         m_progress_cb->Progress(done, total) == RENDPROG_CONTINUE
             ? ContinueRendering
             : AbortRendering;
-
-    asf::sleep(100);
 }
 
 asr::IRendererController::Status RendererController::get_status() const
