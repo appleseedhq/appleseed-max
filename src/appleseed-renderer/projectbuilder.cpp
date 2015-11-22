@@ -37,6 +37,8 @@
 #include "renderer/api/camera.h"
 #include "renderer/api/color.h"
 #include "renderer/api/environment.h"
+#include "renderer/api/environmentedf.h"
+#include "renderer/api/environmentshader.h"
 #include "renderer/api/frame.h"
 #include "renderer/api/light.h"
 #include "renderer/api/material.h"
@@ -79,6 +81,46 @@ namespace asr = renderer;
 
 namespace
 {
+    template <typename EntityContainer>
+    std::string make_unique_name(
+        const EntityContainer&  entities,
+        const std::string&      name)
+    {
+        return
+            entities.get_by_name(name.c_str()) == 0
+                ? name
+                : asr::make_unique_name(name + "_", entities);
+    }
+
+    std::string insert_color(
+        asr::BaseGroup&         base_group,
+        std::string             name,
+        const asf::Color3f&     color)
+    {
+        name = make_unique_name(base_group.colors(), name);
+
+        base_group.colors().insert(
+            asr::ColorEntityFactory::create(
+                name.c_str(),
+                asr::ParamArray()
+                    .insert("color_space", "srgb")
+                    .insert("color", color)));
+
+        return name;
+    }
+
+    // Format a color as an SeExpr expression.
+    std::string fmt_color_expr(const asf::Color3f& c)
+    {
+        std::stringstream sstr;
+        sstr << '[';
+        sstr << c.r; sstr << ", ";
+        sstr << c.g; sstr << ", ";
+        sstr << c.b;
+        sstr << ']';
+        return sstr.str();
+    }
+
     asf::auto_release_ptr<asr::Camera> build_camera(
         const ViewParams&       view_params,
         Bitmap*                 bitmap,
@@ -114,17 +156,6 @@ namespace
                 to_matrix4d(Inverse(view_params.affineTM))));
 
         return camera;
-    }
-
-    std::string fmt_color_expr(const asf::Color3f& c)
-    {
-        std::stringstream sstr;
-        sstr << '[';
-        sstr << c.r; sstr << ", ";
-        sstr << c.g; sstr << ", ";
-        sstr << c.b;
-        sstr << ']';
-        return sstr.str();
     }
 
     void add_default_material(
@@ -172,8 +203,7 @@ namespace
     {
         // Compute a unique name for the instantiated object.
         object_name = utf8_encode(object_node->GetName());
-        if (assembly.objects().get_by_name(object_name.c_str()) != 0)
-            object_name = asr::make_unique_name(object_name + "_", assembly.objects());
+        object_name = make_unique_name(assembly.objects(), object_name);
 
         // Retrieve the ObjectState at the desired time.
         const ObjectState object_state = object_node->EvalWorldState(time);
@@ -301,7 +331,7 @@ namespace
     {
         // Compute a unique name for this instance.
         const std::string instance_name =
-            asr::make_unique_name(object_name + "_inst", assembly.object_instances());
+            make_unique_name(assembly.object_instances(), object_name + "_inst");
 
         // Compute the transform of this instance.
         const asf::Transformd transform =
@@ -310,7 +340,7 @@ namespace
 
         // Create a material for this instance.
         const std::string material_name =
-            asr::make_unique_name(instance_name + "_mat", assembly.materials());
+            make_unique_name(assembly.materials(), instance_name + "_mat");
         add_default_material(
             assembly,
             material_name,
@@ -402,43 +432,49 @@ namespace
 
         // Compute a unique name for this light.
         std::string light_name = utf8_encode(light_node->GetName());
-        if (assembly.lights().get_by_name(light_name.c_str()) != 0)
-            light_name = asr::make_unique_name(light_name + "_", assembly.lights());
+        light_name = make_unique_name(assembly.lights(), light_name);
 
         // Compute the transform of this light.
         const asf::Transformd transform =
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(light_node->GetObjTMAfterWSM(time)));
 
+        // Retrieve the light's color and intensity.
         LightObject* light_object = static_cast<LightObject*>(object_state.obj);
+        const asf::Color3f color = to_color3f(light_object->GetRGBColor(time, FOREVER));
+        const float intensity = light_object->GetIntensity(time, FOREVER);
+
+        // Create a color entity.
+        const std::string light_color_name =
+            insert_color(assembly, light_name + "_color", color);
 
         if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
         {
-            const asf::Color3f color = to_color3f(light_object->GetRGBColor(time, FOREVER));
-            const float intensity = light_object->GetIntensity(time, FOREVER);
-
-            const std::string color_name = light_name + "_color";
-            assembly.colors().insert(
-                asr::ColorEntityFactory::create(
-                    color_name.c_str(),
-                    asr::ParamArray()
-                        .insert("color_space", "srgb")
-                        .insert("color", color)));
-
             asf::auto_release_ptr<asr::Light> light(
                 asr::PointLightFactory().create(
                     light_name.c_str(),
                     asr::ParamArray()
-                        .insert("intensity", color_name)
+                        .insert("intensity", light_color_name)
                         .insert("intensity_multiplier", intensity)));
             light->set_transform(transform);
             assembly.lights().insert(light);
         }
         else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0))
         {
+            asf::auto_release_ptr<asr::Light> light(
+                asr::SpotLightFactory().create(
+                    light_name.c_str(),
+                    asr::ParamArray()
+                        .insert("intensity", light_color_name)
+                        .insert("intensity_multiplier", intensity)
+                        .insert("inner_angle", light_object->GetHotspot(time))
+                        .insert("outer_angle", light_object->GetFallsize(time))));
+            light->set_transform(transform);
+            assembly.lights().insert(light);
         }
         else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0))
         {
+            // todo: implement.
         }
         else
         {
@@ -473,6 +509,46 @@ namespace
         add_objects(assembly, entities, time);
         add_lights(assembly, entities, time);
         add_default_lights(default_lights, default_light_count);
+    }
+
+    void create_environment(
+        asr::Scene&             scene,
+        const TimeValue         time)
+    {
+        const asf::Color3f background_color =
+            to_color3f(GetCOREInterface14()->GetBackGround(time, FOREVER));
+
+        if (asf::is_zero(background_color))
+        {
+            scene.set_environment(
+                asr::EnvironmentFactory::create(
+                    "environment",
+                    asr::ParamArray()));
+        }
+        else
+        {
+            const std::string background_color_name =
+                insert_color(scene, "environment_edf_color", background_color);
+
+            scene.environment_edfs().insert(
+                asr::ConstantEnvironmentEDFFactory().create(
+                    "environment_edf",
+                    asr::ParamArray()
+                        .insert("radiance", background_color_name)));
+
+            scene.environment_shaders().insert(
+                asr::EDFEnvironmentShaderFactory().create(
+                    "environment_shader",
+                    asr::ParamArray()
+                        .insert("environment_edf", "environment_edf")));
+
+            scene.set_environment(
+                asr::EnvironmentFactory::create(
+                    "environment",
+                    asr::ParamArray()
+                        .insert("environment_edf", "environment_edf")
+                        .insert("environment_shader", "environment_shader")));
+        }
     }
 }
 
@@ -526,16 +602,11 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Insert the assembly into the scene.
     scene->assemblies().insert(assembly);
 
-    // Create a default environment and bind it to the scene.
-    scene->set_environment(
-        asr::EnvironmentFactory::create("environment", asr::ParamArray()));
+    // Create the environment.
+    create_environment(scene.ref(), time);
 
     // Create a camera.
-    scene->set_camera(
-        build_camera(
-            view_params,
-            bitmap,
-            time));
+    scene->set_camera(build_camera(view_params, bitmap, time));
 
     // Create a frame and bind it to the project.
     project->set_frame(
