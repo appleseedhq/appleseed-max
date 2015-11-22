@@ -98,7 +98,7 @@ namespace
             params.insert("film_dimensions", make_vec_string(film_width, film_height));
         }
 
-        params.insert("near_z", view_params.hither);
+        params.insert("near_z", -view_params.hither);
 
         asf::auto_release_ptr<renderer::Camera> camera =
             view_params.projType == PROJ_PERSPECTIVE

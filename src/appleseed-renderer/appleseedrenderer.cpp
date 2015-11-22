@@ -148,13 +148,13 @@ namespace
 
                 if (cam_state.manualClip)
                 {
-                    view_params.hither = -cam_state.hither;
-                    view_params.yon = -cam_state.yon;
+                    view_params.hither = cam_state.hither;
+                    view_params.yon = cam_state.yon;
                 }
                 else
                 {
-                    view_params.hither = -0.001f;
-                    view_params.yon = -1.0e38f;
+                    view_params.hither = 0.001f;
+                    view_params.yon = 1.0e38f;
                 }
             }
             break;
