@@ -70,10 +70,9 @@ class TileCallback
         const renderer::Frame*  frame) APPLESEED_OVERRIDE;
 
   private:
-    Bitmap*                     m_bitmap;
-    foundation::uint32*         m_rendered_tile_count;
-    std::auto_ptr<
-        foundation::Tile>       m_float_tile_storage;
+    Bitmap*                         m_bitmap;
+    foundation::uint32*             m_rendered_tile_count;
+    std::auto_ptr<foundation::Tile> m_float_tile_storage;
 
     void blit_tile(
         const renderer::Frame&  frame,
