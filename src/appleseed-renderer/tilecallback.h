@@ -33,11 +33,13 @@
 #include "renderer/api/rendering.h"
 
 // appleseed.foundation headers.
+#include "foundation/image/tile.h"
 #include "foundation/platform/compiler.h"
 #include "foundation/platform/types.h"
 
 // Standard headers.
 #include <cstddef>
+#include <memory>
 
 // Forward declarations.
 namespace renderer  { class Frame; }
@@ -70,6 +72,13 @@ class TileCallback
   private:
     Bitmap*                     m_bitmap;
     foundation::uint32*         m_rendered_tile_count;
+    std::auto_ptr<
+        foundation::Tile>       m_float_tile_storage;
+
+    void blit_tile(
+        const renderer::Frame&  frame,
+        const size_t            tile_x,
+        const size_t            tile_y);
 };
 
 #endif	// !TILECALLBACK_H

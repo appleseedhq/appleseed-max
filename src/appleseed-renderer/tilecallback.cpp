@@ -36,9 +36,12 @@
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/color.h"
 #include "foundation/image/image.h"
-#include "foundation/image/tile.h"
+#include "foundation/image/pixel.h"
 #include "foundation/platform/thread.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
+
+// Boost headers.
+#include "boost/static_assert.hpp"
 
 // 3ds Max headers.
 #include <bitmap.h>
@@ -118,31 +121,6 @@ namespace
         rect.bottom = static_cast<LONG>(y + height);
         return rect;
     }
-
-    void blit_tile(
-        Bitmap*             dest,
-        const size_t        dest_x,
-        const size_t        dest_y,
-        const asf::Tile&    tile)
-    {
-        const size_t tile_width = tile.get_width();
-        const size_t tile_height = tile.get_height();
-
-        for (size_t y = 0; y < tile_height; ++y)
-        {
-            for (size_t x = 0; x < tile_width; ++x)
-            {
-                BMM_Color_fl color;
-                tile.get_pixel(x, y, &color.r);
-
-                dest->PutPixels(
-                    static_cast<int>(dest_x + x),
-                    static_cast<int>(dest_y + y),
-                    1,
-                    &color);
-            }
-        }
-    }
 }
 
 TileCallback::TileCallback(
@@ -187,23 +165,19 @@ void TileCallback::post_render_tile(
     const size_t        tile_y)
 {
     const asf::Image& image = frame->image();
-    const asf::CanvasProperties& frame_props = image.properties();
+    const asf::CanvasProperties& props = image.properties();
 
-    assert(frame_props.m_canvas_width == m_bitmap->Width());
-    assert(frame_props.m_canvas_height == m_bitmap->Height());
-    assert(frame_props.m_channel_count == 4);
-
-    // Retrieve the source tile.
-    const asf::Tile& tile = image.tile(tile_x, tile_y);
-
-    // Compute the coordinates of the first destination pixel.
-    const size_t x = tile_x * frame_props.m_tile_width;
-    const size_t y = tile_y * frame_props.m_tile_height;
+    assert(props.m_canvas_width == m_bitmap->Width());
+    assert(props.m_canvas_height == m_bitmap->Height());
+    assert(props.m_channel_count == 4);
 
     // Blit the tile to the destination bitmap.
-    blit_tile(m_bitmap, x, y, tile);
+    blit_tile(*frame, tile_x, tile_y);
 
     // Partially refresh the display window.
+    const asf::Tile& tile = image.tile(tile_x, tile_y);
+    const size_t x = tile_x * props.m_tile_width;
+    const size_t y = tile_y * props.m_tile_height;
     RECT rect = make_rect(x, y, tile.get_width(), tile.get_height());
     m_bitmap->RefreshWindow(&rect);
 
@@ -214,25 +188,72 @@ void TileCallback::post_render_tile(
 void TileCallback::post_render(
     const asr::Frame*   frame)
 {
-    const asf::Image& image = frame->image();
-    const asf::CanvasProperties& frame_props = image.properties();
+    const asf::CanvasProperties& props = frame->image().properties();
 
-    assert(frame_props.m_canvas_width == m_bitmap->Width());
-    assert(frame_props.m_canvas_height == m_bitmap->Height());
-    assert(frame_props.m_channel_count == 4);
+    assert(props.m_canvas_width == m_bitmap->Width());
+    assert(props.m_canvas_height == m_bitmap->Height());
+    assert(props.m_channel_count == 4);
 
     // Blit all tiles.
-    for (size_t y = 0; y < frame_props.m_tile_count_y; ++y)
+    for (size_t y = 0; y < props.m_tile_count_y; ++y)
     {
-        for (size_t x = 0; x < frame_props.m_tile_count_x; ++x)
-        {
-            const asf::Tile& tile = image.tile(x, y);
-            const size_t dest_x = x * frame_props.m_tile_width;
-            const size_t dest_y = y * frame_props.m_tile_height;
-            blit_tile(m_bitmap, dest_x, dest_y, tile);
-        }
+        for (size_t x = 0; x < props.m_tile_count_x; ++x)
+            blit_tile(*frame, x, y);
     }
 
     // Refresh the entire display window.
     m_bitmap->RefreshWindow();
+}
+
+void TileCallback::blit_tile(
+    const asr::Frame&   frame,
+    const size_t        tile_x,
+    const size_t        tile_y)
+{
+    const asf::CanvasProperties& props = frame.image().properties();
+
+    // Allocate memory for the temporary tile.
+    if (m_float_tile_storage.get() == 0)
+    {
+        m_float_tile_storage.reset(
+            new asf::Tile(
+                props.m_tile_width,
+                props.m_tile_height,
+                props.m_channel_count,
+                asf::PixelFormatFloat));
+    }
+
+    // Retrieve the source tile.
+    const asf::Tile& tile = frame.image().tile(tile_x, tile_y);
+
+    // Convert the tile to 32-bit floating point.
+    asf::Tile fp_tile(
+        tile,
+        asf::PixelFormatFloat,
+        m_float_tile_storage->get_storage());
+
+    // Transform the tile to the color space of the frame.
+    frame.transform_to_output_color_space(fp_tile);
+
+    // Blit the time into the bitmap.
+    const size_t dest_x = tile_x * props.m_tile_width;
+    const size_t dest_y = tile_y * props.m_tile_height;
+    const size_t tile_width = fp_tile.get_width();
+    const size_t tile_height = fp_tile.get_height();
+    for (size_t y = 0; y < tile_height; ++y)
+    {
+        for (size_t x = 0; x < tile_width; ++x)
+        {
+            BOOST_STATIC_ASSERT(sizeof(BMM_Color_fl) == sizeof(asf::Color4f));
+
+            asf::Color4f color;
+            fp_tile.get_pixel(x, y, &color.r);
+
+            m_bitmap->PutPixels(
+                static_cast<int>(dest_x + x),
+                static_cast<int>(dest_y + y),
+                1,
+                reinterpret_cast<BMM_Color_fl*>(&color));
+        }
+    }
 }
