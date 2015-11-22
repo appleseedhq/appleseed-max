@@ -459,7 +459,8 @@ namespace
             light->set_transform(transform);
             assembly.lights().insert(light);
         }
-        else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0))
+        else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0) ||
+                 light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
         {
             asf::auto_release_ptr<asr::Light> light(
                 asr::SpotLightFactory().create(
@@ -472,9 +473,17 @@ namespace
             light->set_transform(transform);
             assembly.lights().insert(light);
         }
-        else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0))
+        else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
+                 light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
         {
-            // todo: implement.
+            asf::auto_release_ptr<asr::Light> light(
+                asr::DirectionalLightFactory().create(
+                    light_name.c_str(),
+                    asr::ParamArray()
+                        .insert("irradiance", light_color_name)
+                        .insert("irradiance_multiplier", intensity)));
+            light->set_transform(transform);
+            assembly.lights().insert(light);
         }
         else
         {
