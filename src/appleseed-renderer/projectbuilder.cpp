@@ -426,7 +426,9 @@ asf::auto_release_ptr<asr::Project> build_project(
             asr::ParamArray()
                 .insert("camera", scene->get_camera()->get_name())
                 .insert("resolution", make_vec_string(bitmap->Width(), bitmap->Height()))
-                .insert("color_space", "linear_rgb")));
+                .insert("color_space", "linear_rgb")
+                .insert("filter", "blackman-harris")
+                .insert("filter_size", 2.0f)));
 
     // Bind the scene to the project.
     project->set_scene(scene);
