@@ -49,6 +49,7 @@
 #include "foundation/platform/compiler.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/containers/dictionary.h"
+#include "foundation/utility/iostreamop.h"
 
 // Boost headers.
 #include "boost/static_assert.hpp"
@@ -84,7 +85,7 @@ namespace
 
         if (view_params.projType == PROJ_PERSPECTIVE)
         {
-            params.insert("film_dimensions", make_vec_string(bitmap->Width(), bitmap->Height()));
+            params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
             params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
         }
         else
@@ -95,7 +96,7 @@ namespace
             const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
             const float film_width = ViewDefaultWidth * view_params.zoom;
             const float film_height = film_width * aspect;
-            params.insert("film_dimensions", make_vec_string(film_width, film_height));
+            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
         }
 
         params.insert("near_z", -view_params.hither);
@@ -425,7 +426,7 @@ asf::auto_release_ptr<asr::Project> build_project(
             "beauty",
             asr::ParamArray()
                 .insert("camera", scene->get_camera()->get_name())
-                .insert("resolution", make_vec_string(bitmap->Width(), bitmap->Height()))
+                .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                 .insert("color_space", "linear_rgb")
                 .insert("filter", "blackman-harris")
                 .insert("filter_size", 2.0f)));
