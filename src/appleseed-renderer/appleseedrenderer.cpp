@@ -240,7 +240,7 @@ namespace
         asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
 
         params.insert_path("uniform_pixel_renderer.samples", settings.m_pixel_samples);
-        //params.insert_path("rendering_threads", "1");
+        params.insert_path("rendering_threads", settings.m_rendering_threads);
         //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
     }
 

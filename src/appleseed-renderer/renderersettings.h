@@ -38,6 +38,7 @@ class RendererSettings
     static const RendererSettings& defaults();
 
     size_t  m_pixel_samples;
+    size_t  m_rendering_threads;
 };
 
 #endif	// !RENDERERSETTINGS_H

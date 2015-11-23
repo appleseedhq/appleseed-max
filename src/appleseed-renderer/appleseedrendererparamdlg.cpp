@@ -42,12 +42,9 @@
 
 namespace
 {
-    // Forward declaration.
-    INT_PTR CALLBACK dialog_proc(
-        HWND    hWnd,
-        UINT    uMsg,
-        WPARAM  wParam,
-        LPARAM  lParam);
+    // Forward declarations.
+    INT_PTR CALLBACK sampling_rollup_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    INT_PTR CALLBACK system_rollup_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 }
 
 struct AppleseedRendererParamDlg::Impl
@@ -60,6 +57,10 @@ struct AppleseedRendererParamDlg::Impl
     ICustEdit*          m_text_pixelsamples;
     ISpinnerControl*    m_spinner_pixelsamples;
 
+    HWND                m_rollup_system;
+    ICustEdit*          m_text_renderingthreads;
+    ISpinnerControl*    m_spinner_renderingthreads;
+
     Impl(
         IRendParams*            rend_params,
         BOOL                    in_progress,
@@ -71,19 +72,30 @@ struct AppleseedRendererParamDlg::Impl
         m_rollup_sampling =
             m_rend_params->AddRollupPage(
                 g_module,
-                MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS),
-                &dialog_proc,
+                MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SAMPLING),
+                &sampling_rollup_proc,
                 _T("Sampling"),
+                reinterpret_cast<LPARAM>(this));
+
+        m_rollup_system =
+            m_rend_params->AddRollupPage(
+                g_module,
+                MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
+                &system_rollup_proc,
+                _T("System"),
                 reinterpret_cast<LPARAM>(this));
     }
 
     ~Impl()
     {
-        destroy_controls();
+        destroy_system_controls();
+        m_rend_params->DeleteRollupPage(m_rollup_system);
+
+        destroy_sampling_controls();
         m_rend_params->DeleteRollupPage(m_rollup_sampling);
     }
 
-    void create_controls(HWND hWnd)
+    void create_sampling_controls(HWND hWnd)
     {
         m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
 
@@ -94,31 +106,33 @@ struct AppleseedRendererParamDlg::Impl
         m_spinner_pixelsamples->SetValue(static_cast<int>(m_settings.m_pixel_samples), FALSE);
     }
 
-    void destroy_controls()
+    void destroy_system_controls()
     {
-        ReleaseICustEdit(m_text_pixelsamples);
+        ReleaseISpinner(m_spinner_renderingthreads);
+        ReleaseICustEdit(m_text_renderingthreads);
+    }
+
+    void create_system_controls(HWND hWnd)
+    {
+        m_text_renderingthreads = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS));
+
+        m_spinner_renderingthreads = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_RENDERINGTHREADS));
+        m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
+        m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
+        m_spinner_renderingthreads->SetResetValue(static_cast<int>(RendererSettings::defaults().m_rendering_threads));
+        m_spinner_renderingthreads->SetValue(static_cast<int>(m_settings.m_rendering_threads), FALSE);
+    }
+
+    void destroy_sampling_controls()
+    {
         ReleaseISpinner(m_spinner_pixelsamples);
+        ReleaseICustEdit(m_text_pixelsamples);
     }
 };
 
 namespace
 {
-    INT_PTR on_command(
-        AppleseedRendererParamDlg::Impl*    impl,
-        WPARAM                              wParam,
-        LPARAM                              lParam)
-    {
-        switch (LOWORD(wParam))
-        {
-          case IDC_TEXT_PIXELSAMPLES:
-            impl->m_settings.m_pixel_samples = static_cast<size_t>(impl->m_text_pixelsamples->GetInt());
-            return TRUE;
-        }
-
-        return FALSE;
-    }
-
-    INT_PTR CALLBACK dialog_proc(
+    INT_PTR CALLBACK sampling_rollup_proc(
         HWND    hWnd,
         UINT    uMsg,
         WPARAM  wParam,
@@ -133,14 +147,54 @@ namespace
         {
           case WM_INITDIALOG:
             DLSetWindowLongPtr(hWnd, impl);
-            impl->create_controls(hWnd);
+            impl->create_sampling_controls(hWnd);
             return TRUE;
 
           case WM_DESTROY:
             return TRUE;
 
           case WM_COMMAND:
-            return on_command(impl, wParam, lParam);
+            switch (LOWORD(wParam))
+            {
+              case IDC_TEXT_PIXELSAMPLES:
+                impl->m_settings.m_pixel_samples = static_cast<size_t>(impl->m_text_pixelsamples->GetInt());
+                return TRUE;
+            }
+            break;
+        }
+
+        return FALSE;
+    }
+
+    INT_PTR CALLBACK system_rollup_proc(
+        HWND    hWnd,
+        UINT    uMsg,
+        WPARAM  wParam,
+        LPARAM  lParam)
+    {
+        AppleseedRendererParamDlg::Impl* impl =
+            uMsg == WM_INITDIALOG
+                ? reinterpret_cast<AppleseedRendererParamDlg::Impl*>(lParam)
+                : DLGetWindowLongPtr<AppleseedRendererParamDlg::Impl*>(hWnd);
+
+        switch (uMsg)
+        {
+          case WM_INITDIALOG:
+            DLSetWindowLongPtr(hWnd, impl);
+            impl->create_system_controls(hWnd);
+            return TRUE;
+
+          case WM_DESTROY:
+            return TRUE;
+
+          case WM_COMMAND:
+            switch (LOWORD(wParam))
+            {
+              case IDC_TEXT_RENDERINGTHREADS:
+                impl->m_settings.m_rendering_threads = static_cast<size_t>(impl->m_text_renderingthreads->GetInt());
+                return TRUE;
+            }
+            break;
         }
 
         return FALSE;
