@@ -243,6 +243,37 @@ namespace
         //params.insert_path("rendering_threads", "1");
         //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
     }
+
+    void render(
+        asr::Project&           project,
+        Bitmap*                 bitmap,
+        RendProgressCallback*   progress_cb)
+    {
+        // Number of rendered tiles, shared counter accessed atomically.
+        asf::uint32 rendered_tile_count = 0;
+
+        // Create the renderer controller.
+        RendererController renderer_controller(
+            progress_cb,
+            &rendered_tile_count,
+            project.get_frame()->image().properties().m_tile_count);
+
+        // Create the tile callback.
+        TileCallback tile_callback(bitmap, &rendered_tile_count);
+
+        // Create the master renderer.
+        std::auto_ptr<asr::MasterRenderer> renderer(
+            new asr::MasterRenderer(
+                project,
+                project.configurations().get_by_name("final")->get_inherited_parameters(),
+                &renderer_controller,
+                &tile_callback));
+
+        // Render the frame.
+        renderer->render();
+
+        // Make sure the master renderer is deleted before the project.
+    }
 }
 
 int AppleseedRenderer::Render(
@@ -263,20 +294,18 @@ int AppleseedRenderer::Render(
     if (m_view_node)
         get_view_params_from_view_node(m_view_params, m_view_node, time);
 
+    // Collect the entities we're interested in.
     if (progress_cb)
         progress_cb->SetTitle(_T("Collecting entities..."));
-
-    // Collect the entities we're interested in.
     MaxSceneEntityCollector collector(m_entities);
     collector.collect(m_scene);
 
     // Call RenderBegin() on all object instances.
     render_begin(m_entities.m_objects, m_time);
 
+    // Build the project.
     if (progress_cb)
         progress_cb->SetTitle(_T("Building scene..."));
-
-    // Build the project.
     asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,
@@ -290,43 +319,21 @@ int AppleseedRenderer::Render(
     apply_settings(project.ref(), m_settings);
 
 #ifdef _DEBUG
+    if (progress_cb)
+        progress_cb->SetTitle(_T("Writing scene to disk..."));
     asr::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
 #endif
 
+    // Render the project.
     if (progress_cb)
         progress_cb->SetTitle(_T("Rendering..."));
-
-    {
-        // Number of rendered tiles, shared counter accessed atomically.
-        asf::uint32 rendered_tile_count = 0;
-
-        // Create the renderer controller.
-        RendererController renderer_controller(
-            progress_cb,
-            &rendered_tile_count,
-            project->get_frame()->image().properties().m_tile_count);
-
-        // Create the tile callback.
-        TileCallback tile_callback(bitmap, &rendered_tile_count);
-
-        // Create the master renderer.
-        std::auto_ptr<asr::MasterRenderer> renderer(
-            new asr::MasterRenderer(
-                project.ref(),
-                project->configurations().get_by_name("final")->get_inherited_parameters(),
-                &renderer_controller,
-                &tile_callback));
-
-        // Render the frame.
-        renderer->render();
-
-        // Make sure the master renderer is deleted before the project.
-    }
+    render(project.ref(), bitmap, progress_cb);
 
     if (progress_cb)
         progress_cb->SetTitle(_T("Done."));
 
-    return 1;   // success
+    // Success.
+    return 1;
 }
 
 void AppleseedRenderer::Close(
