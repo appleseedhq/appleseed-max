@@ -336,10 +336,10 @@ void AppleseedRenderer::Close(
 }
 
 RendParamDlg* AppleseedRenderer::CreateParamDialog(
-    IRendParams*            ir,
-    BOOL                    progress_cb)
+    IRendParams*            rend_params,
+    BOOL                    in_progress)
 {
-    return new AppleseedRendererParamDlg();
+    return new AppleseedRendererParamDlg(rend_params, in_progress);
 }
 
 void AppleseedRenderer::ResetParams()

@@ -86,8 +86,8 @@ class AppleseedRenderer
         RendProgressCallback*   progress_cb) APPLESEED_OVERRIDE;
 
     virtual RendParamDlg* CreateParamDialog(
-        IRendParams*            ir,
-        BOOL                    progress_cb) APPLESEED_OVERRIDE;
+        IRendParams*            rend_params,
+        BOOL                    in_progress) APPLESEED_OVERRIDE;
 
     virtual void ResetParams() APPLESEED_OVERRIDE;
 

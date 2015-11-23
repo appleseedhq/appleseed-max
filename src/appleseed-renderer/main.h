@@ -26,34 +26,10 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEEDRENDERERPARAMDLG_H
-#define APPLESEEDRENDERERPARAMDLG_H
+#ifndef MAIN_H
+#define MAIN_H
 
-// appleseed.foundation headers.
-#include "foundation/platform/compiler.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+// DLL instance handle of the plugin.
+extern HINSTANCE g_module;
 
-// 3ds Max headers.
-#include <render.h>
-
-class AppleseedRendererParamDlg
-  : public RendParamDlg
-{
-  public:
-    struct Impl;
-
-    AppleseedRendererParamDlg(
-        IRendParams*    rend_params,
-        BOOL            in_progress);
-
-    ~AppleseedRendererParamDlg();
-
-    virtual void DeleteThis() APPLESEED_OVERRIDE;
-
-    virtual void AcceptParams() APPLESEED_OVERRIDE;
-
-  private:
-    Impl* impl;
-};
-
-#endif	// !APPLESEEDRENDERERPARAMDLG_H
+#endif	// !MAIN_H

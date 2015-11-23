@@ -19,5 +19,10 @@
     <ClInclude Include="maxsceneentities.h" />
     <ClInclude Include="tilecallback.h" />
     <ClInclude Include="renderercontroller.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="appleseed-renderer.rc" />
   </ItemGroup>
 </Project>

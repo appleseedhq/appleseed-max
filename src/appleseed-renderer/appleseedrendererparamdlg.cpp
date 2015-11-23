@@ -29,10 +29,111 @@
 // Interface header.
 #include "appleseedrendererparamdlg.h"
 
-void AppleseedRendererParamDlg::AcceptParams()
+// appleseed-max headers.
+#include "main.h"
+#include "resource.h"
+
+// 3ds Max headers.
+#include <3dsmaxdlport.h>
+
+namespace
+{
+    // Forward declaration.
+    INT_PTR CALLBACK dialog_proc(
+        HWND    hWnd,
+        UINT    uMsg,
+        WPARAM  wParam,
+        LPARAM  lParam);
+}
+
+struct AppleseedRendererParamDlg::Impl
+{
+    IRendParams*        m_rend_params;
+    BOOL                m_in_progress;
+
+    HWND                m_rollup_sampling;
+    ICustEdit*          m_text_pixelsamples;
+    ISpinnerControl*    m_spinner_pixelsamples;
+
+    Impl(
+        IRendParams*    rend_params,
+        BOOL            in_progress)
+      : m_rend_params(rend_params)
+      , m_in_progress(in_progress)
+    {
+        m_rollup_sampling =
+            m_rend_params->AddRollupPage(
+                g_module,
+                MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS),
+                &dialog_proc,
+                _T("Sampling"),
+                reinterpret_cast<LPARAM>(this));
+    }
+
+    ~Impl()
+    {
+        m_rend_params->DeleteRollupPage(m_rollup_sampling);
+    }
+
+    void init_dialog(HWND hWnd)
+    {
+        m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
+        m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
+    }
+
+    void destroy_dialog()
+    {
+        ReleaseICustEdit(m_text_pixelsamples);
+        ReleaseISpinner(m_spinner_pixelsamples);
+    }
+};
+
+namespace
+{
+    INT_PTR CALLBACK dialog_proc(
+        HWND    hWnd,
+        UINT    uMsg,
+        WPARAM  wParam,
+        LPARAM  lParam)
+    {
+        AppleseedRendererParamDlg::Impl* impl =
+            uMsg == WM_INITDIALOG
+                ? reinterpret_cast<AppleseedRendererParamDlg::Impl*>(lParam)
+                : DLGetWindowLongPtr<AppleseedRendererParamDlg::Impl*>(hWnd);
+
+        switch (uMsg)
+        {
+          case WM_INITDIALOG:
+            DLSetWindowLongPtr(hWnd, impl);
+            impl->init_dialog(hWnd);
+            return TRUE;
+
+          case WM_DESTROY:
+            impl->destroy_dialog();
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+}
+
+AppleseedRendererParamDlg::AppleseedRendererParamDlg(
+    IRendParams*    rend_params,
+    BOOL            in_progress)
+  : impl(new Impl(rend_params, in_progress))
 {
 }
 
+AppleseedRendererParamDlg::~AppleseedRendererParamDlg()
+{
+    delete impl;
+}
+
 void AppleseedRendererParamDlg::DeleteThis()
+{
+    delete this;
+}
+
+void AppleseedRendererParamDlg::AcceptParams()
 {
 }

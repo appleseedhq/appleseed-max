@@ -32,6 +32,8 @@
 // 3ds Max headers.
 #include <max.h>
 
+HINSTANCE g_module;
+
 
 //
 // DLL entry point.
@@ -44,6 +46,7 @@ BOOL APIENTRY DllMain(
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
+        g_module = module;
         MaxSDK::Util::UseLanguagePackLocale();
         DisableThreadLibraryCalls(module);
     }

@@ -126,11 +126,16 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
   <ItemGroup>
     <ClInclude Include="appleseedrenderer.h" />
     <ClInclude Include="appleseedrendererparamdlg.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="maxsceneentities.h" />
     <ClInclude Include="projectbuilder.h" />
     <ClInclude Include="renderercontroller.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="tilecallback.h" />
     <ClInclude Include="utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="appleseed-renderer.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
