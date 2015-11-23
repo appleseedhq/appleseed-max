@@ -10,6 +10,7 @@
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="tilecallback.cpp" />
     <ClCompile Include="renderercontroller.cpp" />
+    <ClCompile Include="renderersettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer.h" />
@@ -21,6 +22,7 @@
     <ClInclude Include="renderercontroller.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="renderersettings.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseed-renderer.rc" />

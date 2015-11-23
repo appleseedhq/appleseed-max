@@ -31,10 +31,14 @@
 
 // appleseed-max headers.
 #include "main.h"
+#include "renderersettings.h"
 #include "resource.h"
 
 // 3ds Max headers.
 #include <3dsmaxdlport.h>
+
+// Windows headers.
+#include <tchar.h>
 
 namespace
 {
@@ -50,16 +54,19 @@ struct AppleseedRendererParamDlg::Impl
 {
     IRendParams*        m_rend_params;
     BOOL                m_in_progress;
+    RendererSettings    m_settings;
 
     HWND                m_rollup_sampling;
     ICustEdit*          m_text_pixelsamples;
     ISpinnerControl*    m_spinner_pixelsamples;
 
     Impl(
-        IRendParams*    rend_params,
-        BOOL            in_progress)
+        IRendParams*            rend_params,
+        BOOL                    in_progress,
+        const RendererSettings& settings)
       : m_rend_params(rend_params)
       , m_in_progress(in_progress)
+      , m_settings(settings)
     {
         m_rollup_sampling =
             m_rend_params->AddRollupPage(
@@ -72,16 +79,22 @@ struct AppleseedRendererParamDlg::Impl
 
     ~Impl()
     {
+        destroy_controls();
         m_rend_params->DeleteRollupPage(m_rollup_sampling);
     }
 
-    void init_dialog(HWND hWnd)
+    void create_controls(HWND hWnd)
     {
         m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
+
         m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
+        m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
+        m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
+        m_spinner_pixelsamples->SetResetValue(static_cast<int>(RendererSettings::defaults().m_pixel_samples));
+        m_spinner_pixelsamples->SetValue(static_cast<int>(m_settings.m_pixel_samples), FALSE);
     }
 
-    void destroy_dialog()
+    void destroy_controls()
     {
         ReleaseICustEdit(m_text_pixelsamples);
         ReleaseISpinner(m_spinner_pixelsamples);
@@ -90,6 +103,21 @@ struct AppleseedRendererParamDlg::Impl
 
 namespace
 {
+    INT_PTR on_command(
+        AppleseedRendererParamDlg::Impl*    impl,
+        WPARAM                              wParam,
+        LPARAM                              lParam)
+    {
+        switch (LOWORD(wParam))
+        {
+          case IDC_TEXT_PIXELSAMPLES:
+            impl->m_settings.m_pixel_samples = static_cast<size_t>(impl->m_text_pixelsamples->GetInt());
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
     INT_PTR CALLBACK dialog_proc(
         HWND    hWnd,
         UINT    uMsg,
@@ -105,12 +133,14 @@ namespace
         {
           case WM_INITDIALOG:
             DLSetWindowLongPtr(hWnd, impl);
-            impl->init_dialog(hWnd);
+            impl->create_controls(hWnd);
             return TRUE;
 
           case WM_DESTROY:
-            impl->destroy_dialog();
             return TRUE;
+
+          case WM_COMMAND:
+            return on_command(impl, wParam, lParam);
         }
 
         return FALSE;
@@ -118,9 +148,11 @@ namespace
 }
 
 AppleseedRendererParamDlg::AppleseedRendererParamDlg(
-    IRendParams*    rend_params,
-    BOOL            in_progress)
-  : impl(new Impl(rend_params, in_progress))
+    IRendParams*        rend_params,
+    BOOL                in_progress,
+    RendererSettings&   settings)
+  : impl(new Impl(rend_params, in_progress, settings))
+  , m_settings(settings)
 {
 }
 
@@ -136,4 +168,5 @@ void AppleseedRendererParamDlg::DeleteThis()
 
 void AppleseedRendererParamDlg::AcceptParams()
 {
+    m_settings = impl->m_settings;
 }

@@ -56,11 +56,6 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
-
-//
-// AppleseedRenderer class implementation.
-//
-
 namespace
 {
     const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
@@ -68,6 +63,7 @@ namespace
 }
 
 AppleseedRenderer::AppleseedRenderer()
+  : m_settings(RendererSettings::defaults())
 {
     clear();
 }
@@ -236,6 +232,17 @@ namespace
 
         proc.EndEnumeration();
     }
+
+    void apply_settings(
+        asr::Project&           project,
+        const RendererSettings& settings)
+    {
+        asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
+
+        params.insert_path("uniform_pixel_renderer.samples", settings.m_pixel_samples);
+        //params.insert_path("rendering_threads", "1");
+        //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
+    }
 }
 
 int AppleseedRenderer::Render(
@@ -279,11 +286,8 @@ int AppleseedRenderer::Render(
             bitmap,
             time));
 
-#if 0
-    project->configurations()
-        .get_by_name("final")->get_parameters()
-            .insert_path("shading_engine.override_shading.mode", "shading_normal");
-#endif
+    // Apply the renderer settings to the project.
+    apply_settings(project.ref(), m_settings);
 
 #ifdef _DEBUG
     asr::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
@@ -339,7 +343,11 @@ RendParamDlg* AppleseedRenderer::CreateParamDialog(
     IRendParams*            rend_params,
     BOOL                    in_progress)
 {
-    return new AppleseedRendererParamDlg(rend_params, in_progress);
+    return
+        new AppleseedRendererParamDlg(
+            rend_params,
+            in_progress,
+            m_settings);
 }
 
 void AppleseedRenderer::ResetParams()

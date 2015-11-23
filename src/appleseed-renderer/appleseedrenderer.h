@@ -31,6 +31,7 @@
 
 // appleseed-max headers.
 #include "maxsceneentities.h"
+#include "renderersettings.h"
 
 // appleseed.foundation headers.
 #include "foundation/platform/compiler.h"
@@ -92,6 +93,7 @@ class AppleseedRenderer
     virtual void ResetParams() APPLESEED_OVERRIDE;
 
   private:
+    RendererSettings    m_settings;
     INode*              m_scene;
     INode*              m_view_node;
     ViewParams          m_view_params;

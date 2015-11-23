@@ -26,40 +26,23 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEEDRENDERERPARAMDLG_H
-#define APPLESEEDRENDERERPARAMDLG_H
+// Interface header.
+#include "renderersettings.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/compiler.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// 3ds Max headers.
-#include <render.h>
-
-// Forward declarations.
-class RendererSettings;
-
-class AppleseedRendererParamDlg
-  : public RendParamDlg
+namespace
 {
-  public:
-    struct Impl;
+    struct DefaultRendererSettings
+      : public RendererSettings
+    {
+        DefaultRendererSettings()
+        {
+            m_pixel_samples = 64;
+        }
+    };
+}
 
-    AppleseedRendererParamDlg(
-        IRendParams*        rend_params,
-        BOOL                in_progress,
-        RendererSettings&   settings);
-
-    ~AppleseedRendererParamDlg();
-
-    virtual void DeleteThis() APPLESEED_OVERRIDE;
-
-    virtual void AcceptParams() APPLESEED_OVERRIDE;
-
-  private:
-    Impl* impl;
-
-    RendererSettings&       m_settings;
-};
-
-#endif	// !APPLESEEDRENDERERPARAMDLG_H
+const RendererSettings& RendererSettings::defaults()
+{
+    static DefaultRendererSettings default_settings;
+    return default_settings;
+}
