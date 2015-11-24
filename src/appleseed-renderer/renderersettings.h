@@ -31,14 +31,28 @@
 
 // Standard headers.
 #include <cstddef>
+#include <string>
 
 class RendererSettings
 {
   public:
     static const RendererSettings& defaults();
 
-    size_t  m_pixel_samples;
-    size_t  m_rendering_threads;
+    // Sampling.
+    size_t      m_pixel_samples;
+
+    // Output.
+    enum OutputMode
+    {
+        OutputModeRenderOnly,
+        OutputModeSaveProjectOnly,
+        OutputModeSaveProjectAndRender
+    };
+    OutputMode  m_output_mode;
+    std::string m_project_file_path;
+
+    // System.
+    size_t      m_rendering_threads;
 };
 
 #endif	// !RENDERERSETTINGS_H

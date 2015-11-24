@@ -37,6 +37,7 @@ namespace
         DefaultRendererSettings()
         {
             m_pixel_samples = 64;
+            m_output_mode = OutputModeRenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
         }
     };

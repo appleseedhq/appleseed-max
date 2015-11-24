@@ -43,8 +43,6 @@ class AppleseedRendererParamDlg
   : public RendParamDlg
 {
   public:
-    struct Impl;
-
     AppleseedRendererParamDlg(
         IRendParams*        rend_params,
         BOOL                in_progress,
@@ -57,9 +55,8 @@ class AppleseedRendererParamDlg
     virtual void AcceptParams() APPLESEED_OVERRIDE;
 
   private:
+    struct Impl;
     Impl* impl;
-
-    RendererSettings&       m_settings;
 };
 
 #endif	// !APPLESEEDRENDERERPARAMDLG_H

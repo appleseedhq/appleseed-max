@@ -40,173 +40,274 @@
 // Windows headers.
 #include <tchar.h>
 
+// Standard headers.
+#include <memory>
+
+using namespace std;
+
 namespace
 {
-    // Forward declarations.
-    INT_PTR CALLBACK sampling_rollup_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    INT_PTR CALLBACK system_rollup_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    // ------------------------------------------------------------------------------------------------
+    // Base class for panels (rollups).
+    // ------------------------------------------------------------------------------------------------
+
+    struct PanelBase
+    {
+        IRendParams*            m_rend_params;
+        RendererSettings&       m_settings;
+
+        PanelBase(
+            IRendParams*        rend_params,
+            BOOL                in_progress,
+            RendererSettings&   settings)
+          : m_rend_params(rend_params)
+          , m_settings(settings)
+        {
+        }
+
+        virtual void init(HWND hWnd) = 0;
+
+        virtual INT_PTR CALLBACK window_proc(
+            HWND                hWnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam) = 0;
+
+        static INT_PTR CALLBACK window_proc_entry(
+            HWND                hWnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam)
+        {
+            switch (uMsg)
+            {
+              case WM_INITDIALOG:
+                {
+                    PanelBase* panel = reinterpret_cast<PanelBase*>(lParam);
+                    DLSetWindowLongPtr(hWnd, panel);
+                    panel->init(hWnd);
+                    return TRUE;
+                }
+
+              case WM_DESTROY:
+                return TRUE;
+
+              default:
+                {
+                    PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hWnd);
+                    return panel->window_proc(hWnd, uMsg, wParam, lParam);
+                }
+            }
+        }
+    };
+
+    // ------------------------------------------------------------------------------------------------
+    // Sampling panel.
+    // ------------------------------------------------------------------------------------------------
+
+    struct SamplingPanel
+      : public PanelBase
+    {
+        HWND                    m_rollup;
+        ICustEdit*              m_text_pixelsamples;
+        ISpinnerControl*        m_spinner_pixelsamples;
+
+        SamplingPanel(
+            IRendParams*        rend_params,
+            BOOL                in_progress,
+            RendererSettings&   settings)
+          : PanelBase(rend_params, in_progress, settings)
+        {
+            m_rollup =
+                rend_params->AddRollupPage(
+                    g_module,
+                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SAMPLING),
+                    &window_proc_entry,
+                    _T("Sampling"),
+                    reinterpret_cast<LPARAM>(this));
+        }
+
+        ~SamplingPanel()
+        {
+            ReleaseISpinner(m_spinner_pixelsamples);
+            ReleaseICustEdit(m_text_pixelsamples);
+            m_rend_params->DeleteRollupPage(m_rollup);
+        }
+
+        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        {
+            m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
+            m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
+            m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
+            m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
+            m_spinner_pixelsamples->SetResetValue(static_cast<int>(RendererSettings::defaults().m_pixel_samples));
+            m_spinner_pixelsamples->SetValue(static_cast<int>(m_settings.m_pixel_samples), FALSE);
+        }
+
+        virtual INT_PTR CALLBACK window_proc(
+            HWND                hWnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam) APPLESEED_OVERRIDE
+        {
+            switch (uMsg)
+            {
+              case CC_SPINNER_CHANGE:
+                switch (LOWORD(wParam))
+                {
+                  case IDC_SPINNER_PIXELSAMPLES:
+                    m_settings.m_pixel_samples = static_cast<size_t>(m_spinner_pixelsamples->GetIVal());
+                    return TRUE;
+
+                  default:
+                    return FALSE;
+                }
+
+              default:
+                return FALSE;
+            }
+        }
+    };
+
+    // ------------------------------------------------------------------------------------------------
+    // Output panel.
+    // ------------------------------------------------------------------------------------------------
+
+    struct OutputPanel
+      : public PanelBase
+    {
+        HWND                    m_rollup;
+
+        OutputPanel(
+            IRendParams*        rend_params,
+            BOOL                in_progress,
+            RendererSettings&   settings)
+          : PanelBase(rend_params, in_progress, settings)
+        {
+            m_rollup =
+                rend_params->AddRollupPage(
+                    g_module,
+                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
+                    &window_proc_entry,
+                    _T("Output"),
+                    reinterpret_cast<LPARAM>(this));
+        }
+
+        ~OutputPanel()
+        {
+            m_rend_params->DeleteRollupPage(m_rollup);
+        }
+
+        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        {
+        }
+
+        virtual INT_PTR CALLBACK window_proc(
+            HWND                hWnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam) APPLESEED_OVERRIDE
+        {
+            return FALSE;
+        }
+    };
+
+    // ------------------------------------------------------------------------------------------------
+    // System panel.
+    // ------------------------------------------------------------------------------------------------
+
+    struct SystemPanel
+      : public PanelBase
+    {
+        HWND                    m_rollup;
+        ICustEdit*              m_text_renderingthreads;
+        ISpinnerControl*        m_spinner_renderingthreads;
+
+        SystemPanel(
+            IRendParams*        rend_params,
+            BOOL                in_progress,
+            RendererSettings&   settings)
+          : PanelBase(rend_params, in_progress, settings)
+        {
+            m_rollup =
+                rend_params->AddRollupPage(
+                    g_module,
+                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
+                    &window_proc_entry,
+                    _T("System"),
+                    reinterpret_cast<LPARAM>(this));
+        }
+
+        ~SystemPanel()
+        {
+            ReleaseISpinner(m_spinner_renderingthreads);
+            ReleaseICustEdit(m_text_renderingthreads);
+            m_rend_params->DeleteRollupPage(m_rollup);
+        }
+
+        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        {
+            m_text_renderingthreads = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS));
+            m_spinner_renderingthreads = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_RENDERINGTHREADS));
+            m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
+            m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
+            m_spinner_renderingthreads->SetResetValue(static_cast<int>(RendererSettings::defaults().m_rendering_threads));
+            m_spinner_renderingthreads->SetValue(static_cast<int>(m_settings.m_rendering_threads), FALSE);
+        }
+
+        virtual INT_PTR CALLBACK window_proc(
+            HWND                hWnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam) APPLESEED_OVERRIDE
+        {
+            switch (uMsg)
+            {
+              case CC_SPINNER_CHANGE:
+                switch (LOWORD(wParam))
+                {
+                  case IDC_SPINNER_RENDERINGTHREADS:
+                    m_settings.m_rendering_threads = static_cast<size_t>(m_spinner_renderingthreads->GetIVal());
+                    return TRUE;
+
+                  default:
+                    return FALSE;
+                }
+
+              default:
+                return FALSE;
+            }
+        }
+    };
 }
 
 struct AppleseedRendererParamDlg::Impl
 {
-    IRendParams*        m_rend_params;
-    BOOL                m_in_progress;
-    RendererSettings    m_settings;
+    RendererSettings        m_temp_settings;    // settings the dialog will modify
+    RendererSettings&       m_settings;         // output (accepted) settings
 
-    HWND                m_rollup_sampling;
-    ICustEdit*          m_text_pixelsamples;
-    ISpinnerControl*    m_spinner_pixelsamples;
-
-    HWND                m_rollup_system;
-    ICustEdit*          m_text_renderingthreads;
-    ISpinnerControl*    m_spinner_renderingthreads;
+    auto_ptr<SamplingPanel> m_sampling_panel;
+    auto_ptr<OutputPanel>   m_output_panel;
+    auto_ptr<SystemPanel>   m_system_panel;
 
     Impl(
-        IRendParams*            rend_params,
-        BOOL                    in_progress,
-        const RendererSettings& settings)
-      : m_rend_params(rend_params)
-      , m_in_progress(in_progress)
+        IRendParams*        rend_params,
+        BOOL                in_progress,
+        RendererSettings&   settings)
+      : m_temp_settings(settings)
       , m_settings(settings)
+      , m_sampling_panel(new SamplingPanel(rend_params, in_progress, m_temp_settings))
+      , m_output_panel(new OutputPanel(rend_params, in_progress, m_temp_settings))
+      , m_system_panel(new SystemPanel(rend_params, in_progress, m_temp_settings))
     {
-        m_rollup_sampling =
-            m_rend_params->AddRollupPage(
-                g_module,
-                MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SAMPLING),
-                &sampling_rollup_proc,
-                _T("Sampling"),
-                reinterpret_cast<LPARAM>(this));
-
-        m_rollup_system =
-            m_rend_params->AddRollupPage(
-                g_module,
-                MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
-                &system_rollup_proc,
-                _T("System"),
-                reinterpret_cast<LPARAM>(this));
-    }
-
-    ~Impl()
-    {
-        destroy_system_controls();
-        m_rend_params->DeleteRollupPage(m_rollup_system);
-
-        destroy_sampling_controls();
-        m_rend_params->DeleteRollupPage(m_rollup_sampling);
-    }
-
-    void create_sampling_controls(HWND hWnd)
-    {
-        m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
-
-        m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
-        m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
-        m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
-        m_spinner_pixelsamples->SetResetValue(static_cast<int>(RendererSettings::defaults().m_pixel_samples));
-        m_spinner_pixelsamples->SetValue(static_cast<int>(m_settings.m_pixel_samples), FALSE);
-    }
-
-    void destroy_system_controls()
-    {
-        ReleaseISpinner(m_spinner_renderingthreads);
-        ReleaseICustEdit(m_text_renderingthreads);
-    }
-
-    void create_system_controls(HWND hWnd)
-    {
-        m_text_renderingthreads = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS));
-
-        m_spinner_renderingthreads = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_RENDERINGTHREADS));
-        m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
-        m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
-        m_spinner_renderingthreads->SetResetValue(static_cast<int>(RendererSettings::defaults().m_rendering_threads));
-        m_spinner_renderingthreads->SetValue(static_cast<int>(m_settings.m_rendering_threads), FALSE);
-    }
-
-    void destroy_sampling_controls()
-    {
-        ReleaseISpinner(m_spinner_pixelsamples);
-        ReleaseICustEdit(m_text_pixelsamples);
     }
 };
 
-namespace
-{
-    INT_PTR CALLBACK sampling_rollup_proc(
-        HWND    hWnd,
-        UINT    uMsg,
-        WPARAM  wParam,
-        LPARAM  lParam)
-    {
-        AppleseedRendererParamDlg::Impl* impl =
-            uMsg == WM_INITDIALOG
-                ? reinterpret_cast<AppleseedRendererParamDlg::Impl*>(lParam)
-                : DLGetWindowLongPtr<AppleseedRendererParamDlg::Impl*>(hWnd);
-
-        switch (uMsg)
-        {
-          case WM_INITDIALOG:
-            DLSetWindowLongPtr(hWnd, impl);
-            impl->create_sampling_controls(hWnd);
-            return TRUE;
-
-          case WM_DESTROY:
-            return TRUE;
-
-          case WM_COMMAND:
-            switch (LOWORD(wParam))
-            {
-              case IDC_TEXT_PIXELSAMPLES:
-                impl->m_settings.m_pixel_samples = static_cast<size_t>(impl->m_text_pixelsamples->GetInt());
-                return TRUE;
-            }
-            break;
-        }
-
-        return FALSE;
-    }
-
-    INT_PTR CALLBACK system_rollup_proc(
-        HWND    hWnd,
-        UINT    uMsg,
-        WPARAM  wParam,
-        LPARAM  lParam)
-    {
-        AppleseedRendererParamDlg::Impl* impl =
-            uMsg == WM_INITDIALOG
-                ? reinterpret_cast<AppleseedRendererParamDlg::Impl*>(lParam)
-                : DLGetWindowLongPtr<AppleseedRendererParamDlg::Impl*>(hWnd);
-
-        switch (uMsg)
-        {
-          case WM_INITDIALOG:
-            DLSetWindowLongPtr(hWnd, impl);
-            impl->create_system_controls(hWnd);
-            return TRUE;
-
-          case WM_DESTROY:
-            return TRUE;
-
-          case WM_COMMAND:
-            switch (LOWORD(wParam))
-            {
-              case IDC_TEXT_RENDERINGTHREADS:
-                impl->m_settings.m_rendering_threads = static_cast<size_t>(impl->m_text_renderingthreads->GetInt());
-                return TRUE;
-            }
-            break;
-        }
-
-        return FALSE;
-    }
-}
-
 AppleseedRendererParamDlg::AppleseedRendererParamDlg(
-    IRendParams*        rend_params,
-    BOOL                in_progress,
-    RendererSettings&   settings)
+    IRendParams*            rend_params,
+    BOOL                    in_progress,
+    RendererSettings&       settings)
   : impl(new Impl(rend_params, in_progress, settings))
-  , m_settings(settings)
 {
 }
 
@@ -222,5 +323,5 @@ void AppleseedRendererParamDlg::DeleteThis()
 
 void AppleseedRendererParamDlg::AcceptParams()
 {
-    m_settings = impl->m_settings;
+    impl->m_settings = impl->m_temp_settings;
 }
