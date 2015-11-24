@@ -525,7 +525,9 @@ namespace
         const TimeValue         time)
     {
         const asf::Color3f background_color =
-            to_color3f(GetCOREInterface14()->GetBackGround(time, FOREVER));
+            asf::clamp_low(
+                to_color3f(GetCOREInterface14()->GetBackGround(time, FOREVER)),
+                0.0f);
 
         if (asf::is_zero(background_color))
         {
