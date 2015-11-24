@@ -29,6 +29,12 @@
 // Interface header.
 #include "renderersettings.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
+#include "renderer/api/utility.h"
+
+namespace asr = renderer;
+
 namespace
 {
     struct DefaultRendererSettings
@@ -36,7 +42,8 @@ namespace
     {
         DefaultRendererSettings()
         {
-            m_pixel_samples = 64;
+            m_pixel_samples = 16;
+            m_passes = 4;
             m_output_mode = OutputModeRenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
         }
@@ -47,4 +54,18 @@ const RendererSettings& RendererSettings::defaults()
 {
     static DefaultRendererSettings default_settings;
     return default_settings;
+}
+
+void RendererSettings::apply(
+    asr::Project&   project,
+    const char*     config_name)
+{
+    asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
+
+    params.insert_path("generic_frame_renderer.passes", m_passes);
+    params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
+    params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
+    params.insert_path("rendering_threads", m_rendering_threads);
+
+    //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
 }

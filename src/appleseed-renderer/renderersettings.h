@@ -33,13 +33,17 @@
 #include <cstddef>
 #include <string>
 
+// Forward declarations.
+namespace renderer  { class Project; }
+
 class RendererSettings
 {
   public:
     static const RendererSettings& defaults();
 
-    // Sampling.
+    // Image Sampling.
     size_t      m_pixel_samples;
+    size_t      m_passes;
 
     // Output.
     enum OutputMode
@@ -53,6 +57,11 @@ class RendererSettings
 
     // System.
     size_t      m_rendering_threads;
+
+    // Apply these settings to a given configuration of a given project.
+    void apply(
+        renderer::Project&  project,
+        const char*         config_name);
 };
 
 #endif	// !RENDERERSETTINGS_H

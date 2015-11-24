@@ -233,19 +233,9 @@ namespace
         proc.EndEnumeration();
     }
 
-    void apply_settings(
-        asr::Project&           project,
-        const RendererSettings& settings)
-    {
-        asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
-
-        params.insert_path("uniform_pixel_renderer.samples", settings.m_pixel_samples);
-        params.insert_path("rendering_threads", settings.m_rendering_threads);
-        //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
-    }
-
     void render(
         asr::Project&           project,
+        const RendererSettings& settings,
         Bitmap*                 bitmap,
         RendProgressCallback*   progress_cb)
     {
@@ -253,10 +243,13 @@ namespace
         asf::uint32 rendered_tile_count = 0;
 
         // Create the renderer controller.
+        const size_t total_tile_count =
+              settings.m_passes
+            * project.get_frame()->image().properties().m_tile_count;
         RendererController renderer_controller(
             progress_cb,
             &rendered_tile_count,
-            project.get_frame()->image().properties().m_tile_count);
+            total_tile_count);
 
         // Create the tile callback.
         TileCallback tile_callback(bitmap, &rendered_tile_count);
@@ -316,7 +309,7 @@ int AppleseedRenderer::Render(
             time));
 
     // Apply the renderer settings to the project.
-    apply_settings(project.ref(), m_settings);
+    m_settings.apply(project.ref(), "final");
 
     // Write the project to disk.
     if (m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ||
@@ -335,7 +328,7 @@ int AppleseedRenderer::Render(
     {
         if (progress_cb)
             progress_cb->SetTitle(_T("Rendering..."));
-        render(project.ref(), bitmap, progress_cb);
+        render(project.ref(), m_settings, bitmap, progress_cb);
     }
 
     if (progress_cb)

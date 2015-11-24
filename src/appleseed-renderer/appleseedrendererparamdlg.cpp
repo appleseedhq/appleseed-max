@@ -121,17 +121,19 @@ namespace
     };
 
     // ------------------------------------------------------------------------------------------------
-    // Sampling panel.
+    // Image Sampling panel.
     // ------------------------------------------------------------------------------------------------
 
-    struct SamplingPanel
+    struct ImageSamplingPanel
       : public PanelBase
     {
         HWND                    m_rollup;
         ICustEdit*              m_text_pixelsamples;
         ISpinnerControl*        m_spinner_pixelsamples;
+        ICustEdit*              m_text_passes;
+        ISpinnerControl*        m_spinner_passes;
 
-        SamplingPanel(
+        ImageSamplingPanel(
             IRendParams*        rend_params,
             BOOL                in_progress,
             RendererSettings&   settings)
@@ -140,14 +142,16 @@ namespace
             m_rollup =
                 rend_params->AddRollupPage(
                     g_module,
-                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SAMPLING),
+                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
                     &window_proc_entry,
-                    _T("Sampling"),
+                    _T("Image Sampling"),
                     reinterpret_cast<LPARAM>(this));
         }
 
-        ~SamplingPanel()
+        ~ImageSamplingPanel()
         {
+            ReleaseISpinner(m_spinner_passes);
+            ReleaseICustEdit(m_text_passes);
             ReleaseISpinner(m_spinner_pixelsamples);
             ReleaseICustEdit(m_text_pixelsamples);
             m_rend_params->DeleteRollupPage(m_rollup);
@@ -155,12 +159,21 @@ namespace
 
         virtual void init(HWND hWnd) APPLESEED_OVERRIDE
         {
+            // Pixel Samples.
             m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
             m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
             m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
             m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
             m_spinner_pixelsamples->SetResetValue(static_cast<int>(RendererSettings::defaults().m_pixel_samples));
             m_spinner_pixelsamples->SetValue(static_cast<int>(m_settings.m_pixel_samples), FALSE);
+
+            // Passes.
+            m_text_passes = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PASSES));
+            m_spinner_passes = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PASSES));
+            m_spinner_passes->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PASSES), EDITTYPE_INT);
+            m_spinner_passes->SetLimits(1, 1000000, FALSE);
+            m_spinner_passes->SetResetValue(static_cast<int>(RendererSettings::defaults().m_passes));
+            m_spinner_passes->SetValue(static_cast<int>(m_settings.m_passes), FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -176,6 +189,10 @@ namespace
                     {
                         case IDC_SPINNER_PIXELSAMPLES:
                             m_settings.m_pixel_samples = static_cast<size_t>(m_spinner_pixelsamples->GetIVal());
+                            return TRUE;
+
+                        case IDC_SPINNER_PASSES:
+                            m_settings.m_passes = static_cast<size_t>(m_spinner_passes->GetIVal());
                             return TRUE;
 
                         default:
@@ -382,12 +399,12 @@ namespace
 
 struct AppleseedRendererParamDlg::Impl
 {
-    RendererSettings        m_temp_settings;    // settings the dialog will modify
-    RendererSettings&       m_settings;         // output (accepted) settings
+    RendererSettings                m_temp_settings;    // settings the dialog will modify
+    RendererSettings&               m_settings;         // output (accepted) settings
 
-    auto_ptr<SamplingPanel> m_sampling_panel;
-    auto_ptr<OutputPanel>   m_output_panel;
-    auto_ptr<SystemPanel>   m_system_panel;
+    auto_ptr<ImageSamplingPanel>    m_sampling_panel;
+    auto_ptr<OutputPanel>           m_output_panel;
+    auto_ptr<SystemPanel>           m_system_panel;
 
     Impl(
         IRendParams*        rend_params,
@@ -395,7 +412,7 @@ struct AppleseedRendererParamDlg::Impl
         RendererSettings&   settings)
       : m_temp_settings(settings)
       , m_settings(settings)
-      , m_sampling_panel(new SamplingPanel(rend_params, in_progress, m_temp_settings))
+      , m_sampling_panel(new ImageSamplingPanel(rend_params, in_progress, m_temp_settings))
       , m_output_panel(new OutputPanel(rend_params, in_progress, m_temp_settings))
       , m_system_panel(new SystemPanel(rend_params, in_progress, m_temp_settings))
     {
