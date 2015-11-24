@@ -33,6 +33,7 @@
 #include "main.h"
 #include "renderersettings.h"
 #include "resource.h"
+#include "utilities.h"
 
 // 3ds Max headers.
 #include <3dsmaxdlport.h>
@@ -41,12 +42,30 @@
 #include <tchar.h>
 
 // Standard headers.
+#include <cstring>
 #include <memory>
+#include <string>
 
 using namespace std;
 
 namespace
 {
+    // ------------------------------------------------------------------------------------------------
+    // Utilities.
+    // ------------------------------------------------------------------------------------------------
+
+    bool get_save_project_filepath(HWND parentWnd, MSTR& filepath)
+    {
+        FilterList filter;
+        filter.Append(_T("Project Files (*.appleseed)"));
+        filter.Append(_T("*.appleseed"));
+        filter.Append(_T("All Files (*.*)"));
+        filter.Append(_T("*.*"));
+
+        MSTR initial_dir;
+        return GetCOREInterface14()->DoMaxSaveAsDialog(parentWnd, _T("Save Project As..."), filepath, initial_dir, filter);
+    }
+
     // ------------------------------------------------------------------------------------------------
     // Base class for panels (rollups).
     // ------------------------------------------------------------------------------------------------
@@ -81,7 +100,7 @@ namespace
         {
             switch (uMsg)
             {
-              case WM_INITDIALOG:
+                case WM_INITDIALOG:
                 {
                     PanelBase* panel = reinterpret_cast<PanelBase*>(lParam);
                     DLSetWindowLongPtr(hWnd, panel);
@@ -89,10 +108,10 @@ namespace
                     return TRUE;
                 }
 
-              case WM_DESTROY:
-                return TRUE;
+                case WM_DESTROY:
+                    return TRUE;
 
-              default:
+                default:
                 {
                     PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hWnd);
                     return panel->window_proc(hWnd, uMsg, wParam, lParam);
@@ -152,19 +171,19 @@ namespace
         {
             switch (uMsg)
             {
-              case CC_SPINNER_CHANGE:
-                switch (LOWORD(wParam))
-                {
-                  case IDC_SPINNER_PIXELSAMPLES:
-                    m_settings.m_pixel_samples = static_cast<size_t>(m_spinner_pixelsamples->GetIVal());
-                    return TRUE;
+                case CC_SPINNER_CHANGE:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_SPINNER_PIXELSAMPLES:
+                            m_settings.m_pixel_samples = static_cast<size_t>(m_spinner_pixelsamples->GetIVal());
+                            return TRUE;
 
-                  default:
+                        default:
+                            return FALSE;
+                    }
+
+                default:
                     return FALSE;
-                }
-
-              default:
-                return FALSE;
             }
         }
     };
@@ -177,6 +196,8 @@ namespace
       : public PanelBase
     {
         HWND                    m_rollup;
+        ICustEdit*              m_text_project_filepath;
+        ICustButton*            m_button_browse;
 
         OutputPanel(
             IRendParams*        rend_params,
@@ -195,11 +216,20 @@ namespace
 
         ~OutputPanel()
         {
+            ReleaseICustButton(m_button_browse);
+            ReleaseICustEdit(m_text_project_filepath);
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
         virtual void init(HWND hWnd) APPLESEED_OVERRIDE
         {
+            CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_RENDER);
+
+            m_text_project_filepath = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PROJECT_FILEPATH));
+            m_text_project_filepath->Disable();
+
+            m_button_browse = GetICustButton(GetDlgItem(hWnd, IDC_BUTTON_BROWSE));
+            m_button_browse->Disable();
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -208,7 +238,76 @@ namespace
             WPARAM              wParam,
             LPARAM              lParam) APPLESEED_OVERRIDE
         {
-            return FALSE;
+            switch (uMsg)
+            {
+                case WM_CUSTEDIT_ENTER:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_TEXT_PROJECT_FILEPATH:
+                        {
+                            MSTR filepath;
+                            m_text_project_filepath->GetText(filepath);
+                            m_settings.m_project_file_path = utf8_encode(filepath);
+                        }
+
+                        default:
+                            return FALSE;
+                    }
+
+                case WM_COMMAND:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_RADIO_RENDER:
+                        {
+                            if (IsDlgButtonChecked(hWnd, IDC_RADIO_RENDER) == BST_CHECKED)
+                            {
+                                m_settings.m_output_mode = RendererSettings::OutputModeRenderOnly;
+                                m_text_project_filepath->Disable();
+                                m_button_browse->Disable();
+                            }
+                            return TRUE;
+                        }
+
+                        case IDC_RADIO_SAVEPROJECT:
+                        {
+                            if (IsDlgButtonChecked(hWnd, IDC_RADIO_SAVEPROJECT) == BST_CHECKED)
+                            {
+                                m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectOnly;
+                                m_text_project_filepath->Enable();
+                                m_button_browse->Enable();
+                            }
+                            return TRUE;
+                        }
+
+                        case IDC_RADIO_SAVEPROJECT_AND_RENDER:
+                        {
+                            if (IsDlgButtonChecked(hWnd, IDC_RADIO_SAVEPROJECT_AND_RENDER) == BST_CHECKED)
+                            {
+                                m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectAndRender;
+                                m_text_project_filepath->Enable();
+                                m_button_browse->Enable();
+                            }
+                            return TRUE;
+                        }
+
+                        case IDC_BUTTON_BROWSE:
+                        {
+                            MSTR filepath;
+                            if (get_save_project_filepath(hWnd, filepath))
+                            {
+                                m_settings.m_project_file_path = utf8_encode(filepath);
+                                m_text_project_filepath->SetText(filepath);
+                            }
+                            return TRUE;
+                        }
+
+                        default:
+                            return FALSE;
+                    }
+
+                default:
+                    return FALSE;
+            }
         }
     };
 
@@ -263,19 +362,19 @@ namespace
         {
             switch (uMsg)
             {
-              case CC_SPINNER_CHANGE:
-                switch (LOWORD(wParam))
-                {
-                  case IDC_SPINNER_RENDERINGTHREADS:
-                    m_settings.m_rendering_threads = static_cast<size_t>(m_spinner_renderingthreads->GetIVal());
-                    return TRUE;
+                case CC_SPINNER_CHANGE:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_SPINNER_RENDERINGTHREADS:
+                            m_settings.m_rendering_threads = static_cast<size_t>(m_spinner_renderingthreads->GetIVal());
+                            return TRUE;
 
-                  default:
+                        default:
+                            return FALSE;
+                    }
+
+                default:
                     return FALSE;
-                }
-
-              default:
-                return FALSE;
             }
         }
     };

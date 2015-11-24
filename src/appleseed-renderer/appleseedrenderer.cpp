@@ -296,7 +296,7 @@ int AppleseedRenderer::Render(
 
     // Collect the entities we're interested in.
     if (progress_cb)
-        progress_cb->SetTitle(_T("Collecting entities..."));
+        progress_cb->SetTitle(_T("Collecting Entities..."));
     MaxSceneEntityCollector collector(m_entities);
     collector.collect(m_scene);
 
@@ -305,7 +305,7 @@ int AppleseedRenderer::Render(
 
     // Build the project.
     if (progress_cb)
-        progress_cb->SetTitle(_T("Building scene..."));
+        progress_cb->SetTitle(_T("Building Project..."));
     asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,
@@ -318,16 +318,25 @@ int AppleseedRenderer::Render(
     // Apply the renderer settings to the project.
     apply_settings(project.ref(), m_settings);
 
-#ifdef _DEBUG
-    if (progress_cb)
-        progress_cb->SetTitle(_T("Writing scene to disk..."));
-    asr::ProjectFileWriter::write(project.ref(), "D:\\temp\\max.appleseed");
-#endif
+    // Write the project to disk.
+    if (m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ||
+        m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectAndRender)
+    {
+        if (progress_cb)
+            progress_cb->SetTitle(_T("Writing Project To Disk..."));
+        asr::ProjectFileWriter::write(
+            project.ref(),
+            m_settings.m_project_file_path.c_str());
+    }
 
     // Render the project.
-    if (progress_cb)
-        progress_cb->SetTitle(_T("Rendering..."));
-    render(project.ref(), bitmap, progress_cb);
+    if (m_settings.m_output_mode == RendererSettings::OutputModeRenderOnly ||
+        m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectAndRender)
+    {
+        if (progress_cb)
+            progress_cb->SetTitle(_T("Rendering..."));
+        render(project.ref(), bitmap, progress_cb);
+    }
 
     if (progress_cb)
         progress_cb->SetTitle(_T("Done."));

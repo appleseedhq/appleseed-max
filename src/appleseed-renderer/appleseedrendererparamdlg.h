@@ -31,7 +31,12 @@
 
 // appleseed.foundation headers.
 #include "foundation/platform/compiler.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+
+// Windows headers.
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <Windows.h>    // include before 3ds Max headers
 
 // 3ds Max headers.
 #include <render.h>

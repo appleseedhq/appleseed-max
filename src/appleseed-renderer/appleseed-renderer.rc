@@ -68,8 +68,8 @@ BEGIN
     CONTROL         "Save Project And Render",IDC_RADIO_SAVEPROJECT_AND_RENDER,
                     "Button",BS_AUTORADIOBUTTON,8,41,97,10
     LTEXT           "Project File:",IDC_STATIC,19,59,41,8
-    CONTROL         "Custom1",IDC_TEXT_PROJECT_FILEPATH,"CustEdit",WS_TABSTOP,61,57,104,12
-    CONTROL         "Browse...",IDC_BUTTON_BROWSE,"CustButton",WS_TABSTOP,171,57,42,12
+    CONTROL         "Custom1",IDC_TEXT_PROJECT_FILEPATH,"CustEdit",WS_TABSTOP,61,58,104,10
+    CONTROL         "Browse...",IDC_BUTTON_BROWSE,"CustButton",WS_TABSTOP,171,58,42,10
     GROUPBOX        "Output Mode",IDC_STATIC,3,3,216,72
 END
 
