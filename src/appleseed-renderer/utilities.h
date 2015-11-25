@@ -36,19 +36,66 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include <ioapi.h>
 #include <matrix3.h>
+#include <maxtypes.h>
+#include <point3.h>
 
 // Standard headers.
+#include <cstddef>
 #include <string>
+
+
+//
+// Type conversion functions.
+//
+
+// Convert a 3ds Max color to an appleseed one.
+foundation::Color3f to_color3f(const Point3& p);
+
+// Convert a 3ds Max transformation matrix to an appleseed one.
+foundation::Matrix4d to_matrix4d(const Matrix3& input);
+
+
+//
+// String conversion functions.
+//
+// Reference:
+//
+//   http://stackoverflow.com/a/3999597/393756
+//
+
+// Convert a wide Unicode string to an UTF-8 string.
+std::string utf8_encode(const std::wstring& wstr);
+std::string utf8_encode(const TCHAR* wstr);
+
+// Convert an UTF-8 string to a wide Unicode String.
+std::wstring utf8_decode(const std::string& str);
+
+
+//
+// I/O functions.
+//
+
+// Write a block of data to a 3ds Max file. Return true on success.
+bool write(ISave* isave, const void* data, const size_t size);
+
+// Write a typed object to a 3ds Max file. Return true on success.
+template <typename T>
+bool write(ISave* isave, const T& object);
+
+// Read a typed object from a 3ds Max file. Return true on success.
+template <typename T>
+IOResult read(ILoad* iload, T* object);
+
+
+//
+// Implementation.
+//
 
 inline foundation::Color3f to_color3f(const Point3& p)
 {
     return foundation::Color3f(p.x, p.y, p.z);
-}
-
-inline foundation::Vector3d to_vector3d(const Point3& p)
-{
-    return foundation::Vector3d(p.x, p.z, -p.y);
 }
 
 inline foundation::Matrix4d to_matrix4d(const Matrix3& input)
@@ -78,20 +125,44 @@ inline foundation::Matrix4d to_matrix4d(const Matrix3& input)
     return output;
 }
 
+inline bool write(ISave* isave, const void* data, const size_t size)
+{
+    ULONG written;
+    const IOResult result =
+        isave->WriteVoid(data, static_cast<ULONG>(size), &written);
+    return result == IO_OK && written == size;
+}
 
-//
-// String conversion functions.
-//
-// Reference:
-//
-//   http://stackoverflow.com/a/3999597/393756
-//
+template <typename T>
+inline bool write(ISave* isave, const T& object)
+{
+    return write(isave, &object, sizeof(T));
+}
 
-// Convert a wide Unicode string to an UTF8 string.
-std::string utf8_encode(const std::wstring& wstr);
-std::string utf8_encode(const TCHAR* wstr);
+template <>
+inline bool write(ISave* isave, const MSTR& s)
+{
+    return isave->WriteWString(s) == IO_OK;
+}
 
-// Convert an UTF8 string to a wide Unicode String.
-std::wstring utf8_decode(const std::string& str);
+template <typename T>
+inline IOResult read(ILoad* iload, T* object)
+{
+    ULONG read;
+    const IOResult result =
+        iload->ReadVoid(object, sizeof(T), &read);
+    return read != sizeof(T) ? IO_ERROR : result;
+}
+
+template <>
+inline IOResult read(ILoad* iload, MSTR* s)
+{
+    MCHAR* buf;
+    const IOResult result = iload->ReadWStringChunk(&buf);
+    if (result == IO_OK)
+        *s = buf;
+    // todo: free memory allocated by ReadWStringChunk()?
+    return result;
+}
 
 #endif	// !UTILITIES_H

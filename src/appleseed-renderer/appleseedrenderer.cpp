@@ -31,9 +31,12 @@
 
 // appleseed-max headers.
 #include "appleseedrendererparamdlg.h"
+#include "datachunks.h"
 #include "projectbuilder.h"
 #include "renderercontroller.h"
 #include "tilecallback.h"
+#include "utilities.h"
+#include "version.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/frame.h"
@@ -244,7 +247,7 @@ namespace
 
         // Create the renderer controller.
         const size_t total_tile_count =
-              settings.m_passes
+              static_cast<size_t>(settings.m_passes)
             * project.get_frame()->image().properties().m_tile_count;
         RendererController renderer_controller(
             progress_cb,
@@ -319,7 +322,7 @@ int AppleseedRenderer::Render(
             progress_cb->SetTitle(_T("Writing Project To Disk..."));
         asr::ProjectFileWriter::write(
             project.ref(),
-            m_settings.m_project_file_path.c_str());
+            utf8_encode(m_settings.m_project_file_path).c_str());
     }
 
     // Render the project.
@@ -361,10 +364,64 @@ RendParamDlg* AppleseedRenderer::CreateParamDialog(
 
 void AppleseedRenderer::ResetParams()
 {
+    clear();
+}
+
+IOResult AppleseedRenderer::Save(ISave* isave)
+{
+    bool success = true;
+
+    isave->BeginChunk(CHUNK_PLUGIN_VERSION);
+    success &= write(isave, PLUGIN_VERSION);
+    isave->EndChunk();
+
+    isave->BeginChunk(CHUNK_SETTINGS);
+    success &= m_settings.save(isave);
+    isave->EndChunk();
+
+    return success ? IO_OK : IO_ERROR;
+}
+
+IOResult AppleseedRenderer::Load(ILoad* iload)
+{
+    IOResult result = IO_OK;
+
+    while (true)
+    {
+        result = iload->OpenChunk();
+        if (result == IO_END)
+            return IO_OK;
+        if (result != IO_OK)
+            break;
+
+        switch (iload->CurChunkID())
+        {
+          case CHUNK_PLUGIN_VERSION:
+            {
+                USHORT version;
+                result = read<USHORT>(iload, &version);
+            }
+            break;
+
+          case CHUNK_SETTINGS:
+            result = m_settings.load(iload);
+            break;
+        }
+
+        if (result != IO_OK)
+            break;
+
+        result = iload->CloseChunk();
+        if (result != IO_OK)
+            break;
+    }
+
+    return result;
 }
 
 void AppleseedRenderer::clear()
 {
+    m_settings = RendererSettings::defaults();
     m_scene = 0;
     m_view_node = 0;
     m_default_lights = 0;
@@ -388,7 +445,7 @@ void* AppleseedRendererClassDesc::Create(BOOL loading)
     return new AppleseedRenderer();
 }
 
-const TCHAR* AppleseedRendererClassDesc::ClassName()
+const MCHAR* AppleseedRendererClassDesc::ClassName()
 {
     return AppleseedRendererClassName;
 }
@@ -403,12 +460,12 @@ Class_ID AppleseedRendererClassDesc::ClassID()
     return AppleseedRendererClassId;
 }
 
-const TCHAR* AppleseedRendererClassDesc::Category()
+const MCHAR* AppleseedRendererClassDesc::Category()
 {
     return _T("");
 }
 
-const TCHAR* AppleseedRendererClassDesc::InternalName()
+const MCHAR* AppleseedRendererClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
     return _T("appleseed_renderer");

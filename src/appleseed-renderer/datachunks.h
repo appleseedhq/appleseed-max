@@ -26,70 +26,25 @@
 // THE SOFTWARE.
 //
 
-#ifndef RENDERERSETTINGS_H
-#define RENDERERSETTINGS_H
+#ifndef DATACHUNKS_H
+#define DATACHUNKS_H
 
 // appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+#include "foundation/platform/windows.h"
 
-// 3ds Max headers.
-#include <maxtypes.h>
-#include <strclass.h>
+const USHORT CHUNK_PLUGIN_VERSION                           = 0x0001;
 
-// Standard headers.
-#include <string>
+const USHORT CHUNK_SETTINGS                                 = 0x1000;
 
-// Forward declarations.
-namespace renderer  { class Project; }
-class ILoad;
-class ISave;
+const USHORT CHUNK_SETTINGS_IMAGESAMPLING                   = 0x1100;
+const USHORT CHUNK_SETTINGS_IMAGESAMPLING_PIXEL_SAMPLES     = 0x1101;
+const USHORT CHUNK_SETTINGS_IMAGESAMPLING_PASSES            = 0x1102;
 
-class RendererSettings
-{
-  public:
-    static const RendererSettings& defaults();
+const USHORT CHUNK_SETTINGS_OUTPUT                          = 0x1200;
+const USHORT CHUNK_SETTINGS_OUTPUT_MODE                     = 0x1201;
+const USHORT CHUNK_SETTINGS_OUTPUT_PROJECT_FILE_PATH        = 0x1202;
 
-    //
-    // Image Sampling.
-    //
+const USHORT CHUNK_SETTINGS_SYSTEM                          = 0x1300;
+const USHORT CHUNK_SETTINGS_SYSTEM_RENDERING_THREADS        = 0x1301;
 
-    int         m_pixel_samples;
-    int         m_passes;
-
-    //
-    // Output.
-    //
-
-    enum OutputMode
-    {
-        OutputModeRenderOnly,
-        OutputModeSaveProjectOnly,
-        OutputModeSaveProjectAndRender
-    };
-    OutputMode  m_output_mode;
-    MSTR        m_project_file_path;
-
-    //
-    // System.
-    //
-
-    int         m_rendering_threads;
-
-    // Apply these settings to a given configuration of a given project.
-    void apply(
-        renderer::Project&  project,
-        const char*         config_name);
-
-    // Save settings to a 3ds Max file.
-    bool save(ISave* isave) const;
-
-    // Load settings from a 3ds Max file.
-    IOResult load(ILoad* iload);
-
-  private:
-    IOResult load_image_sampling_settings(ILoad* iload);
-    IOResult load_output_settings(ILoad* iload);
-    IOResult load_system_settings(ILoad* iload);
-};
-
-#endif	// !RENDERERSETTINGS_H
+#endif	// !DATACHUNKS_H

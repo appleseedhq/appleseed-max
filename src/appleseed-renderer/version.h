@@ -26,70 +26,12 @@
 // THE SOFTWARE.
 //
 
-#ifndef RENDERERSETTINGS_H
-#define RENDERERSETTINGS_H
+#ifndef VERSION_H
+#define VERSION_H
 
 // appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+#include "foundation/platform/windows.h"
 
-// 3ds Max headers.
-#include <maxtypes.h>
-#include <strclass.h>
+const USHORT PLUGIN_VERSION = 0x0001;
 
-// Standard headers.
-#include <string>
-
-// Forward declarations.
-namespace renderer  { class Project; }
-class ILoad;
-class ISave;
-
-class RendererSettings
-{
-  public:
-    static const RendererSettings& defaults();
-
-    //
-    // Image Sampling.
-    //
-
-    int         m_pixel_samples;
-    int         m_passes;
-
-    //
-    // Output.
-    //
-
-    enum OutputMode
-    {
-        OutputModeRenderOnly,
-        OutputModeSaveProjectOnly,
-        OutputModeSaveProjectAndRender
-    };
-    OutputMode  m_output_mode;
-    MSTR        m_project_file_path;
-
-    //
-    // System.
-    //
-
-    int         m_rendering_threads;
-
-    // Apply these settings to a given configuration of a given project.
-    void apply(
-        renderer::Project&  project,
-        const char*         config_name);
-
-    // Save settings to a 3ds Max file.
-    bool save(ISave* isave) const;
-
-    // Load settings from a 3ds Max file.
-    IOResult load(ILoad* iload);
-
-  private:
-    IOResult load_image_sampling_settings(ILoad* iload);
-    IOResult load_output_settings(ILoad* iload);
-    IOResult load_system_settings(ILoad* iload);
-};
-
-#endif	// !RENDERERSETTINGS_H
+#endif	// !VERSION_H

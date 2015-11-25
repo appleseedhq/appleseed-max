@@ -92,6 +92,9 @@ class AppleseedRenderer
 
     virtual void ResetParams() APPLESEED_OVERRIDE;
 
+    virtual IOResult Save(ISave* isave) APPLESEED_OVERRIDE;
+    virtual IOResult Load(ILoad* iload) APPLESEED_OVERRIDE;
+
   private:
     RendererSettings    m_settings;
     INode*              m_scene;
@@ -116,11 +119,11 @@ class AppleseedRendererClassDesc
   public:
     virtual int IsPublic() APPLESEED_OVERRIDE;
     virtual void* Create(BOOL loading) APPLESEED_OVERRIDE;
-    virtual const TCHAR* ClassName() APPLESEED_OVERRIDE;
+    virtual const MCHAR* ClassName() APPLESEED_OVERRIDE;
     virtual SClass_ID SuperClassID() APPLESEED_OVERRIDE;
     virtual Class_ID ClassID() APPLESEED_OVERRIDE;
-    virtual const TCHAR* Category() APPLESEED_OVERRIDE;
-    virtual const TCHAR* InternalName() APPLESEED_OVERRIDE;
+    virtual const MCHAR* Category() APPLESEED_OVERRIDE;
+    virtual const MCHAR* InternalName() APPLESEED_OVERRIDE;
 };
 
 #endif	// !APPLESEEDRENDERER_H

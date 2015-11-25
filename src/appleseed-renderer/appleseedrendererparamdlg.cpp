@@ -164,16 +164,16 @@ namespace
             m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
             m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
             m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
-            m_spinner_pixelsamples->SetResetValue(static_cast<int>(RendererSettings::defaults().m_pixel_samples));
-            m_spinner_pixelsamples->SetValue(static_cast<int>(m_settings.m_pixel_samples), FALSE);
+            m_spinner_pixelsamples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
+            m_spinner_pixelsamples->SetValue(m_settings.m_pixel_samples, FALSE);
 
             // Passes.
             m_text_passes = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PASSES));
             m_spinner_passes = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PASSES));
             m_spinner_passes->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PASSES), EDITTYPE_INT);
             m_spinner_passes->SetLimits(1, 1000000, FALSE);
-            m_spinner_passes->SetResetValue(static_cast<int>(RendererSettings::defaults().m_passes));
-            m_spinner_passes->SetValue(static_cast<int>(m_settings.m_passes), FALSE);
+            m_spinner_passes->SetResetValue(RendererSettings::defaults().m_passes);
+            m_spinner_passes->SetValue(m_settings.m_passes, FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -188,11 +188,11 @@ namespace
                     switch (LOWORD(wParam))
                     {
                         case IDC_SPINNER_PIXELSAMPLES:
-                            m_settings.m_pixel_samples = static_cast<size_t>(m_spinner_pixelsamples->GetIVal());
+                            m_settings.m_pixel_samples = m_spinner_pixelsamples->GetIVal();
                             return TRUE;
 
                         case IDC_SPINNER_PASSES:
-                            m_settings.m_passes = static_cast<size_t>(m_spinner_passes->GetIVal());
+                            m_settings.m_passes = m_spinner_passes->GetIVal();
                             return TRUE;
 
                         default:
@@ -240,13 +240,28 @@ namespace
 
         virtual void init(HWND hWnd) APPLESEED_OVERRIDE
         {
-            CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_RENDER);
-
             m_text_project_filepath = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PROJECT_FILEPATH));
-            m_text_project_filepath->Disable();
-
+            m_text_project_filepath->SetText(m_settings.m_project_file_path);
             m_button_browse = GetICustButton(GetDlgItem(hWnd, IDC_BUTTON_BROWSE));
-            m_button_browse->Disable();
+
+            switch (m_settings.m_output_mode)
+            {
+              case RendererSettings::OutputModeRenderOnly:
+                CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_RENDER);
+                m_text_project_filepath->Disable();
+                m_button_browse->Disable();
+                break;
+              case RendererSettings::OutputModeSaveProjectOnly:
+                CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_SAVEPROJECT);
+                m_text_project_filepath->Enable();
+                m_button_browse->Enable();
+                break;
+              case RendererSettings::OutputModeSaveProjectAndRender:
+                CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER);
+                m_text_project_filepath->Enable();
+                m_button_browse->Enable();
+                break;
+            }
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -261,11 +276,8 @@ namespace
                     switch (LOWORD(wParam))
                     {
                         case IDC_TEXT_PROJECT_FILEPATH:
-                        {
-                            MSTR filepath;
-                            m_text_project_filepath->GetText(filepath);
-                            m_settings.m_project_file_path = utf8_encode(filepath);
-                        }
+                            m_text_project_filepath->GetText(m_settings.m_project_file_path);
+                            return TRUE;
 
                         default:
                             return FALSE;
@@ -312,7 +324,7 @@ namespace
                             MSTR filepath;
                             if (get_save_project_filepath(hWnd, filepath))
                             {
-                                m_settings.m_project_file_path = utf8_encode(filepath);
+                                m_settings.m_project_file_path = filepath;
                                 m_text_project_filepath->SetText(filepath);
                             }
                             return TRUE;
@@ -367,8 +379,8 @@ namespace
             m_spinner_renderingthreads = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_RENDERINGTHREADS));
             m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
             m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
-            m_spinner_renderingthreads->SetResetValue(static_cast<int>(RendererSettings::defaults().m_rendering_threads));
-            m_spinner_renderingthreads->SetValue(static_cast<int>(m_settings.m_rendering_threads), FALSE);
+            m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
+            m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -383,7 +395,7 @@ namespace
                     switch (LOWORD(wParam))
                     {
                         case IDC_SPINNER_RENDERINGTHREADS:
-                            m_settings.m_rendering_threads = static_cast<size_t>(m_spinner_renderingthreads->GetIVal());
+                            m_settings.m_rendering_threads = m_spinner_renderingthreads->GetIVal();
                             return TRUE;
 
                         default:

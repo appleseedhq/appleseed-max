@@ -127,6 +127,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
   <ItemGroup>
     <ClInclude Include="appleseedrenderer.h" />
     <ClInclude Include="appleseedrendererparamdlg.h" />
+    <ClInclude Include="datachunks.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="maxsceneentities.h" />
     <ClInclude Include="projectbuilder.h" />
@@ -135,6 +136,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClInclude Include="resource.h" />
     <ClInclude Include="tilecallback.h" />
     <ClInclude Include="utilities.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseed-renderer.rc" />

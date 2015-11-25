@@ -23,6 +23,8 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="renderersettings.h" />
+    <ClInclude Include="datachunks.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseed-renderer.rc" />
