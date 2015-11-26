@@ -333,24 +333,25 @@ namespace
             m_text_project_filepath->SetText(m_settings.m_project_file_path);
             m_button_browse = GetICustButton(GetDlgItem(hWnd, IDC_BUTTON_BROWSE));
 
-            switch (m_settings.m_output_mode)
-            {
-              case RendererSettings::OutputModeRenderOnly:
-                CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_RENDER);
-                m_text_project_filepath->Disable();
-                m_button_browse->Disable();
-                break;
-              case RendererSettings::OutputModeSaveProjectOnly:
-                CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_SAVEPROJECT);
-                m_text_project_filepath->Enable();
-                m_button_browse->Enable();
-                break;
-              case RendererSettings::OutputModeSaveProjectAndRender:
-                CheckRadioButton(hWnd, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER, IDC_RADIO_SAVEPROJECT_AND_RENDER);
-                m_text_project_filepath->Enable();
-                m_button_browse->Enable();
-                break;
-            }
+            CheckRadioButton(
+                hWnd,
+                IDC_RADIO_RENDER,
+                IDC_RADIO_SAVEPROJECT_AND_RENDER,
+                m_settings.m_output_mode == RendererSettings::OutputModeRenderOnly ? IDC_RADIO_RENDER :
+                m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ? IDC_RADIO_SAVEPROJECT :
+                IDC_RADIO_SAVEPROJECT_AND_RENDER);
+
+            enable_disable_controls();
+        }
+
+        void enable_disable_controls()
+        {
+            const bool save_project =
+                m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ||
+                m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectAndRender;
+
+            m_text_project_filepath->Enable(save_project);
+            m_button_browse->Enable(save_project);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -376,37 +377,19 @@ namespace
                     switch (LOWORD(wParam))
                     {
                         case IDC_RADIO_RENDER:
-                        {
-                            if (IsDlgButtonChecked(hWnd, IDC_RADIO_RENDER) == BST_CHECKED)
-                            {
-                                m_settings.m_output_mode = RendererSettings::OutputModeRenderOnly;
-                                m_text_project_filepath->Disable();
-                                m_button_browse->Disable();
-                            }
+                            m_settings.m_output_mode = RendererSettings::OutputModeRenderOnly;
+                            enable_disable_controls();
                             return TRUE;
-                        }
 
                         case IDC_RADIO_SAVEPROJECT:
-                        {
-                            if (IsDlgButtonChecked(hWnd, IDC_RADIO_SAVEPROJECT) == BST_CHECKED)
-                            {
-                                m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectOnly;
-                                m_text_project_filepath->Enable();
-                                m_button_browse->Enable();
-                            }
+                            m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectOnly;
+                            enable_disable_controls();
                             return TRUE;
-                        }
 
                         case IDC_RADIO_SAVEPROJECT_AND_RENDER:
-                        {
-                            if (IsDlgButtonChecked(hWnd, IDC_RADIO_SAVEPROJECT_AND_RENDER) == BST_CHECKED)
-                            {
-                                m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectAndRender;
-                                m_text_project_filepath->Enable();
-                                m_button_browse->Enable();
-                            }
+                            m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectAndRender;
+                            enable_disable_controls();
                             return TRUE;
-                        }
 
                         case IDC_BUTTON_BROWSE:
                         {
