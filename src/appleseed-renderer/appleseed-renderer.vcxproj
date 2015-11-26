@@ -61,6 +61,7 @@
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;DEBUG;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-debug\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,6 +93,9 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
