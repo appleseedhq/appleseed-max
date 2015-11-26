@@ -620,7 +620,7 @@ asf::auto_release_ptr<asr::Project> build_project(
             asr::ParamArray()
                 .insert("camera", scene->get_camera()->get_name())
                 .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
-                .insert("color_space", "srgb")
+                .insert("color_space", "linear_rgb")
                 .insert("filter", "blackman-harris")
                 .insert("filter_size", 1.5)));
 
