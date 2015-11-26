@@ -57,6 +57,13 @@ class RendererSettings
     int         m_passes;
 
     //
+    // Lighting.
+    //
+
+    bool        m_gi;
+    int         m_bounces;
+
+    //
     // Output.
     //
 
@@ -66,6 +73,7 @@ class RendererSettings
         OutputModeSaveProjectOnly,
         OutputModeSaveProjectAndRender
     };
+
     OutputMode  m_output_mode;
     MSTR        m_project_file_path;
 
@@ -88,6 +96,7 @@ class RendererSettings
 
   private:
     IOResult load_image_sampling_settings(ILoad* iload);
+    IOResult load_lighting_settings(ILoad* iload);
     IOResult load_output_settings(ILoad* iload);
     IOResult load_system_settings(ILoad* iload);
 };

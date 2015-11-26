@@ -140,6 +140,12 @@ inline bool write(ISave* isave, const T& object)
 }
 
 template <>
+inline bool write(ISave* isave, const bool& b)
+{
+    return write<BYTE>(isave, b ? 1 : 0);
+}
+
+template <>
 inline bool write(ISave* isave, const MSTR& s)
 {
     return isave->WriteWString(s) == IO_OK;
@@ -152,6 +158,15 @@ inline IOResult read(ILoad* iload, T* object)
     const IOResult result =
         iload->ReadVoid(object, sizeof(T), &read);
     return read != sizeof(T) ? IO_ERROR : result;
+}
+
+template <>
+inline IOResult read(ILoad* iload, bool* b)
+{
+    BYTE byte;
+    const IOResult result = read<BYTE>(iload, &byte);
+    *b = byte == 1;
+    return result;
 }
 
 template <>

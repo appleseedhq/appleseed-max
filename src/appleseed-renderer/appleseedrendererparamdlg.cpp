@@ -206,6 +206,95 @@ namespace
     };
 
     // ------------------------------------------------------------------------------------------------
+    // Lighting panel.
+    // ------------------------------------------------------------------------------------------------
+
+    struct LightingPanel
+      : public PanelBase
+    {
+        HWND                    m_rollup;
+        ICustEdit*              m_text_bounces;
+        ISpinnerControl*        m_spinner_bounces;
+
+        LightingPanel(
+            IRendParams*        rend_params,
+            BOOL                in_progress,
+            RendererSettings&   settings)
+          : PanelBase(rend_params, in_progress, settings)
+        {
+            m_rollup =
+                rend_params->AddRollupPage(
+                    g_module,
+                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
+                    &window_proc_entry,
+                    _T("Lighting"),
+                    reinterpret_cast<LPARAM>(this));
+        }
+
+        ~LightingPanel()
+        {
+            ReleaseISpinner(m_spinner_bounces);
+            ReleaseICustEdit(m_text_bounces);
+            m_rend_params->DeleteRollupPage(m_rollup);
+        }
+
+        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        {
+            m_text_bounces = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_BOUNCES));
+            m_spinner_bounces = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_BOUNCES));
+            m_spinner_bounces->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_BOUNCES), EDITTYPE_INT);
+            m_spinner_bounces->SetLimits(0, 1000, FALSE);
+            m_spinner_bounces->SetResetValue(RendererSettings::defaults().m_bounces);
+            m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
+
+            CheckDlgButton(hWnd, IDC_CHECK_GI, m_settings.m_gi ? BST_CHECKED : BST_UNCHECKED);
+            enable_disable_controls();
+        }
+
+        void enable_disable_controls()
+        {
+            m_text_bounces->Enable(m_settings.m_gi);
+            m_spinner_bounces->Enable(m_settings.m_gi);
+        }
+
+        virtual INT_PTR CALLBACK window_proc(
+            HWND                hWnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam) APPLESEED_OVERRIDE
+        {
+            switch (uMsg)
+            {
+                case WM_COMMAND:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_CHECK_GI:
+                            m_settings.m_gi = IsDlgButtonChecked(hWnd, IDC_CHECK_GI) == BST_CHECKED;
+                            enable_disable_controls();
+                            return TRUE;
+
+                        default:
+                            return FALSE;
+                    }
+
+                case CC_SPINNER_CHANGE:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_SPINNER_BOUNCES:
+                            m_settings.m_bounces = m_spinner_bounces->GetIVal();
+                            return TRUE;
+
+                        default:
+                            return FALSE;
+                    }
+
+                default:
+                    return FALSE;
+            }
+        }
+    };
+
+    // ------------------------------------------------------------------------------------------------
     // Output panel.
     // ------------------------------------------------------------------------------------------------
 
@@ -414,7 +503,8 @@ struct AppleseedRendererParamDlg::Impl
     RendererSettings                m_temp_settings;    // settings the dialog will modify
     RendererSettings&               m_settings;         // output (accepted) settings
 
-    auto_ptr<ImageSamplingPanel>    m_sampling_panel;
+    auto_ptr<ImageSamplingPanel>    m_image_sampling_panel;
+    auto_ptr<LightingPanel>         m_lighting_panel;
     auto_ptr<OutputPanel>           m_output_panel;
     auto_ptr<SystemPanel>           m_system_panel;
 
@@ -424,7 +514,8 @@ struct AppleseedRendererParamDlg::Impl
         RendererSettings&   settings)
       : m_temp_settings(settings)
       , m_settings(settings)
-      , m_sampling_panel(new ImageSamplingPanel(rend_params, in_progress, m_temp_settings))
+      , m_image_sampling_panel(new ImageSamplingPanel(rend_params, in_progress, m_temp_settings))
+      , m_lighting_panel(new LightingPanel(rend_params, in_progress, m_temp_settings))
       , m_output_panel(new OutputPanel(rend_params, in_progress, m_temp_settings))
       , m_system_panel(new SystemPanel(rend_params, in_progress, m_temp_settings))
     {

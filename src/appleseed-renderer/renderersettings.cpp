@@ -51,6 +51,8 @@ namespace
         {
             m_pixel_samples = 16;
             m_passes = 4;
+            m_gi = true;
+            m_bounces = 3;
             m_output_mode = OutputModeRenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
         }
@@ -72,6 +74,9 @@ void RendererSettings::apply(
     params.insert_path("generic_frame_renderer.passes", m_passes);
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
     params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
+    if (m_gi)
+        params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
+    else params.insert_path("pt.max_path_length", 1);
     params.insert_path("rendering_threads", m_rendering_threads);
 
     //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
@@ -98,6 +103,22 @@ bool RendererSettings::save(ISave* isave) const
     isave->EndChunk();
 
     //
+    // Lighting settings.
+    //
+
+    isave->BeginChunk(CHUNK_SETTINGS_LIGHTING);
+
+        isave->BeginChunk(CHUNK_SETTINGS_LIGHTING_GI);
+        success &= write<bool>(isave, m_gi);
+        isave->EndChunk();
+
+        isave->BeginChunk(CHUNK_SETTINGS_LIGHTING_BOUNCES);
+        success &= write<int>(isave, m_bounces);
+        isave->EndChunk();
+
+    isave->EndChunk();
+
+    //
     // Output settings.
     //
 
@@ -107,13 +128,13 @@ bool RendererSettings::save(ISave* isave) const
         switch (m_output_mode)
         {
           case OutputModeRenderOnly:
-            success &= write<USHORT>(isave, 0x0000);
+            success &= write<BYTE>(isave, 0x00);
             break;
           case OutputModeSaveProjectOnly:
-            success &= write<USHORT>(isave, 0x0001);
+            success &= write<BYTE>(isave, 0x01);
             break;
           case OutputModeSaveProjectAndRender:
-            success &= write<USHORT>(isave, 0x0002);
+            success &= write<BYTE>(isave, 0x02);
             break;
         }
         isave->EndChunk();
@@ -155,6 +176,10 @@ IOResult RendererSettings::load(ILoad* iload)
         {
           case CHUNK_SETTINGS_IMAGESAMPLING:
             result = load_image_sampling_settings(iload);
+            break;
+
+          case CHUNK_SETTINGS_LIGHTING:
+            result = load_lighting_settings(iload);
             break;
 
           case CHUNK_SETTINGS_OUTPUT:
@@ -211,6 +236,40 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
     return result;
 }
 
+IOResult RendererSettings::load_lighting_settings(ILoad* iload)
+{
+    IOResult result = IO_OK;
+
+    while (true)
+    {
+        result = iload->OpenChunk();
+        if (result == IO_END)
+            return IO_OK;
+        if (result != IO_OK)
+            break;
+
+        switch (iload->CurChunkID())
+        {
+          case CHUNK_SETTINGS_LIGHTING_GI:
+            result = read<bool>(iload, &m_gi);
+            break;
+
+          case CHUNK_SETTINGS_LIGHTING_BOUNCES:
+            result = read<int>(iload, &m_bounces);
+            break;
+        }
+
+        if (result != IO_OK)
+            break;
+
+        result = iload->CloseChunk();
+        if (result != IO_OK)
+            break;
+    }
+
+    return result;
+}
+
 IOResult RendererSettings::load_output_settings(ILoad* iload)
 {
     IOResult result = IO_OK;
@@ -227,19 +286,19 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
         {
           case CHUNK_SETTINGS_OUTPUT_MODE:
             {
-                USHORT mode;
-                result = read<USHORT>(iload, &mode);
+                BYTE mode;
+                result = read<BYTE>(iload, &mode);
                 if (result == IO_OK)
                 {
                     switch (mode)
                     {
-                      case 0x0000:
+                      case 0x00:
                         m_output_mode = OutputModeRenderOnly;
                         break;
-                      case 0x0001:
+                      case 0x01:
                         m_output_mode = OutputModeSaveProjectOnly;
                         break;
-                      case 0x0002:
+                      case 0x02:
                         m_output_mode = OutputModeSaveProjectAndRender;
                         break;
                       default:
