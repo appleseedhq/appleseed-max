@@ -60,6 +60,7 @@
 
 // 3ds Max headers.
 #include <bitmap.h>
+#include <genlight.h>
 #include <iInstanceMgr.h>
 #include <INodeTab.h>
 #include <object.h>
@@ -95,7 +96,7 @@ namespace
     std::string insert_color(
         asr::BaseGroup&         base_group,
         std::string             name,
-        const asf::Color3f&     color)
+        const asf::Color3f&     linear_rgb)
     {
         name = make_unique_name(base_group.colors(), name);
 
@@ -103,20 +104,20 @@ namespace
             asr::ColorEntityFactory::create(
                 name.c_str(),
                 asr::ParamArray()
-                    .insert("color_space", "srgb")
-                    .insert("color", color)));
+                    .insert("color_space", "linear_rgb")
+                    .insert("color", linear_rgb)));
 
         return name;
     }
 
-    // Format a color as an SeExpr expression.
-    std::string fmt_color_expr(const asf::Color3f& c)
+    // Format an sRGB color as an SeExpr expression.
+    std::string fmt_color_expr(const asf::Color3f& srgb)
     {
         std::stringstream sstr;
         sstr << '[';
-        sstr << c.r; sstr << ", ";
-        sstr << c.g; sstr << ", ";
-        sstr << c.b;
+        sstr << srgb.r; sstr << ", ";
+        sstr << srgb.g; sstr << ", ";
+        sstr << srgb.b;
         sstr << ']';
         return sstr.str();
     }
@@ -161,16 +162,19 @@ namespace
     void add_default_material(
         asr::Assembly&          assembly,
         const std::string&      name,
-        const asf::Color3f&     color)
+        const asf::Color3f&     linear_rgb)
     {
         asf::auto_release_ptr<asr::Material> material(
             asr::DisneyMaterialFactory().create(
                 name.c_str(),
                 asr::ParamArray()));
 
+        // The Disney material expects sRGB colors, so we have to convert the input color to sRGB.
         static_cast<asr::DisneyMaterial*>(material.get())->add_layer(
             asr::DisneyMaterialLayer::get_default_values()
-                .insert("base_color", fmt_color_expr(color)));
+                .insert("base_color", fmt_color_expr(linear_rgb_to_srgb(linear_rgb)))
+                .insert("specular", 1.0)
+                .insert("roughness", 0.5));
 
         assembly.materials().insert(material);
     }
@@ -439,10 +443,12 @@ namespace
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(light_node->GetObjTMAfterWSM(time)));
 
-        // Retrieve the light's color and intensity.
-        LightObject* light_object = static_cast<LightObject*>(object_state.obj);
+        // Retrieve the light's parameters.
+        GenLight* light_object = dynamic_cast<GenLight*>(object_state.obj);
         const asf::Color3f color = to_color3f(light_object->GetRGBColor(time));
         const float intensity = light_object->GetIntensity(time);
+        const float decay_start = light_object->GetDecayRadius(time);
+        const int decay_exponent = light_object->GetDecayType();
 
         // Create a color entity.
         const std::string light_color_name =
@@ -451,11 +457,13 @@ namespace
         if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
         {
             asf::auto_release_ptr<asr::Light> light(
-                asr::PointLightFactory().create(
+                asr::MaxOmniLightFactory().create(
                     light_name.c_str(),
                     asr::ParamArray()
                         .insert("intensity", light_color_name)
-                        .insert("intensity_multiplier", intensity)));
+                        .insert("intensity_multiplier", intensity)
+                        .insert("decay_start", decay_start)
+                        .insert("decay_exponent", decay_exponent)));
             light->set_transform(transform);
             assembly.lights().insert(light);
         }
