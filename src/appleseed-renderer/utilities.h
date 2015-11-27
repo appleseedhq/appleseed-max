@@ -36,6 +36,7 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include <color.h>
 #include <ioapi.h>
 #include <matrix3.h>
 #include <maxtypes.h>
@@ -96,6 +97,11 @@ IOResult read(ILoad* iload, T* object);
 inline foundation::Color3f to_color3f(const Point3& p)
 {
     return foundation::Color3f(p.x, p.y, p.z);
+}
+
+inline foundation::Color3f to_color3f(const Color& c)
+{
+    return foundation::Color3f(c.r, c.g, c.b);
 }
 
 inline foundation::Matrix4d to_matrix4d(const Matrix3& input)

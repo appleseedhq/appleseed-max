@@ -114,8 +114,11 @@ int AppleseedRenderer::Open(
     if (view_params)
         m_view_params = *view_params;
 
-    m_default_lights = default_lights;
-    m_default_light_count = default_light_count;
+    // Copy the default lights as the 'default_lights' pointer is no longer valid in Render().
+    m_default_lights.clear();
+    m_default_lights.reserve(default_light_count);
+    for (int i = 0; i < default_light_count; ++i)
+        m_default_lights.push_back(default_lights[i]);
 
     return 1;   // success
 }
@@ -306,7 +309,6 @@ int AppleseedRenderer::Render(
         build_project(
             m_entities,
             m_default_lights,
-            m_default_light_count,
             m_view_params,
             bitmap,
             time));
@@ -424,8 +426,7 @@ void AppleseedRenderer::clear()
     m_settings = RendererSettings::defaults();
     m_scene = 0;
     m_view_node = 0;
-    m_default_lights = 0;
-    m_default_light_count = 0;
+    m_default_lights.clear();
     m_time = 0;
     m_entities.clear();
 }

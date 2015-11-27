@@ -40,10 +40,14 @@
 // 3ds Max headers.
 #include <iparamb2.h>
 #include <max.h>
+#include <render.h>
 #undef base_type
 
 // Windows headers.
 #include <tchar.h>
+
+// Standard headers.
+#include <vector>
 
 class AppleseedRenderer
   : public Renderer
@@ -96,14 +100,13 @@ class AppleseedRenderer
     virtual IOResult Load(ILoad* iload) APPLESEED_OVERRIDE;
 
   private:
-    RendererSettings    m_settings;
-    INode*              m_scene;
-    INode*              m_view_node;
-    ViewParams          m_view_params;
-    DefaultLight*       m_default_lights;
-    int                 m_default_light_count;
-    TimeValue           m_time;
-    MaxSceneEntities    m_entities;
+    RendererSettings            m_settings;
+    INode*                      m_scene;
+    INode*                      m_view_node;
+    ViewParams                  m_view_params;
+    std::vector<DefaultLight>   m_default_lights;
+    TimeValue                   m_time;
+    MaxSceneEntities            m_entities;
 
     void clear();
 };

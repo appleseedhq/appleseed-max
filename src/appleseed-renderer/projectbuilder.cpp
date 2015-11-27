@@ -64,7 +64,6 @@
 #include <iInstanceMgr.h>
 #include <INodeTab.h>
 #include <object.h>
-#include <render.h>
 #include <triobj.h>
 
 // Standard headers.
@@ -75,7 +74,6 @@
 #include <sstream>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -174,7 +172,7 @@ namespace
             asr::DisneyMaterialLayer::get_default_values()
                 .insert("base_color", fmt_color_expr(linear_rgb_to_srgb(linear_rgb)))
                 .insert("specular", 1.0)
-                .insert("roughness", 0.5));
+                .insert("roughness", 0.625));
 
         assembly.materials().insert(material);
     }
@@ -426,6 +424,69 @@ namespace
             add_object(assembly, entities.m_objects[i], time, objects);
     }
 
+    void add_omni_light(
+        asr::Assembly&          assembly,
+        const std::string&      light_name,
+        const asf::Transformd&  transform,
+        const std::string&      color_name,
+        const float             intensity,
+        const float             decay_start,
+        const int               decay_exponent)
+    {
+        asf::auto_release_ptr<asr::Light> light(
+            asr::MaxOmniLightFactory().create(
+                light_name.c_str(),
+                asr::ParamArray()
+                    .insert("intensity", color_name)
+                    .insert("intensity_multiplier", intensity * asf::Pi)
+                    .insert("decay_start", decay_start)
+                    .insert("decay_exponent", decay_exponent)));
+        light->set_transform(transform);
+        assembly.lights().insert(light);
+    }
+
+    void add_spot_light(
+        asr::Assembly&          assembly,
+        const std::string&      light_name,
+        const asf::Transformd&  transform,
+        const std::string&      color_name,
+        const float             intensity,
+        const float             inner_angle,
+        const float             outer_angle,
+        const float             decay_start,
+        const int               decay_exponent)
+    {
+        asf::auto_release_ptr<asr::Light> light(
+            asr::MaxSpotLightFactory().create(
+                light_name.c_str(),
+                asr::ParamArray()
+                    .insert("intensity", color_name)
+                    .insert("intensity_multiplier", intensity * asf::Pi)
+                    .insert("inner_angle", inner_angle)
+                    .insert("outer_angle", outer_angle)
+                    .insert("decay_start", decay_start)
+                    .insert("decay_exponent", decay_exponent)));
+        light->set_transform(transform);
+        assembly.lights().insert(light);
+    }
+
+    void add_directional_light(
+        asr::Assembly&          assembly,
+        const std::string&      light_name,
+        const asf::Transformd&  transform,
+        const std::string&      color_name,
+        const float             intensity)
+    {
+        asf::auto_release_ptr<asr::Light> light(
+            asr::DirectionalLightFactory().create(
+                light_name.c_str(),
+                asr::ParamArray()
+                    .insert("irradiance", color_name)
+                    .insert("irradiance_multiplier", intensity * asf::Pi)));
+        light->set_transform(transform);
+        assembly.lights().insert(light);
+    }
+
     void add_light(
         asr::Assembly&          assembly,
         INode*                  light_node,
@@ -451,47 +512,43 @@ namespace
         const int decay_exponent = light_object->GetDecayType();
 
         // Create a color entity.
-        const std::string light_color_name =
+        const std::string color_name =
             insert_color(assembly, light_name + "_color", color);
 
         if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
         {
-            asf::auto_release_ptr<asr::Light> light(
-                asr::MaxOmniLightFactory().create(
-                    light_name.c_str(),
-                    asr::ParamArray()
-                        .insert("intensity", light_color_name)
-                        .insert("intensity_multiplier", intensity)
-                        .insert("decay_start", decay_start)
-                        .insert("decay_exponent", decay_exponent)));
-            light->set_transform(transform);
-            assembly.lights().insert(light);
+            add_omni_light(
+                assembly,
+                light_name,
+                transform,
+                color_name,
+                intensity,
+                decay_start,
+                decay_exponent);
         }
         else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0) ||
                  light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
         {
-            asf::auto_release_ptr<asr::Light> light(
-                asr::SpotLightFactory().create(
-                    light_name.c_str(),
-                    asr::ParamArray()
-                        .insert("intensity", light_color_name)
-                        .insert("intensity_multiplier", intensity)
-                        .insert("inner_angle", light_object->GetHotspot(time))
-                        .insert("outer_angle", light_object->GetFallsize(time))));
-            light->set_transform(transform);
-            assembly.lights().insert(light);
+            add_spot_light(
+                assembly,
+                light_name,
+                transform,
+                color_name,
+                intensity,
+                light_object->GetHotspot(time),
+                light_object->GetFallsize(time),
+                decay_start,
+                decay_exponent);
         }
         else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
                  light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
         {
-            asf::auto_release_ptr<asr::Light> light(
-                asr::DirectionalLightFactory().create(
-                    light_name.c_str(),
-                    asr::ParamArray()
-                        .insert("irradiance", light_color_name)
-                        .insert("irradiance_multiplier", intensity)));
-            light->set_transform(transform);
-            assembly.lights().insert(light);
+            add_directional_light(
+                assembly,
+                light_name,
+                transform,
+                color_name,
+                intensity);
         }
         else
         {
@@ -509,23 +566,95 @@ namespace
             add_light(assembly, entities.m_lights[i], time);
     }
 
-    void add_default_lights(
-        DefaultLight*           default_lights,
-        const int               default_light_count)
+    bool is_zero(const Matrix3& m)
     {
-        // todo: implement.
+        for (int row = 0; row < 4; ++row)
+        {
+            for (int col = 0; col < 3; ++col)
+            {
+                if (m[row][col] != 0.0f)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    void add_default_lights(
+        asr::Assembly&                      assembly,
+        const std::vector<DefaultLight>&    default_lights)
+    {
+        for (size_t i = 0, e = default_lights.size(); i < e; ++i)
+        {
+            const DefaultLight& light = default_lights[i];
+
+            // Compute the transform of this light.
+            const asf::Transformd transform =
+                is_zero(light.tm)
+                    ? asf::Transformd::identity()   // todo: fix
+                    : asf::Transformd::from_local_to_parent(to_matrix4d(light.tm));
+
+            // Compute a unique name for this light.
+            const std::string light_name =
+                make_unique_name(assembly.lights(), "DefaultLight");
+
+            // Create a color entity.
+            const std::string color_name =
+                insert_color(assembly, light_name + "_color", to_color3f(light.ls.color));
+
+            // Add the light.
+            switch (light.ls.type)
+            {
+              case OMNI_LGT:
+                add_omni_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    light.ls.intens,
+                    0.0f,   // decay start
+                    0);     // decay exponent
+                break;
+
+              case SPOT_LGT:
+                add_spot_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    light.ls.intens,
+                    light.ls.hotsize,
+                    light.ls.fallsize,
+                    0.0f,   // decay start
+                    0);     // decay exponent
+                break;
+
+              case DIRECT_LGT:
+                add_directional_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    light.ls.intens);
+                break;
+
+              case AMBIENT_LGT:
+                // todo: implement.
+                break;
+            }
+        }
     }
 
     void populate_assembly(
-        asr::Assembly&          assembly,
-        const MaxSceneEntities& entities,
-        DefaultLight*           default_lights,
-        const int               default_light_count,
-        const TimeValue         time)
+        asr::Assembly&                      assembly,
+        const MaxSceneEntities&             entities,
+        const std::vector<DefaultLight>&    default_lights,
+        const TimeValue                     time)
     {
         add_objects(assembly, entities, time);
-        add_lights(assembly, entities, time);
-        add_default_lights(default_lights, default_light_count);
+        if (entities.m_lights.empty())
+            add_default_lights(assembly, default_lights);
+        else add_lights(assembly, entities, time);
     }
 
     void create_environment(
@@ -572,12 +701,11 @@ namespace
 }
 
 asf::auto_release_ptr<asr::Project> build_project(
-    const MaxSceneEntities&     entities,
-    DefaultLight*               default_lights,
-    const int                   default_light_count,
-    const ViewParams&           view_params,
-    Bitmap*                     bitmap,
-    const TimeValue             time)
+    const MaxSceneEntities&                 entities,
+    const std::vector<DefaultLight>&        default_lights,
+    const ViewParams&                       view_params,
+    Bitmap*                                 bitmap,
+    const TimeValue                         time)
 {
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
@@ -598,7 +726,6 @@ asf::auto_release_ptr<asr::Project> build_project(
         assembly.ref(),
         entities,
         default_lights,
-        default_light_count,
         time);
 
     // Create an instance of the assembly and insert it into the scene.

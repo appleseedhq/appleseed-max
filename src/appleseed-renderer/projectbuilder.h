@@ -35,21 +35,23 @@
 
 // 3ds Max headers.
 #include <maxtypes.h>
+#include <render.h>
+
+// Standard headers.
+#include <vector>
 
 // Forward declarations.
 namespace renderer  { class Project; }
 class Bitmap;
-class DefaultLight;
 class MaxSceneEntities;
 class ViewParams;
 
 // Build an appleseed project from the current 3ds Max scene.
 foundation::auto_release_ptr<renderer::Project> build_project(
-    const MaxSceneEntities& entities,
-    DefaultLight*           default_lights,
-    const int               default_light_count,
-    const ViewParams&       view_params,
-    Bitmap*                 bitmap,
-    const TimeValue         time);
+    const MaxSceneEntities&             entities,
+    const std::vector<DefaultLight>&    default_lights,
+    const ViewParams&                   view_params,
+    Bitmap*                             bitmap,
+    const TimeValue                     time);
 
 #endif	// !PROJECTBUILDER_H
