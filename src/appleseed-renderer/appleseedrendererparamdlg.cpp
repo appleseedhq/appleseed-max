@@ -77,7 +77,6 @@ namespace
 
         PanelBase(
             IRendParams*        rend_params,
-            BOOL                in_progress,
             RendererSettings&   settings)
           : m_rend_params(rend_params)
           , m_settings(settings)
@@ -135,9 +134,8 @@ namespace
 
         ImageSamplingPanel(
             IRendParams*        rend_params,
-            BOOL                in_progress,
             RendererSettings&   settings)
-          : PanelBase(rend_params, in_progress, settings)
+          : PanelBase(rend_params, settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -218,9 +216,8 @@ namespace
 
         LightingPanel(
             IRendParams*        rend_params,
-            BOOL                in_progress,
             RendererSettings&   settings)
-          : PanelBase(rend_params, in_progress, settings)
+          : PanelBase(rend_params, settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -307,9 +304,8 @@ namespace
 
         OutputPanel(
             IRendParams*        rend_params,
-            BOOL                in_progress,
             RendererSettings&   settings)
-          : PanelBase(rend_params, in_progress, settings)
+          : PanelBase(rend_params, settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -425,9 +421,8 @@ namespace
 
         SystemPanel(
             IRendParams*        rend_params,
-            BOOL                in_progress,
             RendererSettings&   settings)
-          : PanelBase(rend_params, in_progress, settings)
+          : PanelBase(rend_params, settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -497,11 +492,14 @@ struct AppleseedRendererParamDlg::Impl
         RendererSettings&   settings)
       : m_temp_settings(settings)
       , m_settings(settings)
-      , m_image_sampling_panel(new ImageSamplingPanel(rend_params, in_progress, m_temp_settings))
-      , m_lighting_panel(new LightingPanel(rend_params, in_progress, m_temp_settings))
-      , m_output_panel(new OutputPanel(rend_params, in_progress, m_temp_settings))
-      , m_system_panel(new SystemPanel(rend_params, in_progress, m_temp_settings))
     {
+        if (!in_progress)
+        {
+            m_image_sampling_panel.reset(new ImageSamplingPanel(rend_params, m_temp_settings));
+            m_lighting_panel.reset(new LightingPanel(rend_params, m_temp_settings));
+            m_output_panel.reset(new OutputPanel(rend_params, m_temp_settings));
+            m_system_panel.reset(new SystemPanel(rend_params, m_temp_settings));
+        }
     }
 };
 
