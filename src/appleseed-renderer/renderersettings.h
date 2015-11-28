@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef RENDERERSETTINGS_H
-#define RENDERERSETTINGS_H
+#pragma once
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
@@ -100,5 +99,3 @@ class RendererSettings
     IOResult load_output_settings(ILoad* iload);
     IOResult load_system_settings(ILoad* iload);
 };
-
-#endif	// !RENDERERSETTINGS_H

@@ -26,12 +26,9 @@
 // THE SOFTWARE.
 //
 
-#ifndef VERSION_H
-#define VERSION_H
+#pragma once
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
 const USHORT PLUGIN_VERSION = 0x0001;
-
-#endif	// !VERSION_H

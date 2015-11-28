@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEEDRENDERER_H
-#define APPLESEEDRENDERER_H
+#pragma once
 
 // appleseed-max headers.
 #include "maxsceneentities.h"
@@ -127,5 +126,3 @@ class AppleseedRendererClassDesc
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
 };
-
-#endif	// !APPLESEEDRENDERER_H

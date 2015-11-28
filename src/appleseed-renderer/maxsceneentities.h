@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAXSCENEENTITIES_H
-#define MAXSCENEENTITIES_H
+#pragma once
 
 // Standard headers.
 #include <vector>
@@ -56,5 +55,3 @@ class MaxSceneEntityCollector
 
     void visit(INode* node);
 };
-
-#endif  // !MAXSCENEENTITIES_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef DATACHUNKS_H
-#define DATACHUNKS_H
+#pragma once
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
@@ -50,5 +49,3 @@ const USHORT CHUNK_SETTINGS_OUTPUT_PROJECT_FILE_PATH        = 0x1320;
 
 const USHORT CHUNK_SETTINGS_SYSTEM                          = 0x1400;
 const USHORT CHUNK_SETTINGS_SYSTEM_RENDERING_THREADS        = 0x1410;
-
-#endif	// !DATACHUNKS_H

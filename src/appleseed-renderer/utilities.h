@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#pragma once
 
 // appleseed.foundation headers.
 #include "foundation/image/color.h"
@@ -185,5 +184,3 @@ inline IOResult read(ILoad* iload, MSTR* s)
     // todo: free memory allocated by ReadWStringChunk()?
     return result;
 }
-
-#endif	// !UTILITIES_H

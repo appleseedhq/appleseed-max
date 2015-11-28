@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef RENDERERCONTROLLER_H
-#define RENDERERCONTROLLER_H
+#pragma once
 
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
@@ -62,5 +61,3 @@ class RendererController
     const size_t                m_total_tile_count;
     Status                      m_status;
 };
-
-#endif	// !RENDERERCONTROLLER_H

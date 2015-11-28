@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef TILECALLBACK_H
-#define TILECALLBACK_H
+#pragma once
 
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
@@ -78,5 +77,3 @@ class TileCallback
         const size_t            tile_x,
         const size_t            tile_y);
 };
-
-#endif	// !TILECALLBACK_H

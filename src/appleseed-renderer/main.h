@@ -26,10 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAIN_H
-#define MAIN_H
+#pragma once
 
 // DLL instance handle of the plugin.
 extern HINSTANCE g_module;
-
-#endif	// !MAIN_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef PROJECTBUILDER_H
-#define PROJECTBUILDER_H
+#pragma once
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
@@ -53,5 +52,3 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const ViewParams&                   view_params,
     Bitmap*                             bitmap,
     const TimeValue                     time);
-
-#endif	// !PROJECTBUILDER_H

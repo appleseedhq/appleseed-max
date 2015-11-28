@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEEDRENDERERPARAMDLG_H
-#define APPLESEEDRENDERERPARAMDLG_H
+#pragma once
 
 // Windows headers.
 #ifndef NOMINMAX
@@ -60,5 +59,3 @@ class AppleseedRendererParamDlg
     struct Impl;
     Impl* impl;
 };
-
-#endif	// !APPLESEEDRENDERERPARAMDLG_H
