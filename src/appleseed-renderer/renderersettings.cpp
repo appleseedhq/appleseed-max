@@ -53,7 +53,7 @@ namespace
             m_passes = 4;
             m_gi = true;
             m_bounces = 3;
-            m_output_mode = OutputModeRenderOnly;
+            m_output_mode = OutputMode::RenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
         }
     };
@@ -127,13 +127,13 @@ bool RendererSettings::save(ISave* isave) const
         isave->BeginChunk(CHUNK_SETTINGS_OUTPUT_MODE);
         switch (m_output_mode)
         {
-          case OutputModeRenderOnly:
+          case OutputMode::RenderOnly:
             success &= write<BYTE>(isave, 0x00);
             break;
-          case OutputModeSaveProjectOnly:
+          case OutputMode::SaveProjectOnly:
             success &= write<BYTE>(isave, 0x01);
             break;
-          case OutputModeSaveProjectAndRender:
+          case OutputMode::SaveProjectAndRender:
             success &= write<BYTE>(isave, 0x02);
             break;
         }
@@ -293,13 +293,13 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
                     switch (mode)
                     {
                       case 0x00:
-                        m_output_mode = OutputModeRenderOnly;
+                        m_output_mode = OutputMode::RenderOnly;
                         break;
                       case 0x01:
-                        m_output_mode = OutputModeSaveProjectOnly;
+                        m_output_mode = OutputMode::SaveProjectOnly;
                         break;
                       case 0x02:
-                        m_output_mode = OutputModeSaveProjectAndRender;
+                        m_output_mode = OutputMode::SaveProjectAndRender;
                         break;
                       default:
                         result = IO_ERROR;

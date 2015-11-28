@@ -155,7 +155,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        virtual void init(HWND hWnd) override
         {
             // Pixel Samples.
             m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
@@ -178,7 +178,7 @@ namespace
             HWND                hWnd,
             UINT                uMsg,
             WPARAM              wParam,
-            LPARAM              lParam) APPLESEED_OVERRIDE
+            LPARAM              lParam) override
         {
             switch (uMsg)
             {
@@ -235,7 +235,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        virtual void init(HWND hWnd) override
         {
             m_text_bounces = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_BOUNCES));
             m_spinner_bounces = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_BOUNCES));
@@ -258,7 +258,7 @@ namespace
             HWND                hWnd,
             UINT                uMsg,
             WPARAM              wParam,
-            LPARAM              lParam) APPLESEED_OVERRIDE
+            LPARAM              lParam) override
         {
             switch (uMsg)
             {
@@ -323,7 +323,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        virtual void init(HWND hWnd) override
         {
             m_text_project_filepath = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PROJECT_FILEPATH));
             m_text_project_filepath->SetText(m_settings.m_project_file_path);
@@ -333,8 +333,8 @@ namespace
                 hWnd,
                 IDC_RADIO_RENDER,
                 IDC_RADIO_SAVEPROJECT_AND_RENDER,
-                m_settings.m_output_mode == RendererSettings::OutputModeRenderOnly ? IDC_RADIO_RENDER :
-                m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ? IDC_RADIO_SAVEPROJECT :
+                m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ? IDC_RADIO_RENDER :
+                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ? IDC_RADIO_SAVEPROJECT :
                 IDC_RADIO_SAVEPROJECT_AND_RENDER);
 
             enable_disable_controls();
@@ -343,8 +343,8 @@ namespace
         void enable_disable_controls()
         {
             const bool save_project =
-                m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ||
-                m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectAndRender;
+                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
+                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender;
 
             m_text_project_filepath->Enable(save_project);
             m_button_browse->Enable(save_project);
@@ -354,7 +354,7 @@ namespace
             HWND                hWnd,
             UINT                uMsg,
             WPARAM              wParam,
-            LPARAM              lParam) APPLESEED_OVERRIDE
+            LPARAM              lParam) override
         {
             switch (uMsg)
             {
@@ -373,17 +373,17 @@ namespace
                     switch (LOWORD(wParam))
                     {
                         case IDC_RADIO_RENDER:
-                            m_settings.m_output_mode = RendererSettings::OutputModeRenderOnly;
+                            m_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
                             enable_disable_controls();
                             return TRUE;
 
                         case IDC_RADIO_SAVEPROJECT:
-                            m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectOnly;
+                            m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectOnly;
                             enable_disable_controls();
                             return TRUE;
 
                         case IDC_RADIO_SAVEPROJECT_AND_RENDER:
-                            m_settings.m_output_mode = RendererSettings::OutputModeSaveProjectAndRender;
+                            m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectAndRender;
                             enable_disable_controls();
                             return TRUE;
 
@@ -440,7 +440,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) APPLESEED_OVERRIDE
+        virtual void init(HWND hWnd) override
         {
             m_text_renderingthreads = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS));
             m_spinner_renderingthreads = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_RENDERINGTHREADS));
@@ -454,7 +454,7 @@ namespace
             HWND                hWnd,
             UINT                uMsg,
             WPARAM              wParam,
-            LPARAM              lParam) APPLESEED_OVERRIDE
+            LPARAM              lParam) override
         {
             switch (uMsg)
             {

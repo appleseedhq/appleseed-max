@@ -40,9 +40,6 @@
 #include "foundation/platform/thread.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
-// Boost headers.
-#include "boost/static_assert.hpp"
-
 // 3ds Max headers.
 #include <bitmap.h>
 
@@ -213,7 +210,7 @@ void TileCallback::blit_tile(
     const asf::CanvasProperties& props = frame.image().properties();
 
     // Allocate memory for the temporary tile.
-    if (m_float_tile_storage.get() == 0)
+    if (m_float_tile_storage.get() == nullptr)
     {
         m_float_tile_storage.reset(
             new asf::Tile(
@@ -244,7 +241,9 @@ void TileCallback::blit_tile(
     {
         for (size_t x = 0; x < tile_width; ++x)
         {
-            BOOST_STATIC_ASSERT(sizeof(BMM_Color_fl) == sizeof(asf::Color4f));
+            static_assert(
+                sizeof(BMM_Color_fl) == sizeof(asf::Color4f),
+                "BMM_Color_fl is expected to be the same size of foundation::Color4f");
 
             asf::Color4f color;
             fp_tile.get_pixel(x, y, &color.r);

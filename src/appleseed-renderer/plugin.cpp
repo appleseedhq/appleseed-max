@@ -70,7 +70,7 @@ extern "C"
             return &g_appleseed_renderer_classdesc;
 
           default:
-            return 0;
+            return nullptr;
         }
     }
 

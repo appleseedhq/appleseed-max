@@ -33,7 +33,6 @@
 #include "renderer/api/rendering.h"
 
 // appleseed.foundation headers.
-#include "foundation/platform/compiler.h"
 #include "foundation/platform/types.h"
 
 // Standard headers.
@@ -51,11 +50,11 @@ class RendererController
         foundation::uint32*     rendered_tile_count,
         const size_t            total_tile_count);
 
-    virtual void on_rendering_begin() APPLESEED_OVERRIDE;
+    virtual void on_rendering_begin() override;
 
-    virtual void on_progress() APPLESEED_OVERRIDE;
+    virtual void on_progress() override;
 
-    virtual Status get_status() const APPLESEED_OVERRIDE;
+    virtual Status get_status() const override;
 
   private:
     RendProgressCallback*       m_progress_cb;

@@ -34,7 +34,6 @@
 #include "renderersettings.h"
 
 // appleseed.foundation headers.
-#include "foundation/platform/compiler.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
@@ -55,18 +54,18 @@ class AppleseedRenderer
   public:
     AppleseedRenderer();
 
-    virtual Class_ID ClassID() APPLESEED_OVERRIDE;
+    virtual Class_ID ClassID() override;
 
-    virtual void GetClassName(MSTR& s) APPLESEED_OVERRIDE;
+    virtual void GetClassName(MSTR& s) override;
 
-    virtual void DeleteThis() APPLESEED_OVERRIDE;
+    virtual void DeleteThis() override;
 
     virtual RefResult NotifyRefChanged(
         const Interval&         changeInt,
         RefTargetHandle         hTarget,
         PartID&                 partID,
         RefMessage              message,
-        BOOL                    propagate) APPLESEED_OVERRIDE;
+        BOOL                    propagate) override;
 
     virtual int Open(
         INode*                  scene,
@@ -76,7 +75,7 @@ class AppleseedRenderer
         HWND                    hwnd,
         DefaultLight*           default_lights,
         int                     default_light_count,
-        RendProgressCallback*   progress_cb) APPLESEED_OVERRIDE;
+        RendProgressCallback*   progress_cb) override;
 
     virtual int Render(
         TimeValue               time,
@@ -84,20 +83,20 @@ class AppleseedRenderer
         FrameRendParams&        frp,
         HWND                    hwnd,
         RendProgressCallback*   progress_cb,
-        ViewParams*             view_params) APPLESEED_OVERRIDE;
+        ViewParams*             view_params) override;
 
     virtual void Close(
         HWND                    hwnd,
-        RendProgressCallback*   progress_cb) APPLESEED_OVERRIDE;
+        RendProgressCallback*   progress_cb) override;
 
     virtual RendParamDlg* CreateParamDialog(
         IRendParams*            rend_params,
-        BOOL                    in_progress) APPLESEED_OVERRIDE;
+        BOOL                    in_progress) override;
 
-    virtual void ResetParams() APPLESEED_OVERRIDE;
+    virtual void ResetParams() override;
 
-    virtual IOResult Save(ISave* isave) APPLESEED_OVERRIDE;
-    virtual IOResult Load(ILoad* iload) APPLESEED_OVERRIDE;
+    virtual IOResult Save(ISave* isave) override;
+    virtual IOResult Load(ILoad* iload) override;
 
   private:
     RendererSettings            m_settings;
@@ -120,13 +119,13 @@ class AppleseedRendererClassDesc
   : public ClassDesc2
 {
   public:
-    virtual int IsPublic() APPLESEED_OVERRIDE;
-    virtual void* Create(BOOL loading) APPLESEED_OVERRIDE;
-    virtual const MCHAR* ClassName() APPLESEED_OVERRIDE;
-    virtual SClass_ID SuperClassID() APPLESEED_OVERRIDE;
-    virtual Class_ID ClassID() APPLESEED_OVERRIDE;
-    virtual const MCHAR* Category() APPLESEED_OVERRIDE;
-    virtual const MCHAR* InternalName() APPLESEED_OVERRIDE;
+    virtual int IsPublic() override;
+    virtual void* Create(BOOL loading) override;
+    virtual const MCHAR* ClassName() override;
+    virtual SClass_ID SuperClassID() override;
+    virtual Class_ID ClassID() override;
+    virtual const MCHAR* Category() override;
+    virtual const MCHAR* InternalName() override;
 };
 
 #endif	// !APPLESEEDRENDERER_H

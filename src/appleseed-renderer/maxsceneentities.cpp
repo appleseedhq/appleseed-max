@@ -75,7 +75,7 @@ void MaxSceneEntityCollector::visit(INode* node)
 
     // Retrieve the ObjectState structure of this node.
     ObjectState object_state = node->EvalWorldState(0);
-    if (object_state.obj == 0)
+    if (object_state.obj == nullptr)
         return;
 
     switch (object_state.obj->SuperClassID())

@@ -34,7 +34,6 @@
 
 // appleseed.foundation headers.
 #include "foundation/image/tile.h"
-#include "foundation/platform/compiler.h"
 #include "foundation/platform/types.h"
 
 // Standard headers.
@@ -53,21 +52,21 @@ class TileCallback
         Bitmap*                 bitmap,
         foundation::uint32*     rendered_tile_count);
 
-    virtual void release() APPLESEED_OVERRIDE;
+    virtual void release() override;
 
     virtual void pre_render(
         const size_t            x,
         const size_t            y,
         const size_t            width,
-        const size_t            height) APPLESEED_OVERRIDE;
+        const size_t            height) override;
 
     virtual void post_render_tile(
         const renderer::Frame*  frame,
         const size_t            tile_x,
-        const size_t            tile_y) APPLESEED_OVERRIDE;
+        const size_t            tile_y) override;
 
     virtual void post_render(
-        const renderer::Frame*  frame) APPLESEED_OVERRIDE;
+        const renderer::Frame*  frame) override;
 
   private:
     Bitmap*                         m_bitmap;

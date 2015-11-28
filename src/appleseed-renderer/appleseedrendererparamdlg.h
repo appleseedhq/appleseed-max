@@ -29,9 +29,6 @@
 #ifndef APPLESEEDRENDERERPARAMDLG_H
 #define APPLESEEDRENDERERPARAMDLG_H
 
-// appleseed.foundation headers.
-#include "foundation/platform/compiler.h"
-
 // Windows headers.
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -55,9 +52,9 @@ class AppleseedRendererParamDlg
 
     ~AppleseedRendererParamDlg();
 
-    virtual void DeleteThis() APPLESEED_OVERRIDE;
+    virtual void DeleteThis() override;
 
-    virtual void AcceptParams() APPLESEED_OVERRIDE;
+    virtual void AcceptParams() override;
 
   private:
     struct Impl;

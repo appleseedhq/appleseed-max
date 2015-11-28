@@ -67,11 +67,11 @@ class RendererSettings
     // Output.
     //
 
-    enum OutputMode
+    enum class OutputMode
     {
-        OutputModeRenderOnly,
-        OutputModeSaveProjectOnly,
-        OutputModeSaveProjectAndRender
+        RenderOnly,
+        SaveProjectOnly,
+        SaveProjectAndRender
     };
 
     OutputMode  m_output_mode;

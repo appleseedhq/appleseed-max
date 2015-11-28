@@ -31,10 +31,10 @@
 
 std::string utf8_encode(const TCHAR* wstr)
 {
-    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, 0, 0, 0, 0);
+    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, nullptr, 0, nullptr, nullptr);
 
     std::string result(result_size - 1, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, &result[0], result_size - 1, 0, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, &result[0], result_size - 1, nullptr, nullptr);
 
     return result;
 }
@@ -45,10 +45,10 @@ std::string utf8_encode(const std::wstring& wstr)
         return std::string();
 
     const int wstr_size = static_cast<int>(wstr.size());
-    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, 0, 0, 0, 0);
+    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, nullptr, 0, nullptr, nullptr);
 
     std::string result(result_size, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, &result[0], result_size, 0, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, &result[0], result_size, nullptr, nullptr);
 
     return result;
 }
@@ -59,7 +59,7 @@ std::wstring utf8_decode(const std::string& str)
         return std::wstring();
 
     const int str_size = static_cast<int>(str.size());
-    const int result_size = MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, 0, 0);
+    const int result_size = MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, nullptr, 0);
 
     std::wstring result(result_size, 0);
     MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, &result[0], result_size);

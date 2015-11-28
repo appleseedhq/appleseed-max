@@ -184,7 +184,7 @@ namespace
         {
         }
 
-        virtual int proc(ReferenceMaker* rm) APPLESEED_OVERRIDE
+        virtual int proc(ReferenceMaker* rm) override
         {
             rm->RenderBegin(m_time);
             return REF_ENUM_CONTINUE;
@@ -203,7 +203,7 @@ namespace
         {
         }
 
-        virtual int proc(ReferenceMaker* rm) APPLESEED_OVERRIDE
+        virtual int proc(ReferenceMaker* rm) override
         {
             rm->RenderEnd(m_time);
             return REF_ENUM_CONTINUE;
@@ -220,8 +220,8 @@ namespace
         RenderBeginProc proc(time);
         proc.BeginEnumeration();
 
-        for (size_t i = 0, e = nodes.size(); i < e; ++i)
-            nodes[i]->EnumRefHierarchy(proc);
+        for (auto node : nodes)
+            node->EnumRefHierarchy(proc);
 
         proc.EndEnumeration();
     }
@@ -233,8 +233,8 @@ namespace
         RenderEndProc proc(time);
         proc.BeginEnumeration();
 
-        for (size_t i = 0, e = nodes.size(); i < e; ++i)
-            nodes[i]->EnumRefHierarchy(proc);
+        for (auto node : nodes)
+            node->EnumRefHierarchy(proc);
 
         proc.EndEnumeration();
     }
@@ -317,8 +317,8 @@ int AppleseedRenderer::Render(
     m_settings.apply(project.ref(), "final");
 
     // Write the project to disk.
-    if (m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectOnly ||
-        m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectAndRender)
+    if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
+        m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
     {
         if (progress_cb)
             progress_cb->SetTitle(_T("Writing Project To Disk..."));
@@ -328,8 +328,8 @@ int AppleseedRenderer::Render(
     }
 
     // Render the project.
-    if (m_settings.m_output_mode == RendererSettings::OutputModeRenderOnly ||
-        m_settings.m_output_mode == RendererSettings::OutputModeSaveProjectAndRender)
+    if (m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ||
+        m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
     {
         if (progress_cb)
             progress_cb->SetTitle(_T("Rendering..."));
@@ -424,8 +424,8 @@ IOResult AppleseedRenderer::Load(ILoad* iload)
 void AppleseedRenderer::clear()
 {
     m_settings = RendererSettings::defaults();
-    m_scene = 0;
-    m_view_node = 0;
+    m_scene = nullptr;
+    m_view_node = nullptr;
     m_default_lights.clear();
     m_time = 0;
     m_entities.clear();

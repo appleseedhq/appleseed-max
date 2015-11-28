@@ -50,13 +50,9 @@
 // appleseed.foundation headers.
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
-#include "foundation/platform/compiler.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/iostreamop.h"
-
-// Boost headers.
-#include "boost/static_assert.hpp"
 
 // 3ds Max headers.
 #include <bitmap.h>
@@ -86,7 +82,7 @@ namespace
         const std::string&      name)
     {
         return
-            entities.get_by_name(name.c_str()) == 0
+            entities.get_by_name(name.c_str()) == nullptr
                 ? name
                 : asr::make_unique_name(name + "_", entities);
     }
@@ -189,7 +185,7 @@ namespace
         const Class_ID TriObjectClassID(TRIOBJ_CLASS_ID, 0);
 
         if (!object_state.obj->CanConvertToType(TriObjectClassID))
-            return 0;
+            return nullptr;
 
         TriObject* tri_object = static_cast<TriObject*>(object_state.obj->ConvertToType(time, TriObjectClassID));
         must_delete = tri_object != object_state.obj;
@@ -213,7 +209,7 @@ namespace
         // Convert the object to a TriObject.
         bool must_delete_tri_object;
         TriObject* tri_object = get_tri_object_from_node(object_state, time, must_delete_tri_object);
-        if (tri_object == 0)
+        if (tri_object == nullptr)
         {
             // todo: emit warning message.
             return false;
@@ -295,7 +291,9 @@ namespace
                     }
                 }
 
-                BOOST_STATIC_ASSERT(sizeof(DWORD) == sizeof(asf::uint32));
+                static_assert(
+                    sizeof(DWORD) == sizeof(asf::uint32),
+                    "DWORD is expected to be 32-bit long");
 
                 asr::Triangle triangle;
                 triangle.m_v0 = face.getVert(0);
@@ -420,8 +418,8 @@ namespace
     {
         ObjectMap objects;
 
-        for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
-            add_object(assembly, entities.m_objects[i], time, objects);
+        for (const auto& object : entities.m_objects)
+            add_object(assembly, object, time, objects);
     }
 
     void add_omni_light(
@@ -562,8 +560,8 @@ namespace
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
-        for (size_t i = 0, e = entities.m_lights.size(); i < e; ++i)
-            add_light(assembly, entities.m_lights[i], time);
+        for (const auto& light : entities.m_lights)
+            add_light(assembly, light, time);
     }
 
     bool is_zero(const Matrix3& m)
@@ -584,10 +582,8 @@ namespace
         asr::Assembly&                      assembly,
         const std::vector<DefaultLight>&    default_lights)
     {
-        for (size_t i = 0, e = default_lights.size(); i < e; ++i)
+        for (const auto& light : default_lights)
         {
-            const DefaultLight& light = default_lights[i];
-
             // Compute the transform of this light.
             const asf::Transformd transform =
                 is_zero(light.tm)
