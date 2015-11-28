@@ -373,8 +373,8 @@ IOResult AppleseedRenderer::Save(ISave* isave)
 {
     bool success = true;
 
-    isave->BeginChunk(CHUNK_PLUGIN_VERSION);
-    success &= write(isave, PLUGIN_VERSION);
+    isave->BeginChunk(CHUNK_FILE_FORMAT_VERSION);
+    success &= write(isave, FILE_FORMAT_VERSION);
     isave->EndChunk();
 
     isave->BeginChunk(CHUNK_SETTINGS);
@@ -398,7 +398,7 @@ IOResult AppleseedRenderer::Load(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_PLUGIN_VERSION:
+          case CHUNK_FILE_FORMAT_VERSION:
             {
                 USHORT version;
                 result = read<USHORT>(iload, &version);

@@ -31,7 +31,7 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
-const USHORT CHUNK_PLUGIN_VERSION                           = 0x0001;
+const USHORT CHUNK_FILE_FORMAT_VERSION                      = 0x0001;
 
 const USHORT CHUNK_SETTINGS                                 = 0x1000;
 

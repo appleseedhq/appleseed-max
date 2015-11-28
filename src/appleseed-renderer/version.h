@@ -31,4 +31,6 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
-const USHORT PLUGIN_VERSION = 0x0001;
+// Version of the file format.
+// Increment when making incompatible changes to the file format.
+const USHORT FILE_FORMAT_VERSION = 0x0001;
