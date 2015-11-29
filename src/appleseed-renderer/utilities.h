@@ -181,6 +181,5 @@ inline IOResult read(ILoad* iload, MSTR* s)
     const IOResult result = iload->ReadWStringChunk(&buf);
     if (result == IO_OK)
         *s = buf;
-    // todo: free memory allocated by ReadWStringChunk()?
     return result;
 }
