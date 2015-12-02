@@ -11,6 +11,8 @@
     <ClCompile Include="tilecallback.cpp" />
     <ClCompile Include="renderercontroller.cpp" />
     <ClCompile Include="renderersettings.cpp" />
+    <ClCompile Include="version.cpp" />
+    <ClCompile Include="updatechecker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer.h" />
@@ -25,6 +27,7 @@
     <ClInclude Include="renderersettings.h" />
     <ClInclude Include="datachunks.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="updatechecker.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseed-renderer.rc" />

@@ -200,7 +200,7 @@ namespace
         std::string&            object_name)
     {
         // Compute a unique name for the instantiated object.
-        object_name = utf8_encode(object_node->GetName());
+        object_name = wide_to_utf8(object_node->GetName());
         object_name = make_unique_name(assembly.objects(), object_name);
 
         // Retrieve the ObjectState at the desired time.
@@ -494,7 +494,7 @@ namespace
         const ObjectState object_state = light_node->EvalWorldState(time);
 
         // Compute a unique name for this light.
-        std::string light_name = utf8_encode(light_node->GetName());
+        std::string light_name = wide_to_utf8(light_node->GetName());
         light_name = make_unique_name(assembly.lights(), light_name);
 
         // Compute the transform of this light.
@@ -587,7 +587,7 @@ namespace
             // Compute the transform of this light.
             const asf::Transformd transform =
                 is_zero(light.tm)
-                    ? asf::Transformd::identity()   // todo: fix
+                    ? asf::Transformd::identity()   // todo: implement
                     : asf::Transformd::from_local_to_parent(to_matrix4d(light.tm));
 
             // Compute a unique name for this light.

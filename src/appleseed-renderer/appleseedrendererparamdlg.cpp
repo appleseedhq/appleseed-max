@@ -33,7 +33,12 @@
 #include "main.h"
 #include "renderersettings.h"
 #include "resource.h"
+#include "updatechecker.h"
 #include "utilities.h"
+#include "version.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/appleseed.h"
 
 // 3ds Max headers.
 #include <3dsmaxdlport.h>
@@ -42,11 +47,13 @@
 #include <tchar.h>
 
 // Standard headers.
+#include <cassert>
 #include <cstring>
 #include <memory>
+#include <sstream>
 #include <string>
 
-using namespace std;
+namespace asf = foundation;
 
 namespace
 {
@@ -72,27 +79,16 @@ namespace
 
     struct PanelBase
     {
-        IRendParams*            m_rend_params;
-        RendererSettings&       m_settings;
-
-        PanelBase(
-            IRendParams*        rend_params,
-            RendererSettings&   settings)
-          : m_rend_params(rend_params)
-          , m_settings(settings)
-        {
-        }
-
-        virtual void init(HWND hWnd) = 0;
+        virtual void init(HWND hwnd) = 0;
 
         virtual INT_PTR CALLBACK window_proc(
-            HWND                hWnd,
+            HWND                hwnd,
             UINT                uMsg,
             WPARAM              wParam,
             LPARAM              lParam) = 0;
 
         static INT_PTR CALLBACK window_proc_entry(
-            HWND                hWnd,
+            HWND                hwnd,
             UINT                uMsg,
             WPARAM              wParam,
             LPARAM              lParam)
@@ -102,8 +98,8 @@ namespace
                 case WM_INITDIALOG:
                 {
                     PanelBase* panel = reinterpret_cast<PanelBase*>(lParam);
-                    DLSetWindowLongPtr(hWnd, panel);
-                    panel->init(hWnd);
+                    DLSetWindowLongPtr(hwnd, panel);
+                    panel->init(hwnd);
                     return TRUE;
                 }
 
@@ -112,9 +108,165 @@ namespace
 
                 default:
                 {
-                    PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hWnd);
-                    return panel->window_proc(hWnd, uMsg, wParam, lParam);
+                    PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hwnd);
+                    return panel->window_proc(hwnd, uMsg, wParam, lParam);
                 }
+            }
+        }
+    };
+
+    // ------------------------------------------------------------------------------------------------
+    // About panel.
+    // ------------------------------------------------------------------------------------------------
+
+    struct AboutPanel
+      : public PanelBase
+    {
+        IRendParams*            m_rend_params;
+        HWND                    m_rollup;
+        ICustButton*            m_button_download;
+        bool                    m_update_available;
+        std::wstring            m_download_url;
+
+        explicit AboutPanel(
+            IRendParams*        rend_params)
+          : m_rend_params(rend_params)
+        {
+            m_rollup =
+                rend_params->AddRollupPage(
+                    g_module,
+                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_ABOUT),
+                    &window_proc_entry,
+                    _T("About"),
+                    reinterpret_cast<LPARAM>(this));
+        }
+
+        ~AboutPanel()
+        {
+            ReleaseICustButton(m_button_download);
+            m_rend_params->DeleteRollupPage(m_rollup);
+        }
+
+        void set_label_text(const HWND parent_hwnd, const int control_id, const wchar_t* text)
+        {
+            SetDlgItemText(parent_hwnd, control_id, text);
+
+            const HWND control_hwnd = GetDlgItem(parent_hwnd, control_id);
+
+            RECT rect;
+            GetClientRect(control_hwnd, &rect);
+            InvalidateRect(control_hwnd, &rect, TRUE);
+            MapWindowPoints(control_hwnd, parent_hwnd, reinterpret_cast<POINT*>(&rect), 2);
+            RedrawWindow(parent_hwnd, &rect, nullptr, RDW_ERASE | RDW_INVALIDATE);
+        }
+
+        virtual void init(HWND hwnd) override
+        {
+            const HWND download_button_hwnd = GetDlgItem(hwnd, IDC_BUTTON_DOWNLOAD);
+            m_button_download = GetICustButton(download_button_hwnd);
+
+            // Display the version strings of the plugin and of appleseed itself.
+            GetICustStatus(GetDlgItem(hwnd, IDC_TEXT_PLUGIN_VERSION))->SetText(PluginVersionString);
+            GetICustStatus(GetDlgItem(hwnd, IDC_TEXT_APPLESEED_VERSION))->SetText(
+                utf8_to_wide(asf::Appleseed::get_lib_version()).c_str());
+
+            // Check if an update is available.
+            m_update_available = false;
+            std::string new_version_string, publication_date, download_url;
+            if (check_for_update(new_version_string, publication_date, download_url))
+            {
+                const std::wstring new_version_wstring = utf8_to_wide(new_version_string);
+                m_update_available = (new_version_wstring != std::wstring(PluginVersionString));
+            }
+
+            // Update the controls accordingly.
+            if (m_update_available)
+            {
+                m_download_url = utf8_to_wide(download_url);
+                std::wstringstream sstr;
+                sstr << "UPDATE: Version " << utf8_to_wide(new_version_string) << " available.";
+                set_label_text(hwnd, IDC_STATIC_NEW_VERSION, sstr.str().c_str());
+            }
+            else
+            {
+                set_label_text(hwnd, IDC_STATIC_NEW_VERSION, L"The plugin is up-to-date.");
+                ShowWindow(download_button_hwnd, SW_HIDE);
+            }
+
+#if 0
+            const HWND syslink_hwnd = GetDlgItem(hwnd, IDC_SYSLINK_UPDATE_INFO);
+            LITEM item = { 0 };
+            item.iLink = 0;
+            item.mask = LIF_ITEMINDEX | LIF_STATE;
+            item.state = LIS_DEFAULTCOLORS;
+            item.stateMask = LIS_DEFAULTCOLORS;
+            SendMessage(syslink_hwnd, LM_SETITEM, 0, (LPARAM)&item);
+#endif
+        }
+
+        virtual INT_PTR CALLBACK window_proc(
+            HWND                hwnd,
+            UINT                uMsg,
+            WPARAM              wParam,
+            LPARAM              lParam) override
+        {
+            switch (uMsg)
+            {
+#if 0
+                case WM_CTLCOLORSTATIC:
+                {
+                    const HDC hdc = reinterpret_cast<HDC>(wParam);
+                    SetTextColor(hdc, RGB(255, 0, 0));
+                    SetBkColor(hdc, GetSysColor(COLOR_BTNFACE));
+                    return GetSysColorBrush(COLOR_BTNFACE) != nullptr ? TRUE : FALSE;
+                }
+
+                case WM_NOTIFY:
+                    switch (((LPNMHDR)lParam)->code)
+                    {
+                        case NM_CLICK:
+                        case NM_RETURN:
+                        {
+                            if (((LPNMHDR)lParam)->hwndFrom == GetDlgItem(hwnd, IDC_SYSLINK_UPDATE_INFO))
+                            {
+                                ShellExecute(
+                                    hwnd,
+                                    _T("open"),
+                                    _T("https://github.com/appleseedhq/appleseed-max/releases/download/0.1.0-alpha/appleseed-max2015-0.1.0-alpha.zip"),
+                                    nullptr,        // application parameters
+                                    nullptr,        // working directory
+                                    SW_SHOWNORMAL);
+                            }
+                            return TRUE;
+                        }
+
+                        default:
+                            return FALSE;
+                    }
+#endif
+
+                case WM_COMMAND:
+                    switch (LOWORD(wParam))
+                    {
+                        case IDC_BUTTON_DOWNLOAD:
+                        {
+                            assert(m_update_available);
+                            ShellExecute(
+                                hwnd,
+                                _T("open"),
+                                m_download_url.c_str(),
+                                nullptr,        // application parameters
+                                nullptr,        // working directory
+                                SW_SHOWNORMAL);
+                            return TRUE;
+                        }
+
+                        default:
+                            return FALSE;
+                    }
+
+                default:
+                    return FALSE;
             }
         }
     };
@@ -126,6 +278,8 @@ namespace
     struct ImageSamplingPanel
       : public PanelBase
     {
+        IRendParams*            m_rend_params;
+        RendererSettings&       m_settings;
         HWND                    m_rollup;
         ICustEdit*              m_text_pixelsamples;
         ISpinnerControl*        m_spinner_pixelsamples;
@@ -135,7 +289,8 @@ namespace
         ImageSamplingPanel(
             IRendParams*        rend_params,
             RendererSettings&   settings)
-          : PanelBase(rend_params, settings)
+          : m_rend_params(rend_params)
+          , m_settings(settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -155,27 +310,27 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) override
+        virtual void init(HWND hwnd) override
         {
             // Pixel Samples.
-            m_text_pixelsamples = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES));
-            m_spinner_pixelsamples = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PIXELSAMPLES));
-            m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
+            m_text_pixelsamples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES));
+            m_spinner_pixelsamples = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PIXELSAMPLES));
+            m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
             m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
             m_spinner_pixelsamples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
             m_spinner_pixelsamples->SetValue(m_settings.m_pixel_samples, FALSE);
 
             // Passes.
-            m_text_passes = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PASSES));
-            m_spinner_passes = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_PASSES));
-            m_spinner_passes->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_PASSES), EDITTYPE_INT);
+            m_text_passes = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PASSES));
+            m_spinner_passes = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PASSES));
+            m_spinner_passes->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PASSES), EDITTYPE_INT);
             m_spinner_passes->SetLimits(1, 1000000, FALSE);
             m_spinner_passes->SetResetValue(RendererSettings::defaults().m_passes);
             m_spinner_passes->SetValue(m_settings.m_passes, FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
-            HWND                hWnd,
+            HWND                hwnd,
             UINT                uMsg,
             WPARAM              wParam,
             LPARAM              lParam) override
@@ -210,6 +365,8 @@ namespace
     struct LightingPanel
       : public PanelBase
     {
+        IRendParams*            m_rend_params;
+        RendererSettings&       m_settings;
         HWND                    m_rollup;
         ICustEdit*              m_text_bounces;
         ISpinnerControl*        m_spinner_bounces;
@@ -217,7 +374,8 @@ namespace
         LightingPanel(
             IRendParams*        rend_params,
             RendererSettings&   settings)
-          : PanelBase(rend_params, settings)
+          : m_rend_params(rend_params)
+          , m_settings(settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -235,16 +393,16 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) override
+        virtual void init(HWND hwnd) override
         {
-            m_text_bounces = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_BOUNCES));
-            m_spinner_bounces = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_BOUNCES));
-            m_spinner_bounces->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_BOUNCES), EDITTYPE_INT);
+            m_text_bounces = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES));
+            m_spinner_bounces = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_BOUNCES));
+            m_spinner_bounces->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES), EDITTYPE_INT);
             m_spinner_bounces->SetLimits(0, 1000, FALSE);
             m_spinner_bounces->SetResetValue(RendererSettings::defaults().m_bounces);
             m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
 
-            CheckDlgButton(hWnd, IDC_CHECK_GI, m_settings.m_gi ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hwnd, IDC_CHECK_GI, m_settings.m_gi ? BST_CHECKED : BST_UNCHECKED);
             enable_disable_controls();
         }
 
@@ -255,7 +413,7 @@ namespace
         }
 
         virtual INT_PTR CALLBACK window_proc(
-            HWND                hWnd,
+            HWND                hwnd,
             UINT                uMsg,
             WPARAM              wParam,
             LPARAM              lParam) override
@@ -266,7 +424,7 @@ namespace
                     switch (LOWORD(wParam))
                     {
                         case IDC_CHECK_GI:
-                            m_settings.m_gi = IsDlgButtonChecked(hWnd, IDC_CHECK_GI) == BST_CHECKED;
+                            m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
                             enable_disable_controls();
                             return TRUE;
 
@@ -298,6 +456,8 @@ namespace
     struct OutputPanel
       : public PanelBase
     {
+        IRendParams*            m_rend_params;
+        RendererSettings&       m_settings;
         HWND                    m_rollup;
         ICustEdit*              m_text_project_filepath;
         ICustButton*            m_button_browse;
@@ -305,7 +465,8 @@ namespace
         OutputPanel(
             IRendParams*        rend_params,
             RendererSettings&   settings)
-          : PanelBase(rend_params, settings)
+          : m_rend_params(rend_params)
+          , m_settings(settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -323,14 +484,14 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) override
+        virtual void init(HWND hwnd) override
         {
-            m_text_project_filepath = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_PROJECT_FILEPATH));
+            m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
             m_text_project_filepath->SetText(m_settings.m_project_file_path);
-            m_button_browse = GetICustButton(GetDlgItem(hWnd, IDC_BUTTON_BROWSE));
+            m_button_browse = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_BROWSE));
 
             CheckRadioButton(
-                hWnd,
+                hwnd,
                 IDC_RADIO_RENDER,
                 IDC_RADIO_SAVEPROJECT_AND_RENDER,
                 m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ? IDC_RADIO_RENDER :
@@ -351,7 +512,7 @@ namespace
         }
 
         virtual INT_PTR CALLBACK window_proc(
-            HWND                hWnd,
+            HWND                hwnd,
             UINT                uMsg,
             WPARAM              wParam,
             LPARAM              lParam) override
@@ -390,7 +551,7 @@ namespace
                         case IDC_BUTTON_BROWSE:
                         {
                             MSTR filepath;
-                            if (get_save_project_filepath(hWnd, filepath))
+                            if (get_save_project_filepath(hwnd, filepath))
                             {
                                 m_settings.m_project_file_path = filepath;
                                 m_text_project_filepath->SetText(filepath);
@@ -415,6 +576,8 @@ namespace
     struct SystemPanel
       : public PanelBase
     {
+        IRendParams*            m_rend_params;
+        RendererSettings&       m_settings;
         HWND                    m_rollup;
         ICustEdit*              m_text_renderingthreads;
         ISpinnerControl*        m_spinner_renderingthreads;
@@ -422,7 +585,8 @@ namespace
         SystemPanel(
             IRendParams*        rend_params,
             RendererSettings&   settings)
-          : PanelBase(rend_params, settings)
+          : m_rend_params(rend_params)
+          , m_settings(settings)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -440,18 +604,18 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hWnd) override
+        virtual void init(HWND hwnd) override
         {
-            m_text_renderingthreads = GetICustEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS));
-            m_spinner_renderingthreads = GetISpinner(GetDlgItem(hWnd, IDC_SPINNER_RENDERINGTHREADS));
-            m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hWnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
+            m_text_renderingthreads = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS));
+            m_spinner_renderingthreads = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_RENDERINGTHREADS));
+            m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
             m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
             m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
             m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
-            HWND                hWnd,
+            HWND                hwnd,
             UINT                uMsg,
             WPARAM              wParam,
             LPARAM              lParam) override
@@ -478,13 +642,14 @@ namespace
 
 struct AppleseedRendererParamDlg::Impl
 {
-    RendererSettings                m_temp_settings;    // settings the dialog will modify
-    RendererSettings&               m_settings;         // output (accepted) settings
+    RendererSettings                    m_temp_settings;    // settings the dialog will modify
+    RendererSettings&                   m_settings;         // output (accepted) settings
 
-    auto_ptr<ImageSamplingPanel>    m_image_sampling_panel;
-    auto_ptr<LightingPanel>         m_lighting_panel;
-    auto_ptr<OutputPanel>           m_output_panel;
-    auto_ptr<SystemPanel>           m_system_panel;
+    std::auto_ptr<AboutPanel>           m_about_panel;
+    std::auto_ptr<ImageSamplingPanel>   m_image_sampling_panel;
+    std::auto_ptr<LightingPanel>        m_lighting_panel;
+    std::auto_ptr<OutputPanel>          m_output_panel;
+    std::auto_ptr<SystemPanel>          m_system_panel;
 
     Impl(
         IRendParams*        rend_params,
@@ -495,6 +660,7 @@ struct AppleseedRendererParamDlg::Impl
     {
         if (!in_progress)
         {
+            m_about_panel.reset(new AboutPanel(rend_params));
             m_image_sampling_panel.reset(new ImageSamplingPanel(rend_params, m_temp_settings));
             m_lighting_panel.reset(new LightingPanel(rend_params, m_temp_settings));
             m_output_panel.reset(new OutputPanel(rend_params, m_temp_settings));

@@ -90,13 +90,13 @@ bool RendererSettings::save(ISave* isave) const
     // Image Sampling settings.
     //
 
-    isave->BeginChunk(CHUNK_SETTINGS_IMAGESAMPLING);
+    isave->BeginChunk(ChunkSettingsImageSampling);
 
-        isave->BeginChunk(CHUNK_SETTINGS_IMAGESAMPLING_PIXEL_SAMPLES);
+        isave->BeginChunk(ChunkSettingsImageSamplingPixelSamples);
         success &= write<int>(isave, m_pixel_samples);
         isave->EndChunk();
 
-        isave->BeginChunk(CHUNK_SETTINGS_IMAGESAMPLING_PASSES);
+        isave->BeginChunk(ChunkSettingsImageSamplingPasses);
         success &= write<int>(isave, m_passes);
         isave->EndChunk();
 
@@ -106,13 +106,13 @@ bool RendererSettings::save(ISave* isave) const
     // Lighting settings.
     //
 
-    isave->BeginChunk(CHUNK_SETTINGS_LIGHTING);
+    isave->BeginChunk(ChunkSettingsLighting);
 
-        isave->BeginChunk(CHUNK_SETTINGS_LIGHTING_GI);
+        isave->BeginChunk(ChunkSettingsLightingGI);
         success &= write<bool>(isave, m_gi);
         isave->EndChunk();
 
-        isave->BeginChunk(CHUNK_SETTINGS_LIGHTING_BOUNCES);
+        isave->BeginChunk(ChunkSettingsLightingBounces);
         success &= write<int>(isave, m_bounces);
         isave->EndChunk();
 
@@ -122,9 +122,9 @@ bool RendererSettings::save(ISave* isave) const
     // Output settings.
     //
 
-    isave->BeginChunk(CHUNK_SETTINGS_OUTPUT);
+    isave->BeginChunk(ChunkSettingsOutput);
 
-        isave->BeginChunk(CHUNK_SETTINGS_OUTPUT_MODE);
+        isave->BeginChunk(ChunkSettingsOutputMode);
         switch (m_output_mode)
         {
           case OutputMode::RenderOnly:
@@ -139,7 +139,7 @@ bool RendererSettings::save(ISave* isave) const
         }
         isave->EndChunk();
 
-        isave->BeginChunk(CHUNK_SETTINGS_OUTPUT_PROJECT_FILE_PATH);
+        isave->BeginChunk(ChunkSettingsOutputProjectFilePath);
         success &= write(isave, m_project_file_path);
         isave->EndChunk();
 
@@ -149,9 +149,9 @@ bool RendererSettings::save(ISave* isave) const
     // System settings.
     //
 
-    isave->BeginChunk(CHUNK_SETTINGS_SYSTEM);
+    isave->BeginChunk(ChunkSettingsSystem);
 
-        isave->BeginChunk(CHUNK_SETTINGS_SYSTEM_RENDERING_THREADS);
+        isave->BeginChunk(ChunkSettingsSystemRenderingThreads);
         success &= write<int>(isave, m_rendering_threads);
         isave->EndChunk();
 
@@ -174,19 +174,19 @@ IOResult RendererSettings::load(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_SETTINGS_IMAGESAMPLING:
+          case ChunkSettingsImageSampling:
             result = load_image_sampling_settings(iload);
             break;
 
-          case CHUNK_SETTINGS_LIGHTING:
+          case ChunkSettingsLighting:
             result = load_lighting_settings(iload);
             break;
 
-          case CHUNK_SETTINGS_OUTPUT:
+          case ChunkSettingsOutput:
             result = load_output_settings(iload);
             break;
 
-          case CHUNK_SETTINGS_SYSTEM:
+          case ChunkSettingsSystem:
             result = load_system_settings(iload);
             break;
         }
@@ -216,11 +216,11 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_SETTINGS_IMAGESAMPLING_PIXEL_SAMPLES:
+          case ChunkSettingsImageSamplingPixelSamples:
             result = read<int>(iload, &m_pixel_samples);
             break;
 
-          case CHUNK_SETTINGS_IMAGESAMPLING_PASSES:
+          case ChunkSettingsImageSamplingPasses:
             result = read<int>(iload, &m_passes);
             break;
         }
@@ -250,11 +250,11 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_SETTINGS_LIGHTING_GI:
+          case ChunkSettingsLightingGI:
             result = read<bool>(iload, &m_gi);
             break;
 
-          case CHUNK_SETTINGS_LIGHTING_BOUNCES:
+          case ChunkSettingsLightingBounces:
             result = read<int>(iload, &m_bounces);
             break;
         }
@@ -284,7 +284,7 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_SETTINGS_OUTPUT_MODE:
+          case ChunkSettingsOutputMode:
             {
                 BYTE mode;
                 result = read<BYTE>(iload, &mode);
@@ -309,7 +309,7 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
             }
             break;
 
-          case CHUNK_SETTINGS_OUTPUT_PROJECT_FILE_PATH:
+          case ChunkSettingsOutputProjectFilePath:
             result = read(iload, &m_project_file_path);
             break;
         }
@@ -339,7 +339,7 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_SETTINGS_SYSTEM_RENDERING_THREADS:
+          case ChunkSettingsSystemRenderingThreads:
             result = read<int>(iload, &m_rendering_threads);
             break;
         }

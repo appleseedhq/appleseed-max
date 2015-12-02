@@ -28,15 +28,10 @@
 
 #pragma once
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"
+// Standard headers.
+#include <string>
 
-// Windows headers.
-#include <tchar.h>
-
-// Plugin version string.
-extern const TCHAR* PluginVersionString;
-
-// Version of the file format.
-// Increment when making incompatible changes to the file format.
-const USHORT FileFormatVersion = 0x0001;
+bool check_for_update(
+    std::string&    version_string,
+    std::string&    publication_date,
+    std::string&    download_url);

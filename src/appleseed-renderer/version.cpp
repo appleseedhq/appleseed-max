@@ -26,17 +26,7 @@
 // THE SOFTWARE.
 //
 
-#pragma once
+// Interface header.
+#include "version.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"
-
-// Windows headers.
-#include <tchar.h>
-
-// Plugin version string.
-extern const TCHAR* PluginVersionString;
-
-// Version of the file format.
-// Increment when making incompatible changes to the file format.
-const USHORT FileFormatVersion = 0x0001;
+const TCHAR* PluginVersionString = _T("0.1.0-alpha");

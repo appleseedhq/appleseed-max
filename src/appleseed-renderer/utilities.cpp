@@ -29,17 +29,7 @@
 // Interface header.
 #include "utilities.h"
 
-std::string utf8_encode(const TCHAR* wstr)
-{
-    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, nullptr, 0, nullptr, nullptr);
-
-    std::string result(result_size - 1, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], -1, &result[0], result_size - 1, nullptr, nullptr);
-
-    return result;
-}
-
-std::string utf8_encode(const std::wstring& wstr)
+std::string wide_to_utf8(const std::wstring& wstr)
 {
     if (wstr.empty())
         return std::string();
@@ -53,7 +43,17 @@ std::string utf8_encode(const std::wstring& wstr)
     return result;
 }
 
-std::wstring utf8_decode(const std::string& str)
+std::string wide_to_utf8(const TCHAR* wstr)
+{
+    const int result_size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, nullptr, 0, nullptr, nullptr);
+
+    std::string result(result_size - 1, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wstr, -1, &result[0], result_size - 1, nullptr, nullptr);
+
+    return result;
+}
+
+std::wstring utf8_to_wide(const std::string& str)
 {
     if (str.empty())
         return std::wstring();
@@ -63,6 +63,16 @@ std::wstring utf8_decode(const std::string& str)
 
     std::wstring result(result_size, 0);
     MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, &result[0], result_size);
+
+    return result;
+}
+
+std::wstring utf8_to_wide(const char* str)
+{
+    const int result_size = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
+
+    std::wstring result(result_size - 1, 0);
+    MultiByteToWideChar(CP_UTF8, 0, str, -1, &result[0], result_size - 1);
 
     return result;
 }

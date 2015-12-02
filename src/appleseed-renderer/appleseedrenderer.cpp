@@ -324,7 +324,7 @@ int AppleseedRenderer::Render(
             progress_cb->SetTitle(_T("Writing Project To Disk..."));
         asr::ProjectFileWriter::write(
             project.ref(),
-            utf8_encode(m_settings.m_project_file_path).c_str());
+            wide_to_utf8(m_settings.m_project_file_path).c_str());
     }
 
     // Render the project.
@@ -373,11 +373,11 @@ IOResult AppleseedRenderer::Save(ISave* isave)
 {
     bool success = true;
 
-    isave->BeginChunk(CHUNK_FILE_FORMAT_VERSION);
-    success &= write(isave, FILE_FORMAT_VERSION);
+    isave->BeginChunk(ChunkFileFormatVersion);
+    success &= write(isave, FileFormatVersion);
     isave->EndChunk();
 
-    isave->BeginChunk(CHUNK_SETTINGS);
+    isave->BeginChunk(ChunkSettings);
     success &= m_settings.save(isave);
     isave->EndChunk();
 
@@ -398,14 +398,14 @@ IOResult AppleseedRenderer::Load(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case CHUNK_FILE_FORMAT_VERSION:
+          case ChunkFileFormatVersion:
             {
                 USHORT version;
                 result = read<USHORT>(iload, &version);
             }
             break;
 
-          case CHUNK_SETTINGS:
+          case ChunkSettings:
             result = m_settings.load(iload);
             break;
         }

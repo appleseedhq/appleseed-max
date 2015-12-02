@@ -31,21 +31,21 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
-const USHORT CHUNK_FILE_FORMAT_VERSION                      = 0x0001;
+const USHORT ChunkFileFormatVersion                 = 0x0001;
 
-const USHORT CHUNK_SETTINGS                                 = 0x1000;
+const USHORT ChunkSettings                          = 0x1000;
 
-const USHORT CHUNK_SETTINGS_IMAGESAMPLING                   = 0x1100;
-const USHORT CHUNK_SETTINGS_IMAGESAMPLING_PIXEL_SAMPLES     = 0x1110;
-const USHORT CHUNK_SETTINGS_IMAGESAMPLING_PASSES            = 0x1120;
+const USHORT ChunkSettingsImageSampling             = 0x1100;
+const USHORT ChunkSettingsImageSamplingPixelSamples = 0x1110;
+const USHORT ChunkSettingsImageSamplingPasses       = 0x1120;
 
-const USHORT CHUNK_SETTINGS_LIGHTING                        = 0x1200;
-const USHORT CHUNK_SETTINGS_LIGHTING_GI                     = 0x1210;
-const USHORT CHUNK_SETTINGS_LIGHTING_BOUNCES                = 0x1220;
+const USHORT ChunkSettingsLighting                  = 0x1200;
+const USHORT ChunkSettingsLightingGI                = 0x1210;
+const USHORT ChunkSettingsLightingBounces           = 0x1220;
 
-const USHORT CHUNK_SETTINGS_OUTPUT                          = 0x1300;
-const USHORT CHUNK_SETTINGS_OUTPUT_MODE                     = 0x1310;
-const USHORT CHUNK_SETTINGS_OUTPUT_PROJECT_FILE_PATH        = 0x1320;
+const USHORT ChunkSettingsOutput                    = 0x1300;
+const USHORT ChunkSettingsOutputMode                = 0x1310;
+const USHORT ChunkSettingsOutputProjectFilePath     = 0x1320;
 
-const USHORT CHUNK_SETTINGS_SYSTEM                          = 0x1400;
-const USHORT CHUNK_SETTINGS_SYSTEM_RENDERING_THREADS        = 0x1410;
+const USHORT ChunkSettingsSystem                    = 0x1400;
+const USHORT ChunkSettingsSystemRenderingThreads    = 0x1410;
