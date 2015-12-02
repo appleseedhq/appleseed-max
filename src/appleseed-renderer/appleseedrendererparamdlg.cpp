@@ -49,6 +49,7 @@
 // Standard headers.
 #include <cassert>
 #include <cstring>
+#include <future>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -61,7 +62,20 @@ namespace
     // Utilities.
     // ------------------------------------------------------------------------------------------------
 
-    bool get_save_project_filepath(HWND parentWnd, MSTR& filepath)
+    void set_label_text(const HWND parent_hwnd, const int control_id, const wchar_t* text)
+    {
+        SetDlgItemText(parent_hwnd, control_id, text);
+
+        const HWND control_hwnd = GetDlgItem(parent_hwnd, control_id);
+
+        RECT rect;
+        GetClientRect(control_hwnd, &rect);
+        InvalidateRect(control_hwnd, &rect, TRUE);
+        MapWindowPoints(control_hwnd, parent_hwnd, reinterpret_cast<POINT*>(&rect), 2);
+        RedrawWindow(parent_hwnd, &rect, nullptr, RDW_ERASE | RDW_INVALIDATE);
+    }
+
+    bool get_save_project_filepath(HWND parent_hwnd, MSTR& filepath)
     {
         FilterList filter;
         filter.Append(_T("Project Files (*.appleseed)"));
@@ -70,7 +84,13 @@ namespace
         filter.Append(_T("*.*"));
 
         MSTR initial_dir;
-        return GetCOREInterface14()->DoMaxSaveAsDialog(parentWnd, _T("Save Project As..."), filepath, initial_dir, filter);
+        return
+            GetCOREInterface14()->DoMaxSaveAsDialog(
+                parent_hwnd,
+                _T("Save Project As..."),
+                filepath,
+                initial_dir,
+                filter);
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -83,21 +103,21 @@ namespace
 
         virtual INT_PTR CALLBACK window_proc(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam) = 0;
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) = 0;
 
         static INT_PTR CALLBACK window_proc_entry(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam)
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam)
         {
-            switch (uMsg)
+            switch (umsg)
             {
                 case WM_INITDIALOG:
                 {
-                    PanelBase* panel = reinterpret_cast<PanelBase*>(lParam);
+                    PanelBase* panel = reinterpret_cast<PanelBase*>(lparam);
                     DLSetWindowLongPtr(hwnd, panel);
                     panel->init(hwnd);
                     return TRUE;
@@ -109,7 +129,7 @@ namespace
                 default:
                 {
                     PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hwnd);
-                    return panel->window_proc(hwnd, uMsg, wParam, lParam);
+                    return panel->window_proc(hwnd, umsg, wparam, lparam);
                 }
             }
         }
@@ -124,9 +144,12 @@ namespace
     {
         IRendParams*            m_rend_params;
         HWND                    m_rollup;
+        HWND                    m_button_download_hwnd;
         ICustButton*            m_button_download;
         bool                    m_update_available;
         std::wstring            m_download_url;
+
+        enum { WM_UPDATE_CHECK_DATA = WM_USER + 101 };
 
         explicit AboutPanel(
             IRendParams*        rend_params)
@@ -147,106 +170,75 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        void set_label_text(const HWND parent_hwnd, const int control_id, const wchar_t* text)
+        struct UpdateCheckData
         {
-            SetDlgItemText(parent_hwnd, control_id, text);
+            bool            m_update_available;
+            std::wstring    m_version_string;
+            std::wstring    m_download_url;
+        };
 
-            const HWND control_hwnd = GetDlgItem(parent_hwnd, control_id);
+        static void async_update_check(HWND hwnd)
+        {
+            std::auto_ptr<UpdateCheckData> data(new UpdateCheckData());
+            data->m_update_available = false;
 
-            RECT rect;
-            GetClientRect(control_hwnd, &rect);
-            InvalidateRect(control_hwnd, &rect, TRUE);
-            MapWindowPoints(control_hwnd, parent_hwnd, reinterpret_cast<POINT*>(&rect), 2);
-            RedrawWindow(parent_hwnd, &rect, nullptr, RDW_ERASE | RDW_INVALIDATE);
+            std::string version_string, publication_date, download_url;
+            if (check_for_update(version_string, publication_date, download_url))
+            {
+                const std::wstring wide_version_string = utf8_to_wide(version_string);
+                if (wide_version_string != std::wstring(PluginVersionString))
+                {
+                    data->m_update_available = true;
+                    data->m_version_string = wide_version_string;
+                    data->m_download_url = utf8_to_wide(download_url);
+                }
+            }
+
+            PostMessage(hwnd, WM_UPDATE_CHECK_DATA, reinterpret_cast<WPARAM>(data.release()), 0);
         }
 
         virtual void init(HWND hwnd) override
         {
-            const HWND download_button_hwnd = GetDlgItem(hwnd, IDC_BUTTON_DOWNLOAD);
-            m_button_download = GetICustButton(download_button_hwnd);
+            m_button_download_hwnd = GetDlgItem(hwnd, IDC_BUTTON_DOWNLOAD);
+            m_button_download = GetICustButton(m_button_download_hwnd);
+            ShowWindow(m_button_download_hwnd, SW_HIDE);
 
             // Display the version strings of the plugin and of appleseed itself.
             GetICustStatus(GetDlgItem(hwnd, IDC_TEXT_PLUGIN_VERSION))->SetText(PluginVersionString);
             GetICustStatus(GetDlgItem(hwnd, IDC_TEXT_APPLESEED_VERSION))->SetText(
                 utf8_to_wide(asf::Appleseed::get_lib_version()).c_str());
 
-            // Check if an update is available.
-            m_update_available = false;
-            std::string new_version_string, publication_date, download_url;
-            if (check_for_update(new_version_string, publication_date, download_url))
-            {
-                const std::wstring new_version_wstring = utf8_to_wide(new_version_string);
-                m_update_available = (new_version_wstring != std::wstring(PluginVersionString));
-            }
-
-            // Update the controls accordingly.
-            if (m_update_available)
-            {
-                m_download_url = utf8_to_wide(download_url);
-                std::wstringstream sstr;
-                sstr << "UPDATE: Version " << utf8_to_wide(new_version_string) << " available.";
-                set_label_text(hwnd, IDC_STATIC_NEW_VERSION, sstr.str().c_str());
-            }
-            else
-            {
-                set_label_text(hwnd, IDC_STATIC_NEW_VERSION, L"The plugin is up-to-date.");
-                ShowWindow(download_button_hwnd, SW_HIDE);
-            }
-
-#if 0
-            const HWND syslink_hwnd = GetDlgItem(hwnd, IDC_SYSLINK_UPDATE_INFO);
-            LITEM item = { 0 };
-            item.iLink = 0;
-            item.mask = LIF_ITEMINDEX | LIF_STATE;
-            item.state = LIS_DEFAULTCOLORS;
-            item.stateMask = LIS_DEFAULTCOLORS;
-            SendMessage(syslink_hwnd, LM_SETITEM, 0, (LPARAM)&item);
-#endif
+            // Asynchronously check if an update is available.
+            std::async(std::launch::async, async_update_check, hwnd);
         }
 
         virtual INT_PTR CALLBACK window_proc(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam) override
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) override
         {
-            switch (uMsg)
+            switch (umsg)
             {
-#if 0
-                case WM_CTLCOLORSTATIC:
+                case WM_UPDATE_CHECK_DATA:
                 {
-                    const HDC hdc = reinterpret_cast<HDC>(wParam);
-                    SetTextColor(hdc, RGB(255, 0, 0));
-                    SetBkColor(hdc, GetSysColor(COLOR_BTNFACE));
-                    return GetSysColorBrush(COLOR_BTNFACE) != nullptr ? TRUE : FALSE;
+                    std::auto_ptr<UpdateCheckData> data(reinterpret_cast<UpdateCheckData*>(wparam));
+                    if (data->m_update_available)
+                    {
+                        std::wstringstream sstr;
+                        sstr << "UPDATE: Version " << data->m_version_string << " available.";
+                        set_label_text(hwnd, IDC_STATIC_NEW_VERSION, sstr.str().c_str());
+                        ShowWindow(m_button_download_hwnd, SW_SHOW);
+                    }
+                    else
+                    {
+                        set_label_text(hwnd, IDC_STATIC_NEW_VERSION, L"The plugin is up-to-date.");
+                    }
+                    return TRUE;
                 }
 
-                case WM_NOTIFY:
-                    switch (((LPNMHDR)lParam)->code)
-                    {
-                        case NM_CLICK:
-                        case NM_RETURN:
-                        {
-                            if (((LPNMHDR)lParam)->hwndFrom == GetDlgItem(hwnd, IDC_SYSLINK_UPDATE_INFO))
-                            {
-                                ShellExecute(
-                                    hwnd,
-                                    _T("open"),
-                                    _T("https://github.com/appleseedhq/appleseed-max/releases/download/0.1.0-alpha/appleseed-max2015-0.1.0-alpha.zip"),
-                                    nullptr,        // application parameters
-                                    nullptr,        // working directory
-                                    SW_SHOWNORMAL);
-                            }
-                            return TRUE;
-                        }
-
-                        default:
-                            return FALSE;
-                    }
-#endif
-
                 case WM_COMMAND:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_BUTTON_DOWNLOAD:
                         {
@@ -255,8 +247,8 @@ namespace
                                 hwnd,
                                 _T("open"),
                                 m_download_url.c_str(),
-                                nullptr,        // application parameters
-                                nullptr,        // working directory
+                                nullptr,            // application parameters
+                                nullptr,            // working directory
                                 SW_SHOWNORMAL);
                             return TRUE;
                         }
@@ -331,14 +323,14 @@ namespace
 
         virtual INT_PTR CALLBACK window_proc(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam) override
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) override
         {
-            switch (uMsg)
+            switch (umsg)
             {
                 case CC_SPINNER_CHANGE:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_SPINNER_PIXELSAMPLES:
                             m_settings.m_pixel_samples = m_spinner_pixelsamples->GetIVal();
@@ -414,14 +406,14 @@ namespace
 
         virtual INT_PTR CALLBACK window_proc(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam) override
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) override
         {
-            switch (uMsg)
+            switch (umsg)
             {
                 case WM_COMMAND:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_CHECK_GI:
                             m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
@@ -433,7 +425,7 @@ namespace
                     }
 
                 case CC_SPINNER_CHANGE:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_SPINNER_BOUNCES:
                             m_settings.m_bounces = m_spinner_bounces->GetIVal();
@@ -513,14 +505,14 @@ namespace
 
         virtual INT_PTR CALLBACK window_proc(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam) override
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) override
         {
-            switch (uMsg)
+            switch (umsg)
             {
                 case WM_CUSTEDIT_ENTER:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_TEXT_PROJECT_FILEPATH:
                             m_text_project_filepath->GetText(m_settings.m_project_file_path);
@@ -531,7 +523,7 @@ namespace
                     }
 
                 case WM_COMMAND:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_RADIO_RENDER:
                             m_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
@@ -616,14 +608,14 @@ namespace
 
         virtual INT_PTR CALLBACK window_proc(
             HWND                hwnd,
-            UINT                uMsg,
-            WPARAM              wParam,
-            LPARAM              lParam) override
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) override
         {
-            switch (uMsg)
+            switch (umsg)
             {
                 case CC_SPINNER_CHANGE:
-                    switch (LOWORD(wParam))
+                    switch (LOWORD(wparam))
                     {
                         case IDC_SPINNER_RENDERINGTHREADS:
                             m_settings.m_rendering_threads = m_spinner_renderingthreads->GetIVal();
