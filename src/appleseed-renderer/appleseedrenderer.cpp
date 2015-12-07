@@ -423,7 +423,6 @@ IOResult AppleseedRenderer::Load(ILoad* iload)
 
 void AppleseedRenderer::clear()
 {
-    m_settings = RendererSettings::defaults();
     m_scene = nullptr;
     m_view_node = nullptr;
     m_default_lights.clear();
