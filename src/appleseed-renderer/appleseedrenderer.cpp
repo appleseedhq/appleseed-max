@@ -65,6 +65,11 @@ namespace
     const TCHAR* AppleseedRendererClassName = _T("appleseed Renderer");
 }
 
+
+//
+// AppleseedRenderer class implementation.
+//
+
 AppleseedRenderer::AppleseedRenderer()
   : m_settings(RendererSettings::defaults())
 {

@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+// Interface header.
+#include "main.h"
 
 // 3ds Max headers.
 #include <max.h>

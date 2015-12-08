@@ -51,7 +51,7 @@ extern "C"
     __declspec(dllexport)
     const TCHAR* LibDescription()
     {
-        return _T("appleseed Plugin");
+        return _T("appleseed Renderer");
     }
 
     __declspec(dllexport)
@@ -77,7 +77,7 @@ extern "C"
     __declspec(dllexport)
     ULONG LibVersion()
     {
-        return VERSION_3DSMAX; 
+        return VERSION_3DSMAX;
     }
 
     __declspec(dllexport)
