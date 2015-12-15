@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-renderer", "appleseed-renderer\appleseed-renderer.vcxproj", "{62C41566-DBCB-49D3-943A-4DD53222269E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-stdmat", "appleseed-stdmat\appleseed-stdmat.vcxproj", "{7E9823AC-C312-400A-AF9C-19B6FB10649D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -13,6 +15,10 @@ Global
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Debug|x64.Build.0 = Debug|x64
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Release|x64.ActiveCfg = Release|x64
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Release|x64.Build.0 = Release|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Debug|x64.ActiveCfg = Debug|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Debug|x64.Build.0 = Debug|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Release|x64.ActiveCfg = Release|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
