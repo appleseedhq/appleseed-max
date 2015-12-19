@@ -42,12 +42,12 @@
 
 // 3ds Max headers.
 #include <3dsmaxdlport.h>
+#include <assert1.h>
 
 // Windows headers.
 #include <tchar.h>
 
 // Standard headers.
-#include <cassert>
 #include <cstring>
 #include <future>
 #include <memory>
@@ -242,7 +242,7 @@ namespace
                     {
                         case IDC_BUTTON_DOWNLOAD:
                         {
-                            assert(m_update_available);
+                            DbgAssert(m_update_available);
                             ShellExecute(
                                 hwnd,
                                 _T("open"),

@@ -41,11 +41,11 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include <assert1.h>
 #include <bitmap.h>
 
 // Standard headers.
 #include <algorithm>
-#include <cassert>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -164,9 +164,9 @@ void TileCallback::post_render_tile(
     const asf::Image& image = frame->image();
     const asf::CanvasProperties& props = image.properties();
 
-    assert(props.m_canvas_width == m_bitmap->Width());
-    assert(props.m_canvas_height == m_bitmap->Height());
-    assert(props.m_channel_count == 4);
+    DbgAssert(props.m_canvas_width == m_bitmap->Width());
+    DbgAssert(props.m_canvas_height == m_bitmap->Height());
+    DbgAssert(props.m_channel_count == 4);
 
     // Blit the tile to the destination bitmap.
     blit_tile(*frame, tile_x, tile_y);
@@ -187,9 +187,9 @@ void TileCallback::post_render(
 {
     const asf::CanvasProperties& props = frame->image().properties();
 
-    assert(props.m_canvas_width == m_bitmap->Width());
-    assert(props.m_canvas_height == m_bitmap->Height());
-    assert(props.m_channel_count == 4);
+    DbgAssert(props.m_canvas_width == m_bitmap->Width());
+    DbgAssert(props.m_canvas_height == m_bitmap->Height());
+    DbgAssert(props.m_channel_count == 4);
 
     // Blit all tiles.
     for (size_t y = 0; y < props.m_tile_count_y; ++y)

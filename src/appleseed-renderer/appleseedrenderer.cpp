@@ -50,10 +50,10 @@
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
+#include <assert1.h>
 #include <bitmap.h>
 
 // Standard headers.
-#include <cassert>
 #include <cstddef>
 
 namespace asf = foundation;
@@ -171,12 +171,12 @@ namespace
 
           case LIGHT_CLASS_ID:
             {
-                assert(!"Not implemented yet.");
+                DbgAssert(!"Not implemented yet.");
             }
             break;
 
           default:
-            assert(!"Unexpected super class ID for camera.");
+            DbgAssert(!"Unexpected super class ID for camera.");
         }
     }
 

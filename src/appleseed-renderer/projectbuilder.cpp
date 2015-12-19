@@ -55,6 +55,7 @@
 #include "foundation/utility/iostreamop.h"
 
 // 3ds Max headers.
+#include <assert1.h>
 #include <bitmap.h>
 #include <genlight.h>
 #include <iInstanceMgr.h>
@@ -63,7 +64,6 @@
 #include <triobj.h>
 
 // Standard headers.
-#include <cassert>
 #include <cstddef>
 #include <limits>
 #include <map>
@@ -130,7 +130,7 @@ namespace
         }
         else
         {
-            assert(view_params.projType == PROJ_PARALLEL);
+            DbgAssert(view_params.projType == PROJ_PARALLEL);
 
             const float ViewDefaultWidth = 400.0f;
             const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
@@ -178,7 +178,7 @@ namespace
         const TimeValue         time,
         bool&                   must_delete)
     {
-        assert(object_state.obj);
+        DbgAssert(object_state.obj);
 
         must_delete = false;
 
