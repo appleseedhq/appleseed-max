@@ -57,12 +57,21 @@ class AppleseedStdMat
 
     AppleseedStdMat();
 
+    virtual void DeleteThis() override;
+    virtual Class_ID ClassID() override;
+
+    virtual void SetReference(int i, RefTargetHandle rtarg) override;
+    virtual RefTargetHandle GetReference(int i) override;
     virtual RefResult NotifyRefChanged(
         const Interval&     changeInt,
         RefTargetHandle     hTarget,
         PartID&             partID,
         RefMessage          message,
         BOOL                propagate) override;
+
+    virtual int NumParamBlocks() override;
+    virtual IParamBlock2* GetParamBlock(int i) override;
+    virtual IParamBlock2* GetParamBlockByID(BlockID id) override;
 
     virtual void Update(TimeValue t, Interval& valid) override;
     virtual void Reset() override;
@@ -82,6 +91,9 @@ class AppleseedStdMat
     virtual void SetSpecular(Color c, TimeValue t) override;
     virtual void SetShininess(float v, TimeValue t) override;
     virtual void Shade(ShadeContext& sc) override;
+
+  private:
+    IParamBlock2* m_pblock;
 };
 
 
@@ -114,7 +126,8 @@ class AppleseedStdMatClassDesc
     virtual Class_ID ClassID() override;
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
-    FPInterface* GetInterface(Interface_ID id);
+    virtual FPInterface* GetInterface(Interface_ID id) override;
+    virtual HINSTANCE HInstance();
 
   private:
     AppleseedStdmatBrowserEntryInfo m_browser_entry_info;

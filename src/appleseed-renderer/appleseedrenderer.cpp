@@ -30,12 +30,12 @@
 #include "appleseedrenderer.h"
 
 // appleseed-max headers.
+#include "common/utilities.h"
 #include "appleseedrendererparamdlg.h"
 #include "datachunks.h"
 #include "projectbuilder.h"
 #include "renderercontroller.h"
 #include "tilecallback.h"
-#include "utilities.h"
 #include "version.h"
 
 // appleseed.renderer headers.

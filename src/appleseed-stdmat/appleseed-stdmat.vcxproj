@@ -60,7 +60,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;DEBUG;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\;C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-debug\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-debug\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
     </ClCompile>
@@ -85,7 +85,7 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"</Comma
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\;C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-release\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-release\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -116,10 +116,18 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"</Comma
   <ItemGroup>
     <ClInclude Include="appleseedstdmat.h" />
     <ClInclude Include="appleseedstdmatparamdlg.h" />
+    <ClInclude Include="datachunks.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseed-stdmat.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\common\common.vcxproj">
+      <Project>{d683de6a-baae-43fc-9f51-1af521393949}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

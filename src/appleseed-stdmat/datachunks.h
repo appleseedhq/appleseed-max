@@ -26,30 +26,11 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "main.h"
+#pragma once
 
-// 3ds Max headers.
-#include <max.h>
+// appleseed.foundation headers.
+#include "foundation/platform/windows.h"
 
-HINSTANCE g_module;
+const USHORT ChunkFileFormatVersion                 = 0x0001;
 
-
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
-{
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        g_module = module;
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-    }
-
-    return TRUE;
-}
+const USHORT ChunkMtlBase                           = 0x1000;

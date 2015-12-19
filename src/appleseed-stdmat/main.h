@@ -26,30 +26,10 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "main.h"
+#pragma once
 
-// 3ds Max headers.
-#include <max.h>
+// appleseed.foundation headers.
+#include "foundation/platform/windows.h"    // include before 3ds Max headers
 
-HINSTANCE g_module;
-
-
-//
-// DLL entry point.
-//
-
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
-{
-    if (reason == DLL_PROCESS_ATTACH)
-    {
-        g_module = module;
-        MaxSDK::Util::UseLanguagePackLocale();
-        DisableThreadLibraryCalls(module);
-    }
-
-    return TRUE;
-}
+// DLL instance handle of the plugin.
+extern HINSTANCE g_module;

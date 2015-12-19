@@ -30,7 +30,7 @@
 #include "updatechecker.h"
 
 // RapidJSON headers.
-#include "rapidjson/document.h"
+#include "3rdparty/rapidjson/document.h"
 
 // Windows headers.
 #include <Windows.h>

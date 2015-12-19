@@ -10,6 +10,9 @@
     <ClInclude Include="appleseedstdmat.h" />
     <ClInclude Include="appleseedstdmatparamdlg.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="datachunks.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseed-stdmat.rc" />

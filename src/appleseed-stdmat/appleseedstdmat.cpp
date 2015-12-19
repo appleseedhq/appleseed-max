@@ -30,8 +30,12 @@
 #include "appleseedstdmat.h"
 
 // appleseed-max headers.
+#include "common/utilities.h"
 #include "appleseedstdmatparamdlg.h"
+#include "datachunks.h"
+#include "main.h"
 #include "resource.h"
+#include "version.h"
 
 // 3ds Max headers.
 #include <color.h>
@@ -56,16 +60,24 @@ AppleseedStdMatClassDesc g_appleseed_stdmat_classdesc;
 
 namespace
 {
+    enum { ParamBlockIdStdMat };
+    enum { ParamBlockRefStdMat };
+
+    enum
+    {
+        ParamIdBaseColor
+    };
+
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
-        0,                                          // parameter block's ID
-        _T("appleseedStdMatParams"),                // internal name
+        ParamBlockIdStdMat,                         // parameter block's ID
+        _T("appleseedStdMatParams"),                // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_stdmat_classdesc,              // class descriptor
         P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
-        0,                                          // parameter block's reference number
+        ParamBlockRefStdMat,                        // parameter block's reference number
 
         // --- P_AUTO_UI arguments ---
         IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
@@ -75,6 +87,10 @@ namespace
         nullptr,                                    // user dialog procedure
 
         // --- Parameters specifications ---
+        ParamIdBaseColor, _T("base_color"), TYPE_RGBA, 0, IDS_BASE_COLOR,
+            p_default, Color(0.9f, 0.9f, 0.9f),
+            p_ui, TYPE_COLORSWATCH, IDC_COLOR_BASE,
+        p_end,
 
         // --- The end ---
         p_end);
@@ -90,14 +106,54 @@ AppleseedStdMat::AppleseedStdMat()
     g_appleseed_stdmat_classdesc.MakeAutoParamBlocks(this);
 }
 
-RefResult AppleseedStdMat::NotifyRefChanged(
-    const Interval&         changeInt,
-    RefTargetHandle         hTarget,
-    PartID&                 partID,
-    RefMessage              message,
-    BOOL                    propagate)
+void AppleseedStdMat::DeleteThis()
 {
-    return REF_SUCCEED;
+    delete this;
+}
+
+Class_ID AppleseedStdMat::ClassID()
+{
+    return get_class_id();
+}
+
+void AppleseedStdMat::SetReference(int i, RefTargetHandle rtarg)
+{
+    if (i == ParamBlockRefStdMat)
+    {
+        IParamBlock2* pblock = dynamic_cast<IParamBlock2*>(rtarg);
+        if (pblock)
+            m_pblock = pblock;
+    }
+}
+
+RefTargetHandle AppleseedStdMat::GetReference(int i)
+{
+    return i == ParamBlockRefStdMat ? m_pblock : nullptr;
+}
+
+RefResult AppleseedStdMat::NotifyRefChanged(
+    const Interval&     changeInt,
+    RefTargetHandle     hTarget,
+    PartID&             partID,
+    RefMessage          message,
+    BOOL                propagate)
+{
+    return REF_DONTCARE;
+}
+
+int AppleseedStdMat::NumParamBlocks()
+{
+    return 1;
+}
+
+IParamBlock2* AppleseedStdMat::GetParamBlock(int i)
+{
+    return i == 0 ? m_pblock : nullptr;
+}
+
+IParamBlock2* AppleseedStdMat::GetParamBlockByID(BlockID id)
+{
+    return id == m_pblock->ID() ? m_pblock : nullptr;
 }
 
 void AppleseedStdMat::Update(TimeValue t, Interval& valid)
@@ -123,7 +179,13 @@ IOResult AppleseedStdMat::Save(ISave* isave)
 {
     bool success = true;
 
-    // todo: implement.
+    isave->BeginChunk(ChunkFileFormatVersion);
+    success &= write(isave, FileFormatVersion);
+    isave->EndChunk();
+
+    isave->BeginChunk(ChunkMtlBase);
+    success &= MtlBase::Save(isave) == IO_OK;
+    isave->EndChunk();
 
     return success ? IO_OK : IO_ERROR;
 }
@@ -132,7 +194,35 @@ IOResult AppleseedStdMat::Load(ILoad* iload)
 {
     IOResult result = IO_OK;
 
-    // todo: implement.
+    while (true)
+    {
+        result = iload->OpenChunk();
+        if (result == IO_END)
+            return IO_OK;
+        if (result != IO_OK)
+            break;
+
+        switch (iload->CurChunkID())
+        {
+          case ChunkFileFormatVersion:
+            {
+                USHORT version;
+                result = read<USHORT>(iload, &version);
+            }
+            break;
+
+          case ChunkMtlBase:
+            result = MtlBase::Load(iload);
+            break;
+        }
+
+        if (result != IO_OK)
+            break;
+
+        result = iload->CloseChunk();
+        if (result != IO_OK)
+            break;
+    }
 
     return result;
 }
@@ -255,4 +345,9 @@ FPInterface* AppleseedStdMatClassDesc::GetInterface(Interface_ID id)
         return &m_browser_entry_info;
 
     return ClassDesc2::GetInterface(id);
+}
+
+HINSTANCE AppleseedStdMatClassDesc::HInstance()
+{
+    return g_module;
 }
