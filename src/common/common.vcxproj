@@ -11,9 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="appleseedmtl.cpp" />
     <ClCompile Include="utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="appleseedmtl.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

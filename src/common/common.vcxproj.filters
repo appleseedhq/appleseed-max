@@ -2,8 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="appleseedmtl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utilities.h" />
+    <ClInclude Include="appleseedmtl.h" />
   </ItemGroup>
 </Project>

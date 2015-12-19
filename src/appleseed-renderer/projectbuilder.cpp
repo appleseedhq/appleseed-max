@@ -30,6 +30,7 @@
 #include "projectbuilder.h"
 
 // appleseed-max headers.
+#include "common/appleseedmtl.h"
 #include "common/utilities.h"
 #include "maxsceneentities.h"
 
@@ -323,11 +324,14 @@ namespace
         return true;
     }
 
+    typedef std::map<Mtl*, std::string> MaterialMap;
+
     void create_object_instance(
         asr::Assembly&          assembly,
         INode*                  instance_node,
         const std::string&      object_name,
-        const TimeValue         time)
+        const TimeValue         time,
+        MaterialMap&            material_map)
     {
         // Compute a unique name for this instance.
         const std::string instance_name =
@@ -338,17 +342,47 @@ namespace
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(instance_node->GetObjTMAfterWSM(time)));
 
-        // Create a material for this instance.
-        const std::string material_name =
-            make_unique_name(assembly.materials(), instance_name + "_mat");
-        add_default_material(
-            assembly,
-            material_name,
-            to_color3f(Color(instance_node->GetWireColor())));
-
         // Material-slots to materials mappings.
         asf::StringDictionary material_mappings;
-        material_mappings.insert("material", material_name);
+
+        Mtl* mtl = instance_node->GetMtl();
+        if (mtl)
+        {
+            // The instance has a material.
+            AppleseedMtl* appleseed_mtl =
+                static_cast<AppleseedMtl*>(mtl->GetInterface(AppleseedMtl::interface_id()));
+            if (appleseed_mtl)
+            {
+                // The instance has an appleseed material.
+                const MaterialMap::const_iterator it = material_map.find(mtl);
+                if (it == material_map.end())
+                {
+                    // The appleseed material does not exist yet, let the material plugin create it.
+                    const std::string material_name =
+                        make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()));
+                    assembly.materials().insert(
+                        appleseed_mtl->create_material(material_name.c_str()));
+                    material_map.insert(std::make_pair(mtl, material_name));
+                    material_mappings.insert("material", material_name);
+                }
+                else
+                {
+                    // The appleseed material exists.
+                    material_mappings.insert("material", it->second);
+                }
+            }
+        }
+        else
+        {
+            // The instance does not have a material: create a new default material.
+            const std::string material_name =
+                make_unique_name(assembly.materials(), instance_name + "_mat");
+            add_default_material(
+                assembly,
+                material_name,
+                to_color3f(Color(instance_node->GetWireColor())));
+            material_mappings.insert("material", material_name);
+        }
 
         // Create the instance and insert it into the assembly.
         assembly.object_instances().insert(
@@ -374,16 +408,17 @@ namespace
         asr::Assembly&          assembly,
         INode*                  node,
         const TimeValue         time,
-        ObjectMap&              objects)
+        ObjectMap&              object_map,
+        MaterialMap&            material_map)
     {
         // Retrieve the geometrical object referenced by this node.
         Object* object = node->GetObjectRef();
 
         // Check if we already generated the corresponding appleseed object.
+        const ObjectMap::const_iterator it = object_map.find(object);
         ObjectInfo object_info;
-        const ObjectMap::const_iterator it = objects.find(object);
 
-        if (it == objects.end())
+        if (it == object_map.end())
         {
             // The appleseed object does not exist yet, create it.
             object_info.m_valid =
@@ -392,7 +427,7 @@ namespace
                     node,
                     time,
                     object_info.m_name);
-            objects.insert(std::make_pair(object, object_info));
+            object_map.insert(std::make_pair(object, object_info));
         }
         else
         {
@@ -407,7 +442,8 @@ namespace
                 assembly,
                 node,
                 object_info.m_name,
-                time);
+                time,
+                material_map);
         }
     }
 
@@ -416,10 +452,11 @@ namespace
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
-        ObjectMap objects;
+        ObjectMap object_map;
+        MaterialMap material_map;
 
         for (const auto& object : entities.m_objects)
-            add_object(assembly, object, time, objects);
+            add_object(assembly, object, time, object_map, material_map);
     }
 
     void add_omni_light(

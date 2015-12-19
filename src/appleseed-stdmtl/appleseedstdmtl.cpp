@@ -37,6 +37,10 @@
 #include "resource.h"
 #include "version.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/material.h"
+#include "renderer/api/utility.h"
+
 // 3ds Max headers.
 #include <color.h>
 #include <interval.h>
@@ -45,6 +49,9 @@
 
 // Windows headers.
 #include <tchar.h>
+
+namespace asf = foundation;
+namespace asr = renderer;
 
 namespace
 {
@@ -112,9 +119,9 @@ void AppleseedStdMtl::DeleteThis()
     delete this;
 }
 
-Class_ID AppleseedStdMtl::ClassID()
+void AppleseedStdMtl::GetClassName(TSTR& s)
 {
-    return get_class_id();
+    s = _T("appleseedStdMtl");
 }
 
 SClass_ID AppleseedStdMtl::SuperClassID()
@@ -122,9 +129,16 @@ SClass_ID AppleseedStdMtl::SuperClassID()
     return MATERIAL_CLASS_ID;
 }
 
-void AppleseedStdMtl::GetClassName(TSTR& s)
+Class_ID AppleseedStdMtl::ClassID()
 {
-    s = _T("appleseedStdMtl");
+    return get_class_id();
+}
+
+void* AppleseedStdMtl::GetInterface(ULONG id)
+{
+    return
+        id == AppleseedMtl::interface_id() ? static_cast<AppleseedMtl*>(this) :
+        Mtl::GetInterface(id);
 }
 
 int AppleseedStdMtl::NumSubs()
@@ -319,6 +333,16 @@ void AppleseedStdMtl::SetShininess(float v, TimeValue t)
 
 void AppleseedStdMtl::Shade(ShadeContext& sc)
 {
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char* name)
+{
+    auto material = asr::DisneyMaterialFactory().create(name, asr::ParamArray());
+    auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
+
+    disney_material->add_new_default_layer();
+
+    return material;
 }
 
 

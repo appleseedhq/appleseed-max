@@ -28,8 +28,12 @@
 
 #pragma once
 
+// appleseed-max headers.
+#include "common/appleseedmtl.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
+#include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
 #include <IMaterialBrowserEntryInfo.h>
@@ -41,6 +45,8 @@
 #undef base_type
 
 // Forward declarations.
+namespace renderer  { class Material; }
+class BaseInterface;
 class Bitmap;
 class Color;
 class FPInterface;
@@ -51,6 +57,7 @@ class ShadeContext;
 
 class AppleseedStdMtl
   : public Mtl
+  , public AppleseedMtl
 {
   public:
     static Class_ID get_class_id();
@@ -58,11 +65,12 @@ class AppleseedStdMtl
     // Constructor.
     AppleseedStdMtl();
 
-    // Animatable base class.
+    // Animatable methods.
     virtual void DeleteThis() override;
-    virtual Class_ID ClassID() override;
-    virtual SClass_ID SuperClassID() override;
     virtual void GetClassName(TSTR& s) override;
+    virtual SClass_ID SuperClassID() override;
+    virtual Class_ID ClassID() override;
+    virtual void* GetInterface(ULONG id) override;
     virtual int NumSubs() override;
     virtual Animatable* SubAnim(int i) override;
     virtual TSTR SubAnimName(int i) override;
@@ -71,7 +79,7 @@ class AppleseedStdMtl
     virtual IParamBlock2* GetParamBlock(int i) override;
     virtual IParamBlock2* GetParamBlockByID(BlockID id) override;
 
-    // ReferenceMaker base class.
+    // ReferenceMaker methods.
     virtual int NumRefs() override;
     virtual RefTargetHandle GetReference(int i) override;
     virtual void SetReference(int i, RefTargetHandle rtarg) override;
@@ -82,10 +90,10 @@ class AppleseedStdMtl
         RefMessage          message,
         BOOL                propagate) override;
 
-    // ReferenceTarget base class.
+    // ReferenceTarget methods.
     virtual RefTargetHandle Clone(RemapDir &remap) override;
 
-    // MtlBase base class.
+    // MtlBase methods.
     virtual void Update(TimeValue t, Interval& valid) override;
     virtual void Reset() override;
     virtual Interval Validity(TimeValue t) override;
@@ -93,7 +101,7 @@ class AppleseedStdMtl
     virtual IOResult Save(ISave* isave) override;
     virtual IOResult Load(ILoad* iload) override;
 
-    // Mtl base class.
+    // Mtl methods.
     virtual Color GetAmbient(int mtlNum, BOOL backFace) override;
     virtual Color GetDiffuse(int mtlNum, BOOL backFace) override;
     virtual Color GetSpecular(int mtlNum, BOOL backFace) override;
@@ -105,6 +113,9 @@ class AppleseedStdMtl
     virtual void SetSpecular(Color c, TimeValue t) override;
     virtual void SetShininess(float v, TimeValue t) override;
     virtual void Shade(ShadeContext& sc) override;
+
+    // AppleseedMtl methods.
+    virtual foundation::auto_release_ptr<renderer::Material> create_material(const char* name) override;
 
   private:
     IParamBlock2* m_pblock;
