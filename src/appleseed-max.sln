@@ -8,7 +8,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-renderer", "apple
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949} = {D683DE6A-BAAE-43FC-9F51-1AF521393949}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-stdmat", "appleseed-stdmat\appleseed-stdmat.vcxproj", "{7E9823AC-C312-400A-AF9C-19B6FB10649D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-stdmtl", "appleseed-stdmtl\appleseed-stdmtl.vcxproj", "{7E9823AC-C312-400A-AF9C-19B6FB10649D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949} = {D683DE6A-BAAE-43FC-9F51-1AF521393949}
 	EndProjectSection

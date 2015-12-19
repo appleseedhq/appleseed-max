@@ -3,18 +3,18 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
-    <ClCompile Include="appleseedstdmat.cpp" />
-    <ClCompile Include="appleseedstdmatparamdlg.cpp" />
+    <ClCompile Include="appleseedstdmtl.cpp" />
+    <ClCompile Include="appleseedstdmtlparamdlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="appleseedstdmat.h" />
-    <ClInclude Include="appleseedstdmatparamdlg.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="datachunks.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="appleseedstdmtl.h" />
+    <ClInclude Include="appleseedstdmtlparamdlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="appleseed-stdmat.rc" />
+    <ResourceCompile Include="appleseed-stdmtl.rc" />
   </ItemGroup>
 </Project>

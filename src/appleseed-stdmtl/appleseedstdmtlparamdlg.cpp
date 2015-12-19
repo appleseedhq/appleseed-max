@@ -26,49 +26,48 @@
 // THE SOFTWARE.
 //
 
+// Interface header.
+#include "appleseedstdmtlparamdlg.h"
+
 // appleseed-max headers.
-#include "appleseedstdmat.h"
+#include "appleseedstdmtl.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// 3ds Max headers.
-#include <plugapi.h>
-
-// Windows headers.
-#include <tchar.h>
-
-extern "C"
+AppleseedStdMtlParamDlg::AppleseedStdMtlParamDlg(
+    AppleseedStdMtl*    mtl,
+    HWND                hwMtlEdit,
+    IMtlParams*         imp)
+  : m_mtl(mtl)
 {
-    __declspec(dllexport)
-    const TCHAR* LibDescription()
-    {
-        return _T("appleseed Standard Material");
-    }
+}
 
-    __declspec(dllexport)
-    int LibNumberClasses()
-    {
-        return 1;
-    }
+Class_ID AppleseedStdMtlParamDlg::ClassID()
+{
+    return AppleseedStdMtl::get_class_id();
+}
 
-    __declspec(dllexport)
-    ClassDesc2* LibClassDesc(int i)
-    {
-        switch (i)
-        {
-          // Make sure to update LibNumberClasses() if you add classes.
-          case 0:
-            return &g_appleseed_stdmat_classdesc;
+void AppleseedStdMtlParamDlg::SetThing(ReferenceTarget* m)
+{
+    m_mtl = static_cast<AppleseedStdMtl*>(m);
+}
 
-          default:
-            return nullptr;
-        }
-    }
+ReferenceTarget* AppleseedStdMtlParamDlg::GetThing()
+{
+    return m_mtl;
+}
 
-    __declspec(dllexport)
-    ULONG LibVersion()
-    {
-        return VERSION_3DSMAX;
-    }
+void AppleseedStdMtlParamDlg::SetTime(TimeValue t)
+{
+}
+
+void AppleseedStdMtlParamDlg::ReloadDialog()
+{
+}
+
+void AppleseedStdMtlParamDlg::DeleteThis()
+{
+    delete this;
+}
+
+void AppleseedStdMtlParamDlg::ActivateDlg(BOOL onOff)
+{
 }

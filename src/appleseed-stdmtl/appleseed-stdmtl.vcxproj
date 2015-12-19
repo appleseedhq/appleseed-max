@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7E9823AC-C312-400A-AF9C-19B6FB10649D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>appleseedstdmat</RootNamespace>
+    <RootNamespace>appleseedstdmtl</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -108,21 +108,21 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="appleseedstdmat.cpp" />
-    <ClCompile Include="appleseedstdmatparamdlg.cpp" />
+    <ClCompile Include="appleseedstdmtl.cpp" />
+    <ClCompile Include="appleseedstdmtlparamdlg.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="appleseedstdmat.h" />
-    <ClInclude Include="appleseedstdmatparamdlg.h" />
+    <ClInclude Include="appleseedstdmtl.h" />
+    <ClInclude Include="appleseedstdmtlparamdlg.h" />
     <ClInclude Include="datachunks.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="appleseed-stdmat.rc" />
+    <ResourceCompile Include="appleseed-stdmtl.rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
