@@ -123,6 +123,13 @@ class AppleseedStdMtl
   private:
     IParamBlock2*   m_pblock;
     Color           m_base_color;
+    float           m_metallic;
+    float           m_specular;
+    float           m_specular_tint;
+    float           m_anisotropic;
+    float           m_roughness;
+    float           m_clearcoat;
+    float           m_clearcoat_gloss;
 };
 
 

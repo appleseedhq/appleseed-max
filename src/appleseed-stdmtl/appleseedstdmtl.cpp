@@ -72,10 +72,17 @@ namespace
 
     enum
     {
-        ParamIdBaseColor
+        ParamIdBaseColor,
+        ParamIdMetallic,
+        ParamIdSpecular,
+        ParamIdSpecularTint,
+        ParamIdAnisotropic,
+        ParamIdRoughness,
+        ParamIdClearcoat,
+        ParamIdClearcoatGloss
     };
 
-    ParamBlockDesc2 g_block_desc(
+    const ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdStdMtl,                         // parameter block's ID
         _T("appleseedStdMtlParams"),                // internal parameter block's name
@@ -94,9 +101,45 @@ namespace
         nullptr,                                    // user dialog procedure
 
         // --- Parameters specifications ---
-        ParamIdBaseColor, _T("base_color"), TYPE_RGBA, 0, IDS_BASE_COLOR,
+
+        ParamIdBaseColor, _T("base_color"), TYPE_RGBA, P_ANIMATABLE, IDS_BASE_COLOR,
             p_default, Color(0.9f, 0.9f, 0.9f),
             p_ui, TYPE_COLORSWATCH, IDC_COLOR_BASE,
+        p_end,
+
+        ParamIdMetallic, _T("metallic"), TYPE_FLOAT, P_ANIMATABLE, IDS_METALLIC,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_METALLIC, IDC_SPINNER_METALLIC, 0.1f,
+        p_end,
+
+        ParamIdSpecular, _T("specular"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPECULAR, IDC_SPINNER_SPECULAR, 0.1f,
+        p_end,
+
+        ParamIdSpecularTint, _T("specular_tint"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_TINT,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPECULARTINT, IDC_SPINNER_SPECULARTINT, 0.1f,
+        p_end,
+
+        ParamIdAnisotropic, _T("anisotropic"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPIC,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ANISOTROPIC, IDC_SPINNER_ANISOTROPIC, 0.1f,
+        p_end,
+
+        ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ROUGHNESS, IDC_SPINNER_ROUGHNESS, 0.1f,
+        p_end,
+
+        ParamIdClearcoat, _T("clearcoat"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_CLEARCOAT, IDC_SPINNER_CLEARCOAT, 0.1f,
+        p_end,
+
+        ParamIdClearcoatGloss, _T("clearcoat_gloss"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT_GLOSS,
+            p_default, 0.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_CLEARCOATGLOSS, IDC_SPINNER_CLEARCOATGLOSS, 0.1f,
         p_end,
 
         // --- The end ---
@@ -218,6 +261,13 @@ RefTargetHandle AppleseedStdMtl::Clone(RemapDir &remap)
 void AppleseedStdMtl::Update(TimeValue t, Interval& valid)
 {
     m_pblock->GetValue(ParamIdBaseColor, t, m_base_color, valid);
+    m_pblock->GetValue(ParamIdMetallic, t, m_metallic, valid);
+    m_pblock->GetValue(ParamIdSpecular, t, m_specular, valid);
+    m_pblock->GetValue(ParamIdSpecularTint, t, m_specular_tint, valid);
+    m_pblock->GetValue(ParamIdAnisotropic, t, m_anisotropic, valid);
+    m_pblock->GetValue(ParamIdRoughness, t, m_roughness, valid);
+    m_pblock->GetValue(ParamIdClearcoat, t, m_clearcoat, valid);
+    m_pblock->GetValue(ParamIdClearcoatGloss, t, m_clearcoat_gloss, valid);
 }
 
 void AppleseedStdMtl::Reset()
@@ -342,10 +392,18 @@ void AppleseedStdMtl::Shade(ShadeContext& sc)
 asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char* name)
 {
     auto material = asr::DisneyMaterialFactory().create(name, asr::ParamArray());
-    auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
 
     auto values = asr::DisneyMaterialLayer::get_default_values();
     values.insert("base_color", fmt_color_expr(to_color3f(m_base_color)));
+    values.insert("metallic", m_metallic);
+    values.insert("specular", m_specular);
+    values.insert("specular_tint", m_specular_tint);
+    values.insert("anisotropic", m_anisotropic);
+    values.insert("roughness", m_roughness);
+    values.insert("clearcoat", m_clearcoat);
+    values.insert("clearcoat_gloss", m_clearcoat_gloss);
+
+    auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
     disney_material->add_layer(values);
 
     return material;
