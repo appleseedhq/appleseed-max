@@ -30,7 +30,7 @@
 #include "projectbuilder.h"
 
 // appleseed-max headers.
-#include "common/appleseedmtl.h"
+#include "common/iappleseedmtl.h"
 #include "common/utilities.h"
 #include "maxsceneentities.h"
 
@@ -103,18 +103,6 @@ namespace
                     .insert("color", linear_rgb)));
 
         return name;
-    }
-
-    // Format an sRGB color as an SeExpr expression.
-    std::string fmt_color_expr(const asf::Color3f& srgb)
-    {
-        std::stringstream sstr;
-        sstr << '[';
-        sstr << srgb.r; sstr << ", ";
-        sstr << srgb.g; sstr << ", ";
-        sstr << srgb.b;
-        sstr << ']';
-        return sstr.str();
     }
 
     asf::auto_release_ptr<asr::Camera> build_camera(
@@ -349,8 +337,8 @@ namespace
         if (mtl)
         {
             // The instance has a material.
-            AppleseedMtl* appleseed_mtl =
-                static_cast<AppleseedMtl*>(mtl->GetInterface(AppleseedMtl::interface_id()));
+            IAppleseedMtl* appleseed_mtl =
+                static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
             if (appleseed_mtl)
             {
                 // The instance has an appleseed material.

@@ -32,15 +32,20 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
 
+// 3ds Max headers.
+#include <baseinterface.h>
+
 // Forward declarations.
 namespace renderer  { class Material; }
+class Interface_ID;
 
-class AppleseedMtl
+class IAppleseedMtl
+  : public BaseInterface
 {
   public:
-    static ULONG interface_id();
+    static Interface_ID interface_id();
 
-    virtual ~AppleseedMtl() {}
+    virtual Interface_ID GetID() override;
 
     virtual foundation::auto_release_ptr<renderer::Material> create_material(const char* name) = 0;
 };

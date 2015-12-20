@@ -27,12 +27,17 @@
 //
 
 // Interface header.
-#include "appleseedmtl.h"
+#include "iappleseedmtl.h"
 
 // 3ds Max headers.
-#include <AnimatableInterfaceIDs.h>
+#include <maxtypes.h>
 
-ULONG AppleseedMtl::interface_id()
+Interface_ID IAppleseedMtl::interface_id()
 {
-    return I_USERINTERFACE + 0x1d87d86;
+    return Interface_ID(0x1d87d86, 0x209f11dc);
+}
+
+Interface_ID IAppleseedMtl::GetID()
+{
+    return interface_id();
 }

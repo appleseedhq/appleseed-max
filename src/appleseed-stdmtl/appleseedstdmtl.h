@@ -29,13 +29,14 @@
 #pragma once
 
 // appleseed-max headers.
-#include "common/appleseedmtl.h"
+#include "common/iappleseedmtl.h"
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
+#include <color.h>
 #include <IMaterialBrowserEntryInfo.h>
 #include <imtl.h>
 #include <iparamb2.h>
@@ -57,7 +58,7 @@ class ShadeContext;
 
 class AppleseedStdMtl
   : public Mtl
-  , public AppleseedMtl
+  , public IAppleseedMtl
 {
   public:
     static Class_ID get_class_id();
@@ -65,12 +66,14 @@ class AppleseedStdMtl
     // Constructor.
     AppleseedStdMtl();
 
+    // InterfaceServer methods.
+    virtual BaseInterface* GetInterface(Interface_ID id) override;
+
     // Animatable methods.
     virtual void DeleteThis() override;
     virtual void GetClassName(TSTR& s) override;
     virtual SClass_ID SuperClassID() override;
     virtual Class_ID ClassID() override;
-    virtual void* GetInterface(ULONG id) override;
     virtual int NumSubs() override;
     virtual Animatable* SubAnim(int i) override;
     virtual TSTR SubAnimName(int i) override;
@@ -114,11 +117,12 @@ class AppleseedStdMtl
     virtual void SetShininess(float v, TimeValue t) override;
     virtual void Shade(ShadeContext& sc) override;
 
-    // AppleseedMtl methods.
+    // IAppleseedMtl methods.
     virtual foundation::auto_release_ptr<renderer::Material> create_material(const char* name) override;
 
   private:
-    IParamBlock2* m_pblock;
+    IParamBlock2*   m_pblock;
+    Color           m_base_color;
 };
 
 

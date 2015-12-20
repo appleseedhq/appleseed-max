@@ -51,6 +51,7 @@
 //
 
 // Convert a 3ds Max color to an appleseed one.
+foundation::Color3f to_color3f(const Color& c);
 foundation::Color3f to_color3f(const Point3& p);
 
 // Convert a 3ds Max transformation matrix to an appleseed one.
@@ -75,6 +76,14 @@ std::wstring utf8_to_wide(const char* str);
 
 
 //
+// Formatting functions.
+//
+
+// Format an sRGB color as an SeExpr expression.
+std::string fmt_color_expr(const foundation::Color3f& srgb);
+
+
+//
 // I/O functions.
 //
 
@@ -94,14 +103,14 @@ IOResult read(ILoad* iload, T* object);
 // Implementation.
 //
 
-inline foundation::Color3f to_color3f(const Point3& p)
-{
-    return foundation::Color3f(p.x, p.y, p.z);
-}
-
 inline foundation::Color3f to_color3f(const Color& c)
 {
     return foundation::Color3f(c.r, c.g, c.b);
+}
+
+inline foundation::Color3f to_color3f(const Point3& p)
+{
+    return foundation::Color3f(p.x, p.y, p.z);
 }
 
 inline foundation::Matrix4d to_matrix4d(const Matrix3& input)

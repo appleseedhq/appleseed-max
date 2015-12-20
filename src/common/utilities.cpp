@@ -29,6 +29,11 @@
 // Interface header.
 #include "utilities.h"
 
+// Standard headers.
+#include <sstream>
+
+namespace asf = foundation;
+
 std::string wide_to_utf8(const std::wstring& wstr)
 {
     if (wstr.empty())
@@ -75,4 +80,15 @@ std::wstring utf8_to_wide(const char* str)
     MultiByteToWideChar(CP_UTF8, 0, str, -1, &result[0], result_size - 1);
 
     return result;
+}
+
+std::string fmt_color_expr(const asf::Color3f& srgb)
+{
+    std::stringstream sstr;
+    sstr << '[';
+    sstr << srgb.r; sstr << ", ";
+    sstr << srgb.g; sstr << ", ";
+    sstr << srgb.b;
+    sstr << ']';
+    return sstr.str();
 }

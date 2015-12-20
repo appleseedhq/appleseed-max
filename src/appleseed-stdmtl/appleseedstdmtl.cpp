@@ -114,6 +114,14 @@ AppleseedStdMtl::AppleseedStdMtl()
     g_appleseed_stdmtl_classdesc.MakeAutoParamBlocks(this);
 }
 
+BaseInterface* AppleseedStdMtl::GetInterface(Interface_ID id)
+{
+    return
+        id == IAppleseedMtl::interface_id()
+            ? static_cast<IAppleseedMtl*>(this)
+            : Mtl::GetInterface(id);
+}
+
 void AppleseedStdMtl::DeleteThis()
 {
     delete this;
@@ -132,13 +140,6 @@ SClass_ID AppleseedStdMtl::SuperClassID()
 Class_ID AppleseedStdMtl::ClassID()
 {
     return get_class_id();
-}
-
-void* AppleseedStdMtl::GetInterface(ULONG id)
-{
-    return
-        id == AppleseedMtl::interface_id() ? static_cast<AppleseedMtl*>(this) :
-        Mtl::GetInterface(id);
 }
 
 int AppleseedStdMtl::NumSubs()
@@ -202,7 +203,7 @@ RefResult AppleseedStdMtl::NotifyRefChanged(
     RefMessage          message,
     BOOL                propagate)
 {
-    return REF_DONTCARE;
+    return REF_SUCCEED;
 }
 
 RefTargetHandle AppleseedStdMtl::Clone(RemapDir &remap)
@@ -216,16 +217,19 @@ RefTargetHandle AppleseedStdMtl::Clone(RemapDir &remap)
 
 void AppleseedStdMtl::Update(TimeValue t, Interval& valid)
 {
+    m_pblock->GetValue(ParamIdBaseColor, t, m_base_color, valid);
 }
 
 void AppleseedStdMtl::Reset()
 {
+    g_appleseed_stdmtl_classdesc.Reset(this);
 }
 
 Interval AppleseedStdMtl::Validity(TimeValue t)
 {
-    // todo: implement.
-    return FOREVER;
+    Interval valid = FOREVER;
+    Update(t, valid);
+    return valid;
 }
 
 ParamDlg* AppleseedStdMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
@@ -340,7 +344,9 @@ asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char
     auto material = asr::DisneyMaterialFactory().create(name, asr::ParamArray());
     auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
 
-    disney_material->add_new_default_layer();
+    auto values = asr::DisneyMaterialLayer::get_default_values();
+    values.insert("base_color", fmt_color_expr(to_color3f(m_base_color)));
+    disney_material->add_layer(values);
 
     return material;
 }
