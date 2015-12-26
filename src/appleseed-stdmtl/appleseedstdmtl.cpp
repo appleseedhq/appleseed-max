@@ -346,7 +346,7 @@ Color AppleseedStdMtl::GetAmbient(int mtlNum, BOOL backFace)
 
 Color AppleseedStdMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    return Color(0.0f, 0.0f, 0.0f);
+    return m_base_color;
 }
 
 Color AppleseedStdMtl::GetSpecular(int mtlNum, BOOL backFace)
