@@ -41,6 +41,9 @@
 #include "renderer/api/material.h"
 #include "renderer/api/utility.h"
 
+// appleseed.foundation headers.
+#include "foundation/image/colorspace.h"
+
 // 3ds Max headers.
 #include <color.h>
 #include <interval.h>
@@ -399,9 +402,10 @@ void AppleseedStdMtl::Shade(ShadeContext& sc)
 asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char* name)
 {
     auto material = asr::DisneyMaterialFactory().create(name, asr::ParamArray());
-
     auto values = asr::DisneyMaterialLayer::get_default_values();
-    values.insert("base_color", fmt_color_expr(to_color3f(m_base_color)));
+
+    // The Disney material expects sRGB colors, so we have to convert the input color to sRGB.
+    values.insert("base_color", fmt_color_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
     values.insert("metallic", m_metallic / 100.0f);
     values.insert("specular", m_specular / 100.0f);
     values.insert("specular_tint", m_specular_tint / 100.0f);
