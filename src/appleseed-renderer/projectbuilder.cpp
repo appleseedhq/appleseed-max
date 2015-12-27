@@ -49,6 +49,7 @@
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
+#include "foundation/image/colorspace.h"
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
 #include "foundation/platform/types.h"
@@ -155,7 +156,7 @@ namespace
         // The Disney material expects sRGB colors, so we have to convert the input color to sRGB.
         static_cast<asr::DisneyMaterial*>(material.get())->add_layer(
             asr::DisneyMaterialLayer::get_default_values()
-                .insert("base_color", fmt_color_expr(linear_rgb_to_srgb(linear_rgb)))
+                .insert("base_color", fmt_color_expr(asf::linear_rgb_to_srgb(linear_rgb)))
                 .insert("specular", 1.0)
                 .insert("roughness", 0.625));
 
