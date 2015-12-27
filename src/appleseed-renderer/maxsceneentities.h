@@ -52,6 +52,4 @@ class MaxSceneEntityCollector
 
   private:
     MaxSceneEntities& m_entities;
-
-    void visit(INode* node);
 };

@@ -57,17 +57,11 @@ MaxSceneEntityCollector::MaxSceneEntityCollector(MaxSceneEntities& entities)
 {
 }
 
-void MaxSceneEntityCollector::collect(INode* scene)
-{
-    for (int i = 0, e = scene->NumberOfChildren(); i < e; ++i)
-        visit(scene->GetChildNode(i));
-}
-
-void MaxSceneEntityCollector::visit(INode* node)
+void MaxSceneEntityCollector::collect(INode* node)
 {
     // Recurse into children.
     for (int i = 0, e = node->NumberOfChildren(); i < e; ++i)
-        visit(node->GetChildNode(i));
+        collect(node->GetChildNode(i));
 
     // Skip non-renderable nodes.
     if (!node->Renderable())
