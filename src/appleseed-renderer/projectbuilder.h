@@ -42,6 +42,7 @@
 // Forward declarations.
 namespace renderer  { class Project; }
 class Bitmap;
+class FrameRendParams;
 class MaxSceneEntities;
 class ViewParams;
 
@@ -50,5 +51,6 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const MaxSceneEntities&             entities,
     const std::vector<DefaultLight>&    default_lights,
     const ViewParams&                   view_params,
+    const FrameRendParams&              frame_rend_params,
     Bitmap*                             bitmap,
     const TimeValue                     time);

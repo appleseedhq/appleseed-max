@@ -680,11 +680,17 @@ namespace
 
     void create_environment(
         asr::Scene&             scene,
+        const FrameRendParams&  frame_rend_params,
         const TimeValue         time)
     {
+        //const asf::Color3f background_color =
+        //    asf::clamp_low(
+        //        to_color3f(GetCOREInterface14()->GetBackGround(time, FOREVER)),
+        //        0.0f);
+
         const asf::Color3f background_color =
             asf::clamp_low(
-                to_color3f(GetCOREInterface14()->GetBackGround(time, FOREVER)),
+                to_color3f(frame_rend_params.background),
                 0.0f);
 
         if (asf::is_zero(background_color))
@@ -725,6 +731,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     const MaxSceneEntities&                 entities,
     const std::vector<DefaultLight>&        default_lights,
     const ViewParams&                       view_params,
+    const FrameRendParams&                  frame_rend_params,
     Bitmap*                                 bitmap,
     const TimeValue                         time)
 {
@@ -764,7 +771,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     scene->assemblies().insert(assembly);
 
     // Create the environment.
-    create_environment(scene.ref(), time);
+    create_environment(scene.ref(), frame_rend_params, time);
 
     // Create a camera.
     scene->set_camera(build_camera(view_params, bitmap, time));

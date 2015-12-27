@@ -105,7 +105,7 @@ int AppleseedRenderer::Open(
     INode*                  scene,
     INode*                  view_node,
     ViewParams*             view_params,
-    RendParams&             rp,
+    RendParams&             rend_params,
     HWND                    hwnd,
     DefaultLight*           default_lights,
     int                     default_light_count,
@@ -115,9 +115,9 @@ int AppleseedRenderer::Open(
 
     m_scene = scene;
     m_view_node = view_node;
-
     if (view_params)
         m_view_params = *view_params;
+    m_rend_params = rend_params;
 
     // Copy the default lights as the 'default_lights' pointer is no longer valid in Render().
     m_default_lights.clear();
@@ -283,7 +283,7 @@ namespace
 int AppleseedRenderer::Render(
     TimeValue               time,
     Bitmap*                 bitmap,
-    FrameRendParams&        frp,
+    FrameRendParams&        frame_rend_params,
     HWND                    hwnd,
     RendProgressCallback*   progress_cb,
     ViewParams*             view_params)
@@ -315,11 +315,23 @@ int AppleseedRenderer::Render(
             m_entities,
             m_default_lights,
             m_view_params,
+            frame_rend_params,
             bitmap,
             time));
 
-    // Apply the renderer settings to the project.
-    m_settings.apply(project.ref(), "final");
+    // Set rendering settings.
+    if (m_rend_params.inMtlEdit)
+    {
+        RendererSettings material_editor_settings = m_settings;
+        material_editor_settings.m_pixel_samples = m_rend_params.mtlEditAA ? 16 : 1;
+        material_editor_settings.m_passes = 1;
+        material_editor_settings.m_gi = false;
+        material_editor_settings.apply(project.ref(), "final");
+    }
+    else
+    {
+        m_settings.apply(project.ref(), "final");
+    }
 
     // Write the project to disk.
     if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||

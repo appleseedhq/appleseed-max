@@ -70,7 +70,7 @@ class AppleseedRenderer
         INode*                  scene,
         INode*                  view_node,
         ViewParams*             view_params,
-        RendParams&             rp,
+        RendParams&             rend_params,
         HWND                    hwnd,
         DefaultLight*           default_lights,
         int                     default_light_count,
@@ -79,7 +79,7 @@ class AppleseedRenderer
     virtual int Render(
         TimeValue               time,
         Bitmap*                 bitmap,
-        FrameRendParams&        frp,
+        FrameRendParams&        frame_rend_params,
         HWND                    hwnd,
         RendProgressCallback*   progress_cb,
         ViewParams*             view_params) override;
@@ -102,6 +102,7 @@ class AppleseedRenderer
     INode*                      m_scene;
     INode*                      m_view_node;
     ViewParams                  m_view_params;
+    RendParams                  m_rend_params;
     std::vector<DefaultLight>   m_default_lights;
     TimeValue                   m_time;
     MaxSceneEntities            m_entities;
