@@ -109,37 +109,44 @@ namespace
 
         ParamIdMetallic, _T("metallic"), TYPE_FLOAT, P_ANIMATABLE, IDS_METALLIC,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_METALLIC, IDC_SPINNER_METALLIC, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_METALLIC, IDC_SLIDER_METALLIC, 10.0f,
         p_end,
 
         ParamIdSpecular, _T("specular"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPECULAR, IDC_SPINNER_SPECULAR, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_SPECULAR, IDC_SLIDER_SPECULAR, 10.0f,
         p_end,
 
         ParamIdSpecularTint, _T("specular_tint"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_TINT,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPECULARTINT, IDC_SPINNER_SPECULARTINT, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_SPECULARTINT, IDC_SLIDER_SPECULARTINT, 10.0f,
         p_end,
 
         ParamIdAnisotropic, _T("anisotropic"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPIC,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ANISOTROPIC, IDC_SPINNER_ANISOTROPIC, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_ANISOTROPIC, IDC_SLIDER_ANISOTROPIC, 10.0f,
         p_end,
 
         ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ROUGHNESS, IDC_SPINNER_ROUGHNESS, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
 
         ParamIdClearcoat, _T("clearcoat"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_CLEARCOAT, IDC_SPINNER_CLEARCOAT, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_CLEARCOAT, IDC_SLIDER_CLEARCOAT, 10.0f,
         p_end,
 
         ParamIdClearcoatGloss, _T("clearcoat_gloss"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT_GLOSS,
             p_default, 0.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_CLEARCOATGLOSS, IDC_SPINNER_CLEARCOATGLOSS, 0.1f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_TEXT_CLEARCOATGLOSS, IDC_SLIDER_CLEARCOATGLOSS, 10.0f,
         p_end,
 
         // --- The end ---
@@ -395,13 +402,13 @@ asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char
 
     auto values = asr::DisneyMaterialLayer::get_default_values();
     values.insert("base_color", fmt_color_expr(to_color3f(m_base_color)));
-    values.insert("metallic", m_metallic);
-    values.insert("specular", m_specular);
-    values.insert("specular_tint", m_specular_tint);
-    values.insert("anisotropic", m_anisotropic);
-    values.insert("roughness", m_roughness);
-    values.insert("clearcoat", m_clearcoat);
-    values.insert("clearcoat_gloss", m_clearcoat_gloss);
+    values.insert("metallic", m_metallic / 100.0f);
+    values.insert("specular", m_specular / 100.0f);
+    values.insert("specular_tint", m_specular_tint / 100.0f);
+    values.insert("anisotropic", m_anisotropic / 100.0f);
+    values.insert("roughness", m_roughness / 100.0f);
+    values.insert("clearcoat", m_clearcoat / 100.0f);
+    values.insert("clearcoat_gloss", m_clearcoat_gloss / 100.0f);
 
     auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
     disney_material->add_layer(values);
