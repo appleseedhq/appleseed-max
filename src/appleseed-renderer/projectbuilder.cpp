@@ -279,10 +279,17 @@ namespace
 
     typedef std::map<Mtl*, std::string> MaterialMap;
 
+    enum class RenderType
+    {
+        Default,
+        MaterialPreview
+    };
+
     void create_object_instance(
         asr::Assembly&          assembly,
         INode*                  instance_node,
         const std::string&      object_name,
+        const RenderType        type,
         const TimeValue         time,
         MaterialMap&            material_map)
     {
@@ -337,11 +344,16 @@ namespace
             material_mappings.insert("material", material_name);
         }
 
+        // Parameters.
+        asr::ParamArray params;
+        if (type == RenderType::MaterialPreview)
+            params.insert_path("visibility.shadow", false);
+
         // Create the instance and insert it into the assembly.
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
-                asr::ParamArray(),
+                params,
                 object_name.c_str(),
                 transform,
                 material_mappings,
@@ -360,6 +372,7 @@ namespace
     void add_object(
         asr::Assembly&          assembly,
         INode*                  node,
+        const RenderType        type,
         const TimeValue         time,
         ObjectMap&              object_map,
         MaterialMap&            material_map)
@@ -395,6 +408,7 @@ namespace
                 assembly,
                 node,
                 object_info.m_name,
+                type,
                 time,
                 material_map);
         }
@@ -403,13 +417,22 @@ namespace
     void add_objects(
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
+        const RenderType        type,
         const TimeValue         time)
     {
         ObjectMap object_map;
         MaterialMap material_map;
 
         for (const auto& object : entities.m_objects)
-            add_object(assembly, object, time, object_map, material_map);
+        {
+            add_object(
+                assembly,
+                object,
+                type,
+                time,
+                object_map,
+                material_map);
+        }
     }
 
     void add_omni_light(
@@ -635,9 +658,11 @@ namespace
         asr::Assembly&                      assembly,
         const MaxSceneEntities&             entities,
         const std::vector<DefaultLight>&    default_lights,
+        const RenderType                    type,
         const TimeValue                     time)
     {
-        add_objects(assembly, entities, time);
+        add_objects(assembly, entities, type, time);
+
         if (entities.m_lights.empty())
             add_default_lights(assembly, default_lights);
         else add_lights(assembly, entities, time);
@@ -646,7 +671,7 @@ namespace
     void setup_environment(
         asr::Scene&             scene,
         const FrameRendParams&  frame_rend_params,
-        const RendererSettings& renderer_settings,
+        const RendererSettings& settings,
         const TimeValue         time)
     {
         const asf::Color3f background_color =
@@ -678,7 +703,7 @@ namespace
                     asr::ParamArray()
                         .insert("environment_edf", "environment_edf")));
 
-            if (renderer_settings.m_background_emits_light)
+            if (settings.m_background_emits_light)
             {
                 scene.set_environment(
                     asr::EnvironmentFactory::create(
@@ -775,7 +800,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     const ViewParams&                       view_params,
     const RendParams&                       rend_params,
     const FrameRendParams&                  frame_rend_params,
-    const RendererSettings&                 renderer_settings,
+    const RendererSettings&                 settings,
     Bitmap*                                 bitmap,
     const TimeValue                         time)
 {
@@ -794,10 +819,13 @@ asf::auto_release_ptr<asr::Project> build_project(
         asr::AssemblyFactory().create("assembly", asr::ParamArray()));
 
     // Populate the assembly with entities from the 3ds Max scene.
+    const RenderType type =
+        rend_params.inMtlEdit ? RenderType::MaterialPreview : RenderType::Default;
     populate_assembly(
         assembly.ref(),
         entities,
         default_lights,
+        type,
         time);
 
     // Create an instance of the assembly and insert it into the scene.
@@ -818,7 +846,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     setup_environment(
         scene.ref(),
         frame_rend_params,
-        renderer_settings,
+        settings,
         time);
 
     // Create a camera and bind it to the scene.
@@ -835,7 +863,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     project->set_scene(scene);
 
     // Apply renderer settings.
-    renderer_settings.apply(project.ref(), "final");
+    settings.apply(project.ref(), "final");
 
     return project;
 }

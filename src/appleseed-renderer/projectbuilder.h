@@ -55,6 +55,6 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const ViewParams&                   view_params,
     const RendParams&                   rend_params,
     const FrameRendParams&              frame_rend_params,
-    const RendererSettings&             renderer_settings,
+    const RendererSettings&             settings,
     Bitmap*                             bitmap,
     const TimeValue                     time);
