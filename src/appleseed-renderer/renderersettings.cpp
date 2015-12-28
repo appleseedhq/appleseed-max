@@ -53,6 +53,7 @@ namespace
             m_passes = 4;
             m_gi = true;
             m_bounces = 3;
+            m_background_emits_light = true;
             m_output_mode = OutputMode::RenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
         }
@@ -67,7 +68,7 @@ const RendererSettings& RendererSettings::defaults()
 
 void RendererSettings::apply(
     asr::Project&   project,
-    const char*     config_name)
+    const char*     config_name) const
 {
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
 
@@ -114,6 +115,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsLightingBounces);
         success &= write<int>(isave, m_bounces);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingBackgroundEmitsLight);
+        success &= write<bool>(isave, m_background_emits_light);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -256,6 +261,10 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
           case ChunkSettingsLightingBounces:
             result = read<int>(iload, &m_bounces);
+            break;
+
+          case ChunkSettingsLightingBackgroundEmitsLight:
+            result = read<bool>(iload, &m_background_emits_light);
             break;
         }
 

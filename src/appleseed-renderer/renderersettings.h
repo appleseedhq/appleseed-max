@@ -61,6 +61,7 @@ class RendererSettings
 
     bool        m_gi;
     int         m_bounces;
+    bool        m_background_emits_light;
 
     //
     // Output.
@@ -85,7 +86,7 @@ class RendererSettings
     // Apply these settings to a given configuration of a given project.
     void apply(
         renderer::Project&  project,
-        const char*         config_name);
+        const char*         config_name) const;
 
     // Save settings to a 3ds Max file.
     bool save(ISave* isave) const;

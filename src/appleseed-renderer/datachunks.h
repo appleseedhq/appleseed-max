@@ -31,21 +31,22 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
-const USHORT ChunkFileFormatVersion                 = 0x0001;
+const USHORT ChunkFileFormatVersion                     = 0x0001;
 
-const USHORT ChunkSettings                          = 0x1000;
+const USHORT ChunkSettings                              = 0x1000;
 
-const USHORT ChunkSettingsImageSampling             = 0x1100;
-const USHORT ChunkSettingsImageSamplingPixelSamples = 0x1110;
-const USHORT ChunkSettingsImageSamplingPasses       = 0x1120;
+const USHORT ChunkSettingsImageSampling                 = 0x1100;
+const USHORT ChunkSettingsImageSamplingPixelSamples     = 0x1110;
+const USHORT ChunkSettingsImageSamplingPasses           = 0x1120;
 
-const USHORT ChunkSettingsLighting                  = 0x1200;
-const USHORT ChunkSettingsLightingGI                = 0x1210;
-const USHORT ChunkSettingsLightingBounces           = 0x1220;
+const USHORT ChunkSettingsLighting                      = 0x1200;
+const USHORT ChunkSettingsLightingGI                    = 0x1210;
+const USHORT ChunkSettingsLightingBounces               = 0x1220;
+const USHORT ChunkSettingsLightingBackgroundEmitsLight  = 0x1230;
 
-const USHORT ChunkSettingsOutput                    = 0x1300;
-const USHORT ChunkSettingsOutputMode                = 0x1310;
-const USHORT ChunkSettingsOutputProjectFilePath     = 0x1320;
+const USHORT ChunkSettingsOutput                        = 0x1300;
+const USHORT ChunkSettingsOutputMode                    = 0x1310;
+const USHORT ChunkSettingsOutputProjectFilePath         = 0x1320;
 
-const USHORT ChunkSettingsSystem                    = 0x1400;
-const USHORT ChunkSettingsSystemRenderingThreads    = 0x1410;
+const USHORT ChunkSettingsSystem                        = 0x1400;
+const USHORT ChunkSettingsSystemRenderingThreads        = 0x1410;

@@ -33,6 +33,7 @@
 #include "common/iappleseedmtl.h"
 #include "common/utilities.h"
 #include "maxsceneentities.h"
+#include "renderersettings.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
@@ -104,43 +105,6 @@ namespace
                     .insert("color", linear_rgb)));
 
         return name;
-    }
-
-    asf::auto_release_ptr<asr::Camera> build_camera(
-        const ViewParams&       view_params,
-        Bitmap*                 bitmap,
-        const TimeValue         time)
-    {
-        asr::ParamArray params;
-
-        if (view_params.projType == PROJ_PERSPECTIVE)
-        {
-            params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
-            params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
-        }
-        else
-        {
-            DbgAssert(view_params.projType == PROJ_PARALLEL);
-
-            const float ViewDefaultWidth = 400.0f;
-            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
-            const float film_width = ViewDefaultWidth * view_params.zoom;
-            const float film_height = film_width * aspect;
-            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
-        }
-
-        params.insert("near_z", -view_params.hither);
-
-        asf::auto_release_ptr<renderer::Camera> camera =
-            view_params.projType == PROJ_PERSPECTIVE
-                ? asr::PinholeCameraFactory().create("camera", params)
-                : asr::OrthographicCameraFactory().create("camera", params);
-
-        camera->transform_sequence().set_transform(
-            0.0, asf::Transformd::from_local_to_parent(
-                to_matrix4d(Inverse(view_params.affineTM))));
-
-        return camera;
     }
 
     void add_default_material(
@@ -679,16 +643,12 @@ namespace
         else add_lights(assembly, entities, time);
     }
 
-    void create_environment(
+    void setup_environment(
         asr::Scene&             scene,
         const FrameRendParams&  frame_rend_params,
+        const RendererSettings& renderer_settings,
         const TimeValue         time)
     {
-        //const asf::Color3f background_color =
-        //    asf::clamp_low(
-        //        to_color3f(GetCOREInterface14()->GetBackGround(time, FOREVER)),
-        //        0.0f);
-
         const asf::Color3f background_color =
             asf::clamp_low(
                 to_color3f(frame_rend_params.background),
@@ -718,12 +678,93 @@ namespace
                     asr::ParamArray()
                         .insert("environment_edf", "environment_edf")));
 
-            scene.set_environment(
-                asr::EnvironmentFactory::create(
-                    "environment",
+            if (renderer_settings.m_background_emits_light)
+            {
+                scene.set_environment(
+                    asr::EnvironmentFactory::create(
+                        "environment",
+                        asr::ParamArray()
+                            .insert("environment_edf", "environment_edf")
+                            .insert("environment_shader", "environment_shader")));
+            }
+            else
+            {
+                scene.set_environment(
+                    asr::EnvironmentFactory::create(
+                        "environment",
+                        asr::ParamArray()
+                            .insert("environment_shader", "environment_shader")));
+            }
+        }
+    }
+
+    asf::auto_release_ptr<asr::Camera> build_camera(
+        const ViewParams&       view_params,
+        Bitmap*                 bitmap,
+        const TimeValue         time)
+    {
+        asr::ParamArray params;
+
+        if (view_params.projType == PROJ_PERSPECTIVE)
+        {
+            params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
+            params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
+        }
+        else
+        {
+            DbgAssert(view_params.projType == PROJ_PARALLEL);
+
+            const float ViewDefaultWidth = 400.0f;
+            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
+            const float film_width = ViewDefaultWidth * view_params.zoom;
+            const float film_height = film_width * aspect;
+            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
+        }
+
+        params.insert("near_z", -view_params.hither);
+
+        asf::auto_release_ptr<renderer::Camera> camera =
+            view_params.projType == PROJ_PERSPECTIVE
+                ? asr::PinholeCameraFactory().create("camera", params)
+                : asr::OrthographicCameraFactory().create("camera", params);
+
+        camera->transform_sequence().set_transform(
+            0.0, asf::Transformd::from_local_to_parent(
+                to_matrix4d(Inverse(view_params.affineTM))));
+
+        return camera;
+    }
+
+    asf::auto_release_ptr<asr::Frame> build_frame(
+        const asr::Camera&      camera,
+        Bitmap*                 bitmap,
+        const RendParams&       rend_params)
+    {
+        if (rend_params.inMtlEdit)
+        {
+            return
+                asr::FrameFactory::create(
+                    "beauty",
                     asr::ParamArray()
-                        .insert("environment_edf", "environment_edf")
-                        .insert("environment_shader", "environment_shader")));
+                        .insert("camera", camera.get_name())
+                        .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
+                        .insert("tile_size", asf::Vector2i(8, 8))
+                        .insert("color_space", "linear_rgb")
+                        .insert("filter", "box")
+                        .insert("filter_size", 0.5));
+        }
+        else
+        {
+            return
+                asr::FrameFactory::create(
+                    "beauty",
+                    asr::ParamArray()
+                        .insert("camera", camera.get_name())
+                        .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
+                        .insert("tile_size", asf::Vector2i(64, 64))
+                        .insert("color_space", "linear_rgb")
+                        .insert("filter", "blackman-harris")
+                        .insert("filter_size", 1.5));
         }
     }
 }
@@ -732,7 +773,9 @@ asf::auto_release_ptr<asr::Project> build_project(
     const MaxSceneEntities&                 entities,
     const std::vector<DefaultLight>&        default_lights,
     const ViewParams&                       view_params,
+    const RendParams&                       rend_params,
     const FrameRendParams&                  frame_rend_params,
+    const RendererSettings&                 renderer_settings,
     Bitmap*                                 bitmap,
     const TimeValue                         time)
 {
@@ -771,25 +814,28 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Insert the assembly into the scene.
     scene->assemblies().insert(assembly);
 
-    // Create the environment.
-    create_environment(scene.ref(), frame_rend_params, time);
+    // Setup the environment.
+    setup_environment(
+        scene.ref(),
+        frame_rend_params,
+        renderer_settings,
+        time);
 
-    // Create a camera.
+    // Create a camera and bind it to the scene.
     scene->set_camera(build_camera(view_params, bitmap, time));
 
     // Create a frame and bind it to the project.
     project->set_frame(
-        asr::FrameFactory::create(
-            "beauty",
-            asr::ParamArray()
-                .insert("camera", scene->get_camera()->get_name())
-                .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
-                .insert("color_space", "linear_rgb")
-                .insert("filter", "blackman-harris")
-                .insert("filter_size", 1.5)));
+        build_frame(
+            *scene->get_camera(),
+            bitmap,
+            rend_params));
 
     // Bind the scene to the project.
     project->set_scene(scene);
+
+    // Apply renderer settings.
+    renderer_settings.apply(project.ref(), "final");
 
     return project;
 }

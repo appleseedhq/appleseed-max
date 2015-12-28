@@ -23,6 +23,7 @@
 #define IDC_SPINNER_BOUNCES             1016
 #define IDC_TEXT_APPLESEED_VERSION      1016
 #define IDC_CHECK_GI                    1017
+#define IDC_CHECK_BACKGROUND_EMITS_LIGHT 1018
 #define IDC_TEXT_PLUGIN_VERSION         1020
 #define IDC_BUTTON_DOWNLOAD             1022
 #define IDC_STATIC_NEW_VERSION          1023

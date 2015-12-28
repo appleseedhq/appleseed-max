@@ -298,6 +298,16 @@ int AppleseedRenderer::Render(
     if (m_view_node)
         get_view_params_from_view_node(m_view_params, m_view_node, time);
 
+    // Retrieve and tweak renderer settings.
+    RendererSettings renderer_settings = m_settings;
+    if (m_rend_params.inMtlEdit)
+    {
+        renderer_settings.m_pixel_samples = m_rend_params.mtlEditAA ? 24 : 1;
+        renderer_settings.m_passes = 1;
+        renderer_settings.m_gi = false;
+        renderer_settings.m_background_emits_light = false;
+    }
+
     // Collect the entities we're interested in.
     if (progress_cb)
         progress_cb->SetTitle(_T("Collecting Entities..."));
@@ -315,23 +325,11 @@ int AppleseedRenderer::Render(
             m_entities,
             m_default_lights,
             m_view_params,
+            m_rend_params,
             frame_rend_params,
+            renderer_settings,
             bitmap,
             time));
-
-    // Set rendering settings.
-    if (m_rend_params.inMtlEdit)
-    {
-        RendererSettings material_editor_settings = m_settings;
-        material_editor_settings.m_pixel_samples = m_rend_params.mtlEditAA ? 16 : 1;
-        material_editor_settings.m_passes = 1;
-        material_editor_settings.m_gi = false;
-        material_editor_settings.apply(project.ref(), "final");
-    }
-    else
-    {
-        m_settings.apply(project.ref(), "final");
-    }
 
     // Write the project to disk.
     if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||

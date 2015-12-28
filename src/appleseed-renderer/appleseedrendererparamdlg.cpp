@@ -395,6 +395,9 @@ namespace
             m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
 
             CheckDlgButton(hwnd, IDC_CHECK_GI, m_settings.m_gi ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
+                m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
+
             enable_disable_controls();
         }
 
@@ -418,6 +421,11 @@ namespace
                         case IDC_CHECK_GI:
                             m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
                             enable_disable_controls();
+                            return TRUE;
+
+                        case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
+                            m_settings.m_background_emits_light =
+                                IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
                             return TRUE;
 
                         default:
