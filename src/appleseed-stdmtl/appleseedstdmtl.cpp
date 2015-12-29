@@ -278,6 +278,8 @@ void AppleseedStdMtl::Update(TimeValue t, Interval& valid)
     m_pblock->GetValue(ParamIdRoughness, t, m_roughness, valid);
     m_pblock->GetValue(ParamIdClearcoat, t, m_clearcoat, valid);
     m_pblock->GetValue(ParamIdClearcoatGloss, t, m_clearcoat_gloss, valid);
+
+    NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
 }
 
 void AppleseedStdMtl::Reset()
