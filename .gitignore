@@ -1,6 +1,8 @@
 bin/
 build/
 *.aps
+*.db
+*.opendb
 *.opensdf
 *.sdf
 *.suo
