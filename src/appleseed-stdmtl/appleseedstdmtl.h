@@ -55,6 +55,7 @@ class ILoad;
 class Interval;
 class ISave;
 class ShadeContext;
+class Texmap;
 
 class AppleseedStdMtl
   : public Mtl
@@ -96,6 +97,11 @@ class AppleseedStdMtl
     // ReferenceTarget methods.
     virtual RefTargetHandle Clone(RemapDir &remap) override;
 
+    // ISubMap methods.
+    virtual int NumSubTexmaps() override;
+    virtual Texmap* GetSubTexmap(int i) override;
+    virtual void SetSubTexmap(int i, Texmap* texmap) override;
+
     // MtlBase methods.
     virtual void Update(TimeValue t, Interval& valid) override;
     virtual void Reset() override;
@@ -123,13 +129,21 @@ class AppleseedStdMtl
   private:
     IParamBlock2*   m_pblock;
     Color           m_base_color;
+    Texmap*         m_base_color_texmap;
     float           m_metallic;
+    Texmap*         m_metallic_texmap;
     float           m_specular;
+    Texmap*         m_specular_texmap;
     float           m_specular_tint;
+    Texmap*         m_specular_tint_texmap;
     float           m_anisotropic;
+    Texmap*         m_anisotropic_texmap;
     float           m_roughness;
+    Texmap*         m_roughness_texmap;
     float           m_clearcoat;
+    Texmap*         m_clearcoat_texmap;
     float           m_clearcoat_gloss;
+    Texmap*         m_clearcoat_gloss_texmap;
 };
 
 
