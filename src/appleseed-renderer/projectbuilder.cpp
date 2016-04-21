@@ -190,12 +190,22 @@ namespace
                 object->push_vertex(asr::GVector3(v.x, v.y, v.z));
             }
 
+            // Copy texture vertices to the mesh object.
+            object->reserve_tex_coords(mesh.getNumTVerts());
+            for (int i = 0, e = mesh.getNumTVerts(); i < e; ++i)
+            {
+                const UVVert& uv = mesh.getTVert(i);
+                object->push_tex_coords(asr::GVector2(uv.x, uv.y));
+            }
+
             // Copy vertex normals and triangles to mesh object.
             object->reserve_vertex_normals(mesh.getNumFaces() * 3);
             object->reserve_triangles(mesh.getNumFaces());
             for (int i = 0, e = mesh.getNumFaces(); i < e; ++i)
             {
                 Face& face = mesh.faces[i];
+                TVFace& tvface = mesh.tvFace[i];
+
                 const DWORD face_smgroup = face.getSmGroup();
                 const MtlID face_mat = face.getMatID();
 
@@ -256,9 +266,9 @@ namespace
                 triangle.m_n0 = normal_indices[0];
                 triangle.m_n1 = normal_indices[1];
                 triangle.m_n2 = normal_indices[2];
-                triangle.m_a0 = asr::Triangle::None;
-                triangle.m_a1 = asr::Triangle::None;
-                triangle.m_a2 = asr::Triangle::None;
+                triangle.m_a0 = tvface.getTVert(0);
+                triangle.m_a1 = tvface.getTVert(1);
+                triangle.m_a2 = tvface.getTVert(2);
                 triangle.m_pa = material_slot;
 
                 object->push_triangle(triangle);
