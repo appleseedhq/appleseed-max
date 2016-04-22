@@ -66,8 +66,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;Pathcch.lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>appleseed.dll</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
@@ -75,9 +76,9 @@
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\"</Command>
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -103,7 +104,8 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>appleseed.dll</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
@@ -111,9 +113,9 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\"</Command>
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

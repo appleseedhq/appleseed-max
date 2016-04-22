@@ -27,10 +27,15 @@
 //
 
 // appleseed-max headers.
+#include "common/utilities.h"
 #include "appleseedstdmtl.h"
+#include "main.h"
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
+
+// appleseed.main headers.
+#include "main/allocator.h"
 
 // 3ds Max headers.
 #include <plugapi.h>
@@ -70,5 +75,16 @@ extern "C"
     ULONG LibVersion()
     {
         return VERSION_3DSMAX;
+    }
+
+    __declspec(dllexport)
+    int LibInitialize()
+    {
+        if (!load_appleseed_library(g_module))
+            return FALSE;
+
+        start_memory_tracking();
+
+        return TRUE;
     }
 }

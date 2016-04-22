@@ -47,6 +47,13 @@
 
 
 //
+// System functions.
+//
+
+bool load_appleseed_library(HINSTANCE module);
+
+
+//
 // Type conversion functions.
 //
 

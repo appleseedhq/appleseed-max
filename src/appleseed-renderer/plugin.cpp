@@ -27,7 +27,9 @@
 //
 
 // appleseed-max headers.
+#include "common/utilities.h"
 #include "appleseedrenderer.h"
+#include "main.h"
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
@@ -40,11 +42,6 @@
 
 // Windows headers.
 #include <tchar.h>
-
-namespace
-{
-    AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
-}
 
 extern "C"
 {
@@ -83,7 +80,11 @@ extern "C"
     __declspec(dllexport)
     int LibInitialize()
     {
+        if (!load_appleseed_library(g_module))
+            return FALSE;
+
         start_memory_tracking();
+
         return TRUE;
     }
 }

@@ -127,3 +127,5 @@ class AppleseedRendererClassDesc
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
 };
+
+extern AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
