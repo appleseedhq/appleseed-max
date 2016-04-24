@@ -22,6 +22,8 @@ Global
 		Debug|x64 = Debug|x64
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x64 = Release|x64
+		Ship|Mixed Platforms = Ship|Mixed Platforms
+		Ship|x64 = Ship|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
@@ -32,6 +34,10 @@ Global
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Release|Mixed Platforms.Build.0 = Release|x64
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Release|x64.ActiveCfg = Release|x64
 		{62C41566-DBCB-49D3-943A-4DD53222269E}.Release|x64.Build.0 = Release|x64
+		{62C41566-DBCB-49D3-943A-4DD53222269E}.Ship|Mixed Platforms.ActiveCfg = Ship|x64
+		{62C41566-DBCB-49D3-943A-4DD53222269E}.Ship|Mixed Platforms.Build.0 = Ship|x64
+		{62C41566-DBCB-49D3-943A-4DD53222269E}.Ship|x64.ActiveCfg = Ship|x64
+		{62C41566-DBCB-49D3-943A-4DD53222269E}.Ship|x64.Build.0 = Ship|x64
 		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Debug|x64.ActiveCfg = Debug|x64
@@ -40,6 +46,10 @@ Global
 		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Release|Mixed Platforms.Build.0 = Release|x64
 		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Release|x64.ActiveCfg = Release|x64
 		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Release|x64.Build.0 = Release|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Ship|Mixed Platforms.ActiveCfg = Ship|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Ship|Mixed Platforms.Build.0 = Ship|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Ship|x64.ActiveCfg = Ship|x64
+		{7E9823AC-C312-400A-AF9C-19B6FB10649D}.Ship|x64.Build.0 = Ship|x64
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Debug|x64.ActiveCfg = Debug|x64
@@ -48,6 +58,10 @@ Global
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Release|Mixed Platforms.Build.0 = Release|x64
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Release|x64.ActiveCfg = Release|x64
 		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Release|x64.Build.0 = Release|x64
+		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Ship|Mixed Platforms.ActiveCfg = Ship|x64
+		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Ship|Mixed Platforms.Build.0 = Ship|x64
+		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Ship|x64.ActiveCfg = Ship|x64
+		{D683DE6A-BAAE-43FC-9F51-1AF521393949}.Ship|x64.Build.0 = Ship|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
