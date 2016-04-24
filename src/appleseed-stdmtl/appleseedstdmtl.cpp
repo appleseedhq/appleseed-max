@@ -525,12 +525,30 @@ void AppleseedStdMtl::Shade(ShadeContext& sc)
 
 namespace
 {
+    bool is_bitmap(Texmap* texmap)
+    {
+        if (texmap == nullptr)
+            return false;
+        
+        if (texmap->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
+            return false;
+
+        Bitmap* bitmap = static_cast<BitmapTex*>(texmap)->GetBitmap(0);
+
+        if (bitmap == nullptr)
+            return false;
+
+        return true;
+    }
+
     std::string format_value(BitmapTex* bitmap_tex)
     {
         DbgAssert(bitmap_tex != nullptr);
         const auto filepath = wide_to_utf8(bitmap_tex->GetMapName());
 
         Bitmap* bitmap = bitmap_tex->GetBitmap(0);
+        DbgAssert(bitmap != nullptr);
+
         const int width = bitmap->Width();
         const int height = bitmap->Height();
 
@@ -541,7 +559,7 @@ namespace
     {
         auto value = asf::to_string(scalar / 100.0f);
 
-        if (map != nullptr && map->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+        if (is_bitmap(map))
             value += asf::format(" * {0}", format_value(static_cast<BitmapTex*>(map)));
 
         return value;
@@ -555,7 +573,7 @@ asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char
 
     // The Disney material expects sRGB colors, so we have to convert input colors to sRGB.
 
-    if (m_base_color_texmap != nullptr && m_base_color_texmap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+    if (is_bitmap(m_base_color_texmap))
         values.insert("base_color", format_value(static_cast<BitmapTex*>(m_base_color_texmap)));
     else values.insert("base_color", fmt_color_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
 
