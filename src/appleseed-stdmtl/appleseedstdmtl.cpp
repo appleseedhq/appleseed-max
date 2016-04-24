@@ -45,6 +45,7 @@
 #include "foundation/image/colorspace.h"
 
 // 3ds Max headers.
+#include <assert1.h>
 #include <color.h>
 #include <interval.h>
 #include <iparamm2.h>
@@ -53,9 +54,6 @@
 
 // Windows headers.
 #include <tchar.h>
-
-// Standard headers.
-#include <cassert>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -529,7 +527,7 @@ namespace
 {
     std::string format_value(BitmapTex* bitmap_tex)
     {
-        assert(bitmap_tex != nullptr);
+        DbgAssert(bitmap_tex != nullptr);
         const auto filepath = wide_to_utf8(bitmap_tex->GetMapName());
 
         Bitmap* bitmap = bitmap_tex->GetBitmap(0);
