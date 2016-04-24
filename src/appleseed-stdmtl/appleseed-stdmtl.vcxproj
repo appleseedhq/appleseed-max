@@ -69,7 +69,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>appleseed.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
@@ -101,7 +102,8 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\applesee
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>appleseed.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul

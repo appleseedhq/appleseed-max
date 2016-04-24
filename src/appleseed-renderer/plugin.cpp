@@ -27,7 +27,6 @@
 //
 
 // appleseed-max headers.
-#include "common/utilities.h"
 #include "appleseedrenderer.h"
 #include "main.h"
 
@@ -80,9 +79,6 @@ extern "C"
     __declspec(dllexport)
     int LibInitialize()
     {
-        if (!load_appleseed_library(g_module))
-            return FALSE;
-
         start_memory_tracking();
 
         return TRUE;
