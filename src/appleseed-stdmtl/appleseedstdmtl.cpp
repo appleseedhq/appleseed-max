@@ -550,7 +550,7 @@ namespace
 
 asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char* name)
 {
-    auto material = asr::DisneyMaterialFactory().create(name, asr::ParamArray());
+    auto material = asr::DisneyMaterialFactory::static_create(name, asr::ParamArray());
     auto values = asr::DisneyMaterialLayer::get_default_values();
 
     // The Disney material expects sRGB colors, so we have to convert input colors to sRGB.

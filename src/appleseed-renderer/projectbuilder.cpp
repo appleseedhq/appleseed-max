@@ -113,7 +113,7 @@ namespace
         const asf::Color3f&     linear_rgb)
     {
         asf::auto_release_ptr<asr::Material> material(
-            asr::DisneyMaterialFactory().create(
+            asr::DisneyMaterialFactory::static_create(
                 name.c_str(),
                 asr::ParamArray()));
 
@@ -455,7 +455,7 @@ namespace
         const int               decay_exponent)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::MaxOmniLightFactory().create(
+            asr::MaxOmniLightFactory::static_create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("intensity", color_name)
@@ -478,7 +478,7 @@ namespace
         const int               decay_exponent)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::MaxSpotLightFactory().create(
+            asr::MaxSpotLightFactory::static_create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("intensity", color_name)
@@ -499,7 +499,7 @@ namespace
         const float             intensity)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::DirectionalLightFactory().create(
+            asr::DirectionalLightFactory::static_create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("irradiance", color_name)
@@ -702,13 +702,13 @@ namespace
                 insert_color(scene, "environment_edf_color", background_color);
 
             scene.environment_edfs().insert(
-                asr::ConstantEnvironmentEDFFactory().create(
+                asr::ConstantEnvironmentEDFFactory::static_create(
                     "environment_edf",
                     asr::ParamArray()
                         .insert("radiance", background_color_name)));
 
             scene.environment_shaders().insert(
-                asr::EDFEnvironmentShaderFactory().create(
+                asr::EDFEnvironmentShaderFactory::static_create(
                     "environment_shader",
                     asr::ParamArray()
                         .insert("environment_edf", "environment_edf")));
@@ -760,8 +760,8 @@ namespace
 
         asf::auto_release_ptr<renderer::Camera> camera =
             view_params.projType == PROJ_PERSPECTIVE
-                ? asr::PinholeCameraFactory().create("camera", params)
-                : asr::OrthographicCameraFactory().create("camera", params);
+                ? asr::PinholeCameraFactory::static_create("camera", params)
+                : asr::OrthographicCameraFactory::static_create("camera", params);
 
         camera->transform_sequence().set_transform(
             0.0, asf::Transformd::from_local_to_parent(
@@ -826,7 +826,7 @@ asf::auto_release_ptr<asr::Project> build_project(
 
     // Create an assembly.
     asf::auto_release_ptr<asr::Assembly> assembly(
-        asr::AssemblyFactory().create("assembly", asr::ParamArray()));
+        asr::AssemblyFactory::static_create("assembly"));
 
     // Populate the assembly with entities from the 3ds Max scene.
     const RenderType type =
