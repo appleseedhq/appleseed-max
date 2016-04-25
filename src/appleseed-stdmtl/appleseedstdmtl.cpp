@@ -350,7 +350,7 @@ RefResult AppleseedStdMtl::NotifyRefChanged(
     return REF_SUCCEED;
 }
 
-RefTargetHandle AppleseedStdMtl::Clone(RemapDir &remap)
+RefTargetHandle AppleseedStdMtl::Clone(RemapDir& remap)
 {
     AppleseedStdMtl* clone = new AppleseedStdMtl();
     *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
