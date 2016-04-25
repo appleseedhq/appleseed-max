@@ -107,6 +107,18 @@ namespace
         TexmapCount
     };
 
+    const MSTR g_texmap_slot_names[TexmapCount] =
+    {
+        _T("Base Color"),
+        _T("Metallic"),
+        _T("Specular"),
+        _T("Specular Tint"),
+        _T("Anisotropic"),
+        _T("Roughness"),
+        _T("Clearcoat"),
+        _T("Clearcoat Gloss")
+    };
+
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
         ParamIdBaseColorTexmap,
@@ -381,6 +393,17 @@ void AppleseedStdMtl::SetSubTexmap(int i, Texmap* texmap)
     const auto texmap_id = static_cast<TexmapId>(i);
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
+}
+
+int AppleseedStdMtl::MapSlotType(int i)
+{
+    return MAPSLOT_TEXTURE;
+}
+
+MSTR AppleseedStdMtl::GetSubTexmapSlotName(int i)
+{
+    const auto texmap_id = static_cast<TexmapId>(i);
+    return g_texmap_slot_names[texmap_id];
 }
 
 void AppleseedStdMtl::Update(TimeValue t, Interval& valid)

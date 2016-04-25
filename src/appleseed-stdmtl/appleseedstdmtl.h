@@ -102,6 +102,8 @@ class AppleseedStdMtl
     virtual int NumSubTexmaps() override;
     virtual Texmap* GetSubTexmap(int i) override;
     virtual void SetSubTexmap(int i, Texmap* texmap) override;
+    virtual int MapSlotType(int i) override;
+    virtual MSTR GetSubTexmapSlotName(int i) override;
 
     // MtlBase methods.
     virtual void Update(TimeValue t, Interval& valid) override;
