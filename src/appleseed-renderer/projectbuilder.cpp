@@ -107,6 +107,16 @@ namespace
         return name;
     }
 
+    void add_empty_material(
+        asr::Assembly&          assembly,
+        const std::string&      name)
+    {
+        assembly.materials().insert(
+            asr::GenericMaterialFactory::static_create(
+                name.c_str(),
+                asr::ParamArray()));
+    }
+
     void add_default_material(
         asr::Assembly&          assembly,
         const std::string&      name,
@@ -340,6 +350,14 @@ namespace
                     // The appleseed material exists.
                     material_mappings.insert("material", it->second);
                 }
+            }
+            else
+            {
+                // The instance has a non-appleseed material: assign it an empty material that will appear black.
+                const std::string material_name =
+                    make_unique_name(assembly.materials(), instance_name + "_mat");
+                add_empty_material(assembly, material_name);
+                material_mappings.insert("material", material_name);
             }
         }
         else
