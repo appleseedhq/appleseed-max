@@ -39,6 +39,7 @@
 #include <color.h>
 #include <IMaterialBrowserEntryInfo.h>
 #include <imtl.h>
+#include <interval.h>
 #include <iparamb2.h>
 #include <maxtypes.h>
 #include <ref.h>
@@ -128,6 +129,7 @@ class AppleseedStdMtl
 
   private:
     IParamBlock2*   m_pblock;
+    Interval        m_params_validity;
     Color           m_base_color;
     Texmap*         m_base_color_texmap;
     float           m_metallic;

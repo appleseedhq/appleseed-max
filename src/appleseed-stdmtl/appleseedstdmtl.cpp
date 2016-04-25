@@ -47,7 +47,6 @@
 // 3ds Max headers.
 #include <assert1.h>
 #include <color.h>
-#include <interval.h>
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
@@ -247,6 +246,8 @@ AppleseedStdMtl::AppleseedStdMtl()
   , m_clearcoat_gloss(0.0f)
   , m_clearcoat_gloss_texmap(nullptr)
 {
+    m_params_validity.SetEmpty();
+
     g_appleseed_stdmtl_classdesc.MakeAutoParamBlocks(this);
 }
 
@@ -339,15 +340,22 @@ RefResult AppleseedStdMtl::NotifyRefChanged(
     RefMessage          message,
     BOOL                propagate)
 {
+    switch (message)
+    {
+      case REFMSG_CHANGE:
+        m_params_validity.SetEmpty();
+        break;
+    }
+
     return REF_SUCCEED;
 }
 
 RefTargetHandle AppleseedStdMtl::Clone(RemapDir &remap)
 {
-    ReferenceTarget* clone = new AppleseedStdMtl();
-    *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this); 
-    BaseClone(this, clone, remap);
+    AppleseedStdMtl* clone = new AppleseedStdMtl();
+    *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
     clone->ReplaceReference(0, remap.CloneRef(m_pblock));
+    BaseClone(this, clone, remap);
     return clone;
 }
 
@@ -377,36 +385,45 @@ void AppleseedStdMtl::SetSubTexmap(int i, Texmap* texmap)
 
 void AppleseedStdMtl::Update(TimeValue t, Interval& valid)
 {
-    m_pblock->GetValue(ParamIdBaseColor, t, m_base_color, valid);
-    m_pblock->GetValue(ParamIdBaseColorTexmap, t, m_base_color_texmap, valid);
+    if (!m_params_validity.InInterval(t))
+    {
+        m_params_validity.SetInfinite();
 
-    m_pblock->GetValue(ParamIdMetallic, t, m_metallic, valid);
-    m_pblock->GetValue(ParamIdMetallicTexmap, t, m_metallic_texmap, valid);
+        m_pblock->GetValue(ParamIdBaseColor, t, m_base_color, m_params_validity);
+        m_pblock->GetValue(ParamIdBaseColorTexmap, t, m_base_color_texmap, m_params_validity);
 
-    m_pblock->GetValue(ParamIdSpecular, t, m_specular, valid);
-    m_pblock->GetValue(ParamIdSpecularTexmap, t, m_specular_texmap, valid);
+        m_pblock->GetValue(ParamIdMetallic, t, m_metallic, m_params_validity);
+        m_pblock->GetValue(ParamIdMetallicTexmap, t, m_metallic_texmap, m_params_validity);
 
-    m_pblock->GetValue(ParamIdSpecularTint, t, m_specular_tint, valid);
-    m_pblock->GetValue(ParamIdSpecularTintTexmap, t, m_specular_tint_texmap, valid);
+        m_pblock->GetValue(ParamIdSpecular, t, m_specular, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularTexmap, t, m_specular_texmap, m_params_validity);
 
-    m_pblock->GetValue(ParamIdAnisotropic, t, m_anisotropic, valid);
-    m_pblock->GetValue(ParamIdAnisotropicTexmap, t, m_anisotropic_texmap, valid);
+        m_pblock->GetValue(ParamIdSpecularTint, t, m_specular_tint, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularTintTexmap, t, m_specular_tint_texmap, m_params_validity);
 
-    m_pblock->GetValue(ParamIdRoughness, t, m_roughness, valid);
-    m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, valid);
+        m_pblock->GetValue(ParamIdAnisotropic, t, m_anisotropic, m_params_validity);
+        m_pblock->GetValue(ParamIdAnisotropicTexmap, t, m_anisotropic_texmap, m_params_validity);
 
-    m_pblock->GetValue(ParamIdClearcoat, t, m_clearcoat, valid);
-    m_pblock->GetValue(ParamIdClearcoatTexmap, t, m_clearcoat_texmap, valid);
+        m_pblock->GetValue(ParamIdRoughness, t, m_roughness, m_params_validity);
+        m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, m_params_validity);
 
-    m_pblock->GetValue(ParamIdClearcoatGloss, t, m_clearcoat_gloss, valid);
-    m_pblock->GetValue(ParamIdClearcoatGlossTexmap, t, m_clearcoat_gloss_texmap, valid);
+        m_pblock->GetValue(ParamIdClearcoat, t, m_clearcoat, m_params_validity);
+        m_pblock->GetValue(ParamIdClearcoatTexmap, t, m_clearcoat_texmap, m_params_validity);
 
-    NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
+        m_pblock->GetValue(ParamIdClearcoatGloss, t, m_clearcoat_gloss, m_params_validity);
+        m_pblock->GetValue(ParamIdClearcoatGlossTexmap, t, m_clearcoat_gloss_texmap, m_params_validity);
+
+        NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
+    }
+
+    valid &= m_params_validity;
 }
 
 void AppleseedStdMtl::Reset()
 {
     g_appleseed_stdmtl_classdesc.Reset(this);
+
+    m_params_validity.SetEmpty();
 }
 
 Interval AppleseedStdMtl::Validity(TimeValue t)
@@ -529,7 +546,7 @@ namespace
     {
         if (texmap == nullptr)
             return false;
-        
+
         if (texmap->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
             return false;
 
