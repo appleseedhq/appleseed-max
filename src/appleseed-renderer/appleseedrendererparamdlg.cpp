@@ -142,12 +142,18 @@ namespace
     struct AboutPanel
       : public PanelBase
     {
-        IRendParams*            m_rend_params;
-        HWND                    m_rollup;
-        HWND                    m_button_download_hwnd;
-        ICustButton*            m_button_download;
-        bool                    m_update_available;
-        std::wstring            m_download_url;
+        struct UpdateCheckData
+        {
+            bool            m_update_available;
+            std::wstring    m_version_string;
+            std::wstring    m_download_url;
+        };
+
+        IRendParams*                    m_rend_params;
+        HWND                            m_rollup;
+        HWND                            m_button_download_hwnd;
+        ICustButton*                    m_button_download;
+        std::auto_ptr<UpdateCheckData>  m_update_data;
 
         enum { WM_UPDATE_CHECK_DATA = WM_USER + 101 };
 
@@ -169,13 +175,6 @@ namespace
             ReleaseICustButton(m_button_download);
             m_rend_params->DeleteRollupPage(m_rollup);
         }
-
-        struct UpdateCheckData
-        {
-            bool            m_update_available;
-            std::wstring    m_version_string;
-            std::wstring    m_download_url;
-        };
 
         static void async_update_check(HWND hwnd)
         {
@@ -222,11 +221,11 @@ namespace
             {
                 case WM_UPDATE_CHECK_DATA:
                 {
-                    std::auto_ptr<UpdateCheckData> data(reinterpret_cast<UpdateCheckData*>(wparam));
-                    if (data->m_update_available)
+                    m_update_data.reset(reinterpret_cast<UpdateCheckData*>(wparam));
+                    if (m_update_data->m_update_available)
                     {
                         std::wstringstream sstr;
-                        sstr << "UPDATE: Version " << data->m_version_string << " available.";
+                        sstr << "UPDATE: Version " << m_update_data->m_version_string << " available.";
                         set_label_text(hwnd, IDC_STATIC_NEW_VERSION, sstr.str().c_str());
                         ShowWindow(m_button_download_hwnd, SW_SHOW);
                     }
@@ -242,11 +241,12 @@ namespace
                     {
                         case IDC_BUTTON_DOWNLOAD:
                         {
-                            DbgAssert(m_update_available);
+                            DbgAssert(m_update_data.get());
+                            DbgAssert(m_update_data->m_update_available);
                             ShellExecute(
                                 hwnd,
                                 _T("open"),
-                                m_download_url.c_str(),
+                                m_update_data->m_download_url.c_str(),
                                 nullptr,            // application parameters
                                 nullptr,            // working directory
                                 SW_SHOWNORMAL);
