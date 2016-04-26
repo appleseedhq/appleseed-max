@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="stdmtl\appleseedstdmtl.cpp">
+      <Filter>stdmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="stdmtl\appleseedstdmtlparamdlg.cpp">
+      <Filter>stdmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\appleseedrenderer.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\appleseedrendererparamdlg.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\maxsceneentities.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\projectbuilder.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderercontroller.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderersettings.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\tilecallback.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\updatechecker.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="iappleseedmtl.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="version.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdmtl\appleseedstdmtl.h">
+      <Filter>stdmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="stdmtl\appleseedstdmtlparamdlg.h">
+      <Filter>stdmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="stdmtl\datachunks.h">
+      <Filter>stdmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="stdmtl\resource.h">
+      <Filter>stdmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\appleseedrenderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\appleseedrendererparamdlg.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\datachunks.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\maxsceneentities.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\projectbuilder.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\renderercontroller.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\renderersettings.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\resource.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\tilecallback.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\updatechecker.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="iappleseedmtl.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="stdmtl\appleseedstdmtl.rc">
+      <Filter>stdmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="renderer\appleseedrenderer.rc">
+      <Filter>renderer</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="renderer">
+      <UniqueIdentifier>{3b53d01d-35e2-4c3e-a0a4-6d9921c729a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stdmtl">
+      <UniqueIdentifier>{21b521f9-2447-4c79-9433-e35a454d6af0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

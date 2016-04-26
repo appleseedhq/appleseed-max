@@ -1,0 +1,170 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_RENDERERPARAMS_ABOUT DIALOGEX 0, 0, 200, 56
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Plugin Version:",IDC_STATIC,0,6,78,8
+    LTEXT           "appleseed Version:",IDC_STATIC,0,21,78,8
+    CONTROL         "Custom1",IDC_TEXT_PLUGIN_VERSION,"CustStatus",WS_TABSTOP,78,5,72,10
+    CONTROL         "Custom1",IDC_TEXT_APPLESEED_VERSION,"CustStatus",WS_TABSTOP,78,20,72,10
+    CONTROL         "Download",IDC_BUTTON_DOWNLOAD,"CustButton",WS_TABSTOP,150,41,42,10
+    LTEXT           "Checking for updates...",IDC_STATIC_NEW_VERSION,0,42,144,8
+END
+
+IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING DIALOGEX 0, 0, 200, 21
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Pixel Samples:",IDC_STATIC,0,6,48,8
+    CONTROL         "Custom1",IDC_TEXT_PIXELSAMPLES,"CustEdit",WS_TABSTOP,50,5,30,10
+    CONTROL         "Custom1",IDC_SPINNER_PIXELSAMPLES,"SpinnerControl",WS_TABSTOP,81,5,6,10
+    LTEXT           "Passes:",IDC_STATIC,107,6,27,8
+    CONTROL         "Custom1",IDC_TEXT_PASSES,"CustEdit",WS_TABSTOP,136,5,30,10
+    CONTROL         "Custom1",IDC_SPINNER_PASSES,"SpinnerControl",WS_TABSTOP,168,5,6,10
+END
+
+IDD_FORMVIEW_RENDERERPARAMS_LIGHTING DIALOGEX 0, 0, 200, 35
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Bounces:",IDC_STATIC,102,6,30,8
+    CONTROL         "Custom1",IDC_TEXT_BOUNCES,"CustEdit",WS_TABSTOP,136,5,30,10
+    CONTROL         "Custom1",IDC_SPINNER_BOUNCES,"SpinnerControl",WS_TABSTOP,168,5,6,10
+    CONTROL         "Global Illumination",IDC_CHECK_GI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,5,73,10
+    CONTROL         "Background Emits Light",IDC_CHECK_BACKGROUND_EMITS_LIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,20,89,10
+END
+
+IDD_FORMVIEW_RENDERERPARAMS_OUTPUT DIALOGEX 0, 0, 200, 80
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Render Only",IDC_RADIO_RENDER,"Button",BS_AUTORADIOBUTTON | WS_GROUP,8,15,56,10
+    CONTROL         "Save Project Only",IDC_RADIO_SAVEPROJECT,"Button",BS_AUTORADIOBUTTON,8,28,73,10
+    CONTROL         "Save Project And Render",IDC_RADIO_SAVEPROJECT_AND_RENDER,
+                    "Button",BS_AUTORADIOBUTTON,8,41,97,10
+    LTEXT           "Project File:",IDC_STATIC,18,59,41,8
+    CONTROL         "Custom1",IDC_TEXT_PROJECT_FILEPATH,"CustEdit",WS_TABSTOP,61,58,88,10
+    CONTROL         "Browse...",IDC_BUTTON_BROWSE,"CustButton",WS_TABSTOP,153,58,42,10
+    GROUPBOX        "Output Mode",IDC_STATIC,0,3,200,72
+END
+
+IDD_FORMVIEW_RENDERERPARAMS_SYSTEM DIALOGEX 0, 0, 200, 21
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "CPU Cores:",IDC_STATIC,0,6,38,8
+    CONTROL         "Custom1",IDC_TEXT_RENDERINGTHREADS,"CustEdit",WS_TABSTOP,42,5,30,10
+    CONTROL         "Custom1",IDC_SPINNER_RENDERINGTHREADS,"SpinnerControl",WS_TABSTOP,73,5,6,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_RENDERERPARAMS_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 44
+    END
+
+    IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING, DIALOG
+    BEGIN
+    END
+
+    IDD_FORMVIEW_RENDERERPARAMS_LIGHTING, DIALOG
+    BEGIN
+    END
+
+    IDD_FORMVIEW_RENDERERPARAMS_OUTPUT, DIALOG
+    BEGIN
+    END
+
+    IDD_FORMVIEW_RENDERERPARAMS_SYSTEM, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 20
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_RENDERERPARAMS_OUTPUT AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

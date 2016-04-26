@@ -30,10 +30,10 @@
 #include "projectbuilder.h"
 
 // appleseed-max headers.
-#include "common/iappleseedmtl.h"
-#include "common/utilities.h"
-#include "maxsceneentities.h"
-#include "renderersettings.h"
+#include "renderer/maxsceneentities.h"
+#include "renderer/renderersettings.h"
+#include "iappleseedmtl.h"
+#include "utilities.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"

@@ -30,11 +30,11 @@
 #include "appleseedstdmtl.h"
 
 // appleseed-max headers.
-#include "common/utilities.h"
-#include "appleseedstdmtlparamdlg.h"
-#include "datachunks.h"
+#include "stdmtl/appleseedstdmtlparamdlg.h"
+#include "stdmtl/datachunks.h"
+#include "stdmtl/resource.h"
 #include "main.h"
-#include "resource.h"
+#include "utilities.h"
 #include "version.h"
 
 // appleseed.renderer headers.

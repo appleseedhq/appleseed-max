@@ -30,8 +30,8 @@
 #include "renderersettings.h"
 
 // appleseed-max headers.
-#include "common/utilities.h"
-#include "datachunks.h"
+#include "renderer/datachunks.h"
+#include "utilities.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"

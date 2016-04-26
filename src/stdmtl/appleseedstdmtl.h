@@ -29,7 +29,7 @@
 #pragma once
 
 // appleseed-max headers.
-#include "common/iappleseedmtl.h"
+#include "iappleseedmtl.h"
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers

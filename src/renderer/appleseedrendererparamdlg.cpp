@@ -30,11 +30,11 @@
 #include "appleseedrendererparamdlg.h"
 
 // appleseed-max headers.
-#include "common/utilities.h"
+#include "renderer/renderersettings.h"
+#include "renderer/resource.h"
+#include "renderer/updatechecker.h"
 #include "main.h"
-#include "renderersettings.h"
-#include "resource.h"
-#include "updatechecker.h"
+#include "utilities.h"
 #include "version.h"
 
 // appleseed.foundation headers.

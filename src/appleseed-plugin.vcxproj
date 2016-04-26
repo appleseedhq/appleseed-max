@@ -180,39 +180,45 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="appleseedrenderer.cpp" />
-    <ClCompile Include="appleseedrendererparamdlg.cpp" />
+    <ClCompile Include="iappleseedmtl.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="maxsceneentities.cpp" />
     <ClCompile Include="plugin.cpp" />
-    <ClCompile Include="projectbuilder.cpp" />
-    <ClCompile Include="renderercontroller.cpp" />
-    <ClCompile Include="renderersettings.cpp" />
-    <ClCompile Include="tilecallback.cpp" />
-    <ClCompile Include="updatechecker.cpp" />
+    <ClCompile Include="renderer\appleseedrenderer.cpp" />
+    <ClCompile Include="renderer\appleseedrendererparamdlg.cpp" />
+    <ClCompile Include="renderer\maxsceneentities.cpp" />
+    <ClCompile Include="renderer\projectbuilder.cpp" />
+    <ClCompile Include="renderer\renderercontroller.cpp" />
+    <ClCompile Include="renderer\renderersettings.cpp" />
+    <ClCompile Include="renderer\tilecallback.cpp" />
+    <ClCompile Include="renderer\updatechecker.cpp" />
+    <ClCompile Include="stdmtl\appleseedstdmtl.cpp" />
+    <ClCompile Include="stdmtl\appleseedstdmtlparamdlg.cpp" />
+    <ClCompile Include="utilities.cpp" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="appleseedrenderer.h" />
-    <ClInclude Include="appleseedrendererparamdlg.h" />
-    <ClInclude Include="datachunks.h" />
+    <ClInclude Include="iappleseedmtl.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="maxsceneentities.h" />
-    <ClInclude Include="projectbuilder.h" />
-    <ClInclude Include="renderercontroller.h" />
-    <ClInclude Include="renderersettings.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="tilecallback.h" />
-    <ClInclude Include="updatechecker.h" />
+    <ClInclude Include="renderer\appleseedrenderer.h" />
+    <ClInclude Include="renderer\appleseedrendererparamdlg.h" />
+    <ClInclude Include="renderer\datachunks.h" />
+    <ClInclude Include="renderer\maxsceneentities.h" />
+    <ClInclude Include="renderer\projectbuilder.h" />
+    <ClInclude Include="renderer\renderercontroller.h" />
+    <ClInclude Include="renderer\renderersettings.h" />
+    <ClInclude Include="renderer\resource.h" />
+    <ClInclude Include="renderer\tilecallback.h" />
+    <ClInclude Include="renderer\updatechecker.h" />
+    <ClInclude Include="stdmtl\appleseedstdmtl.h" />
+    <ClInclude Include="stdmtl\appleseedstdmtlparamdlg.h" />
+    <ClInclude Include="stdmtl\datachunks.h" />
+    <ClInclude Include="stdmtl\resource.h" />
+    <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="appleseed-renderer.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\common\common.vcxproj">
-      <Project>{d683de6a-baae-43fc-9f51-1af521393949}</Project>
-    </ProjectReference>
+    <ResourceCompile Include="renderer\appleseedrenderer.rc" />
+    <ResourceCompile Include="stdmtl\appleseedstdmtl.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -30,7 +30,7 @@
 #include "appleseedstdmtlparamdlg.h"
 
 // appleseed-max headers.
-#include "appleseedstdmtl.h"
+#include "stdmtl/appleseedstdmtl.h"
 
 AppleseedStdMtlParamDlg::AppleseedStdMtlParamDlg(
     AppleseedStdMtl*    mtl,
