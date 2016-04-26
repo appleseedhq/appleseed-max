@@ -606,7 +606,7 @@ namespace
     }
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)
 {
     auto material = asr::DisneyMaterialFactory::static_create(name, asr::ParamArray());
     auto values = asr::DisneyMaterialLayer::get_default_values();

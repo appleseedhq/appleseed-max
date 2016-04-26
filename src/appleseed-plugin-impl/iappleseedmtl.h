@@ -36,6 +36,7 @@
 #include <baseinterface.h>
 
 // Forward declarations.
+namespace renderer  { class Assembly; }
 namespace renderer  { class Material; }
 class Interface_ID;
 
@@ -47,5 +48,7 @@ class IAppleseedMtl
 
     virtual Interface_ID GetID() override;
 
-    virtual foundation::auto_release_ptr<renderer::Material> create_material(const char* name) = 0;
+    virtual foundation::auto_release_ptr<renderer::Material> create_material(
+        renderer::Assembly& assembly,
+        const char*         name) = 0;
 };

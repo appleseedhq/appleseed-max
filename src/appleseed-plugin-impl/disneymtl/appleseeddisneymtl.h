@@ -127,7 +127,9 @@ class AppleseedDisneyMtl
     virtual void Shade(ShadeContext& sc) override;
 
     // IAppleseedMtl methods.
-    virtual foundation::auto_release_ptr<renderer::Material> create_material(const char* name) override;
+    virtual foundation::auto_release_ptr<renderer::Material> create_material(
+        renderer::Assembly& assembly,
+        const char*         name) override;
 
   private:
     IParamBlock2*   m_pblock;

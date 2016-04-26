@@ -341,7 +341,7 @@ namespace
                     const std::string material_name =
                         make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()));
                     assembly.materials().insert(
-                        appleseed_mtl->create_material(material_name.c_str()));
+                        appleseed_mtl->create_material(assembly, material_name.c_str()));
                     material_map.insert(std::make_pair(mtl, material_name));
                     material_mappings.insert("material", material_name);
                 }
