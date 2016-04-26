@@ -58,7 +58,7 @@ class ISave;
 class ShadeContext;
 class Texmap;
 
-class AppleseedStdMtl
+class AppleseedDisneyMtl
   : public Mtl
   , public IAppleseedMtl
 {
@@ -66,7 +66,7 @@ class AppleseedStdMtl
     static Class_ID get_class_id();
 
     // Constructor.
-    AppleseedStdMtl();
+    AppleseedDisneyMtl();
 
     // InterfaceServer methods.
     virtual BaseInterface* GetInterface(Interface_ID id) override;
@@ -152,10 +152,10 @@ class AppleseedStdMtl
 
 
 //
-// AppleseedStdMtl material browser info.
+// AppleseedDisneyMtl material browser info.
 //
 
-class AppleseedStdMtlBrowserEntryInfo
+class AppleseedDisneyMtlBrowserEntryInfo
   : public IMaterialBrowserEntryInfo
 {
   public:
@@ -166,10 +166,10 @@ class AppleseedStdMtlBrowserEntryInfo
 
 
 //
-// AppleseedStdMtl class descriptor.
+// AppleseedDisneyMtl class descriptor.
 //
 
-class AppleseedStdMtlClassDesc
+class AppleseedDisneyMtlClassDesc
   : public ClassDesc2
 {
   public:
@@ -184,7 +184,7 @@ class AppleseedStdMtlClassDesc
     virtual HINSTANCE HInstance();
 
   private:
-    AppleseedStdMtlBrowserEntryInfo m_browser_entry_info;
+    AppleseedDisneyMtlBrowserEntryInfo m_browser_entry_info;
 };
 
-extern AppleseedStdMtlClassDesc g_appleseed_stdmtl_classdesc;
+extern AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;

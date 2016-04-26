@@ -27,47 +27,47 @@
 //
 
 // Interface header.
-#include "appleseedstdmtlparamdlg.h"
+#include "appleseeddisneymtlparamdlg.h"
 
 // appleseed-max headers.
-#include "stdmtl/appleseedstdmtl.h"
+#include "disneymtl/appleseeddisneymtl.h"
 
-AppleseedStdMtlParamDlg::AppleseedStdMtlParamDlg(
-    AppleseedStdMtl*    mtl,
+AppleseedDisneyMtlParamDlg::AppleseedDisneyMtlParamDlg(
+    AppleseedDisneyMtl* mtl,
     HWND                hwMtlEdit,
     IMtlParams*         imp)
   : m_mtl(mtl)
 {
 }
 
-Class_ID AppleseedStdMtlParamDlg::ClassID()
+Class_ID AppleseedDisneyMtlParamDlg::ClassID()
 {
-    return AppleseedStdMtl::get_class_id();
+    return AppleseedDisneyMtl::get_class_id();
 }
 
-void AppleseedStdMtlParamDlg::SetThing(ReferenceTarget* m)
+void AppleseedDisneyMtlParamDlg::SetThing(ReferenceTarget* m)
 {
-    m_mtl = static_cast<AppleseedStdMtl*>(m);
+    m_mtl = static_cast<AppleseedDisneyMtl*>(m);
 }
 
-ReferenceTarget* AppleseedStdMtlParamDlg::GetThing()
+ReferenceTarget* AppleseedDisneyMtlParamDlg::GetThing()
 {
     return m_mtl;
 }
 
-void AppleseedStdMtlParamDlg::SetTime(TimeValue t)
+void AppleseedDisneyMtlParamDlg::SetTime(TimeValue t)
 {
 }
 
-void AppleseedStdMtlParamDlg::ReloadDialog()
+void AppleseedDisneyMtlParamDlg::ReloadDialog()
 {
 }
 
-void AppleseedStdMtlParamDlg::DeleteThis()
+void AppleseedDisneyMtlParamDlg::DeleteThis()
 {
     delete this;
 }
 
-void AppleseedStdMtlParamDlg::ActivateDlg(BOOL onOff)
+void AppleseedDisneyMtlParamDlg::ActivateDlg(BOOL onOff)
 {
 }

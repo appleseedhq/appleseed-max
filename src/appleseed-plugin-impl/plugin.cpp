@@ -27,8 +27,8 @@
 //
 
 // appleseed-max headers.
+#include "disneymtl/appleseeddisneymtl.h"
 #include "renderer/appleseedrenderer.h"
-#include "stdmtl/appleseedstdmtl.h"
 #include "main.h"
 
 // appleseed.foundation headers.
@@ -65,7 +65,7 @@ extern "C"
         {
           // Make sure to update LibNumberClasses() if you add classes.
           case 0: return &g_appleseed_renderer_classdesc;
-          case 1: return &g_appleseed_stdmtl_classdesc;
+          case 1: return &g_appleseed_disneymtl_classdesc;
 
           default:
             return nullptr;

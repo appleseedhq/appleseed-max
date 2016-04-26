@@ -27,12 +27,12 @@
 //
 
 // Interface header.
-#include "appleseedstdmtl.h"
+#include "appleseeddisneymtl.h"
 
 // appleseed-max headers.
-#include "stdmtl/appleseedstdmtlparamdlg.h"
-#include "stdmtl/datachunks.h"
-#include "stdmtl/resource.h"
+#include "disneymtl/appleseeddisneymtlparamdlg.h"
+#include "disneymtl/datachunks.h"
+#include "disneymtl/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -59,20 +59,20 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedStdMtlFriendlyClassName = _T("appleseed Standard Material");
+    const TCHAR* AppleseedDisneyMtlFriendlyClassName = _T("appleseed Disney Material");
 }
 
-AppleseedStdMtlClassDesc g_appleseed_stdmtl_classdesc;
+AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;
 
 
 //
-// AppleseedStdMtl class implementation.
+// AppleseedDisneyMtl class implementation.
 //
 
 namespace
 {
-    enum { ParamBlockIdStdMtl };
-    enum { ParamBlockRefStdMtl };
+    enum { ParamBlockIdDisneyMtl };
+    enum { ParamBlockRefDisneyMtl };
 
     enum ParamId
     {
@@ -133,14 +133,14 @@ namespace
 
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
-        ParamBlockIdStdMtl,                         // parameter block's ID
-        _T("appleseedStdMtlParams"),                // internal parameter block's name
+        ParamBlockIdDisneyMtl,                      // parameter block's ID
+        _T("appleseedDisneyMtlParams"),             // internal parameter block's name
         0,                                          // ID of the localized name string
-        &g_appleseed_stdmtl_classdesc,              // class descriptor
+        &g_appleseed_disneymtl_classdesc,           // class descriptor
         P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
-        ParamBlockRefStdMtl,                        // parameter block's reference number
+        ParamBlockRefDisneyMtl,                     // parameter block's reference number
 
         // --- P_AUTO_UI arguments ---
         IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
@@ -234,12 +234,12 @@ namespace
         p_end);
 }
 
-Class_ID AppleseedStdMtl::get_class_id()
+Class_ID AppleseedDisneyMtl::get_class_id()
 {
     return Class_ID(0x331b1ff7, 0x16381b67);
 }
 
-AppleseedStdMtl::AppleseedStdMtl()
+AppleseedDisneyMtl::AppleseedDisneyMtl()
   : m_pblock(nullptr)
   , m_base_color(0.0f, 0.0f, 0.0f)
   , m_base_color_texmap(nullptr)
@@ -260,10 +260,10 @@ AppleseedStdMtl::AppleseedStdMtl()
 {
     m_params_validity.SetEmpty();
 
-    g_appleseed_stdmtl_classdesc.MakeAutoParamBlocks(this);
+    g_appleseed_disneymtl_classdesc.MakeAutoParamBlocks(this);
 }
 
-BaseInterface* AppleseedStdMtl::GetInterface(Interface_ID id)
+BaseInterface* AppleseedDisneyMtl::GetInterface(Interface_ID id)
 {
     return
         id == IAppleseedMtl::interface_id()
@@ -271,81 +271,81 @@ BaseInterface* AppleseedStdMtl::GetInterface(Interface_ID id)
             : Mtl::GetInterface(id);
 }
 
-void AppleseedStdMtl::DeleteThis()
+void AppleseedDisneyMtl::DeleteThis()
 {
     delete this;
 }
 
-void AppleseedStdMtl::GetClassName(TSTR& s)
+void AppleseedDisneyMtl::GetClassName(TSTR& s)
 {
-    s = _T("appleseedStdMtl");
+    s = _T("appleseedDisneyMtl");
 }
 
-SClass_ID AppleseedStdMtl::SuperClassID()
+SClass_ID AppleseedDisneyMtl::SuperClassID()
 {
     return MATERIAL_CLASS_ID;
 }
 
-Class_ID AppleseedStdMtl::ClassID()
+Class_ID AppleseedDisneyMtl::ClassID()
 {
     return get_class_id();
 }
 
-int AppleseedStdMtl::NumSubs()
+int AppleseedDisneyMtl::NumSubs()
 {
     return 1;
 }
 
-Animatable* AppleseedStdMtl::SubAnim(int i)
+Animatable* AppleseedDisneyMtl::SubAnim(int i)
 {
     return i == 0 ? m_pblock : nullptr;
 }
 
-TSTR AppleseedStdMtl::SubAnimName(int i)
+TSTR AppleseedDisneyMtl::SubAnimName(int i)
 {
     return i == 0 ? _T("Parameters") : _T("");
 }
 
-int AppleseedStdMtl::SubNumToRefNum(int subNum)
+int AppleseedDisneyMtl::SubNumToRefNum(int subNum)
 {
     return subNum;
 }
 
-int AppleseedStdMtl::NumParamBlocks()
+int AppleseedDisneyMtl::NumParamBlocks()
 {
     return 1;
 }
 
-IParamBlock2* AppleseedStdMtl::GetParamBlock(int i)
+IParamBlock2* AppleseedDisneyMtl::GetParamBlock(int i)
 {
     return i == 0 ? m_pblock : nullptr;
 }
 
-IParamBlock2* AppleseedStdMtl::GetParamBlockByID(BlockID id)
+IParamBlock2* AppleseedDisneyMtl::GetParamBlockByID(BlockID id)
 {
     return id == m_pblock->ID() ? m_pblock : nullptr;
 }
 
-int AppleseedStdMtl::NumRefs()
+int AppleseedDisneyMtl::NumRefs()
 {
     return 1;
 }
 
-RefTargetHandle AppleseedStdMtl::GetReference(int i)
+RefTargetHandle AppleseedDisneyMtl::GetReference(int i)
 {
-    return i == ParamBlockRefStdMtl ? m_pblock : nullptr;
+    return i == ParamBlockRefDisneyMtl ? m_pblock : nullptr;
 }
 
-void AppleseedStdMtl::SetReference(int i, RefTargetHandle rtarg)
+void AppleseedDisneyMtl::SetReference(int i, RefTargetHandle rtarg)
 {
-    if (i == ParamBlockRefStdMtl)
+    if (i == ParamBlockRefDisneyMtl)
     {
         if (IParamBlock2* pblock = dynamic_cast<IParamBlock2*>(rtarg))
             m_pblock = pblock;
     }
 }
 
-RefResult AppleseedStdMtl::NotifyRefChanged(
+RefResult AppleseedDisneyMtl::NotifyRefChanged(
     const Interval&     changeInt,
     RefTargetHandle     hTarget,
     PartID&             partID,
@@ -362,21 +362,21 @@ RefResult AppleseedStdMtl::NotifyRefChanged(
     return REF_SUCCEED;
 }
 
-RefTargetHandle AppleseedStdMtl::Clone(RemapDir& remap)
+RefTargetHandle AppleseedDisneyMtl::Clone(RemapDir& remap)
 {
-    AppleseedStdMtl* clone = new AppleseedStdMtl();
+    AppleseedDisneyMtl* clone = new AppleseedDisneyMtl();
     *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
     clone->ReplaceReference(0, remap.CloneRef(m_pblock));
     BaseClone(this, clone, remap);
     return clone;
 }
 
-int AppleseedStdMtl::NumSubTexmaps()
+int AppleseedDisneyMtl::NumSubTexmaps()
 {
     return TexmapCount;
 }
 
-Texmap* AppleseedStdMtl::GetSubTexmap(int i)
+Texmap* AppleseedDisneyMtl::GetSubTexmap(int i)
 {
     Texmap* texmap;
     Interval valid;
@@ -388,25 +388,25 @@ Texmap* AppleseedStdMtl::GetSubTexmap(int i)
     return texmap;
 }
 
-void AppleseedStdMtl::SetSubTexmap(int i, Texmap* texmap)
+void AppleseedDisneyMtl::SetSubTexmap(int i, Texmap* texmap)
 {
     const auto texmap_id = static_cast<TexmapId>(i);
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
 }
 
-int AppleseedStdMtl::MapSlotType(int i)
+int AppleseedDisneyMtl::MapSlotType(int i)
 {
     return MAPSLOT_TEXTURE;
 }
 
-MSTR AppleseedStdMtl::GetSubTexmapSlotName(int i)
+MSTR AppleseedDisneyMtl::GetSubTexmapSlotName(int i)
 {
     const auto texmap_id = static_cast<TexmapId>(i);
     return g_texmap_slot_names[texmap_id];
 }
 
-void AppleseedStdMtl::Update(TimeValue t, Interval& valid)
+void AppleseedDisneyMtl::Update(TimeValue t, Interval& valid)
 {
     if (!m_params_validity.InInterval(t))
     {
@@ -442,26 +442,26 @@ void AppleseedStdMtl::Update(TimeValue t, Interval& valid)
     valid &= m_params_validity;
 }
 
-void AppleseedStdMtl::Reset()
+void AppleseedDisneyMtl::Reset()
 {
-    g_appleseed_stdmtl_classdesc.Reset(this);
+    g_appleseed_disneymtl_classdesc.Reset(this);
 
     m_params_validity.SetEmpty();
 }
 
-Interval AppleseedStdMtl::Validity(TimeValue t)
+Interval AppleseedDisneyMtl::Validity(TimeValue t)
 {
     Interval valid = FOREVER;
     Update(t, valid);
     return valid;
 }
 
-ParamDlg* AppleseedStdMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
+ParamDlg* AppleseedDisneyMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
-    return g_appleseed_stdmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    return g_appleseed_disneymtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
 }
 
-IOResult AppleseedStdMtl::Save(ISave* isave)
+IOResult AppleseedDisneyMtl::Save(ISave* isave)
 {
     bool success = true;
 
@@ -476,7 +476,7 @@ IOResult AppleseedStdMtl::Save(ISave* isave)
     return success ? IO_OK : IO_ERROR;
 }
 
-IOResult AppleseedStdMtl::Load(ILoad* iload)
+IOResult AppleseedDisneyMtl::Load(ILoad* iload)
 {
     IOResult result = IO_OK;
 
@@ -513,53 +513,53 @@ IOResult AppleseedStdMtl::Load(ILoad* iload)
     return result;
 }
 
-Color AppleseedStdMtl::GetAmbient(int mtlNum, BOOL backFace)
+Color AppleseedDisneyMtl::GetAmbient(int mtlNum, BOOL backFace)
 {
     return Color(0.0f, 0.0f, 0.0f);
 }
 
-Color AppleseedStdMtl::GetDiffuse(int mtlNum, BOOL backFace)
+Color AppleseedDisneyMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
     return m_base_color;
 }
 
-Color AppleseedStdMtl::GetSpecular(int mtlNum, BOOL backFace)
+Color AppleseedDisneyMtl::GetSpecular(int mtlNum, BOOL backFace)
 {
     return Color(0.0f, 0.0f, 0.0f);
 }
 
-float AppleseedStdMtl::GetShininess(int mtlNum, BOOL backFace)
+float AppleseedDisneyMtl::GetShininess(int mtlNum, BOOL backFace)
 {
     return 0.0f;
 }
 
-float AppleseedStdMtl::GetShinStr(int mtlNum, BOOL backFace)
+float AppleseedDisneyMtl::GetShinStr(int mtlNum, BOOL backFace)
 {
     return 0.0f;
 }
 
-float AppleseedStdMtl::GetXParency(int mtlNum, BOOL backFace)
+float AppleseedDisneyMtl::GetXParency(int mtlNum, BOOL backFace)
 {
     return 0.0f;
 }
 
-void AppleseedStdMtl::SetAmbient(Color c, TimeValue t)
+void AppleseedDisneyMtl::SetAmbient(Color c, TimeValue t)
 {
 }
 
-void AppleseedStdMtl::SetDiffuse(Color c, TimeValue t)
+void AppleseedDisneyMtl::SetDiffuse(Color c, TimeValue t)
 {
 }
 
-void AppleseedStdMtl::SetSpecular(Color c, TimeValue t)
+void AppleseedDisneyMtl::SetSpecular(Color c, TimeValue t)
 {
 }
 
-void AppleseedStdMtl::SetShininess(float v, TimeValue t)
+void AppleseedDisneyMtl::SetShininess(float v, TimeValue t)
 {
 }
 
-void AppleseedStdMtl::Shade(ShadeContext& sc)
+void AppleseedDisneyMtl::Shade(ShadeContext& sc)
 {
 }
 
@@ -606,7 +606,7 @@ namespace
     }
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(const char* name)
 {
     auto material = asr::DisneyMaterialFactory::static_create(name, asr::ParamArray());
     auto values = asr::DisneyMaterialLayer::get_default_values();
@@ -633,20 +633,20 @@ asf::auto_release_ptr<asr::Material> AppleseedStdMtl::create_material(const char
 
 
 //
-// AppleseedStdMtlBrowserEntryInfo class implementation.
+// AppleseedDisneyMtlBrowserEntryInfo class implementation.
 //
 
-const MCHAR* AppleseedStdMtlBrowserEntryInfo::GetEntryName() const
+const MCHAR* AppleseedDisneyMtlBrowserEntryInfo::GetEntryName() const
 {
-    return AppleseedStdMtlFriendlyClassName;
+    return AppleseedDisneyMtlFriendlyClassName;
 }
 
-const MCHAR* AppleseedStdMtlBrowserEntryInfo::GetEntryCategory() const
+const MCHAR* AppleseedDisneyMtlBrowserEntryInfo::GetEntryCategory() const
 {
     return _T("Materials\\appleseed");
 }
 
-Bitmap* AppleseedStdMtlBrowserEntryInfo::GetEntryThumbnail() const
+Bitmap* AppleseedDisneyMtlBrowserEntryInfo::GetEntryThumbnail() const
 {
     // todo: implement.
     return nullptr;
@@ -654,46 +654,46 @@ Bitmap* AppleseedStdMtlBrowserEntryInfo::GetEntryThumbnail() const
 
 
 //
-// AppleseedStdMtlClassDesc class implementation.
+// AppleseedDisneyMtlClassDesc class implementation.
 //
 
-int AppleseedStdMtlClassDesc::IsPublic()
+int AppleseedDisneyMtlClassDesc::IsPublic()
 {
     return TRUE;
 }
 
-void* AppleseedStdMtlClassDesc::Create(BOOL loading)
+void* AppleseedDisneyMtlClassDesc::Create(BOOL loading)
 {
-    return new AppleseedStdMtl();
+    return new AppleseedDisneyMtl();
 }
 
-const MCHAR* AppleseedStdMtlClassDesc::ClassName()
+const MCHAR* AppleseedDisneyMtlClassDesc::ClassName()
 {
-    return AppleseedStdMtlFriendlyClassName;
+    return AppleseedDisneyMtlFriendlyClassName;
 }
 
-SClass_ID AppleseedStdMtlClassDesc::SuperClassID()
+SClass_ID AppleseedDisneyMtlClassDesc::SuperClassID()
 {
     return MATERIAL_CLASS_ID;
 }
 
-Class_ID AppleseedStdMtlClassDesc::ClassID()
+Class_ID AppleseedDisneyMtlClassDesc::ClassID()
 {
-    return AppleseedStdMtl::get_class_id();
+    return AppleseedDisneyMtl::get_class_id();
 }
 
-const MCHAR* AppleseedStdMtlClassDesc::Category()
+const MCHAR* AppleseedDisneyMtlClassDesc::Category()
 {
     return _T("");
 }
 
-const MCHAR* AppleseedStdMtlClassDesc::InternalName()
+const MCHAR* AppleseedDisneyMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseed_stdmtl");
+    return _T("appleseed_disneymtl");
 }
 
-FPInterface* AppleseedStdMtlClassDesc::GetInterface(Interface_ID id)
+FPInterface* AppleseedDisneyMtlClassDesc::GetInterface(Interface_ID id)
 {
     if (id == IMATERIAL_BROWSER_ENTRY_INFO_INTERFACE)
         return &m_browser_entry_info;
@@ -701,7 +701,7 @@ FPInterface* AppleseedStdMtlClassDesc::GetInterface(Interface_ID id)
     return ClassDesc2::GetInterface(id);
 }
 
-HINSTANCE AppleseedStdMtlClassDesc::HInstance()
+HINSTANCE AppleseedDisneyMtlClassDesc::HInstance()
 {
     return g_module;
 }

@@ -39,15 +39,15 @@
 #include <maxtypes.h>
 
 // Forward declarations.
-class AppleseedStdMtl;
+class AppleseedDisneyMtl;
 class ReferenceTarget;
 
-class AppleseedStdMtlParamDlg
+class AppleseedDisneyMtlParamDlg
   : public ParamDlg
 {
   public:
-    AppleseedStdMtlParamDlg(
-        AppleseedStdMtl*    mtl,
+    AppleseedDisneyMtlParamDlg(
+        AppleseedDisneyMtl* mtl,
         HWND                hwMtlEdit,
         IMtlParams*         imp);
 
@@ -60,5 +60,5 @@ class AppleseedStdMtlParamDlg
     virtual void ActivateDlg(BOOL onOff) override;
 
   private:
-    AppleseedStdMtl*        m_mtl;
+    AppleseedDisneyMtl* m_mtl;
 };

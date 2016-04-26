@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by appleseed-renderer.rc
+// Used by appleseedrenderer.rc
 //
 #define IDD_FORMVIEW_RENDERERPARAMS_SAMPLING 101
 #define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM 104

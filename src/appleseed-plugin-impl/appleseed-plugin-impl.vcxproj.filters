@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="stdmtl\appleseedstdmtl.cpp">
-      <Filter>stdmtl</Filter>
-    </ClCompile>
-    <ClCompile Include="stdmtl\appleseedstdmtlparamdlg.cpp">
-      <Filter>stdmtl</Filter>
-    </ClCompile>
     <ClCompile Include="renderer\appleseedrenderer.cpp">
       <Filter>renderer</Filter>
     </ClCompile>
@@ -36,20 +30,14 @@
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="version.cpp" />
+    <ClCompile Include="disneymtl\appleseeddisneymtl.cpp">
+      <Filter>disneymtl</Filter>
+    </ClCompile>
+    <ClCompile Include="disneymtl\appleseeddisneymtlparamdlg.cpp">
+      <Filter>disneymtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdmtl\appleseedstdmtl.h">
-      <Filter>stdmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="stdmtl\appleseedstdmtlparamdlg.h">
-      <Filter>stdmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="stdmtl\datachunks.h">
-      <Filter>stdmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="stdmtl\resource.h">
-      <Filter>stdmtl</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\appleseedrenderer.h">
       <Filter>renderer</Filter>
     </ClInclude>
@@ -84,21 +72,33 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="disneymtl\appleseeddisneymtl.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="disneymtl\appleseeddisneymtlparamdlg.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="disneymtl\datachunks.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="disneymtl\resource.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="stdmtl\appleseedstdmtl.rc">
-      <Filter>stdmtl</Filter>
-    </ResourceCompile>
     <ResourceCompile Include="renderer\appleseedrenderer.rc">
       <Filter>renderer</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc">
+      <Filter>disneymtl</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="renderer">
       <UniqueIdentifier>{3b53d01d-35e2-4c3e-a0a4-6d9921c729a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="stdmtl">
-      <UniqueIdentifier>{21b521f9-2447-4c79-9433-e35a454d6af0}</UniqueIdentifier>
+    <Filter Include="disneymtl">
+      <UniqueIdentifier>{0f63c39e-3c84-4009-a32b-ae9dfec1dc15}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
