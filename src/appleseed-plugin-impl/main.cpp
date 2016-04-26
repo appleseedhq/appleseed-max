@@ -26,62 +26,20 @@
 // THE SOFTWARE.
 //
 
-// appleseed-max headers.
-#include "renderer/appleseedrenderer.h"
-#include "stdmtl/appleseedstdmtl.h"
+// Interface header.
 #include "main.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+HINSTANCE g_module;
 
-// appleseed.main headers.
-#include "main/allocator.h"
 
-// 3ds Max headers.
-#include <plugapi.h>
+//
+// DLL entry point.
+//
 
-// Windows headers.
-#include <tchar.h>
-
-extern "C"
+BOOL APIENTRY DllMain(HINSTANCE module, DWORD reason, LPVOID /*reserved*/)
 {
-    __declspec(dllexport)
-    const TCHAR* LibDescription()
-    {
-        return _T("appleseed Renderer");
-    }
+    if (reason == DLL_PROCESS_ATTACH)
+        g_module = module;
 
-    __declspec(dllexport)
-    int LibNumberClasses()
-    {
-        return 2;
-    }
-
-    __declspec(dllexport)
-    ClassDesc2* LibClassDesc(int i)
-    {
-        switch (i)
-        {
-          // Make sure to update LibNumberClasses() if you add classes.
-          case 0: return &g_appleseed_renderer_classdesc;
-          case 1: return &g_appleseed_stdmtl_classdesc;
-
-          default:
-            return nullptr;
-        }
-    }
-
-    __declspec(dllexport)
-    ULONG LibVersion()
-    {
-        return VERSION_3DSMAX;
-    }
-
-    __declspec(dllexport)
-    int LibInitialize()
-    {
-        start_memory_tracking();
-
-        return TRUE;
-    }
+    return TRUE;
 }

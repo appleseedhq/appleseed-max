@@ -39,10 +39,7 @@ HINSTANCE g_module;
 // DLL entry point.
 //
 
-BOOL APIENTRY DllMain(
-    HINSTANCE   module,
-    DWORD       reason,
-    LPVOID      /*reserved*/)
+BOOL APIENTRY DllMain(HINSTANCE module, DWORD reason, LPVOID /*reserved*/)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {

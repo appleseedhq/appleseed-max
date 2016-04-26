@@ -32,27 +32,7 @@
 // Standard headers.
 #include <sstream>
 
-// Windows headers.
-#include <Pathcch.h>
-
 namespace asf = foundation;
-
-bool load_appleseed_library(HINSTANCE module)
-{
-    wchar_t path[MAX_PATH];
-    const DWORD path_length = sizeof(path) / sizeof(wchar_t);
-
-    if (!GetModuleFileName(module, path, path_length))
-        return false;
-
-    PathCchRemoveFileSpec(path, path_length);
-    PathCchAppend(path, path_length, _T("appleseed.dll"));
-
-    if (!LoadLibraryEx(path, nullptr, 0))
-        return false;
-
-    return true;
-}
 
 std::string wide_to_utf8(const std::wstring& wstr)
 {
