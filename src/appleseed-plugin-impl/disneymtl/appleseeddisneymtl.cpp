@@ -45,7 +45,6 @@
 #include "foundation/image/colorspace.h"
 
 // 3ds Max headers.
-#include <assert1.h>
 #include <color.h>
 #include <iparamm2.h>
 #include <stdmat.h>
@@ -563,49 +562,6 @@ void AppleseedDisneyMtl::Shade(ShadeContext& sc)
 {
 }
 
-namespace
-{
-    bool is_bitmap(Texmap* texmap)
-    {
-        if (texmap == nullptr)
-            return false;
-
-        if (texmap->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
-            return false;
-
-        Bitmap* bitmap = static_cast<BitmapTex*>(texmap)->GetBitmap(0);
-
-        if (bitmap == nullptr)
-            return false;
-
-        return true;
-    }
-
-    std::string format_value(BitmapTex* bitmap_tex)
-    {
-        DbgAssert(bitmap_tex != nullptr);
-        const auto filepath = wide_to_utf8(bitmap_tex->GetMapName());
-
-        Bitmap* bitmap = bitmap_tex->GetBitmap(0);
-        DbgAssert(bitmap != nullptr);
-
-        const int width = bitmap->Width();
-        const int height = bitmap->Height();
-
-        return asf::format("texture(\"{0}\", $u % {1}, $v % {2})", filepath, width, height);
-    }
-
-    std::string format_value(const float scalar, Texmap* map)
-    {
-        auto value = asf::to_string(scalar / 100.0f);
-
-        if (is_bitmap(map))
-            value += asf::format(" * {0}", format_value(static_cast<BitmapTex*>(map)));
-
-        return value;
-    }
-}
-
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)
 {
     auto material = asr::DisneyMaterialFactory::static_create(name, asr::ParamArray());
@@ -614,16 +570,16 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
     // The Disney material expects sRGB colors, so we have to convert input colors to sRGB.
 
     if (is_bitmap(m_base_color_texmap))
-        values.insert("base_color", format_value(static_cast<BitmapTex*>(m_base_color_texmap)));
-    else values.insert("base_color", fmt_color_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
+        values.insert("base_color", fmt_expr(static_cast<BitmapTex*>(m_base_color_texmap)));
+    else values.insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
 
-    values.insert("metallic", format_value(m_metallic, m_metallic_texmap));
-    values.insert("specular", format_value(m_specular, m_specular_texmap));
-    values.insert("specular_tint", format_value(m_specular_tint, m_specular_tint_texmap));
-    values.insert("anisotropic", format_value(m_anisotropic, m_anisotropic_texmap));
-    values.insert("roughness", format_value(m_roughness, m_roughness_texmap));
-    values.insert("clearcoat", format_value(m_clearcoat, m_clearcoat_texmap));
-    values.insert("clearcoat_gloss", format_value(m_clearcoat_gloss, m_clearcoat_gloss_texmap));
+    values.insert("metallic", fmt_expr(m_metallic, m_metallic_texmap));
+    values.insert("specular", fmt_expr(m_specular, m_specular_texmap));
+    values.insert("specular_tint", fmt_expr(m_specular_tint, m_specular_tint_texmap));
+    values.insert("anisotropic", fmt_expr(m_anisotropic, m_anisotropic_texmap));
+    values.insert("roughness", fmt_expr(m_roughness, m_roughness_texmap));
+    values.insert("clearcoat", fmt_expr(m_clearcoat, m_clearcoat_texmap));
+    values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss, m_clearcoat_gloss_texmap));
 
     auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
     disney_material->add_layer(values);

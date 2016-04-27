@@ -130,7 +130,7 @@ namespace
         // The Disney material expects sRGB colors, so we have to convert the input color to sRGB.
         static_cast<asr::DisneyMaterial*>(material.get())->add_layer(
             asr::DisneyMaterialLayer::get_default_values()
-                .insert("base_color", fmt_color_expr(asf::linear_rgb_to_srgb(linear_rgb)))
+                .insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(linear_rgb)))
                 .insert("specular", 1.0)
                 .insert("roughness", 0.625));
 

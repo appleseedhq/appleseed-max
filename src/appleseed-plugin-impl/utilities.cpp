@@ -29,8 +29,15 @@
 // Interface header.
 #include "utilities.h"
 
-// Standard headers.
-#include <sstream>
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
+
+// 3ds Max Headers.
+#include <assert1.h>
+#include <bitmap.h>
+#include <imtl.h>
+#include <plugapi.h>
+#include <stdmat.h>
 
 namespace asf = foundation;
 
@@ -82,13 +89,47 @@ std::wstring utf8_to_wide(const char* str)
     return result;
 }
 
-std::string fmt_color_expr(const asf::Color3f& srgb)
+bool is_bitmap(Texmap* map)
 {
-    std::stringstream sstr;
-    sstr << '[';
-    sstr << srgb.r; sstr << ", ";
-    sstr << srgb.g; sstr << ", ";
-    sstr << srgb.b;
-    sstr << ']';
-    return sstr.str();
+    if (map == nullptr)
+        return false;
+
+    if (map->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
+        return false;
+
+    Bitmap* bitmap = static_cast<BitmapTex*>(map)->GetBitmap(0);
+
+    if (bitmap == nullptr)
+        return false;
+
+    return true;
+}
+
+std::string fmt_expr(const asf::Color3f& srgb)
+{
+    return asf::format("[{0}, {1}, {2}]", srgb.r, srgb.g, srgb.b);
+}
+
+std::string fmt_expr(BitmapTex* bitmap_tex)
+{
+    DbgAssert(bitmap_tex != nullptr);
+    const auto filepath = wide_to_utf8(bitmap_tex->GetMapName());
+
+    Bitmap* bitmap = bitmap_tex->GetBitmap(0);
+    DbgAssert(bitmap != nullptr);
+
+    const int width = bitmap->Width();
+    const int height = bitmap->Height();
+
+    return asf::format("texture(\"{0}\", $u % {1}, $v % {2})", filepath, width, height);
+}
+
+std::string fmt_expr(const float scalar, Texmap* map)
+{
+    auto value = asf::to_string(scalar / 100.0f);
+
+    if (is_bitmap(map))
+        value += asf::format(" * {0}", fmt_expr(static_cast<BitmapTex*>(map)));
+
+    return value;
 }

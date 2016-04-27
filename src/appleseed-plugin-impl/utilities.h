@@ -45,6 +45,10 @@
 #include <cstddef>
 #include <string>
 
+// Forward declarations.
+class BitmapTex;
+class Texmap;
+
 
 //
 // Type conversion functions.
@@ -79,8 +83,17 @@ std::wstring utf8_to_wide(const char* str);
 // Formatting functions.
 //
 
+// Return true if a given map is a valid bitmap texture.
+bool is_bitmap(Texmap* map);
+
 // Format an sRGB color as an SeExpr expression.
-std::string fmt_color_expr(const foundation::Color3f& srgb);
+std::string fmt_expr(const foundation::Color3f& srgb);
+
+// Format a bitmap texture as an SeExpr expression.
+std::string fmt_expr(BitmapTex* bitmap_tex);
+
+// Format a scalar x map product as an SeExpr expression.
+std::string fmt_expr(const float scalar, Texmap* map);
 
 
 //
