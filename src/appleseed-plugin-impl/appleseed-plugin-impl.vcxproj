@@ -187,6 +187,8 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClCompile Include="renderer\renderersettings.cpp" />
     <ClCompile Include="renderer\tilecallback.cpp" />
     <ClCompile Include="renderer\updatechecker.cpp" />
+    <ClCompile Include="sssmtl\appleseedsssmtl.cpp" />
+    <ClCompile Include="sssmtl\appleseedsssmtlparamdlg.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
@@ -207,12 +209,17 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClInclude Include="renderer\resource.h" />
     <ClInclude Include="renderer\tilecallback.h" />
     <ClInclude Include="renderer\updatechecker.h" />
+    <ClInclude Include="sssmtl\appleseedsssmtl.h" />
+    <ClInclude Include="sssmtl\appleseedsssmtlparamdlg.h" />
+    <ClInclude Include="sssmtl\datachunks.h" />
+    <ClInclude Include="sssmtl\resource.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="renderer\appleseedrenderer.rc" />
+    <ResourceCompile Include="sssmtl\appleseedsssmtl.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

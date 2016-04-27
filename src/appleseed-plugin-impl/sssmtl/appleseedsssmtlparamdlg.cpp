@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2016 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2016 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,65 +26,48 @@
 // THE SOFTWARE.
 //
 
+// Interface header.
+#include "appleseedsssmtlparamdlg.h"
+
 // appleseed-max headers.
-#include "disneymtl/appleseeddisneymtl.h"
-#include "renderer/appleseedrenderer.h"
 #include "sssmtl/appleseedsssmtl.h"
-#include "main.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// appleseed.main headers.
-#include "main/allocator.h"
-
-// 3ds Max headers.
-#include <iparamb2.h>
-#include <plugapi.h>
-
-// Windows headers.
-#include <tchar.h>
-
-extern "C"
+AppleseedSSSMtlParamDlg::AppleseedSSSMtlParamDlg(
+    AppleseedSSSMtl*    mtl,
+    HWND                hwMtlEdit,
+    IMtlParams*         imp)
+  : m_mtl(mtl)
 {
-    __declspec(dllexport)
-    const TCHAR* LibDescription()
-    {
-        return _T("appleseed Renderer");
-    }
+}
 
-    __declspec(dllexport)
-    int LibNumberClasses()
-    {
-        return 3;
-    }
+Class_ID AppleseedSSSMtlParamDlg::ClassID()
+{
+    return AppleseedSSSMtl::get_class_id();
+}
 
-    __declspec(dllexport)
-    ClassDesc2* LibClassDesc(int i)
-    {
-        switch (i)
-        {
-          // Make sure to update LibNumberClasses() if you add classes.
-          case 0: return &g_appleseed_renderer_classdesc;
-          case 1: return &g_appleseed_disneymtl_classdesc;
-          case 2: return &g_appleseed_sssmtl_classdesc;
+void AppleseedSSSMtlParamDlg::SetThing(ReferenceTarget* m)
+{
+    m_mtl = static_cast<AppleseedSSSMtl*>(m);
+}
 
-          default:
-            return nullptr;
-        }
-    }
+ReferenceTarget* AppleseedSSSMtlParamDlg::GetThing()
+{
+    return m_mtl;
+}
 
-    __declspec(dllexport)
-    ULONG LibVersion()
-    {
-        return VERSION_3DSMAX;
-    }
+void AppleseedSSSMtlParamDlg::SetTime(TimeValue t)
+{
+}
 
-    __declspec(dllexport)
-    int LibInitialize()
-    {
-        start_memory_tracking();
+void AppleseedSSSMtlParamDlg::ReloadDialog()
+{
+}
 
-        return TRUE;
-    }
+void AppleseedSSSMtlParamDlg::DeleteThis()
+{
+    delete this;
+}
+
+void AppleseedSSSMtlParamDlg::ActivateDlg(BOOL onOff)
+{
 }

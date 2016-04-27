@@ -36,6 +36,12 @@
     <ClCompile Include="disneymtl\appleseeddisneymtlparamdlg.cpp">
       <Filter>disneymtl</Filter>
     </ClCompile>
+    <ClCompile Include="sssmtl\appleseedsssmtl.cpp">
+      <Filter>sssmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="sssmtl\appleseedsssmtlparamdlg.cpp">
+      <Filter>sssmtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="renderer\appleseedrenderer.h">
@@ -84,6 +90,18 @@
     <ClInclude Include="disneymtl\resource.h">
       <Filter>disneymtl</Filter>
     </ClInclude>
+    <ClInclude Include="sssmtl\appleseedsssmtl.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\appleseedsssmtlparamdlg.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\datachunks.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\resource.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="renderer\appleseedrenderer.rc">
@@ -92,6 +110,9 @@
     <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc">
       <Filter>disneymtl</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="sssmtl\appleseedsssmtl.rc">
+      <Filter>sssmtl</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="renderer">
@@ -99,6 +120,9 @@
     </Filter>
     <Filter Include="disneymtl">
       <UniqueIdentifier>{0f63c39e-3c84-4009-a32b-ae9dfec1dc15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sssmtl">
+      <UniqueIdentifier>{4e79312e-d35e-43b5-bc53-f2bd6ad9d984}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
