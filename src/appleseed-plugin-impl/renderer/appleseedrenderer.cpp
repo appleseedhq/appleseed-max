@@ -304,7 +304,7 @@ int AppleseedRenderer::Render(
     RendererSettings renderer_settings = m_settings;
     if (m_rend_params.inMtlEdit)
     {
-        renderer_settings.m_pixel_samples = m_rend_params.mtlEditAA ? 24 : 1;
+        renderer_settings.m_pixel_samples = m_rend_params.mtlEditAA ? 32 : 4;
         renderer_settings.m_passes = 1;
         renderer_settings.m_gi = false;
         renderer_settings.m_background_emits_light = false;
