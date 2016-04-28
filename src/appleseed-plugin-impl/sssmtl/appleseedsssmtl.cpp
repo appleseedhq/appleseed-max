@@ -38,6 +38,7 @@
 #include "version.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/bsdf.h"
 #include "renderer/api/bssrdf.h"
 #include "renderer/api/color.h"
 #include "renderer/api/material.h"
@@ -47,7 +48,6 @@
 #include "foundation/image/colorspace.h"
 
 // 3ds Max headers.
-#include <assert1.h>
 #include <color.h>
 #include <iparamm2.h>
 #include <stdmat.h>
@@ -79,18 +79,34 @@ namespace
     enum { ParamBlockIdSSSMtl };
     enum { ParamBlockRefSSSMtl };
 
+    enum MapId
+    {
+        MapIdSSS,
+        MapIdSpecular
+    };
+
     enum ParamId
     {
-        ParamIdBaseColor,
-        ParamIdBaseColorTexmap,
-        ParamIdScatterDistance,
-        ParamIdIOR
+        ParamIdSSSColor,
+        ParamIdSSSColorTexmap,
+        ParamIdSSSAmount,
+        ParamIdSSSScatterDistance,
+        ParamIdSSSIOR,
+        ParamIdSpecularColor,
+        ParamIdSpecularColorTexmap,
+        ParamIdSpecularRoughness,
+        ParamIdSpecularRoughnessTexmap,
+        ParamIdSpecularAnisotropy,
+        ParamIdSpecularAnisotropyTexmap
     };
 
     enum TexmapId
     {
         TexmapIdBase,
-        TexmapCount
+        TexmapIdSpecular,
+        TexmapIdSpecularRoughness,
+        TexmapIdSpecularAnisotropy,
+        TexmapCount // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =
@@ -100,7 +116,7 @@ namespace
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
-        ParamIdBaseColorTexmap
+        ParamIdSSSColorTexmap
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -109,39 +125,88 @@ namespace
         _T("appleseedSSSMtlParams"),                // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_sssmtl_classdesc,              // class descriptor
-        P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
+        P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
         ParamBlockRefSSSMtl,                        // parameter block's reference number
 
-        // --- P_AUTO_UI arguments ---
-        IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
-        IDS_FORMVIEW_PARAMS_TITLE,                  // ID of the dialog's title string
+        // --- P_MULTIMAP arguments ---
+        2,                                          // number of rollups
+
+        // --- P_AUTO_UI arguments for SSS rollup ---
+        MapIdSSS,
+        IDD_FORMVIEW_SSS_PARAMS,                    // ID of the dialog template
+        IDS_FORMVIEW_SSS_PARAMS_TITLE,              // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
         nullptr,                                    // user dialog procedure
 
-        // --- Parameters specifications ---
+        // --- P_AUTO_UI arguments for Specular rollup ---
+        MapIdSpecular,
+        IDD_FORMVIEW_SPECULAR_PARAMS,               // ID of the dialog template
+        IDS_FORMVIEW_SPECULAR_PARAMS_TITLE,         // ID of the dialog's title string
+        0,                                          // IParamMap2 creation/deletion flag mask
+        0,                                          // rollup creation flag
+        nullptr,                                    // user dialog procedure
 
-        ParamIdBaseColor, _T("base_color"), TYPE_RGBA, P_ANIMATABLE, IDS_BASE_COLOR,
+        // --- Parameters specifications for SSS rollup ---
+
+        ParamIdSSSColor, _T("sss_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SSS_COLOR,
             p_default, Color(0.9f, 0.9f, 0.9f),
-            p_ui, TYPE_COLORSWATCH, IDC_SWATCH_BASE_COLOR,
+            p_ui, MapIdSSS, TYPE_COLORSWATCH, IDC_SWATCH_SSS_COLOR,
         p_end,
-        ParamIdBaseColorTexmap, _T("base_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_BASE_COLOR,
+        ParamIdSSSColorTexmap, _T("sss_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_COLOR,
             p_subtexno, TexmapIdBase,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BASE_COLOR,
+            p_ui, MapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SSS_COLOR,
         p_end,
 
-        ParamIdScatterDistance, _T("scatter_distance"), TYPE_FLOAT, P_ANIMATABLE, IDS_SCATTER_DISTANCE,
+        ParamIdSSSAmount, _T("sss_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_AMOUNT,
+            p_default, 50.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_AMOUNT, IDC_SLIDER_SSS_AMOUNT, 10.0f,
+        p_end,
+
+        ParamIdSSSScatterDistance, _T("sss_scatter_distance"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_SCATTER_DISTANCE,
             p_default, 5.0f,
-            p_range, 0.001f, 10000.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SCATTER_DISTANCE, IDC_SLIDER_SCATTER_DISTANCE, 10.0f,
+            p_range, 0.001f, 1000.0f,
+            p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_SCATTER_DISTANCE, IDC_SLIDER_SSS_SCATTER_DISTANCE, 10.0f,
         p_end,
 
-        ParamIdIOR, _T("ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
+        ParamIdSSSIOR, _T("sss_ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_IOR,
             p_default, 1.3f,
             p_range, 0.5f, 2.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
+            p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_IOR, IDC_SLIDER_SSS_IOR, 0.1f,
+        p_end,
+
+        // --- Parameters specifications for Specular rollup ---
+
+        ParamIdSpecularColor, _T("specular_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SPECULAR_COLOR,
+            p_default, Color(0.9f, 0.9f, 0.9f),
+            p_ui, MapIdSpecular, TYPE_COLORSWATCH, IDC_SWATCH_SPECULAR_COLOR,
+        p_end,
+        ParamIdSpecularColorTexmap, _T("specular_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_COLOR,
+            p_subtexno, TexmapIdSpecular,
+            p_ui, MapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_COLOR,
+        p_end,
+
+        ParamIdSpecularRoughness, _T("specular_roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ROUGHNESS,
+            p_default, 40.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, MapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_ROUGHNESS, IDC_SLIDER_SPECULAR_ROUGHNESS, 10.0f,
+        p_end,
+        ParamIdSpecularRoughnessTexmap, _T("specular_roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ROUGHNESS,
+            p_subtexno, TexmapIdSpecularRoughness,
+            p_ui, MapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_ROUGHNESS,
+        p_end,
+
+        ParamIdSpecularAnisotropy, _T("specular_anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ANISOTROPY,
+            p_default, 0.0f,
+            p_range, -1.0f, 1.0f,
+            p_ui, MapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_ANISOTROPY, IDC_SLIDER_SPECULAR_ANISOTROPY, 0.1f,
+        p_end,
+        ParamIdSpecularAnisotropyTexmap, _T("specular_anisotropy_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ANISOTROPY,
+            p_subtexno, TexmapIdSpecularAnisotropy,
+            p_ui, MapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_ANISOTROPY,
         p_end,
 
         // --- The end ---
@@ -155,10 +220,15 @@ Class_ID AppleseedSSSMtl::get_class_id()
 
 AppleseedSSSMtl::AppleseedSSSMtl()
   : m_pblock(nullptr)
-  , m_base_color(0.0f, 0.0f, 0.0f)
-  , m_base_color_texmap(nullptr)
-  , m_scatter_distance(0.0f)
-  , m_ior(0.0f)
+  , m_sss_color(0.5f, 0.5f, 0.5f)
+  , m_sss_color_texmap(nullptr)
+  , m_sss_amount(0.0f)
+  , m_sss_scatter_distance(1.0f)
+  , m_sss_ior(1.3f)
+  , m_specular_color(0.9f, 0.9f, 0.9f)
+  , m_specular_color_texmap(nullptr)
+  , m_specular_roughness(40.0f)
+  , m_specular_anisotropy(0.0f)
 {
     m_params_validity.SetEmpty();
 
@@ -314,11 +384,16 @@ void AppleseedSSSMtl::Update(TimeValue t, Interval& valid)
     {
         m_params_validity.SetInfinite();
 
-        m_pblock->GetValue(ParamIdBaseColor, t, m_base_color, m_params_validity);
-        m_pblock->GetValue(ParamIdBaseColorTexmap, t, m_base_color_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSColor, t, m_sss_color, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSColorTexmap, t, m_sss_color_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSAmount, t, m_sss_amount, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSScatterDistance, t, m_sss_scatter_distance, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSIOR, t, m_sss_ior, m_params_validity);
 
-        m_pblock->GetValue(ParamIdScatterDistance, t, m_scatter_distance, m_params_validity);
-        m_pblock->GetValue(ParamIdIOR, t, m_ior, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularColor, t, m_specular_color, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularColorTexmap, t, m_specular_color_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularRoughness, t, m_specular_roughness, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularAnisotropy, t, m_specular_anisotropy, m_params_validity);
 
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
@@ -404,7 +479,7 @@ Color AppleseedSSSMtl::GetAmbient(int mtlNum, BOOL backFace)
 
 Color AppleseedSSSMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    return m_base_color;
+    return m_sss_color;
 }
 
 Color AppleseedSSSMtl::GetSpecular(int mtlNum, BOOL backFace)
@@ -449,33 +524,57 @@ void AppleseedSSSMtl::Shade(ShadeContext& sc)
 
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assembly& assembly, const char* name)
 {
-    // todo: use texture if set.
-    const auto reflectance_name = std::string(name) + "_reflectance";
+    // todo: add support for texturing.
+
+    // BSSRDF reflectance.
+    const auto bssrdf_reflectance_name = std::string(name) + "_bssrdf_reflectance";
     assembly.colors().insert(
         asr::ColorEntityFactory::create(
-            reflectance_name.c_str(),
+            bssrdf_reflectance_name.c_str(),
             asr::ParamArray()
                 .insert("color_space", "linear_rgb")
-                .insert("color", to_color3f(m_base_color))));
+                .insert("color", to_color3f(m_sss_color))));
 
-    const float scatter_distance = std::max(m_scatter_distance, 0.1f);
-
+    // BSSRDF.
     const auto bssrdf_name = std::string(name) + "_bssrdf";
+    const auto scatter_distance = std::max(m_sss_scatter_distance, 0.1f);
     assembly.bssrdfs().insert(
         asr::NormalizedDiffusionBSSRDFFactory::static_create(
             bssrdf_name.c_str(),
             asr::ParamArray()
-                .insert("weight", "1.0")
-                .insert("reflectance", reflectance_name)
+                .insert("weight", m_sss_amount / 100.0f)
+                .insert("reflectance", bssrdf_reflectance_name)
                 .insert("dmfp", scatter_distance)
-                .insert("outside_ior", "1.0")
-                .insert("inside_ior", m_ior)));
+                .insert("outside_ior", 1.0f)
+                .insert("inside_ior", m_sss_ior)));
 
+    // BRDF color.
+    const auto brdf_reflectance_name = std::string(name) + "_brdf_reflectance";
+    assembly.colors().insert(
+        asr::ColorEntityFactory::create(
+            brdf_reflectance_name.c_str(),
+            asr::ParamArray()
+                .insert("color_space", "linear_rgb")
+                .insert("color", to_color3f(m_specular_color))));
+
+    // BRDF.
+    const auto brdf_name = std::string(name) + "_brdf";
+    assembly.bsdfs().insert(
+        asr::GlossyBRDFFactory::static_create(
+            brdf_name.c_str(),
+            asr::ParamArray()
+                .insert("reflectance", brdf_reflectance_name)
+                .insert("roughness", m_specular_roughness / 100.0f)
+                .insert("anisotropic", m_specular_anisotropy)
+                .insert("ior", m_sss_ior)));
+
+    // Material.
     auto material =
         asr::GenericMaterialFactory::static_create(
             name,
             asr::ParamArray()
-                .insert("bssrdf", bssrdf_name));
+                .insert("bssrdf", bssrdf_name)
+                .insert("bsdf", brdf_name));
 
     return material;
 }

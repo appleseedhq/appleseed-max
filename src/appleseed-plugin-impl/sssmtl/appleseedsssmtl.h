@@ -134,10 +134,15 @@ class AppleseedSSSMtl
   private:
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
-    Color           m_base_color;
-    Texmap*         m_base_color_texmap;
-    float           m_scatter_distance;
-    float           m_ior;
+    Color           m_sss_color;
+    Texmap*         m_sss_color_texmap;
+    float           m_sss_amount;
+    float           m_sss_scatter_distance;
+    float           m_sss_ior;
+    Color           m_specular_color;
+    Texmap*         m_specular_color_texmap;
+    float           m_specular_roughness;
+    float           m_specular_anisotropy;
 };
 
 
