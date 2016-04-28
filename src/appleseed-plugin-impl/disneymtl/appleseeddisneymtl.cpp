@@ -83,10 +83,10 @@ namespace
         ParamIdSpecularTexmap,
         ParamIdSpecularTint,
         ParamIdSpecularTintTexmap,
-        ParamIdAnisotropic,
-        ParamIdAnisotropicTexmap,
         ParamIdRoughness,
         ParamIdRoughnessTexmap,
+        ParamIdAnisotropy,
+        ParamIdAnisotropyTexmap,
         ParamIdClearcoat,
         ParamIdClearcoatTexmap,
         ParamIdClearcoatGloss,
@@ -99,11 +99,11 @@ namespace
         TexmapIdMetallic,
         TexmapIdSpecular,
         TexmapIdSpecularTint,
-        TexmapIdAnisotropic,
         TexmapIdRoughness,
+        TexmapIdAnisotropy,
         TexmapIdClearcoat,
         TexmapIdClearcoatGloss,
-        TexmapCount
+        TexmapCount // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =
@@ -112,8 +112,8 @@ namespace
         _T("Metallic"),
         _T("Specular"),
         _T("Specular Tint"),
-        _T("Anisotropic"),
         _T("Roughness"),
+        _T("Anisotropy"),
         _T("Clearcoat"),
         _T("Clearcoat Gloss")
     };
@@ -124,8 +124,8 @@ namespace
         ParamIdMetallicTexmap,
         ParamIdSpecularTexmap,
         ParamIdSpecularTintTexmap,
-        ParamIdAnisotropicTexmap,
         ParamIdRoughnessTexmap,
+        ParamIdAnisotropyTexmap,
         ParamIdClearcoatTexmap,
         ParamIdClearcoatGlossTexmap
     };
@@ -170,7 +170,7 @@ namespace
         p_end,
 
         ParamIdSpecular, _T("specular"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR,
-            p_default, 0.0f,
+            p_default, 90.0f,
             p_range, 0.0f, 100.0f,
             p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR, IDC_SLIDER_SPECULAR, 10.0f,
         p_end,
@@ -189,24 +189,24 @@ namespace
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_TINT,
         p_end,
 
-        ParamIdAnisotropic, _T("anisotropic"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPIC,
-            p_default, 0.0f,
-            p_range, 0.0f, 100.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPIC, IDC_SLIDER_ANISOTROPIC, 10.0f,
-        p_end,
-        ParamIdAnisotropicTexmap, _T("anisotropic_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPIC,
-            p_subtexno, TexmapIdAnisotropic,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPIC,
-        p_end,
-
         ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
-            p_default, 0.0f,
+            p_default, 40.0f,
             p_range, 0.0f, 100.0f,
             p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
         ParamIdRoughnessTexmap, _T("roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
+        p_end,
+
+        ParamIdAnisotropy, _T("anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
+            p_default, 0.0f,
+            p_range, -1.0f, 1.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
+        p_end,
+        ParamIdAnisotropyTexmap, _T("anisotropy_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
+            p_subtexno, TexmapIdAnisotropy,
+            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
 
         ParamIdClearcoat, _T("clearcoat"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT,
@@ -240,18 +240,18 @@ Class_ID AppleseedDisneyMtl::get_class_id()
 
 AppleseedDisneyMtl::AppleseedDisneyMtl()
   : m_pblock(nullptr)
-  , m_base_color(0.0f, 0.0f, 0.0f)
+  , m_base_color(0.9f, 0.9f, 0.9f)
   , m_base_color_texmap(nullptr)
   , m_metallic(0.0f)
   , m_metallic_texmap(nullptr)
-  , m_specular(0.0f)
+  , m_specular(90.0f)
   , m_specular_texmap(nullptr)
   , m_specular_tint(0.0f)
   , m_specular_tint_texmap(nullptr)
-  , m_anisotropic(0.0f)
-  , m_anisotropic_texmap(nullptr)
-  , m_roughness(0.0f)
+  , m_roughness(40.0f)
   , m_roughness_texmap(nullptr)
+  , m_anisotropy(0.0f)
+  , m_anisotropy_texmap(nullptr)
   , m_clearcoat(0.0f)
   , m_clearcoat_texmap(nullptr)
   , m_clearcoat_gloss(0.0f)
@@ -423,11 +423,11 @@ void AppleseedDisneyMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdSpecularTint, t, m_specular_tint, m_params_validity);
         m_pblock->GetValue(ParamIdSpecularTintTexmap, t, m_specular_tint_texmap, m_params_validity);
 
-        m_pblock->GetValue(ParamIdAnisotropic, t, m_anisotropic, m_params_validity);
-        m_pblock->GetValue(ParamIdAnisotropicTexmap, t, m_anisotropic_texmap, m_params_validity);
-
         m_pblock->GetValue(ParamIdRoughness, t, m_roughness, m_params_validity);
         m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, m_params_validity);
+
+        m_pblock->GetValue(ParamIdAnisotropy, t, m_anisotropy, m_params_validity);
+        m_pblock->GetValue(ParamIdAnisotropyTexmap, t, m_anisotropy_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdClearcoat, t, m_clearcoat, m_params_validity);
         m_pblock->GetValue(ParamIdClearcoatTexmap, t, m_clearcoat_texmap, m_params_validity);
@@ -573,13 +573,13 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
         values.insert("base_color", fmt_expr(static_cast<BitmapTex*>(m_base_color_texmap)));
     else values.insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
 
-    values.insert("metallic", fmt_expr(m_metallic, m_metallic_texmap));
-    values.insert("specular", fmt_expr(m_specular, m_specular_texmap));
-    values.insert("specular_tint", fmt_expr(m_specular_tint, m_specular_tint_texmap));
-    values.insert("anisotropic", fmt_expr(m_anisotropic, m_anisotropic_texmap));
-    values.insert("roughness", fmt_expr(m_roughness, m_roughness_texmap));
-    values.insert("clearcoat", fmt_expr(m_clearcoat, m_clearcoat_texmap));
-    values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss, m_clearcoat_gloss_texmap));
+    values.insert("metallic", fmt_expr(m_metallic / 100.0f, m_metallic_texmap));
+    values.insert("specular", fmt_expr(m_specular / 100.0f, m_specular_texmap));
+    values.insert("specular_tint", fmt_expr(m_specular_tint / 100.0f, m_specular_tint_texmap));
+    values.insert("anisotropy", fmt_expr(m_anisotropy, m_anisotropy_texmap));
+    values.insert("roughness", fmt_expr(m_roughness / 100.0f, m_roughness_texmap));
+    values.insert("clearcoat", fmt_expr(m_clearcoat / 100.0f, m_clearcoat_texmap));
+    values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss / 100.0f, m_clearcoat_gloss_texmap));
 
     auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
     disney_material->add_layer(values);

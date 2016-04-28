@@ -126,7 +126,7 @@ std::string fmt_expr(BitmapTex* bitmap_tex)
 
 std::string fmt_expr(const float scalar, Texmap* map)
 {
-    auto value = asf::to_string(scalar / 100.0f);
+    auto value = asf::to_string(scalar);
 
     if (is_bitmap(map))
         value += asf::format(" * {0}", fmt_expr(static_cast<BitmapTex*>(map)));
