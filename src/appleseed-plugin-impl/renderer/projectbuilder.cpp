@@ -276,9 +276,18 @@ namespace
                 triangle.m_n0 = normal_indices[0];
                 triangle.m_n1 = normal_indices[1];
                 triangle.m_n2 = normal_indices[2];
-                triangle.m_a0 = tvface.getTVert(0);
-                triangle.m_a1 = tvface.getTVert(1);
-                triangle.m_a2 = tvface.getTVert(2);
+                if (mesh.getNumTVerts() > 0)
+                {
+                    triangle.m_a0 = tvface.getTVert(0);
+                    triangle.m_a1 = tvface.getTVert(1);
+                    triangle.m_a2 = tvface.getTVert(2);
+                }
+                else
+                {
+                    triangle.m_a0 = asr::Triangle::None;
+                    triangle.m_a1 = asr::Triangle::None;
+                    triangle.m_a2 = asr::Triangle::None;
+                }
                 triangle.m_pa = material_slot;
 
                 object->push_triangle(triangle);
