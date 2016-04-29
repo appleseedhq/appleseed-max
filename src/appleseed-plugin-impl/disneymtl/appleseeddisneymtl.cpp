@@ -569,7 +569,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
 
     // The Disney material expects sRGB colors, so we have to convert input colors to sRGB.
 
-    if (is_bitmap(m_base_color_texmap))
+    if (is_bitmap_texture(m_base_color_texmap))
         values.insert("base_color", fmt_expr(static_cast<BitmapTex*>(m_base_color_texmap)));
     else values.insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
 

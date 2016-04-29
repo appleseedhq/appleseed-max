@@ -84,7 +84,7 @@ std::wstring utf8_to_wide(const char* str);
 //
 
 // Return true if a given map is a valid bitmap texture.
-bool is_bitmap(Texmap* map);
+bool is_bitmap_texture(Texmap* map);
 
 // Format an sRGB color as an SeExpr expression.
 std::string fmt_expr(const foundation::Color3f& srgb);

@@ -89,7 +89,7 @@ std::wstring utf8_to_wide(const char* str)
     return result;
 }
 
-bool is_bitmap(Texmap* map)
+bool is_bitmap_texture(Texmap* map)
 {
     if (map == nullptr)
         return false;
@@ -128,7 +128,7 @@ std::string fmt_expr(const float scalar, Texmap* map)
 {
     auto value = asf::to_string(scalar);
 
-    if (is_bitmap(map))
+    if (is_bitmap_texture(map))
         value += asf::format(" * {0}", fmt_expr(static_cast<BitmapTex*>(map)));
 
     return value;

@@ -42,10 +42,13 @@
 #include "renderer/api/bssrdf.h"
 #include "renderer/api/color.h"
 #include "renderer/api/material.h"
+#include "renderer/api/scene.h"
+#include "renderer/api/texture.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
+#include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
 #include <color.h>
@@ -111,12 +114,18 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        _T("Base Color")
+        _T("SSS Color"),
+        _T("Specular Color"),
+        _T("Specular Roughness"),
+        _T("Specular Anisotropy")
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
-        ParamIdSSSColorTexmap
+        ParamIdSSSColorTexmap,
+        ParamIdSpecularColorTexmap,
+        ParamIdSpecularRoughnessTexmap,
+        ParamIdSpecularAnisotropyTexmap
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -228,7 +237,9 @@ AppleseedSSSMtl::AppleseedSSSMtl()
   , m_specular_color(0.9f, 0.9f, 0.9f)
   , m_specular_color_texmap(nullptr)
   , m_specular_roughness(40.0f)
+  , m_specular_roughness_texmap(nullptr)
   , m_specular_anisotropy(0.0f)
+  , m_specular_anisotropy_texmap(nullptr)
 {
     m_params_validity.SetEmpty();
 
@@ -386,14 +397,19 @@ void AppleseedSSSMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdSSSColor, t, m_sss_color, m_params_validity);
         m_pblock->GetValue(ParamIdSSSColorTexmap, t, m_sss_color_texmap, m_params_validity);
+
         m_pblock->GetValue(ParamIdSSSAmount, t, m_sss_amount, m_params_validity);
         m_pblock->GetValue(ParamIdSSSScatterDistance, t, m_sss_scatter_distance, m_params_validity);
         m_pblock->GetValue(ParamIdSSSIOR, t, m_sss_ior, m_params_validity);
 
         m_pblock->GetValue(ParamIdSpecularColor, t, m_specular_color, m_params_validity);
         m_pblock->GetValue(ParamIdSpecularColorTexmap, t, m_specular_color_texmap, m_params_validity);
+
         m_pblock->GetValue(ParamIdSpecularRoughness, t, m_specular_roughness, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularRoughnessTexmap, t, m_specular_roughness_texmap, m_params_validity);
+
         m_pblock->GetValue(ParamIdSpecularAnisotropy, t, m_specular_anisotropy, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularAnisotropyTexmap, t, m_specular_anisotropy_texmap, m_params_validity);
 
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
@@ -522,61 +538,113 @@ void AppleseedSSSMtl::Shade(ShadeContext& sc)
 {
 }
 
+namespace
+{
+    void insert_color(asr::Assembly& assembly, const Color& color, const char* name)
+    {
+        assembly.colors().insert(
+            asr::ColorEntityFactory::create(
+                name,
+                asr::ParamArray()
+                    .insert("color_space", "linear_rgb")
+                    .insert("color", to_color3f(color))));
+    }
+
+    std::string insert_texture_and_instance(asr::Assembly& assembly, Texmap* texmap)
+    {
+        BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
+
+        const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
+        assembly.textures().insert(
+            asr::DiskTexture2dFactory::static_create(
+                texture_name.c_str(),
+                asr::ParamArray()
+                    .insert("filename", wide_to_utf8(bitmap_tex->GetMapName()))
+                    .insert("color_space", "srgb"),     // todo: fix
+                asf::SearchPaths()));
+
+        const std::string texture_instance_name = texture_name + "_inst";
+        assembly.texture_instances().insert(
+            asr::TextureInstanceFactory::create(
+                texture_instance_name.c_str(),
+                asr::ParamArray(),
+                texture_name.c_str()));
+
+        return texture_instance_name;
+    }
+}
+
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assembly& assembly, const char* name)
 {
-    // todo: add support for texturing.
+    asr::ParamArray material_params;
 
-    // BSSRDF reflectance.
-    const auto bssrdf_reflectance_name = std::string(name) + "_bssrdf_reflectance";
-    assembly.colors().insert(
-        asr::ColorEntityFactory::create(
-            bssrdf_reflectance_name.c_str(),
-            asr::ParamArray()
-                .insert("color_space", "linear_rgb")
-                .insert("color", to_color3f(m_sss_color))));
-
+    //
     // BSSRDF.
-    const auto bssrdf_name = std::string(name) + "_bssrdf";
-    const auto scatter_distance = std::max(m_sss_scatter_distance, 0.1f);
-    assembly.bssrdfs().insert(
-        asr::NormalizedDiffusionBSSRDFFactory::static_create(
-            bssrdf_name.c_str(),
-            asr::ParamArray()
-                .insert("weight", m_sss_amount / 100.0f)
-                .insert("reflectance", bssrdf_reflectance_name)
-                .insert("dmfp", scatter_distance)
-                .insert("outside_ior", 1.0f)
-                .insert("inside_ior", m_sss_ior)));
+    //
 
-    // BRDF color.
-    const auto brdf_reflectance_name = std::string(name) + "_brdf_reflectance";
-    assembly.colors().insert(
-        asr::ColorEntityFactory::create(
-            brdf_reflectance_name.c_str(),
-            asr::ParamArray()
-                .insert("color_space", "linear_rgb")
-                .insert("color", to_color3f(m_specular_color))));
+    {
+        asr::ParamArray bssrdf_params;
+        bssrdf_params.insert("weight", m_sss_amount / 100.0f);
+        bssrdf_params.insert("dmfp", std::max(m_sss_scatter_distance, 0.1f));
+        bssrdf_params.insert("outside_ior", 1.0f);
+        bssrdf_params.insert("inside_ior", m_sss_ior);
 
+        // Reflectance.
+        if (is_bitmap_texture(m_sss_color_texmap))
+            bssrdf_params.insert("reflectance", insert_texture_and_instance(assembly, m_sss_color_texmap));
+        else
+        {
+            const auto color_name = std::string(name) + "_bssrdf_reflectance";
+            insert_color(assembly, m_sss_color, color_name.c_str());
+            bssrdf_params.insert("reflectance", color_name);
+        }
+
+        const auto bssrdf_name = std::string(name) + "_bssrdf";
+        assembly.bssrdfs().insert(
+            asr::NormalizedDiffusionBSSRDFFactory::static_create(bssrdf_name.c_str(), bssrdf_params));
+        material_params.insert("bssrdf", bssrdf_name);
+    }
+
+    //
     // BRDF.
-    const auto brdf_name = std::string(name) + "_brdf";
-    assembly.bsdfs().insert(
-        asr::GlossyBRDFFactory::static_create(
-            brdf_name.c_str(),
-            asr::ParamArray()
-                .insert("reflectance", brdf_reflectance_name)
-                .insert("roughness", m_specular_roughness / 100.0f)
-                .insert("anisotropic", m_specular_anisotropy)
-                .insert("ior", m_sss_ior)));
+    //
 
+    {
+        asr::ParamArray brdf_params;
+        brdf_params.insert("mdf", "ggx");
+        brdf_params.insert("ior", m_sss_ior);
+
+        // Reflectance.
+        if (is_bitmap_texture(m_specular_color_texmap))
+            brdf_params.insert("reflectance", insert_texture_and_instance(assembly, m_specular_color_texmap));
+        else
+        {
+            const auto color_name = std::string(name) + "_brdf_reflectance";
+            insert_color(assembly, m_specular_color, color_name.c_str());
+            brdf_params.insert("reflectance", color_name);
+        }
+
+        // Roughness.
+        if (is_bitmap_texture(m_specular_roughness_texmap))
+            brdf_params.insert("roughness", insert_texture_and_instance(assembly, m_specular_roughness_texmap));
+        else brdf_params.insert("roughness", m_specular_roughness / 100.0f);
+
+        // Anisotropy.
+        if (is_bitmap_texture(m_specular_anisotropy_texmap))
+            brdf_params.insert("anisotropic", insert_texture_and_instance(assembly, m_specular_anisotropy_texmap));
+        else brdf_params.insert("anisotropic", m_specular_anisotropy);
+
+        const auto brdf_name = std::string(name) + "_brdf";
+        assembly.bsdfs().insert(
+            asr::GlossyBRDFFactory::static_create(brdf_name.c_str(), brdf_params));
+        material_params.insert("bsdf", brdf_name);
+    }
+
+    //
     // Material.
-    auto material =
-        asr::GenericMaterialFactory::static_create(
-            name,
-            asr::ParamArray()
-                .insert("bssrdf", bssrdf_name)
-                .insert("bsdf", brdf_name));
+    //
 
-    return material;
+    return asr::GenericMaterialFactory::static_create(name, material_params);
 }
 
 
