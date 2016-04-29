@@ -97,6 +97,8 @@ namespace
         ParamIdSSSIOR,
         ParamIdSpecularColor,
         ParamIdSpecularColorTexmap,
+        ParamIdSpecularAmount,
+        ParamIdSpecularAmountTexmap,
         ParamIdSpecularRoughness,
         ParamIdSpecularRoughnessTexmap,
         ParamIdSpecularAnisotropy,
@@ -105,8 +107,9 @@ namespace
 
     enum TexmapId
     {
-        TexmapIdBase,
+        TexmapIdSSS,
         TexmapIdSpecular,
+        TexmapIdSpecularAmount,
         TexmapIdSpecularRoughness,
         TexmapIdSpecularAnisotropy,
         TexmapCount // keep last
@@ -116,6 +119,7 @@ namespace
     {
         _T("SSS Color"),
         _T("Specular Color"),
+        _T("Specular Amount"),
         _T("Specular Roughness"),
         _T("Specular Anisotropy")
     };
@@ -124,6 +128,7 @@ namespace
     {
         ParamIdSSSColorTexmap,
         ParamIdSpecularColorTexmap,
+        ParamIdSpecularAmountTexmap,
         ParamIdSpecularRoughnessTexmap,
         ParamIdSpecularAnisotropyTexmap
     };
@@ -165,12 +170,12 @@ namespace
             p_ui, MapIdSSS, TYPE_COLORSWATCH, IDC_SWATCH_SSS_COLOR,
         p_end,
         ParamIdSSSColorTexmap, _T("sss_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_COLOR,
-            p_subtexno, TexmapIdBase,
+            p_subtexno, TexmapIdSSS,
             p_ui, MapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SSS_COLOR,
         p_end,
 
         ParamIdSSSAmount, _T("sss_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_AMOUNT,
-            p_default, 50.0f,
+            p_default, 100.0f,
             p_range, 0.0f, 100.0f,
             p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_AMOUNT, IDC_SLIDER_SSS_AMOUNT, 10.0f,
         p_end,
@@ -196,6 +201,16 @@ namespace
         ParamIdSpecularColorTexmap, _T("specular_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_COLOR,
             p_subtexno, TexmapIdSpecular,
             p_ui, MapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_COLOR,
+        p_end,
+
+        ParamIdSpecularAmount, _T("specular_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_AMOUNT,
+            p_default, 100.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, MapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_AMOUNT, IDC_SLIDER_SPECULAR_AMOUNT, 10.0f,
+        p_end,
+        ParamIdSpecularAmountTexmap, _T("specular_amount_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_AMOUNT,
+            p_subtexno, TexmapIdSpecularAmount,
+            p_ui, MapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_AMOUNT,
         p_end,
 
         ParamIdSpecularRoughness, _T("specular_roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ROUGHNESS,
@@ -231,11 +246,13 @@ AppleseedSSSMtl::AppleseedSSSMtl()
   : m_pblock(nullptr)
   , m_sss_color(0.5f, 0.5f, 0.5f)
   , m_sss_color_texmap(nullptr)
-  , m_sss_amount(0.0f)
+  , m_sss_amount(100.0f)
   , m_sss_scatter_distance(1.0f)
   , m_sss_ior(1.3f)
   , m_specular_color(0.9f, 0.9f, 0.9f)
   , m_specular_color_texmap(nullptr)
+  , m_specular_amount(100.0f)
+  , m_specular_amount_texmap(nullptr)
   , m_specular_roughness(40.0f)
   , m_specular_roughness_texmap(nullptr)
   , m_specular_anisotropy(0.0f)
@@ -404,6 +421,9 @@ void AppleseedSSSMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdSpecularColor, t, m_specular_color, m_params_validity);
         m_pblock->GetValue(ParamIdSpecularColorTexmap, t, m_specular_color_texmap, m_params_validity);
+
+        m_pblock->GetValue(ParamIdSpecularAmount, t, m_specular_amount, m_params_validity);
+        m_pblock->GetValue(ParamIdSpecularAmountTexmap, t, m_specular_amount_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdSpecularRoughness, t, m_specular_roughness, m_params_validity);
         m_pblock->GetValue(ParamIdSpecularRoughnessTexmap, t, m_specular_roughness_texmap, m_params_validity);
@@ -623,6 +643,11 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
             insert_color(assembly, m_specular_color, color_name.c_str());
             brdf_params.insert("reflectance", color_name);
         }
+
+        // Reflectance multiplier.
+        if (is_bitmap_texture(m_specular_amount_texmap))
+            brdf_params.insert("reflectance_multiplier", insert_texture_and_instance(assembly, m_specular_amount_texmap));
+        else brdf_params.insert("reflectance_multiplier", m_specular_amount / 100.0f);
 
         // Roughness.
         if (is_bitmap_texture(m_specular_roughness_texmap))

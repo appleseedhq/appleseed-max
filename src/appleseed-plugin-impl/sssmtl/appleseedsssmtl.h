@@ -141,6 +141,8 @@ class AppleseedSSSMtl
     float           m_sss_ior;
     Color           m_specular_color;
     Texmap*         m_specular_color_texmap;
+    float           m_specular_amount;
+    Texmap*         m_specular_amount_texmap;
     float           m_specular_roughness;
     Texmap*         m_specular_roughness_texmap;
     float           m_specular_anisotropy;
