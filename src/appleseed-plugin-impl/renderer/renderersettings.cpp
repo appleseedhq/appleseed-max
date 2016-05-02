@@ -50,7 +50,7 @@ namespace
         DefaultRendererSettings()
         {
             m_pixel_samples = 16;
-            m_passes = 4;
+            m_passes = 1;
             m_gi = true;
             m_bounces = 3;
             m_background_emits_light = true;
