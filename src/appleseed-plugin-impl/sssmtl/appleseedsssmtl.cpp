@@ -51,6 +51,7 @@
 #include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
+#include <AssetManagement/AssetUser.h>
 #include <color.h>
 #include <iparamm2.h>
 #include <stdmat.h>
@@ -573,13 +574,14 @@ namespace
     std::string insert_texture_and_instance(asr::Assembly& assembly, Texmap* texmap)
     {
         BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
+        const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
 
         const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
         assembly.textures().insert(
             asr::DiskTexture2dFactory::static_create(
                 texture_name.c_str(),
                 asr::ParamArray()
-                    .insert("filename", wide_to_utf8(bitmap_tex->GetMapName()))
+                    .insert("filename", filepath)
                     .insert("color_space", "srgb"),     // todo: fix
                 asf::SearchPaths()));
 

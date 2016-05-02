@@ -33,6 +33,7 @@
 #include "foundation/utility/string.h"
 
 // 3ds Max Headers.
+#include <AssetManagement/AssetUser.h>
 #include <assert1.h>
 #include <bitmap.h>
 #include <imtl.h>
@@ -113,7 +114,7 @@ std::string fmt_expr(const asf::Color3f& srgb)
 std::string fmt_expr(BitmapTex* bitmap_tex)
 {
     DbgAssert(bitmap_tex != nullptr);
-    const auto filepath = wide_to_utf8(bitmap_tex->GetMapName());
+    const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
 
     Bitmap* bitmap = bitmap_tex->GetBitmap(0);
     DbgAssert(bitmap != nullptr);
