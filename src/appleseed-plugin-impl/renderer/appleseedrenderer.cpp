@@ -333,24 +333,34 @@ int AppleseedRenderer::Render(
             bitmap,
             time));
 
-    // Write the project to disk.
-    if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
-        m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
+    if (m_rend_params.inMtlEdit)
     {
-        if (progress_cb)
-            progress_cb->SetTitle(_T("Writing Project To Disk..."));
-        asr::ProjectFileWriter::write(
-            project.ref(),
-            wide_to_utf8(m_settings.m_project_file_path).c_str());
-    }
-
-    // Render the project.
-    if (m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ||
-        m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
-    {
+        // Render the project.
         if (progress_cb)
             progress_cb->SetTitle(_T("Rendering..."));
         render(project.ref(), m_settings, bitmap, progress_cb);
+    }
+    else
+    {
+        // Write the project to disk.
+        if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
+            m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
+        {
+            if (progress_cb)
+                progress_cb->SetTitle(_T("Writing Project To Disk..."));
+            asr::ProjectFileWriter::write(
+                project.ref(),
+                wide_to_utf8(m_settings.m_project_file_path).c_str());
+        }
+
+        // Render the project.
+        if (m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ||
+            m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
+        {
+            if (progress_cb)
+                progress_cb->SetTitle(_T("Rendering..."));
+            render(project.ref(), m_settings, bitmap, progress_cb);
+        }
     }
 
     if (progress_cb)
