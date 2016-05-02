@@ -94,7 +94,7 @@ namespace
         ParamIdSSSColor,
         ParamIdSSSColorTexmap,
         ParamIdSSSAmount,
-        ParamIdSSSScatterDistance,
+        ParamIdSSSScale,
         ParamIdSSSIOR,
         ParamIdSpecularColor,
         ParamIdSpecularColorTexmap,
@@ -181,10 +181,10 @@ namespace
             p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_AMOUNT, IDC_SLIDER_SSS_AMOUNT, 10.0f,
         p_end,
 
-        ParamIdSSSScatterDistance, _T("sss_scatter_distance"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_SCATTER_DISTANCE,
+        ParamIdSSSScale, _T("sss_scale"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_SCALE,
             p_default, 5.0f,
             p_range, 0.001f, 1000.0f,
-            p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_SCATTER_DISTANCE, IDC_SLIDER_SSS_SCATTER_DISTANCE, 10.0f,
+            p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_SCALE, IDC_SLIDER_SSS_SCALE, 10.0f,
         p_end,
 
         ParamIdSSSIOR, _T("sss_ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_IOR,
@@ -248,7 +248,7 @@ AppleseedSSSMtl::AppleseedSSSMtl()
   , m_sss_color(0.5f, 0.5f, 0.5f)
   , m_sss_color_texmap(nullptr)
   , m_sss_amount(100.0f)
-  , m_sss_scatter_distance(1.0f)
+  , m_sss_scale(1.0f)
   , m_sss_ior(1.3f)
   , m_specular_color(0.9f, 0.9f, 0.9f)
   , m_specular_color_texmap(nullptr)
@@ -417,7 +417,7 @@ void AppleseedSSSMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdSSSColorTexmap, t, m_sss_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdSSSAmount, t, m_sss_amount, m_params_validity);
-        m_pblock->GetValue(ParamIdSSSScatterDistance, t, m_sss_scatter_distance, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSScale, t, m_sss_scale, m_params_validity);
         m_pblock->GetValue(ParamIdSSSIOR, t, m_sss_ior, m_params_validity);
 
         m_pblock->GetValue(ParamIdSpecularColor, t, m_specular_color, m_params_validity);
@@ -607,7 +607,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
     {
         asr::ParamArray bssrdf_params;
         bssrdf_params.insert("weight", m_sss_amount / 100.0f);
-        bssrdf_params.insert("dmfp", std::max(m_sss_scatter_distance, 0.1f));
+        bssrdf_params.insert("dmfp", std::max(m_sss_scale, 0.1f));
         bssrdf_params.insert("outside_ior", 1.0f);
         bssrdf_params.insert("inside_ior", m_sss_ior);
 

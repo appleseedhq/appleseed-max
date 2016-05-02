@@ -137,7 +137,7 @@ class AppleseedSSSMtl
     Color           m_sss_color;
     Texmap*         m_sss_color_texmap;
     float           m_sss_amount;
-    float           m_sss_scatter_distance;
+    float           m_sss_scale;
     float           m_sss_ior;
     Color           m_specular_color;
     Texmap*         m_specular_color_texmap;
