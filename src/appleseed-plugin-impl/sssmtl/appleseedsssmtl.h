@@ -136,6 +136,8 @@ class AppleseedSSSMtl
     Interval        m_params_validity;
     Color           m_sss_color;
     Texmap*         m_sss_color_texmap;
+    Color           m_sss_scattering_color;
+    Texmap*         m_sss_scattering_color_texmap;
     float           m_sss_amount;
     float           m_sss_scale;
     float           m_sss_ior;

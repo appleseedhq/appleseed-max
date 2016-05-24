@@ -93,6 +93,8 @@ namespace
     {
         ParamIdSSSColor,
         ParamIdSSSColorTexmap,
+        ParamIdSSSScatteringColor,
+        ParamIdSSSScatteringColorTexmap,
         ParamIdSSSAmount,
         ParamIdSSSScale,
         ParamIdSSSIOR,
@@ -108,8 +110,9 @@ namespace
 
     enum TexmapId
     {
-        TexmapIdSSS,
-        TexmapIdSpecular,
+        TexmapIdSSSColor,
+        TexmapIdSSSScatteringColor,
+        TexmapIdSpecularColor,
         TexmapIdSpecularAmount,
         TexmapIdSpecularRoughness,
         TexmapIdSpecularAnisotropy,
@@ -119,6 +122,7 @@ namespace
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
         _T("SSS Color"),
+        _T("SSS Scattering Color")
         _T("Specular Color"),
         _T("Specular Amount"),
         _T("Specular Roughness"),
@@ -128,6 +132,7 @@ namespace
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
         ParamIdSSSColorTexmap,
+        ParamIdSSSScatteringColorTexmap,
         ParamIdSpecularColorTexmap,
         ParamIdSpecularAmountTexmap,
         ParamIdSpecularRoughnessTexmap,
@@ -171,8 +176,17 @@ namespace
             p_ui, MapIdSSS, TYPE_COLORSWATCH, IDC_SWATCH_SSS_COLOR,
         p_end,
         ParamIdSSSColorTexmap, _T("sss_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_COLOR,
-            p_subtexno, TexmapIdSSS,
+            p_subtexno, TexmapIdSSSColor,
             p_ui, MapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SSS_COLOR,
+        p_end,
+
+        ParamIdSSSScatteringColor, _T("sss_scattering_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SSS_SCATTERING_COLOR,
+            p_default, Color(0.9f, 0.9f, 0.9f),
+            p_ui, MapIdSSS, TYPE_COLORSWATCH, IDC_SWATCH_SSS_SCATTERING_COLOR,
+        p_end,
+        ParamIdSSSScatteringColorTexmap, _T("sss_scattering_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_SCATTERING_COLOR,
+            p_subtexno, TexmapIdSSSScatteringColor,
+            p_ui, MapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SSS_SCATTERING_COLOR,
         p_end,
 
         ParamIdSSSAmount, _T("sss_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_AMOUNT,
@@ -200,7 +214,7 @@ namespace
             p_ui, MapIdSpecular, TYPE_COLORSWATCH, IDC_SWATCH_SPECULAR_COLOR,
         p_end,
         ParamIdSpecularColorTexmap, _T("specular_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_COLOR,
-            p_subtexno, TexmapIdSpecular,
+            p_subtexno, TexmapIdSpecularColor,
             p_ui, MapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_COLOR,
         p_end,
 
@@ -247,6 +261,8 @@ AppleseedSSSMtl::AppleseedSSSMtl()
   : m_pblock(nullptr)
   , m_sss_color(0.5f, 0.5f, 0.5f)
   , m_sss_color_texmap(nullptr)
+  , m_sss_scattering_color(0.5f, 0.5f, 0.5f)
+  , m_sss_scattering_color_texmap(nullptr)
   , m_sss_amount(100.0f)
   , m_sss_scale(1.0f)
   , m_sss_ior(1.3f)
@@ -415,6 +431,9 @@ void AppleseedSSSMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdSSSColor, t, m_sss_color, m_params_validity);
         m_pblock->GetValue(ParamIdSSSColorTexmap, t, m_sss_color_texmap, m_params_validity);
+
+        m_pblock->GetValue(ParamIdSSSScatteringColor, t, m_sss_scattering_color, m_params_validity);
+        m_pblock->GetValue(ParamIdSSSScatteringColorTexmap, t, m_sss_scattering_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdSSSAmount, t, m_sss_amount, m_params_validity);
         m_pblock->GetValue(ParamIdSSSScale, t, m_sss_scale, m_params_validity);
@@ -607,9 +626,19 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
     {
         asr::ParamArray bssrdf_params;
         bssrdf_params.insert("weight", m_sss_amount / 100.0f);
-        bssrdf_params.insert("dmfp", std::max(m_sss_scale, 0.1f));
+        bssrdf_params.insert("dmfp_multiplier", std::max(m_sss_scale, 0.1f));
         bssrdf_params.insert("outside_ior", 1.0f);
         bssrdf_params.insert("inside_ior", m_sss_ior);
+
+        // Diffuse mean free path.
+        if (is_bitmap_texture(m_sss_scattering_color_texmap))
+            bssrdf_params.insert("dmfp", insert_texture_and_instance(assembly, m_sss_scattering_color_texmap));
+        else
+        {
+            const auto color_name = std::string(name) + "_bssrdf_dmfp";
+            insert_color(assembly, m_sss_scattering_color, color_name.c_str());
+            bssrdf_params.insert("dmfp", color_name);
+        }
 
         // Reflectance.
         if (is_bitmap_texture(m_sss_color_texmap))
