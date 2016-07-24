@@ -72,13 +72,17 @@ void RendererSettings::apply(
 {
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
 
+    if (m_rendering_threads == 0)
+        params.insert_path("rendering_threads", "auto");
+    else params.insert_path("rendering_threads", m_rendering_threads);
+
     params.insert_path("generic_frame_renderer.passes", m_passes);
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
     params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
+
     if (m_gi)
         params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
     else params.insert_path("pt.max_path_length", 1);
-    params.insert_path("rendering_threads", m_rendering_threads);
 
     //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
 }
