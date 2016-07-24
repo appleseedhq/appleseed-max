@@ -203,7 +203,7 @@ namespace
 
         ParamIdSSSIOR, _T("sss_ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_IOR,
             p_default, 1.3f,
-            p_range, 0.5f, 2.0f,
+            p_range, 1.0f, 2.5f,
             p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_IOR, IDC_SLIDER_SSS_IOR, 0.1f,
         p_end,
 
