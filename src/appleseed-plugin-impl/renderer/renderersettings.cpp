@@ -72,6 +72,8 @@ void RendererSettings::apply(
 {
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
 
+    params.insert_path("sampling_mode", "qmc");
+
     if (m_rendering_threads == 0)
         params.insert_path("rendering_threads", "auto");
     else params.insert_path("rendering_threads", m_rendering_threads);
