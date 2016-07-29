@@ -48,6 +48,12 @@
     <ClCompile Include="glassmtl\appleseedglassmtlparamdlg.cpp">
       <Filter>glassmtl</Filter>
     </ClCompile>
+    <ClCompile Include="lightmtl\appleseedlightmtl.cpp">
+      <Filter>lightmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp">
+      <Filter>lightmtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="renderer\appleseedrenderer.h">
@@ -120,6 +126,18 @@
     <ClInclude Include="glassmtl\appleseedglassmtlparamdlg.h">
       <Filter>glassmtl</Filter>
     </ClInclude>
+    <ClInclude Include="lightmtl\appleseedlightmtl.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\appleseedlightmtlparamdlg.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\datachunks.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\resource.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="renderer\appleseedrenderer.rc">
@@ -134,6 +152,9 @@
     <ResourceCompile Include="glassmtl\appleseedglassmtl.rc">
       <Filter>glassmtl</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="lightmtl\appleseedlightmtl.rc">
+      <Filter>lightmtl</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="renderer">
@@ -147,6 +168,9 @@
     </Filter>
     <Filter Include="glassmtl">
       <UniqueIdentifier>{666a1c7e-ebcb-42b1-b62e-a57419733d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lightmtl">
+      <UniqueIdentifier>{f7d6f5af-25a2-427e-bf28-a4e46d2ddaf2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

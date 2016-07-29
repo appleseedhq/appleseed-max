@@ -179,6 +179,8 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClCompile Include="glassmtl\appleseedglassmtl.cpp" />
     <ClCompile Include="glassmtl\appleseedglassmtlparamdlg.cpp" />
     <ClCompile Include="iappleseedmtl.cpp" />
+    <ClCompile Include="lightmtl\appleseedlightmtl.cpp" />
+    <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="renderer\appleseedrenderer.cpp" />
@@ -204,6 +206,10 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClInclude Include="glassmtl\datachunks.h" />
     <ClInclude Include="glassmtl\resource.h" />
     <ClInclude Include="iappleseedmtl.h" />
+    <ClInclude Include="lightmtl\appleseedlightmtl.h" />
+    <ClInclude Include="lightmtl\appleseedlightmtlparamdlg.h" />
+    <ClInclude Include="lightmtl\datachunks.h" />
+    <ClInclude Include="lightmtl\resource.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="renderer\appleseedrenderer.h" />
     <ClInclude Include="renderer\appleseedrendererparamdlg.h" />
@@ -225,6 +231,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
   <ItemGroup>
     <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="glassmtl\appleseedglassmtl.rc" />
+    <ResourceCompile Include="lightmtl\appleseedlightmtl.rc" />
     <ResourceCompile Include="renderer\appleseedrenderer.rc" />
     <ResourceCompile Include="sssmtl\appleseedsssmtl.rc" />
   </ItemGroup>
