@@ -610,8 +610,11 @@ namespace
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
-        for (const auto& light : entities.m_lights)
-            add_light(assembly, light, time);
+        for (const auto& light_info : entities.m_lights)
+        {
+            if (light_info.m_enabled)
+                add_light(assembly, light_info.m_light, time);
+        }
     }
 
     bool is_zero(const Matrix3& m)

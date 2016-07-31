@@ -37,8 +37,14 @@ class INode;
 class MaxSceneEntities
 {
   public:
-    std::vector<INode*> m_objects;
-    std::vector<INode*> m_lights;
+    struct LightInfo
+    {
+        INode*  m_light;
+        bool    m_enabled;
+    };
+
+    std::vector<INode*>     m_objects;
+    std::vector<LightInfo>  m_lights;
 
     void clear();
 };

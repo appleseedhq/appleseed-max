@@ -80,12 +80,11 @@ void MaxSceneEntityCollector::collect(INode* node)
 
             LightObject* light_object = static_cast<LightObject*>(object_state.obj);
 
-            // Skip disabled lights.
-            if (!light_object->GetUseLight())
-                return;
-
-            // Collect this light.
-            m_entities.m_lights.push_back(node);
+            // Collect this light, even if it is disabled.
+            MaxSceneEntities::LightInfo light_info;
+            light_info.m_light = node;
+            light_info.m_enabled = light_object->GetUseLight() != 0;
+            m_entities.m_lights.push_back(light_info);
         }
         break;
 
