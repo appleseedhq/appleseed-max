@@ -152,7 +152,7 @@ namespace
         // --- Parameters specifications ---
 
         ParamIdSurfaceColor, _T("surface_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SURFACE_COLOR,
-            p_default, Color(0.85f, 0.85f, 0.85f),
+            p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, TYPE_COLORSWATCH, IDC_SWATCH_SURFACE_COLOR,
         p_end,
         ParamIdSurfaceColorTexmap, _T("surface_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SURFACE_COLOR,
@@ -185,7 +185,7 @@ namespace
         p_end,
 
         ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
-            p_default, 15.0f,
+            p_default, 0.0f,
             p_range, 0.0f, 100.0f,
             p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
@@ -230,14 +230,14 @@ Class_ID AppleseedGlassMtl::get_class_id()
 
 AppleseedGlassMtl::AppleseedGlassMtl()
   : m_pblock(nullptr)
-  , m_surface_color(0.85f, 0.85f, 0.85f)
+  , m_surface_color(1.0f, 1.0f, 1.0f)
   , m_surface_color_texmap(nullptr)
   , m_reflection_tint(1.0f, 1.0f, 1.0f)
   , m_reflection_tint_texmap(nullptr)
   , m_refraction_tint(1.0f, 1.0f, 1.0f)
   , m_refraction_tint_texmap(nullptr)
   , m_ior(1.5f)
-  , m_roughness(0.15f)
+  , m_roughness(0.0f)
   , m_roughness_texmap(nullptr)
   , m_anisotropy(0.0f)
   , m_anisotropy_texmap(nullptr)
