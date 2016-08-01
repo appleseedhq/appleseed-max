@@ -79,8 +79,10 @@ void RendererSettings::apply(
         params.insert_path("rendering_threads", "auto");
     else params.insert_path("rendering_threads", m_rendering_threads);
 
+    params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
     params.insert_path("generic_frame_renderer.passes", m_passes);
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
+
     params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
 
     if (m_gi)
