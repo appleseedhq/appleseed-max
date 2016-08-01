@@ -585,6 +585,11 @@ namespace
     }
 }
 
+int AppleseedGlassMtl::get_sides() const
+{
+    return asr::ObjectInstance::BothSides;
+}
+
 asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Assembly& assembly, const char* name)
 {
     asr::ParamArray material_params;

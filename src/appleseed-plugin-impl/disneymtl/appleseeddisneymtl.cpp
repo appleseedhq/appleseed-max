@@ -39,6 +39,7 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
+#include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -560,6 +561,11 @@ void AppleseedDisneyMtl::SetShininess(float v, TimeValue t)
 
 void AppleseedDisneyMtl::Shade(ShadeContext& sc)
 {
+}
+
+int AppleseedDisneyMtl::get_sides() const
+{
+    return asr::ObjectInstance::BothSides;
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)

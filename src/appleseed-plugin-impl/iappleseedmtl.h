@@ -48,6 +48,10 @@ class IAppleseedMtl
 
     virtual Interface_ID GetID() override;
 
+    // The sides (front and/or back) on which this material should be applied.
+    // The return value is a combination of renderer::ObjectInstance::Side values.
+    virtual int get_sides() const = 0;
+
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name) = 0;

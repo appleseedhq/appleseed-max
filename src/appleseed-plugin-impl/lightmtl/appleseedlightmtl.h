@@ -127,6 +127,7 @@ class AppleseedLightMtl
     virtual void Shade(ShadeContext& sc) override;
 
     // IAppleseedMtl methods.
+    virtual int get_sides() const override;
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name) override;
@@ -137,6 +138,8 @@ class AppleseedLightMtl
     Color           m_light_color;
     Texmap*         m_light_color_texmap;
     float           m_light_power;
+    bool            m_emission_front;
+    bool            m_emission_back;
 };
 
 

@@ -331,9 +331,11 @@ namespace
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(instance_node->GetObjTMAfterWSM(time)));
 
-        // Material-slots to materials mappings.
-        asf::StringDictionary material_mappings;
+        // Name of the material of this instance.
+        std::string material_name;
+        int material_sides = 0;
 
+        // Retrieve or create an appleseed material.
         Mtl* mtl = instance_node->GetMtl();
         if (mtl)
         {
@@ -347,44 +349,52 @@ namespace
                 if (it == material_map.end())
                 {
                     // The appleseed material does not exist yet, let the material plugin create it.
-                    const std::string material_name =
+                    material_name =
                         make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()));
                     assembly.materials().insert(
                         appleseed_mtl->create_material(assembly, material_name.c_str()));
                     material_map.insert(std::make_pair(mtl, material_name));
-                    material_mappings.insert("material", material_name);
                 }
                 else
                 {
                     // The appleseed material exists.
-                    material_mappings.insert("material", it->second);
+                    material_name = it->second;
                 }
+                material_sides = appleseed_mtl->get_sides();
             }
             else
             {
                 // The instance has a non-appleseed material: assign it an empty material that will appear black.
-                const std::string material_name =
+                material_name =
                     make_unique_name(assembly.materials(), instance_name + "_mat");
                 add_empty_material(assembly, material_name);
-                material_mappings.insert("material", material_name);
+                material_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
             }
         }
         else
         {
             // The instance does not have a material: create a new default material.
-            const std::string material_name =
+            material_name =
                 make_unique_name(assembly.materials(), instance_name + "_mat");
             add_default_material(
                 assembly,
                 material_name,
                 to_color3f(Color(instance_node->GetWireColor())));
-            material_mappings.insert("material", material_name);
+            material_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
         }
 
         // Parameters.
         asr::ParamArray params;
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
+
+        // Material mappings.
+        asf::StringDictionary front_material_mappings;
+        if (material_sides & asr::ObjectInstance::FrontSide)
+            front_material_mappings.insert("material", material_name);
+        asf::StringDictionary back_material_mappings;
+        if (material_sides & asr::ObjectInstance::BackSide)
+            back_material_mappings.insert("material", material_name);
 
         // Create the instance and insert it into the assembly.
         assembly.object_instances().insert(
@@ -393,8 +403,8 @@ namespace
                 params,
                 object_name.c_str(),
                 transform,
-                material_mappings,
-                material_mappings));
+                front_material_mappings,
+                back_material_mappings));
     }
 
     // Information about an appleseed object.

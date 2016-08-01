@@ -86,7 +86,9 @@ namespace
     {
         ParamIdLightColor,
         ParamIdLightColorTexmap,
-        ParamIdLightPower
+        ParamIdLightPower,
+        ParamIdEmissionFront,
+        ParamIdEmissionBack
     };
 
     enum TexmapId
@@ -140,6 +142,15 @@ namespace
             p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_POWER, IDC_SLIDER_LIGHT_POWER, 1.0f,
         p_end,
 
+        ParamIdEmissionFront, _T("emission_front"), TYPE_BOOL, 0, IDS_EMISSION_FRONT,
+            p_default, TRUE,
+            p_ui, TYPE_CHECKBUTTON, IDC_BUTTON_EMISSION_FRONT,
+        p_end,
+        ParamIdEmissionBack, _T("emission_back"), TYPE_BOOL, 0, IDS_EMISSION_BACK,
+            p_default, FALSE,
+            p_ui, TYPE_CHECKBUTTON, IDC_BUTTON_EMISSION_BACK,
+        p_end,
+
         // --- The end ---
         p_end);
 }
@@ -154,6 +165,8 @@ AppleseedLightMtl::AppleseedLightMtl()
   , m_light_color(1.0f, 1.0f, 1.0f)
   , m_light_color_texmap(nullptr)
   , m_light_power(1.0f)
+  , m_emission_front(true)
+  , m_emission_back(false)
 {
     m_params_validity.SetEmpty();
 
@@ -313,6 +326,14 @@ void AppleseedLightMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdLightColorTexmap, t, m_light_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdLightPower, t, m_light_power, m_params_validity);
+
+        int emission_front;
+        m_pblock->GetValue(ParamIdEmissionFront, t, emission_front, m_params_validity);
+        m_emission_front = emission_front != 0;
+
+        int emission_back;
+        m_pblock->GetValue(ParamIdEmissionBack, t, emission_back, m_params_validity);
+        m_emission_back = emission_back != 0;
 
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
@@ -476,6 +497,19 @@ namespace
 
         return texture_instance_name;
     }
+}
+
+int AppleseedLightMtl::get_sides() const
+{
+    int sides = 0;
+
+    if (m_emission_front)
+        sides |= asr::ObjectInstance::FrontSide;
+
+    if (m_emission_back)
+        sides |= asr::ObjectInstance::BackSide;
+
+    return sides;
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Assembly& assembly, const char* name)
