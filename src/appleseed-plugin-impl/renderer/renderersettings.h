@@ -60,6 +60,7 @@ class RendererSettings
     //
 
     bool        m_gi;
+    bool        m_caustics;
     int         m_bounces;
     bool        m_background_emits_light;
 

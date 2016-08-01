@@ -41,6 +41,7 @@ const USHORT ChunkSettingsImageSamplingPasses           = 0x1120;
 
 const USHORT ChunkSettingsLighting                      = 0x1200;
 const USHORT ChunkSettingsLightingGI                    = 0x1210;
+const USHORT ChunkSettingsLightingCaustics              = 0x1215;
 const USHORT ChunkSettingsLightingBounces               = 0x1220;
 const USHORT ChunkSettingsLightingBackgroundEmitsLight  = 0x1230;
 

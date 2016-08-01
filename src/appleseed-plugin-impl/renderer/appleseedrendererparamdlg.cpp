@@ -362,6 +362,7 @@ namespace
         HWND                    m_rollup;
         ICustEdit*              m_text_bounces;
         ISpinnerControl*        m_spinner_bounces;
+        HWND                    m_check_caustics;
 
         LightingPanel(
             IRendParams*        rend_params,
@@ -395,6 +396,10 @@ namespace
             m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
 
             CheckDlgButton(hwnd, IDC_CHECK_GI, m_settings.m_gi ? BST_CHECKED : BST_UNCHECKED);
+
+            m_check_caustics = GetDlgItem(hwnd, IDC_CHECK_CAUSTICS);
+            CheckDlgButton(hwnd, IDC_CHECK_CAUSTICS, m_settings.m_caustics ? BST_CHECKED : BST_UNCHECKED);
+
             CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
                 m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
 
@@ -405,6 +410,7 @@ namespace
         {
             m_text_bounces->Enable(m_settings.m_gi);
             m_spinner_bounces->Enable(m_settings.m_gi);
+            EnableWindow(m_check_caustics, m_settings.m_gi ? TRUE : FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -421,6 +427,10 @@ namespace
                         case IDC_CHECK_GI:
                             m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
                             enable_disable_controls();
+                            return TRUE;
+
+                        case IDC_CHECK_CAUSTICS:
+                            m_settings.m_caustics = IsDlgButtonChecked(hwnd, IDC_CHECK_CAUSTICS) == BST_CHECKED;
                             return TRUE;
 
                         case IDC_CHECK_BACKGROUND_EMITS_LIGHT:

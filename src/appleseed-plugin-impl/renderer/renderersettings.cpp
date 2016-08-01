@@ -52,6 +52,7 @@ namespace
             m_pixel_samples = 16;
             m_passes = 1;
             m_gi = true;
+            m_caustics = false;
             m_bounces = 3;
             m_background_emits_light = true;
             m_output_mode = OutputMode::RenderOnly;
@@ -86,6 +87,8 @@ void RendererSettings::apply(
         params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
     else params.insert_path("pt.max_path_length", 1);
 
+    params.insert_path("pt.enable_caustics", m_caustics);
+
     //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
 }
 
@@ -117,6 +120,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsLightingGI);
         success &= write<bool>(isave, m_gi);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingCaustics);
+        success &= write<bool>(isave, m_caustics);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingBounces);
@@ -263,6 +270,10 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
         {
           case ChunkSettingsLightingGI:
             result = read<bool>(iload, &m_gi);
+            break;
+
+          case ChunkSettingsLightingCaustics:
+            result = read<bool>(iload, &m_caustics);
             break;
 
           case ChunkSettingsLightingBounces:
