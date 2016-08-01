@@ -48,32 +48,32 @@ class TileCallback
 {
   public:
     TileCallback(
-        Bitmap*                 bitmap,
-        foundation::uint32*     rendered_tile_count);
+        Bitmap*                         bitmap,
+        volatile foundation::uint32*    rendered_tile_count);
 
     virtual void release() override;
 
     virtual void pre_render(
-        const size_t            x,
-        const size_t            y,
-        const size_t            width,
-        const size_t            height) override;
+        const size_t                    x,
+        const size_t                    y,
+        const size_t                    width,
+        const size_t                    height) override;
 
     virtual void post_render_tile(
-        const renderer::Frame*  frame,
-        const size_t            tile_x,
-        const size_t            tile_y) override;
+        const renderer::Frame*          frame,
+        const size_t                    tile_x,
+        const size_t                    tile_y) override;
 
     virtual void post_render(
         const renderer::Frame*  frame) override;
 
   private:
-    Bitmap*                         m_bitmap;
-    foundation::uint32*             m_rendered_tile_count;
-    std::auto_ptr<foundation::Tile> m_float_tile_storage;
+    Bitmap*                             m_bitmap;
+    volatile foundation::uint32*        m_rendered_tile_count;
+    std::auto_ptr<foundation::Tile>     m_float_tile_storage;
 
     void blit_tile(
-        const renderer::Frame&  frame,
-        const size_t            tile_x,
-        const size_t            tile_y);
+        const renderer::Frame&          frame,
+        const size_t                    tile_x,
+        const size_t                    tile_y);
 };

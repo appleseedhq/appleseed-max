@@ -37,7 +37,7 @@
 #include "foundation/image/color.h"
 #include "foundation/image/image.h"
 #include "foundation/image/pixel.h"
-#include "foundation/platform/thread.h"
+#include "foundation/platform/atomic.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
@@ -121,8 +121,8 @@ namespace
 }
 
 TileCallback::TileCallback(
-    Bitmap*             bitmap,
-    asf::uint32*        rendered_tile_count)
+    Bitmap*                 bitmap,
+    volatile asf::uint32*   rendered_tile_count)
   : m_bitmap(bitmap)
   , m_rendered_tile_count(rendered_tile_count)
 {
@@ -134,10 +134,10 @@ void TileCallback::release()
 }
 
 void TileCallback::pre_render(
-    const size_t        x,
-    const size_t        y,
-    const size_t        width,
-    const size_t        height)
+    const size_t            x,
+    const size_t            y,
+    const size_t            width,
+    const size_t            height)
 {
     // Draw a bracket around the tile.
     const int BracketExtent = 5;
@@ -157,9 +157,9 @@ void TileCallback::pre_render(
 }
 
 void TileCallback::post_render_tile(
-    const asr::Frame*   frame,
-    const size_t        tile_x,
-    const size_t        tile_y)
+    const asr::Frame*       frame,
+    const size_t            tile_x,
+    const size_t            tile_y)
 {
     const asf::Image& image = frame->image();
     const asf::CanvasProperties& props = image.properties();
@@ -179,7 +179,7 @@ void TileCallback::post_render_tile(
     m_bitmap->RefreshWindow(&rect);
 
     // Keep track of the number of rendered tiles.
-    boost_atomic::atomic_inc32(m_rendered_tile_count);
+    asf::atomic_inc(m_rendered_tile_count);
 }
 
 void TileCallback::post_render(
@@ -203,9 +203,9 @@ void TileCallback::post_render(
 }
 
 void TileCallback::blit_tile(
-    const asr::Frame&   frame,
-    const size_t        tile_x,
-    const size_t        tile_y)
+    const asr::Frame&       frame,
+    const size_t            tile_x,
+    const size_t            tile_y)
 {
     const asf::CanvasProperties& props = frame.image().properties();
 

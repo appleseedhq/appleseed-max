@@ -30,7 +30,7 @@
 #include "renderercontroller.h"
 
 // appleseed.foundation headers.
-#include "foundation/platform/thread.h"
+#include "foundation/platform/atomic.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
@@ -41,7 +41,7 @@ namespace asr = renderer;
 
 RendererController::RendererController(
     RendProgressCallback*   progress_cb,
-    asf::uint32*            rendered_tile_count,
+    volatile asf::uint32*   rendered_tile_count,
     const size_t            total_tile_count)
   : m_progress_cb(progress_cb)
   , m_rendered_tile_count(rendered_tile_count)
@@ -58,7 +58,7 @@ void RendererController::on_rendering_begin()
 void RendererController::on_progress()
 {
     const int done =
-        static_cast<int>(boost_atomic::atomic_read32(m_rendered_tile_count));
+        static_cast<int>(asf::atomic_read(m_rendered_tile_count));
     const int total = static_cast<int>(m_total_tile_count);
 
     m_status =

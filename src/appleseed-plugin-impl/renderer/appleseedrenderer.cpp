@@ -253,7 +253,7 @@ namespace
         RendProgressCallback*   progress_cb)
     {
         // Number of rendered tiles, shared counter accessed atomically.
-        asf::uint32 rendered_tile_count = 0;
+        volatile asf::uint32 rendered_tile_count = 0;
 
         // Create the renderer controller.
         const size_t total_tile_count =

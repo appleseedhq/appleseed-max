@@ -45,9 +45,9 @@ class RendererController
 {
   public:
     RendererController(
-        RendProgressCallback*   progress_cb,
-        foundation::uint32*     rendered_tile_count,
-        const size_t            total_tile_count);
+        RendProgressCallback*           progress_cb,
+        volatile foundation::uint32*    rendered_tile_count,
+        const size_t                    total_tile_count);
 
     virtual void on_rendering_begin() override;
 
@@ -56,8 +56,8 @@ class RendererController
     virtual Status get_status() const override;
 
   private:
-    RendProgressCallback*       m_progress_cb;
-    foundation::uint32*         m_rendered_tile_count;
-    const size_t                m_total_tile_count;
-    Status                      m_status;
+    RendProgressCallback*               m_progress_cb;
+    volatile foundation::uint32*        m_rendered_tile_count;
+    const size_t                        m_total_tile_count;
+    Status                              m_status;
 };
