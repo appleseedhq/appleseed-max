@@ -632,8 +632,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         asr::ParamArray bssrdf_params;
         bssrdf_params.insert("weight", m_sss_amount / 100.0f);
         bssrdf_params.insert("dmfp_multiplier", std::max(m_sss_scale, 0.1f));
-        bssrdf_params.insert("outside_ior", 1.0f);
-        bssrdf_params.insert("inside_ior", m_sss_ior);
+        bssrdf_params.insert("ior", m_sss_ior);
 
         // Diffuse mean free path.
         if (is_bitmap_texture(m_sss_scattering_color_texmap))
