@@ -568,6 +568,11 @@ int AppleseedDisneyMtl::get_sides() const
     return asr::ObjectInstance::BothSides;
 }
 
+bool AppleseedDisneyMtl::can_emit_light() const
+{
+    return false;
+}
+
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)
 {
     auto material = asr::DisneyMaterialFactory::static_create(name, asr::ParamArray());

@@ -52,6 +52,10 @@ class IAppleseedMtl
     // The return value is a combination of renderer::ObjectInstance::Side values.
     virtual int get_sides() const = 0;
 
+    // Can this material emit light, even if this particular instance does not
+    // (for instance because its emission is set to 0)?
+    virtual bool can_emit_light() const = 0;
+
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name) = 0;

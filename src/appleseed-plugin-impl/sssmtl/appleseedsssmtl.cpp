@@ -620,6 +620,11 @@ int AppleseedSSSMtl::get_sides() const
     return asr::ObjectInstance::BothSides;
 }
 
+bool AppleseedSSSMtl::can_emit_light() const
+{
+    return false;
+}
+
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assembly& assembly, const char* name)
 {
     asr::ParamArray material_params;

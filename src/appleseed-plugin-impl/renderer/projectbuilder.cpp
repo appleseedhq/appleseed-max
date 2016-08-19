@@ -465,11 +465,10 @@ namespace
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
         const RenderType        type,
-        const TimeValue         time)
+        const TimeValue         time,
+        ObjectMap&              object_map,
+        MaterialMap&            material_map)
     {
-        ObjectMap object_map;
-        MaterialMap material_map;
-
         for (const auto& object : entities.m_objects)
         {
             add_object(
@@ -704,6 +703,20 @@ namespace
         }
     }
 
+    bool has_light_emitting_materials(const MaterialMap& material_map)
+    {
+        for (const auto& entry : material_map)
+        {
+            Mtl* mtl = entry.first;
+            IAppleseedMtl* appleseed_mtl =
+                static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+            if (appleseed_mtl->can_emit_light())
+                return true;
+        }
+
+        return false;
+    }
+
     void populate_assembly(
         asr::Assembly&                      assembly,
         const MaxSceneEntities&             entities,
@@ -711,11 +724,20 @@ namespace
         const RenderType                    type,
         const TimeValue                     time)
     {
-        add_objects(assembly, entities, type, time);
+        ObjectMap object_map;
+        MaterialMap material_map;
 
-        if (entities.m_lights.empty())
+        // Add objects, and consequently object instances and materials, to the assembly.
+        add_objects(assembly, entities, type, time, object_map, material_map);
+
+        // Only add non-physical lights. Light-emitting materials were added by material plugins.
+        add_lights(assembly, entities, time);
+
+        if (entities.m_lights.empty() && !has_light_emitting_materials(material_map))
+        {
+            // No non-physical light or light-emitting material: add Max's default lights.
             add_default_lights(assembly, default_lights);
-        else add_lights(assembly, entities, time);
+        }
     }
 
     void setup_environment(

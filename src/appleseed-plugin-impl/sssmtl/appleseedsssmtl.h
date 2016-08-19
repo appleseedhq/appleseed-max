@@ -128,6 +128,7 @@ class AppleseedSSSMtl
 
     // IAppleseedMtl methods.
     virtual int get_sides() const override;
+    virtual bool can_emit_light() const override;
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name) override;
