@@ -54,6 +54,7 @@
     <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp">
       <Filter>lightmtl</Filter>
     </ClCompile>
+    <ClCompile Include="logtarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="renderer\appleseedrenderer.h">
@@ -138,6 +139,7 @@
     <ClInclude Include="lightmtl\resource.h">
       <Filter>lightmtl</Filter>
     </ClInclude>
+    <ClInclude Include="logtarget.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="renderer\appleseedrenderer.rc">

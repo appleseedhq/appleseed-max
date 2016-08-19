@@ -32,9 +32,16 @@
 #include "lightmtl/appleseedlightmtl.h"
 #include "renderer/appleseedrenderer.h"
 #include "sssmtl/appleseedsssmtl.h"
+#include "logtarget.h"
 #include "main.h"
+#include "utilities.h"
+#include "version.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/log.h"
 
 // appleseed.foundation headers.
+#include "foundation/core/appleseed.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // appleseed.main headers.
@@ -46,6 +53,18 @@
 
 // Windows headers.
 #include <tchar.h>
+
+// Standard headers.
+#include <sstream>
+#include <string>
+
+namespace asf = foundation;
+namespace asr = renderer;
+
+namespace
+{
+    LogTarget g_log_target;
+}
 
 extern "C"
 {
@@ -89,6 +108,22 @@ extern "C"
     int LibInitialize()
     {
         start_memory_tracking();
+
+        asr::global_logger().add_target(&g_log_target);
+
+        std::stringstream sstr;
+        sstr << "appleseed-max ";
+        sstr << wide_to_utf8(PluginVersionString);
+        sstr << " plug-in for ";
+        sstr << asf::Appleseed::get_synthetic_version_string();
+        sstr << " loaded";
+
+        const std::string title = sstr.str();
+        const std::string sep(title.size(), '=');
+
+        RENDERER_LOG_INFO("%s", sep.c_str());
+        RENDERER_LOG_INFO("%s", title.c_str());
+        RENDERER_LOG_INFO("%s", sep.c_str());
 
         return TRUE;
     }

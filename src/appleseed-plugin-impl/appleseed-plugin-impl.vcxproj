@@ -181,6 +181,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClCompile Include="iappleseedmtl.cpp" />
     <ClCompile Include="lightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp" />
+    <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="renderer\appleseedrenderer.cpp" />
@@ -210,6 +211,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
     <ClInclude Include="lightmtl\appleseedlightmtlparamdlg.h" />
     <ClInclude Include="lightmtl\datachunks.h" />
     <ClInclude Include="lightmtl\resource.h" />
+    <ClInclude Include="logtarget.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="renderer\appleseedrenderer.h" />
     <ClInclude Include="renderer\appleseedrendererparamdlg.h" />
