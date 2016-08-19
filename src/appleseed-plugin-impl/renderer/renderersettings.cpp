@@ -53,7 +53,7 @@ namespace
             m_passes = 1;
             m_gi = true;
             m_caustics = false;
-            m_bounces = 3;
+            m_bounces = 8;
             m_background_emits_light = true;
             m_output_mode = OutputMode::RenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
