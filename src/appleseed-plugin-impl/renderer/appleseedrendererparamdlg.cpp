@@ -185,7 +185,7 @@ namespace
             if (check_for_update(version_string, publication_date, download_url))
             {
                 const std::wstring wide_version_string = utf8_to_wide(version_string);
-                if (wide_version_string != std::wstring(PluginVersionString))
+                if (wide_version_string > std::wstring(PluginVersionString))
                 {
                     data->m_update_available = true;
                     data->m_version_string = wide_version_string;
