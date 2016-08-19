@@ -313,6 +313,7 @@ int AppleseedRenderer::Render(
     // Collect the entities we're interested in.
     if (progress_cb)
         progress_cb->SetTitle(_T("Collecting Entities..."));
+    m_entities.clear();
     MaxSceneEntityCollector collector(m_entities);
     collector.collect(m_scene);
 
