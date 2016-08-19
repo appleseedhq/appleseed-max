@@ -100,6 +100,18 @@ extern "C"
         if ((g_plugin_lib = load_relative_library(_T("appleseed-plugin-impl.dll"))) == nullptr)
             return FALSE;
 
-        return TRUE;
+        typedef int (*LibInitializeFunc)();
+        auto RealLibInitialize =
+            reinterpret_cast<LibInitializeFunc>(GetProcAddress(g_plugin_lib, "LibInitialize"));
+        return RealLibInitialize ? RealLibInitialize() : TRUE;
+    }
+
+    __declspec(dllexport)
+    int LibShutdown()
+    {
+        typedef int (*LibShutdownFunc)();
+        auto RealLibShutdown =
+            reinterpret_cast<LibShutdownFunc>(GetProcAddress(g_plugin_lib, "LibShutdown"));
+        return RealLibShutdown ? RealLibShutdown() : TRUE;
     }
 }
