@@ -180,7 +180,7 @@ namespace
 
         ParamIdIOR, _T("ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
             p_default, 1.5f,
-            p_range, 1.0f, 2.5f,
+            p_range, 1.0f, 4.0f,
             p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
         p_end,
 
