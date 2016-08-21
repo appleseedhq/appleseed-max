@@ -28,6 +28,9 @@
 
 #pragma once
 
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
 // appleseed.foundation headers.
 #include "foundation/image/color.h"
 #include "foundation/math/matrix.h"
@@ -46,7 +49,9 @@
 #include <string>
 
 // Forward declarations.
+namespace renderer  { class Assembly; }
 class BitmapTex;
+class Color;
 class Texmap;
 
 
@@ -110,6 +115,22 @@ bool write(ISave* isave, const T& object);
 // Read a typed object from a 3ds Max file. Return true on success.
 template <typename T>
 IOResult read(ILoad* iload, T* object);
+
+
+//
+// Project construction functions.
+//
+
+void insert_color(
+    renderer::Assembly&     assembly,
+    const Color&            color,
+    const char*             name);
+
+std::string insert_texture_and_instance(
+    renderer::Assembly&     assembly,
+    Texmap*                 texmap,
+    renderer::ParamArray    texture_params = renderer::ParamArray(),
+    renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 
 
 //

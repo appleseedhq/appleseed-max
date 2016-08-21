@@ -39,10 +39,8 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/bsdf.h"
-#include "renderer/api/color.h"
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
-#include "renderer/api/texture.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -546,43 +544,6 @@ void AppleseedGlassMtl::SetShininess(float v, TimeValue t)
 
 void AppleseedGlassMtl::Shade(ShadeContext& sc)
 {
-}
-
-namespace
-{
-    void insert_color(asr::Assembly& assembly, const Color& color, const char* name)
-    {
-        assembly.colors().insert(
-            asr::ColorEntityFactory::create(
-                name,
-                asr::ParamArray()
-                    .insert("color_space", "linear_rgb")
-                    .insert("color", to_color3f(color))));
-    }
-
-    std::string insert_texture_and_instance(asr::Assembly& assembly, Texmap* texmap)
-    {
-        BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
-        const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
-
-        const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
-        assembly.textures().insert(
-            asr::DiskTexture2dFactory::static_create(
-                texture_name.c_str(),
-                asr::ParamArray()
-                    .insert("filename", filepath)
-                    .insert("color_space", "srgb"),     // todo: fix
-                asf::SearchPaths()));
-
-        const std::string texture_instance_name = texture_name + "_inst";
-        assembly.texture_instances().insert(
-            asr::TextureInstanceFactory::create(
-                texture_instance_name.c_str(),
-                asr::ParamArray(),
-                texture_name.c_str()));
-
-        return texture_instance_name;
-    }
 }
 
 int AppleseedGlassMtl::get_sides() const

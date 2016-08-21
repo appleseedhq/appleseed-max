@@ -91,7 +91,9 @@ namespace
         ParamIdClearcoat,
         ParamIdClearcoatTexmap,
         ParamIdClearcoatGloss,
-        ParamIdClearcoatGlossTexmap
+        ParamIdClearcoatGlossTexmap,
+        ParamIdAlpha,
+        ParamIdAlphaTexmap
     };
 
     enum TexmapId
@@ -104,6 +106,7 @@ namespace
         TexmapIdAnisotropy,
         TexmapIdClearcoat,
         TexmapIdClearcoatGloss,
+        TexmapIdAlpha,
         TexmapCount // keep last
     };
 
@@ -116,7 +119,8 @@ namespace
         _T("Roughness"),
         _T("Anisotropy"),
         _T("Clearcoat"),
-        _T("Clearcoat Gloss")
+        _T("Clearcoat Gloss"),
+        _T("Alpha")
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -128,7 +132,8 @@ namespace
         ParamIdRoughnessTexmap,
         ParamIdAnisotropyTexmap,
         ParamIdClearcoatTexmap,
-        ParamIdClearcoatGlossTexmap
+        ParamIdClearcoatGlossTexmap,
+        ParamIdAlphaTexmap
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -230,6 +235,16 @@ namespace
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_CLEARCOAT_GLOSS,
         p_end,
 
+        ParamIdAlpha, _T("alpha"), TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
+            p_default, 0.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
+        p_end,
+        ParamIdAlphaTexmap, _T("alpha_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ALPHA,
+            p_subtexno, TexmapIdAlpha,
+            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
+        p_end,
+
         // --- The end ---
         p_end);
 }
@@ -257,6 +272,8 @@ AppleseedDisneyMtl::AppleseedDisneyMtl()
   , m_clearcoat_texmap(nullptr)
   , m_clearcoat_gloss(0.0f)
   , m_clearcoat_gloss_texmap(nullptr)
+  , m_alpha(0.0f)
+  , m_alpha_texmap(nullptr)
 {
     m_params_validity.SetEmpty();
 
@@ -436,6 +453,9 @@ void AppleseedDisneyMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdClearcoatGloss, t, m_clearcoat_gloss, m_params_validity);
         m_pblock->GetValue(ParamIdClearcoatGlossTexmap, t, m_clearcoat_gloss_texmap, m_params_validity);
 
+        m_pblock->GetValue(ParamIdAlpha, t, m_alpha, m_params_validity);
+        m_pblock->GetValue(ParamIdAlphaTexmap, t, m_alpha_texmap, m_params_validity);
+
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
 
@@ -575,25 +595,49 @@ bool AppleseedDisneyMtl::can_emit_light() const
 
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)
 {
-    auto material = asr::DisneyMaterialFactory::static_create(name, asr::ParamArray());
-    auto values = asr::DisneyMaterialLayer::get_default_values();
+    //
+    // Material.
+    //
+
+    asr::ParamArray material_params;
+
+    if (is_bitmap_texture(m_alpha_texmap))
+    {
+        material_params.insert(
+            "alpha_map",
+            insert_texture_and_instance(
+                assembly,
+                m_alpha_texmap,
+                asr::ParamArray(),
+                asr::ParamArray()
+                    .insert("alpha_mode", "detect")));
+    }
+    else material_params.insert("alpha_map", m_alpha / 100.0f);
+
+    auto material = asr::DisneyMaterialFactory::static_create(name, material_params);
+    auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
+
+    //
+    // Unique layer of the material.
+    //
+
+    auto layer_values = asr::DisneyMaterialLayer::get_default_values();
 
     // The Disney material expects sRGB colors, so we have to convert input colors to sRGB.
 
     if (is_bitmap_texture(m_base_color_texmap))
-        values.insert("base_color", fmt_expr(static_cast<BitmapTex*>(m_base_color_texmap)));
-    else values.insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
+        layer_values.insert("base_color", fmt_expr(static_cast<BitmapTex*>(m_base_color_texmap)));
+    else layer_values.insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
 
-    values.insert("metallic", fmt_expr(m_metallic / 100.0f, m_metallic_texmap));
-    values.insert("specular", fmt_expr(m_specular / 100.0f, m_specular_texmap));
-    values.insert("specular_tint", fmt_expr(m_specular_tint / 100.0f, m_specular_tint_texmap));
-    values.insert("anisotropy", fmt_expr(m_anisotropy, m_anisotropy_texmap));
-    values.insert("roughness", fmt_expr(m_roughness / 100.0f, m_roughness_texmap));
-    values.insert("clearcoat", fmt_expr(m_clearcoat / 100.0f, m_clearcoat_texmap));
-    values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss / 100.0f, m_clearcoat_gloss_texmap));
+    layer_values.insert("metallic", fmt_expr(m_metallic / 100.0f, m_metallic_texmap));
+    layer_values.insert("specular", fmt_expr(m_specular / 100.0f, m_specular_texmap));
+    layer_values.insert("specular_tint", fmt_expr(m_specular_tint / 100.0f, m_specular_tint_texmap));
+    layer_values.insert("anisotropy", fmt_expr(m_anisotropy, m_anisotropy_texmap));
+    layer_values.insert("roughness", fmt_expr(m_roughness / 100.0f, m_roughness_texmap));
+    layer_values.insert("clearcoat", fmt_expr(m_clearcoat / 100.0f, m_clearcoat_texmap));
+    layer_values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss / 100.0f, m_clearcoat_gloss_texmap));
 
-    auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
-    disney_material->add_layer(values);
+    disney_material->add_layer(layer_values);
 
     return material;
 }

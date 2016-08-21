@@ -29,7 +29,13 @@
 // Interface header.
 #include "utilities.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/color.h"
+#include "renderer/api/scene.h"
+#include "renderer/api/texture.h"
+
 // appleseed.foundation headers.
+#include "foundation/utility/searchpaths.h"
 #include "foundation/utility/string.h"
 
 // 3ds Max Headers.
@@ -41,6 +47,7 @@
 #include <stdmat.h>
 
 namespace asf = foundation;
+namespace asr = renderer;
 
 std::string wide_to_utf8(const std::wstring& wstr)
 {
@@ -133,4 +140,49 @@ std::string fmt_expr(const float scalar, Texmap* map)
         value += asf::format(" * {0}", fmt_expr(static_cast<BitmapTex*>(map)));
 
     return value;
+}
+
+void insert_color(asr::Assembly& assembly, const Color& color, const char* name)
+{
+    assembly.colors().insert(
+        asr::ColorEntityFactory::create(
+            name,
+            asr::ParamArray()
+                .insert("color_space", "linear_rgb")
+                .insert("color", to_color3f(color))));
+}
+
+std::string insert_texture_and_instance(
+    asr::Assembly&  assembly,
+    Texmap*         texmap,
+    asr::ParamArray texture_params,
+    asr::ParamArray texture_instance_params)
+{
+    BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
+
+    const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
+    texture_params.insert("filename", filepath);
+
+    if (!texture_params.strings().exist("color_space"))
+    {
+        if (asf::ends_with(filepath, ".exr"))
+            texture_params.insert("color_space", "linear_rgb");
+        else texture_params.insert("color_space", "srgb");
+    }
+
+    const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
+    assembly.textures().insert(
+        asr::DiskTexture2dFactory::static_create(
+            texture_name.c_str(),
+            texture_params,
+            asf::SearchPaths()));
+
+    const std::string texture_instance_name = texture_name + "_inst";
+    assembly.texture_instances().insert(
+        asr::TextureInstanceFactory::create(
+            texture_instance_name.c_str(),
+            texture_instance_params,
+            texture_name.c_str()));
+
+    return texture_instance_name;
 }

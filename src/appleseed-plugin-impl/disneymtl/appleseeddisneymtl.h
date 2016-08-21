@@ -152,6 +152,8 @@ class AppleseedDisneyMtl
     Texmap*         m_clearcoat_texmap;
     float           m_clearcoat_gloss;
     Texmap*         m_clearcoat_gloss_texmap;
+    float           m_alpha;
+    Texmap*         m_alpha_texmap;
 };
 
 
