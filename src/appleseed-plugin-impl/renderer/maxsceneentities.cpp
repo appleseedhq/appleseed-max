@@ -91,7 +91,7 @@ void MaxSceneEntityCollector::collect(INode* node)
       case SHAPE_CLASS_ID:
       case GEOMOBJECT_CLASS_ID:
         {
-            // Skip hidden objects.
+            // Skip hidden objects. Hidden mesh lights will not emit light.
             if (node->IsNodeHidden(TRUE))
                 return;
 
