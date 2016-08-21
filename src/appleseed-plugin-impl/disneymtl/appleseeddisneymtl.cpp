@@ -236,7 +236,7 @@ namespace
         p_end,
 
         ParamIdAlpha, _T("alpha"), TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
-            p_default, 0.0f,
+            p_default, 100.0f,
             p_range, 0.0f, 100.0f,
             p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
         p_end,
@@ -272,7 +272,7 @@ AppleseedDisneyMtl::AppleseedDisneyMtl()
   , m_clearcoat_texmap(nullptr)
   , m_clearcoat_gloss(0.0f)
   , m_clearcoat_gloss_texmap(nullptr)
-  , m_alpha(0.0f)
+  , m_alpha(100.0f)
   , m_alpha_texmap(nullptr)
 {
     m_params_validity.SetEmpty();
