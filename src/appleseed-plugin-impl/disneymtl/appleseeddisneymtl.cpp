@@ -632,7 +632,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
     layer_values.insert("metallic", fmt_expr(m_metallic / 100.0f, m_metallic_texmap));
     layer_values.insert("specular", fmt_expr(m_specular / 100.0f, m_specular_texmap));
     layer_values.insert("specular_tint", fmt_expr(m_specular_tint / 100.0f, m_specular_tint_texmap));
-    layer_values.insert("anisotropy", fmt_expr(m_anisotropy, m_anisotropy_texmap));
+    layer_values.insert("anisotropic", fmt_expr(m_anisotropy, m_anisotropy_texmap));
     layer_values.insert("roughness", fmt_expr(m_roughness / 100.0f, m_roughness_texmap));
     layer_values.insert("clearcoat", fmt_expr(m_clearcoat / 100.0f, m_clearcoat_texmap));
     layer_values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss / 100.0f, m_clearcoat_gloss_texmap));
