@@ -213,8 +213,8 @@ namespace
 
         ParamIdScale, _T("scale"), TYPE_FLOAT, P_ANIMATABLE, IDS_SCALE,
             p_default, 0.0f,
-            p_range, 0.0f, 1000.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SCALE, IDC_SLIDER_SCALE, 10.0f,
+            p_range, 0.0f, 1000000.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SCALE, IDC_SPINNER_SCALE, SPIN_AUTOSCALE,
         p_end,
 
         // --- The end ---

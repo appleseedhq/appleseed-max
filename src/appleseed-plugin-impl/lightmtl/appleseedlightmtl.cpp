@@ -136,8 +136,8 @@ namespace
 
         ParamIdLightPower, _T("light_power"), TYPE_FLOAT, P_ANIMATABLE, IDS_LIGHT_POWER,
             p_default, 1.0f,
-            p_range, 0.0f, 1000.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_POWER, IDC_SLIDER_LIGHT_POWER, 1.0f,
+            p_range, 0.0f, 1000000.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_POWER, IDC_SPINNER_LIGHT_POWER, SPIN_AUTOSCALE,
         p_end,
 
         ParamIdEmissionFront, _T("emission_front"), TYPE_BOOL, 0, IDS_EMISSION_FRONT,

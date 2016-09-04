@@ -194,9 +194,9 @@ namespace
         p_end,
 
         ParamIdSSSScale, _T("sss_scale"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_SCALE,
-            p_default, 5.0f,
-            p_range, 0.001f, 1000.0f,
-            p_ui, MapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_SCALE, IDC_SLIDER_SSS_SCALE, 10.0f,
+            p_default, 1.0f,
+            p_range, 0.0f, 1000000.0f,
+            p_ui, MapIdSSS, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SSS_SCALE, IDC_SPINNER_SSS_SCALE, SPIN_AUTOSCALE,
         p_end,
 
         ParamIdSSSIOR, _T("sss_ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_IOR,
