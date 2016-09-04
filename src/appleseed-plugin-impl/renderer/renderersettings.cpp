@@ -84,6 +84,8 @@ void RendererSettings::apply(
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
 
     params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
+    if (m_pixel_samples == 1)
+        params.insert_path("uniform_pixel_renderer.force_antialiasing", true);
 
     if (m_gi)
         params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
