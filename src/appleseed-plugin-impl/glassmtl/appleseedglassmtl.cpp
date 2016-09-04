@@ -341,6 +341,8 @@ RefResult AppleseedGlassMtl::NotifyRefChanged(
     {
       case REFMSG_CHANGE:
         m_params_validity.SetEmpty();
+        if (hTarget == m_pblock)
+            g_block_desc.InvalidateUI(m_pblock->LastNotifyParamID());
         break;
     }
 
