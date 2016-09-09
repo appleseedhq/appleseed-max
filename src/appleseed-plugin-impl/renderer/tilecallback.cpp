@@ -54,7 +54,7 @@ namespace
 {
     void draw_hline(
         Bitmap*             bitmap,
-        int                 x,
+        const int           x,
         const int           y,
         const int           length,
         BMM_Color_fl*       pixel)
