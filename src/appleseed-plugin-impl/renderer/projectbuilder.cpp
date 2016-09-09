@@ -110,21 +110,27 @@ namespace
         return name;
     }
 
-    void add_empty_material(
+    std::string insert_empty_material(
         asr::Assembly&          assembly,
-        const std::string&      name)
+        std::string             name)
     {
+        name = make_unique_name(assembly.materials(), name);
+
         assembly.materials().insert(
             asr::GenericMaterialFactory::static_create(
                 name.c_str(),
                 asr::ParamArray()));
+
+        return name;
     }
 
-    void add_default_material(
+    std::string insert_default_material(
         asr::Assembly&          assembly,
-        const std::string&      name,
+        std::string             name,
         const asf::Color3f&     linear_rgb)
     {
+        name = make_unique_name(assembly.materials(), name);
+
         asf::auto_release_ptr<asr::Material> material(
             asr::DisneyMaterialFactory::static_create(
                 name.c_str(),
@@ -138,6 +144,8 @@ namespace
                 .insert("roughness", 0.625));
 
         assembly.materials().insert(material);
+
+        return name;
     }
 
     TriObject* get_tri_object_from_node(
@@ -353,7 +361,7 @@ namespace
                 {
                     // The appleseed material does not exist yet, let the material plugin create it.
                     material_name =
-                        make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()));
+                        make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
                     assembly.materials().insert(
                         appleseed_mtl->create_material(assembly, material_name.c_str()));
                     material_map.insert(std::make_pair(mtl, material_name));
@@ -368,9 +376,7 @@ namespace
             else
             {
                 // The instance has a non-appleseed material: assign it an empty material that will appear black.
-                material_name =
-                    make_unique_name(assembly.materials(), instance_name + "_mat");
-                add_empty_material(assembly, material_name);
+                material_name = insert_empty_material(assembly, instance_name + "_mat");
                 material_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
             }
         }
@@ -378,11 +384,10 @@ namespace
         {
             // The instance does not have a material: create a new default material.
             material_name =
-                make_unique_name(assembly.materials(), instance_name + "_mat");
-            add_default_material(
-                assembly,
-                material_name,
-                to_color3f(Color(instance_node->GetWireColor())));
+                insert_default_material(
+                    assembly,
+                    instance_name + "_mat",
+                    to_color3f(Color(instance_node->GetWireColor())));
             material_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
         }
 
