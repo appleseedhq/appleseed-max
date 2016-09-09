@@ -47,15 +47,18 @@
 #include "renderer/api/object.h"
 #include "renderer/api/project.h"
 #include "renderer/api/scene.h"
+#include "renderer/api/texture.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
+#include "foundation/image/image.h"
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/iostreamop.h"
+#include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
 #include <assert1.h>
@@ -742,55 +745,131 @@ namespace
 
     void setup_environment(
         asr::Scene&             scene,
+        const RendParams&       rend_params,
         const FrameRendParams&  frame_rend_params,
         const RendererSettings& settings,
         const TimeValue         time)
     {
-        const asf::Color3f background_color =
-            asf::clamp_low(
-                to_color3f(frame_rend_params.background),
-                0.0f);
-
-        if (asf::is_zero(background_color))
+        if (rend_params.envMap != nullptr)
         {
+            const size_t TextureWidth = 512;
+            const size_t TextureHeight = 512;
+
+            // Render the environment map into a Max bitmap.
+            BitmapInfo bi;
+            bi.SetWidth(TextureWidth);
+            bi.SetHeight(TextureHeight);
+            bi.SetType(BMM_FLOAT_RGBA_32);
+            Bitmap* envmap_bitmap = TheManager->Create(&bi);
+            rend_params.envMap->RenderBitmap(time, envmap_bitmap, 1.0f, TRUE);
+
+            // Build an appleseed image from the Max bitmap.
+            asf::auto_release_ptr<asf::Image> envmap_image(
+                new asf::Image(
+                    TextureWidth, TextureHeight,    // image dimensions
+                    TextureWidth, TextureHeight,    // tile dimensions
+                    4,
+                    asf::PixelFormatFloat));
+            for (size_t y = 0; y < TextureHeight; ++y)
+            {
+                for (size_t x = 0; x < TextureWidth; ++x)
+                {
+                    BMM_Color_fl c;
+                    envmap_bitmap->GetLinearPixels(
+                        static_cast<int>(x),
+                        static_cast<int>(y),
+                        1,
+                        &c);
+                    envmap_image->set_pixel(x, y, c);
+                }
+            }
+
+            // Destroy the Max bitmap.
+            envmap_bitmap->DeleteThis();
+
+            scene.textures().insert(
+                asf::auto_release_ptr<asr::Texture>(
+                    asr::MemoryTexture2dFactory::static_create(
+                        "environment_map",
+                        asr::ParamArray()
+                            .insert("color_space", "linear_rgb"),
+                        envmap_image)));
+
+            scene.texture_instances().insert(
+                asf::auto_release_ptr<asr::TextureInstance>(
+                    asr::TextureInstanceFactory::create(
+                        "environment_map_inst",
+                        asr::ParamArray(),
+                        "environment_map")));
+
+            scene.environment_edfs().insert(
+                asf::auto_release_ptr<asr::EnvironmentEDF>(
+                    asr::LatLongMapEnvironmentEDFFactory::static_create(
+                        "environment_edf",
+                        asr::ParamArray()
+                            .insert("radiance", "environment_map_inst"))));
+
+            scene.environment_shaders().insert(
+                asr::BackgroundEnvironmentShaderFactory::static_create(
+                    "environment_shader",
+                    asr::ParamArray()
+                        .insert("color", "environment_map_inst")));
+
             scene.set_environment(
                 asr::EnvironmentFactory::create(
                     "environment",
-                    asr::ParamArray()));
+                    asr::ParamArray()
+                        .insert("environment_edf", "environment_edf")
+                        .insert("environment_shader", "environment_shader")));
         }
         else
         {
-            const std::string background_color_name =
-                insert_color(scene, "environment_edf_color", background_color);
+            const asf::Color3f background_color =
+                asf::clamp_low(
+                    to_color3f(frame_rend_params.background),
+                    0.0f);
 
-            scene.environment_edfs().insert(
-                asr::ConstantEnvironmentEDFFactory::static_create(
-                    "environment_edf",
-                    asr::ParamArray()
-                        .insert("radiance", background_color_name)));
-
-            scene.environment_shaders().insert(
-                asr::EDFEnvironmentShaderFactory::static_create(
-                    "environment_shader",
-                    asr::ParamArray()
-                        .insert("environment_edf", "environment_edf")));
-
-            if (settings.m_background_emits_light)
+            if (asf::is_zero(background_color))
             {
                 scene.set_environment(
                     asr::EnvironmentFactory::create(
                         "environment",
-                        asr::ParamArray()
-                            .insert("environment_edf", "environment_edf")
-                            .insert("environment_shader", "environment_shader")));
+                        asr::ParamArray()));
             }
             else
             {
-                scene.set_environment(
-                    asr::EnvironmentFactory::create(
-                        "environment",
+                const std::string background_color_name =
+                    insert_color(scene, "environment_edf_color", background_color);
+
+                scene.environment_edfs().insert(
+                    asr::ConstantEnvironmentEDFFactory::static_create(
+                        "environment_edf",
                         asr::ParamArray()
-                            .insert("environment_shader", "environment_shader")));
+                            .insert("radiance", background_color_name)));
+
+                scene.environment_shaders().insert(
+                    asr::EDFEnvironmentShaderFactory::static_create(
+                        "environment_shader",
+                        asr::ParamArray()
+                            .insert("environment_edf", "environment_edf")));
+
+                if (settings.m_background_emits_light)
+                {
+                    scene.set_environment(
+                        asr::EnvironmentFactory::create(
+                            "environment",
+                            asr::ParamArray()
+                                .insert("environment_edf", "environment_edf")
+                                .insert("environment_shader", "environment_shader")));
+                }
+                else
+                {
+                    scene.set_environment(
+                        asr::EnvironmentFactory::create(
+                            "environment",
+                            asr::ParamArray()
+                                .insert("environment_shader", "environment_shader")));
+                }
             }
         }
     }
@@ -917,6 +996,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Setup the environment.
     setup_environment(
         scene.ref(),
+        rend_params,
         frame_rend_params,
         settings,
         time);

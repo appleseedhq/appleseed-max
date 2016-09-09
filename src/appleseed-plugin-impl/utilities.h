@@ -49,7 +49,7 @@
 #include <string>
 
 // Forward declarations.
-namespace renderer  { class Assembly; }
+namespace renderer  { class BaseGroup; }
 class BitmapTex;
 class Color;
 class Texmap;
@@ -122,12 +122,12 @@ IOResult read(ILoad* iload, T* object);
 //
 
 void insert_color(
-    renderer::Assembly&     assembly,
+    renderer::BaseGroup&    base_group,
     const Color&            color,
     const char*             name);
 
 std::string insert_texture_and_instance(
-    renderer::Assembly&     assembly,
+    renderer::BaseGroup&    base_group,
     Texmap*                 texmap,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());

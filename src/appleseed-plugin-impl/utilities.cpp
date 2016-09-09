@@ -142,9 +142,9 @@ std::string fmt_expr(const float scalar, Texmap* map)
     return value;
 }
 
-void insert_color(asr::Assembly& assembly, const Color& color, const char* name)
+void insert_color(asr::BaseGroup& base_group, const Color& color, const char* name)
 {
-    assembly.colors().insert(
+    base_group.colors().insert(
         asr::ColorEntityFactory::create(
             name,
             asr::ParamArray()
@@ -153,7 +153,7 @@ void insert_color(asr::Assembly& assembly, const Color& color, const char* name)
 }
 
 std::string insert_texture_and_instance(
-    asr::Assembly&  assembly,
+    asr::BaseGroup& base_group,
     Texmap*         texmap,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
@@ -171,14 +171,14 @@ std::string insert_texture_and_instance(
     }
 
     const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
-    assembly.textures().insert(
+    base_group.textures().insert(
         asr::DiskTexture2dFactory::static_create(
             texture_name.c_str(),
             texture_params,
             asf::SearchPaths()));
 
     const std::string texture_instance_name = texture_name + "_inst";
-    assembly.texture_instances().insert(
+    base_group.texture_instances().insert(
         asr::TextureInstanceFactory::create(
             texture_instance_name.c_str(),
             texture_instance_params,
