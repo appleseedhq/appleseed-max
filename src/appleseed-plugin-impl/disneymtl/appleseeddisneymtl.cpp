@@ -703,7 +703,7 @@ const MCHAR* AppleseedDisneyMtlClassDesc::Category()
 const MCHAR* AppleseedDisneyMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseed_disneymtl");
+    return _T("appleseedDisneyMtl");
 }
 
 FPInterface* AppleseedDisneyMtlClassDesc::GetInterface(Interface_ID id)

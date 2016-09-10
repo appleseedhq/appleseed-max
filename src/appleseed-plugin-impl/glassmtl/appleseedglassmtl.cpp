@@ -698,7 +698,7 @@ const MCHAR* AppleseedGlassMtlClassDesc::Category()
 const MCHAR* AppleseedGlassMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseed_glassmtl");
+    return _T("appleseedGlassMtl");
 }
 
 FPInterface* AppleseedGlassMtlClassDesc::GetInterface(Interface_ID id)
