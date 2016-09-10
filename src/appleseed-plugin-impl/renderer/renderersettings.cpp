@@ -67,9 +67,16 @@ const RendererSettings& RendererSettings::defaults()
     return default_settings;
 }
 
-void RendererSettings::apply(
-    asr::Project&   project,
-    const char*     config_name) const
+void RendererSettings::apply(asr::Project& project) const
+{
+    apply_common_settings(project, "final");
+    apply_common_settings(project, "interactive");
+
+    apply_settings_to_final_config(project);
+    apply_settings_to_interactive_config(project);
+}
+
+void RendererSettings::apply_common_settings(asr::Project& project, const char* config_name) const
 {
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
 
@@ -79,14 +86,6 @@ void RendererSettings::apply(
         params.insert_path("rendering_threads", "auto");
     else params.insert_path("rendering_threads", m_rendering_threads);
 
-    params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
-    params.insert_path("generic_frame_renderer.passes", m_passes);
-    params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
-
-    params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
-    if (m_pixel_samples == 1)
-        params.insert_path("uniform_pixel_renderer.force_antialiasing", true);
-
     if (m_gi)
         params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
     else params.insert_path("pt.max_path_length", 1);
@@ -94,6 +93,23 @@ void RendererSettings::apply(
     params.insert_path("pt.enable_caustics", m_caustics);
 
     //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
+}
+
+void RendererSettings::apply_settings_to_final_config(asr::Project& project) const
+{
+    asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
+
+    params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
+    params.insert_path("generic_frame_renderer.passes", m_passes);
+    params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
+
+    params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
+    if (m_pixel_samples == 1)
+        params.insert_path("uniform_pixel_renderer.force_antialiasing", true);
+}
+
+void RendererSettings::apply_settings_to_interactive_config(asr::Project& project) const
+{
 }
 
 bool RendererSettings::save(ISave* isave) const

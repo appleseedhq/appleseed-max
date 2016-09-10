@@ -1020,7 +1020,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     project->set_scene(scene);
 
     // Apply renderer settings.
-    settings.apply(project.ref(), "final");
+    settings.apply(project.ref());
 
     return project;
 }

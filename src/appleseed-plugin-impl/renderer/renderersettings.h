@@ -84,10 +84,8 @@ class RendererSettings
 
     int         m_rendering_threads;
 
-    // Apply these settings to a given configuration of a given project.
-    void apply(
-        renderer::Project&  project,
-        const char*         config_name) const;
+    // Apply these settings to a given project.
+    void apply(renderer::Project& project) const;
 
     // Save settings to a 3ds Max file.
     bool save(ISave* isave) const;
@@ -100,4 +98,8 @@ class RendererSettings
     IOResult load_lighting_settings(ILoad* iload);
     IOResult load_output_settings(ILoad* iload);
     IOResult load_system_settings(ILoad* iload);
+
+    void apply_common_settings(renderer::Project& project, const char* config_name) const;
+    void apply_settings_to_final_config(renderer::Project& project) const;
+    void apply_settings_to_interactive_config(renderer::Project& project) const;
 };
