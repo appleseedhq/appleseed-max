@@ -59,6 +59,27 @@ class AppleseedRenderer
 
     virtual void DeleteThis() override;
 
+#if MAX_RELEASE == MAX_RELEASE_R19
+
+    virtual bool IsStopSupported() const override;
+    virtual void StopRendering() override;
+
+    virtual PauseSupport IsPauseSupported() const override;
+    virtual void PauseRendering() override;
+    virtual void ResumeRendering() override;
+
+    virtual bool HasRequirement(Requirement requirement) override;
+
+    virtual bool CompatibleWithAnyRenderElement() const override;
+    virtual bool CompatibleWithRenderElement(IRenderElement& pIRenderElement) const override;
+
+    virtual IInteractiveRender* GetIInteractiveRender() override;
+
+    virtual void GetVendorInformation(MSTR& info) const override;
+    virtual void GetPlatformInformation(MSTR& info) const override;
+
+#endif
+
     virtual RefResult NotifyRefChanged(
         const Interval&         changeInt,
         RefTargetHandle         hTarget,

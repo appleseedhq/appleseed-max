@@ -97,7 +97,15 @@ extern "C"
         if (load_relative_library(_T("appleseed.dll")) == nullptr)
             return FALSE;
 
-        if ((g_plugin_lib = load_relative_library(_T("appleseed-plugin-impl.dll"))) == nullptr)
+#if MAX_RELEASE == MAX_RELEASE_R16
+        static const wchar_t PluginImplDLLFilename[] = _T("appleseed-plugin-max2015-impl.dll");
+#elif MAX_RELEASE == MAX_RELEASE_R19
+        static const wchar_t PluginImplDLLFilename[] = _T("appleseed-plugin-max2017-impl.dll");
+#else
+#error This version of 3ds Max is not supported by the appleseed plugin.
+#endif
+
+        if ((g_plugin_lib = load_relative_library(PluginImplDLLFilename)) == nullptr)
             return FALSE;
 
         typedef int (*LibInitializeFunc)();

@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Ship|x64">
+      <Configuration>Ship</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F43B3C0E-2A72-4B30-9016-DEC6B022D135}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>appleseedmax</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-plugin-max2017</TargetName>
+    <TargetExt>.dlr</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-plugin-max2017</TargetName>
+    <TargetExt>.dlr</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-plugin-max2017</TargetName>
+    <TargetExt>.dlr</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;DEBUG;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon\src\appleseed</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;maxutil.lib;Paramblk2.lib;Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
+copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon\src\appleseed</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;maxutil.lib;Paramblk2.lib;Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
+copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon\src\appleseed</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;maxutil.lib;Paramblk2.lib;Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
+copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

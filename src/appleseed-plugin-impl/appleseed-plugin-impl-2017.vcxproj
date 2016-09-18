@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -18,25 +18,26 @@
     <ProjectGuid>{62C41566-DBCB-49D3-943A-4DD53222269E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>appleseedmax</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -57,16 +58,19 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-plugin-max2017-impl</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-plugin-max2017-impl</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-plugin-max2017-impl</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -74,13 +78,13 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;DEBUG;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\SeExpr-release\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_61_0;$(SolutionDir)..\..\appleseed-dictoon\src\appleseed;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\osl-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\SeExpr-release\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage;$(SolutionDir)..\..\boost_1_61_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;Pathcch.lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
@@ -90,11 +94,11 @@
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"</Command>
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -105,7 +109,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\SeExpr-release\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon\src\appleseed;$(SolutionDir)..\..\boost_1_61_0;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\openexr-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\oiio-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\osl-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\SeExpr-release\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -119,7 +123,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage;$(SolutionDir)..\..\boost_1_61_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -128,11 +132,11 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"</Command>
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -143,7 +147,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon-vc11\src\appleseed;$(SolutionDir)..\..\boost_1_55_0-vc11;$(SolutionDir)..\..\appleseed-deps-vc11\stage\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\openexr-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\oiio-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\osl-release\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps-vc11\stage\SeExpr-release\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed-dictoon\src\appleseed;$(SolutionDir)..\..\boost_1_61_0;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\openexr-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\oiio-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\osl-release\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage\SeExpr-release\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -157,7 +161,7 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon-vc11\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-vc11\stage;$(SolutionDir)..\..\boost_1_55_0-vc11\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed-dictoon\sandbox\lib\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps-boost-161-vc14\stage;$(SolutionDir)..\..\boost_1_61_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -166,11 +170,11 @@ copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(Config
       <Command>mkdir "$(SolutionDir)..\bin\$(Platform)\$(Configuration)" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\$(Platform)\$(Configuration)\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed-dictoon-vc11\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"</Command>
+copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed-dictoon\build\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

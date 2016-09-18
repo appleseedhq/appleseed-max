@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="renderer\appleseedrenderer.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\appleseedrendererparamdlg.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\maxsceneentities.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\projectbuilder.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderercontroller.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderersettings.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\tilecallback.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\updatechecker.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="iappleseedmtl.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="version.cpp" />
+    <ClCompile Include="disneymtl\appleseeddisneymtl.cpp">
+      <Filter>disneymtl</Filter>
+    </ClCompile>
+    <ClCompile Include="disneymtl\appleseeddisneymtlparamdlg.cpp">
+      <Filter>disneymtl</Filter>
+    </ClCompile>
+    <ClCompile Include="sssmtl\appleseedsssmtl.cpp">
+      <Filter>sssmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="sssmtl\appleseedsssmtlparamdlg.cpp">
+      <Filter>sssmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="glassmtl\appleseedglassmtl.cpp">
+      <Filter>glassmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="glassmtl\appleseedglassmtlparamdlg.cpp">
+      <Filter>glassmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="lightmtl\appleseedlightmtl.cpp">
+      <Filter>lightmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp">
+      <Filter>lightmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="logtarget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="renderer\appleseedrenderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\appleseedrendererparamdlg.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\datachunks.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\maxsceneentities.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\projectbuilder.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\renderercontroller.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\renderersettings.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\resource.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\tilecallback.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\updatechecker.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="iappleseedmtl.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="disneymtl\appleseeddisneymtl.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="disneymtl\appleseeddisneymtlparamdlg.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="disneymtl\datachunks.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="disneymtl\resource.h">
+      <Filter>disneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\appleseedsssmtl.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\appleseedsssmtlparamdlg.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\datachunks.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="sssmtl\resource.h">
+      <Filter>sssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="glassmtl\appleseedglassmtl.h">
+      <Filter>glassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="glassmtl\datachunks.h">
+      <Filter>glassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="glassmtl\resource.h">
+      <Filter>glassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="glassmtl\appleseedglassmtlparamdlg.h">
+      <Filter>glassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\appleseedlightmtl.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\appleseedlightmtlparamdlg.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\datachunks.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmtl\resource.h">
+      <Filter>lightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="logtarget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="renderer\appleseedrenderer.rc">
+      <Filter>renderer</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc">
+      <Filter>disneymtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="sssmtl\appleseedsssmtl.rc">
+      <Filter>sssmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="glassmtl\appleseedglassmtl.rc">
+      <Filter>glassmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="lightmtl\appleseedlightmtl.rc">
+      <Filter>lightmtl</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="renderer">
+      <UniqueIdentifier>{3b53d01d-35e2-4c3e-a0a4-6d9921c729a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="disneymtl">
+      <UniqueIdentifier>{0f63c39e-3c84-4009-a32b-ae9dfec1dc15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sssmtl">
+      <UniqueIdentifier>{4e79312e-d35e-43b5-bc53-f2bd6ad9d984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glassmtl">
+      <UniqueIdentifier>{666a1c7e-ebcb-42b1-b62e-a57419733d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lightmtl">
+      <UniqueIdentifier>{f7d6f5af-25a2-427e-bf28-a4e46d2ddaf2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

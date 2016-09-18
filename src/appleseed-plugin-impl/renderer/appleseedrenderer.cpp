@@ -93,6 +93,66 @@ void AppleseedRenderer::DeleteThis()
     delete this;
 }
 
+bool AppleseedRenderer::IsStopSupported() const
+{
+    return false;
+}
+
+void AppleseedRenderer::StopRendering()
+{
+}
+
+Renderer::PauseSupport AppleseedRenderer::IsPauseSupported() const
+{
+    return PauseSupport::None;
+}
+
+void AppleseedRenderer::PauseRendering()
+{
+}
+
+void AppleseedRenderer::ResumeRendering()
+{
+}
+
+bool AppleseedRenderer::HasRequirement(Requirement requirement)
+{
+    // todo: specify kRequirement_NoVFB and kRequirement_DontSaveRenderOutput when saving project instead of rendering.
+
+    switch (requirement)
+    {
+        case kRequirement_Wants32bitFPOutput: return true;
+        case kRequirement_SupportsConcurrentRendering: return true;
+    }
+
+    return false;
+}
+
+bool AppleseedRenderer::CompatibleWithAnyRenderElement() const
+{
+    return false;
+}
+
+bool AppleseedRenderer::CompatibleWithRenderElement(IRenderElement& pIRenderElement) const
+{
+    return false;
+}
+
+IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
+{
+    return nullptr;
+}
+
+void AppleseedRenderer::GetVendorInformation(MSTR& info) const
+{
+    // todo: implement.
+}
+
+void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
+{
+    // todo: implement.
+}
+
 RefResult AppleseedRenderer::NotifyRefChanged(
     const Interval&         changeInt,
     RefTargetHandle         hTarget,
