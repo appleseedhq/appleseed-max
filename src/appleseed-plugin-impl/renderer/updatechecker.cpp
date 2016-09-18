@@ -178,11 +178,11 @@ bool check_for_update(
         const auto& asset = get_index(assets, 0);
         const auto& asset_download_url = get_member(asset, "browser_download_url");
 
-        int year, month, day, hours, minutes, seconds;
+        int year, month, day, hours, minutes, seconds, second_fraction;
         std::sscanf(
             published_date.GetString(),
             "%d-%d-%dT%d:%d:%d:%dZ",
-            &year, &month, &day, &hours, &minutes, &seconds);
+            &year, &month, &day, &hours, &minutes, &seconds, &second_fraction);
 
         std::tm time;
         time.tm_year = year - 1900;
