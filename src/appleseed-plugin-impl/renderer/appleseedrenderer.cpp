@@ -93,6 +93,8 @@ void AppleseedRenderer::DeleteThis()
     delete this;
 }
 
+#if MAX_RELEASE == MAX_RELEASE_R19
+
 bool AppleseedRenderer::IsStopSupported() const
 {
     return false;
@@ -152,6 +154,8 @@ void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
 {
     // todo: implement.
 }
+
+#endif
 
 RefResult AppleseedRenderer::NotifyRefChanged(
     const Interval&         changeInt,
