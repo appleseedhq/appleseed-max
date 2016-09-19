@@ -147,12 +147,12 @@ IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
 
 void AppleseedRenderer::GetVendorInformation(MSTR& info) const
 {
-    // todo: implement.
+    info = _T("appleseed-max ");
+    info += PluginVersionString;
 }
 
 void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
 {
-    // todo: implement.
 }
 
 #endif
