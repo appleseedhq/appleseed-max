@@ -57,6 +57,7 @@ namespace
             m_background_emits_light = true;
             m_output_mode = OutputMode::RenderOnly;
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
+            m_low_priority_mode = true;
         }
     };
 }
@@ -82,15 +83,15 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("sampling_mode", "qmc");
 
-    if (m_rendering_threads == 0)
-        params.insert_path("rendering_threads", "auto");
-    else params.insert_path("rendering_threads", m_rendering_threads);
-
     if (m_gi)
         params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
     else params.insert_path("pt.max_path_length", 1);
 
     params.insert_path("pt.enable_caustics", m_caustics);
+
+    if (m_rendering_threads == 0)
+        params.insert_path("rendering_threads", "auto");
+    else params.insert_path("rendering_threads", m_rendering_threads);
 
     //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
 }
@@ -191,6 +192,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsSystemRenderingThreads);
         success &= write<int>(isave, m_rendering_threads);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSystemLowPriorityMode);
+        success &= write<bool>(isave, m_low_priority_mode);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -387,6 +392,10 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
         {
           case ChunkSettingsSystemRenderingThreads:
             result = read<int>(iload, &m_rendering_threads);
+            break;
+
+          case ChunkSettingsSystemLowPriorityMode:
+            result = read<bool>(iload, &m_low_priority_mode);
             break;
         }
 

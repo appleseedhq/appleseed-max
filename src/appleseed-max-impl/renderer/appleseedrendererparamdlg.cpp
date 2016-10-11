@@ -622,6 +622,8 @@ namespace
             m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
             m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
             m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
+
+            CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -632,6 +634,17 @@ namespace
         {
             switch (umsg)
             {
+                case WM_COMMAND:
+                    switch (LOWORD(wparam))
+                    {
+                        case IDC_CHECK_LOW_PRIORITY_MODE:
+                            m_settings.m_low_priority_mode = IsDlgButtonChecked(hwnd, IDC_CHECK_LOW_PRIORITY_MODE) == BST_CHECKED;
+                            return TRUE;
+
+                        default:
+                            return FALSE;
+                    }
+
                 case CC_SPINNER_CHANGE:
                     switch (LOWORD(wparam))
                     {

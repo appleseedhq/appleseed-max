@@ -83,6 +83,7 @@ class RendererSettings
     //
 
     int         m_rendering_threads;
+    bool        m_low_priority_mode;
 
     // Apply these settings to a given project.
     void apply(renderer::Project& project) const;

@@ -46,6 +46,7 @@
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/image.h"
+#include "foundation/platform/thread.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/autoreleaseptr.h"
 
@@ -427,7 +428,17 @@ int AppleseedRenderer::Render(
         {
             if (progress_cb)
                 progress_cb->SetTitle(_T("Rendering..."));
-            render(project.ref(), m_settings, bitmap, progress_cb);
+            if (m_settings.m_low_priority_mode)
+            {
+                asf::ProcessPriorityContext background_context(
+                    asf::ProcessPriority::ProcessPriorityLow,
+                    &asr::global_logger());
+                render(project.ref(), m_settings, bitmap, progress_cb);
+            }
+            else
+            {
+                render(project.ref(), m_settings, bitmap, progress_cb);
+            }
         }
     }
 

@@ -51,3 +51,4 @@ const USHORT ChunkSettingsOutputProjectFilePath         = 0x1320;
 
 const USHORT ChunkSettingsSystem                        = 0x1400;
 const USHORT ChunkSettingsSystemRenderingThreads        = 0x1410;
+const USHORT ChunkSettingsSystemLowPriorityMode         = 0x1420;

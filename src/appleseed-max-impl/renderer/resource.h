@@ -2,32 +2,36 @@
 // Microsoft Visual C++ generated include file.
 // Used by appleseedrenderer.rc
 //
-#define IDD_FORMVIEW_RENDERERPARAMS_SAMPLING        101
-#define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM          104
-#define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          105
-#define IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING   106
-#define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        107
-#define IDD_FORMVIEW_RENDERERPARAMS_ABOUT           108
-#define IDC_SPINNER_PIXELSAMPLES                    1003
-#define IDC_TEXT_PIXELSAMPLES                       1004
-#define IDC_TEXT_PASSES                             1005
-#define IDC_SPINNER_PASSES                          1006
-#define IDC_TEXT_RENDERINGTHREADS                   1008
-#define IDC_SPINNER_RENDERINGTHREADS                1009
-#define IDC_RADIO_RENDER                            1010
-#define IDC_RADIO_SAVEPROJECT                       1011
-#define IDC_RADIO_SAVEPROJECT_AND_RENDER            1012
-#define IDC_BUTTON_BROWSE                           1013
-#define IDC_TEXT_PROJECT_FILEPATH                   1014
-#define IDC_TEXT_BOUNCES                            1015
-#define IDC_SPINNER_BOUNCES                         1016
-#define IDC_TEXT_APPLESEED_VERSION                  1016
-#define IDC_CHECK_GI                                1017
-#define IDC_CHECK_CAUSTICS                          1018
-#define IDC_CHECK_BACKGROUND_EMITS_LIGHT            1019
-#define IDC_TEXT_PLUGIN_VERSION                     1020 
-#define IDC_BUTTON_DOWNLOAD                         1021
-#define IDC_STATIC_NEW_VERSION                      1022
+#define IDD_FORMVIEW_RENDERERPARAMS_ABOUT           100
+#define IDC_TEXT_PLUGIN_VERSION                     101 
+#define IDC_TEXT_APPLESEED_VERSION                  102
+#define IDC_STATIC_NEW_VERSION                      103
+#define IDC_BUTTON_DOWNLOAD                         104
+
+#define IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING   200
+#define IDC_TEXT_PIXELSAMPLES                       201
+#define IDC_SPINNER_PIXELSAMPLES                    202
+#define IDC_TEXT_PASSES                             203
+#define IDC_SPINNER_PASSES                          204
+
+#define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        300
+#define IDC_CHECK_GI                                301
+#define IDC_CHECK_CAUSTICS                          302
+#define IDC_CHECK_BACKGROUND_EMITS_LIGHT            303
+#define IDC_TEXT_BOUNCES                            304
+#define IDC_SPINNER_BOUNCES                         305
+
+#define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          400
+#define IDC_RADIO_RENDER                            401
+#define IDC_RADIO_SAVEPROJECT                       402
+#define IDC_RADIO_SAVEPROJECT_AND_RENDER            403
+#define IDC_TEXT_PROJECT_FILEPATH                   404
+#define IDC_BUTTON_BROWSE                           405
+
+#define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM          500
+#define IDC_TEXT_RENDERINGTHREADS                   501
+#define IDC_SPINNER_RENDERINGTHREADS                502
+#define IDC_CHECK_LOW_PRIORITY_MODE                 503
 
 // Next default values for new objects
 // 
