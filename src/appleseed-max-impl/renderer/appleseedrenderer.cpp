@@ -400,6 +400,9 @@ int AppleseedRenderer::Render(
 
     if (m_rend_params.inMtlEdit)
     {
+        // Write the project to disk, useful to debug material previews.
+        // asr::ProjectFileWriter::write(project.ref(), "MaterialEditor.appleseed");
+
         // Render the project.
         if (progress_cb)
             progress_cb->SetTitle(_T("Rendering..."));
