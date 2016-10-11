@@ -503,7 +503,7 @@ namespace
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("intensity", color_name)
-                    .insert("intensity_multiplier", intensity * asf::Pi)
+                    .insert("intensity_multiplier", intensity * asf::Pi<float>())
                     .insert("decay_start", decay_start)
                     .insert("decay_exponent", decay_exponent)));
         light->set_transform(transform);
@@ -526,7 +526,7 @@ namespace
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("intensity", color_name)
-                    .insert("intensity_multiplier", intensity * asf::Pi)
+                    .insert("intensity_multiplier", intensity * asf::Pi<float>())
                     .insert("inner_angle", inner_angle)
                     .insert("outer_angle", outer_angle)
                     .insert("decay_start", decay_start)
@@ -547,7 +547,7 @@ namespace
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("irradiance", color_name)
-                    .insert("irradiance_multiplier", intensity * asf::Pi)));
+                    .insert("irradiance_multiplier", intensity * asf::Pi<float>())));
         light->set_transform(transform);
         assembly.lights().insert(light);
     }
