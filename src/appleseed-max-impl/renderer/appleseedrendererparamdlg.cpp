@@ -635,7 +635,7 @@ namespace
             m_text_renderingthreads = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS));
             m_spinner_renderingthreads = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_RENDERINGTHREADS));
             m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
-            m_spinner_renderingthreads->SetLimits(-1, 256, FALSE);
+            m_spinner_renderingthreads->SetLimits(-255, 256, FALSE);
             m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
             m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
 
