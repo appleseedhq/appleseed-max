@@ -54,6 +54,7 @@ class RendererSettings
 
     int         m_pixel_samples;
     int         m_passes;
+    int         m_tile_size;
 
     //
     // Lighting.

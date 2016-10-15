@@ -919,7 +919,8 @@ namespace
     asf::auto_release_ptr<asr::Frame> build_frame(
         const asr::Camera&      camera,
         Bitmap*                 bitmap,
-        const RendParams&       rend_params)
+        const RendParams&       rend_params,
+        const RendererSettings& settings)
     {
         if (rend_params.inMtlEdit)
         {
@@ -942,7 +943,7 @@ namespace
                     asr::ParamArray()
                         .insert("camera", camera.get_name())
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
-                        .insert("tile_size", asf::Vector2i(64, 64))
+                        .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
                         .insert("filter", "blackman-harris")
                         .insert("filter_size", 1.5));
@@ -1014,7 +1015,8 @@ asf::auto_release_ptr<asr::Project> build_project(
         build_frame(
             *scene->get_camera(),
             bitmap,
-            rend_params));
+            rend_params,
+            settings));
 
     // Bind the scene to the project.
     project->set_scene(scene);

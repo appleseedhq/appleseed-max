@@ -51,6 +51,7 @@ namespace
         {
             m_pixel_samples = 16;
             m_passes = 1;
+            m_tile_size = 64;
             m_gi = true;
             m_caustics = false;
             m_bounces = 8;
@@ -129,6 +130,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsImageSamplingPasses);
         success &= write<int>(isave, m_passes);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsImageSamplingTileSize);
+        success &= write<int>(isave, m_tile_size);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -265,6 +270,10 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
 
           case ChunkSettingsImageSamplingPasses:
             result = read<int>(iload, &m_passes);
+            break;
+
+          case ChunkSettingsImageSamplingTileSize:
+            result = read<int>(iload, &m_tile_size);
             break;
         }
 

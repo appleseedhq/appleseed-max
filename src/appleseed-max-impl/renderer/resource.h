@@ -13,6 +13,8 @@
 #define IDC_SPINNER_PIXELSAMPLES                    202
 #define IDC_TEXT_PASSES                             203
 #define IDC_SPINNER_PASSES                          204
+#define IDC_TEXT_TILESIZE                           205
+#define IDC_SPINNER_TILESIZE                        206
 
 #define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        300
 #define IDC_CHECK_GI                                301

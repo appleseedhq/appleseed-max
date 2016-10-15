@@ -277,6 +277,8 @@ namespace
         ISpinnerControl*        m_spinner_pixelsamples;
         ICustEdit*              m_text_passes;
         ISpinnerControl*        m_spinner_passes;
+        ICustEdit*              m_text_tilesize;
+        ISpinnerControl*        m_spinner_tilesize;
 
         ImageSamplingPanel(
             IRendParams*        rend_params,
@@ -295,6 +297,8 @@ namespace
 
         ~ImageSamplingPanel()
         {
+            ReleaseISpinner(m_spinner_tilesize);
+            ReleaseICustEdit(m_text_tilesize);
             ReleaseISpinner(m_spinner_passes);
             ReleaseICustEdit(m_text_passes);
             ReleaseISpinner(m_spinner_pixelsamples);
@@ -319,6 +323,14 @@ namespace
             m_spinner_passes->SetLimits(1, 1000000, FALSE);
             m_spinner_passes->SetResetValue(RendererSettings::defaults().m_passes);
             m_spinner_passes->SetValue(m_settings.m_passes, FALSE);
+
+            // Tile size.
+            m_text_tilesize = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_TILESIZE));
+            m_spinner_tilesize = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_TILESIZE));
+            m_spinner_tilesize->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_TILESIZE), EDITTYPE_INT);
+            m_spinner_tilesize->SetLimits(1, 4096, FALSE);
+            m_spinner_tilesize->SetResetValue(RendererSettings::defaults().m_tile_size);
+            m_spinner_tilesize->SetValue(m_settings.m_tile_size, FALSE);
         }
 
         virtual INT_PTR CALLBACK window_proc(
@@ -338,6 +350,10 @@ namespace
 
                         case IDC_SPINNER_PASSES:
                             m_settings.m_passes = m_spinner_passes->GetIVal();
+                            return TRUE;
+
+                        case IDC_SPINNER_TILESIZE:
+                            m_settings.m_tile_size = m_spinner_tilesize->GetIVal();
                             return TRUE;
 
                         default:
