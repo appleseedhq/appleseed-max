@@ -39,7 +39,7 @@
 #include <plugapi.h>
 
 // Windows headers.
-#include <Pathcch.h>
+#include <Shlwapi.h>
 #include <tchar.h>
 
 namespace
@@ -61,8 +61,8 @@ namespace
             return false;
         }
 
-        PathCchRemoveFileSpec(path, path_length);
-        PathCchAppend(path, path_length, filename);
+        PathRemoveFileSpec(path);
+        PathAppend(path, filename);
 
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_DEBUG,
