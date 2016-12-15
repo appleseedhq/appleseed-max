@@ -599,17 +599,17 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
     {
         asr::ParamArray bssrdf_params;
         bssrdf_params.insert("weight", m_sss_amount / 100.0f);
-        bssrdf_params.insert("dmfp_multiplier", std::max(m_sss_scale, 0.1f));
+        bssrdf_params.insert("mfp_multiplier", std::max(m_sss_scale, 0.1f));
         bssrdf_params.insert("ior", m_sss_ior);
 
         // Diffuse mean free path.
         if (is_bitmap_texture(m_sss_scattering_color_texmap))
-            bssrdf_params.insert("dmfp", insert_texture_and_instance(assembly, m_sss_scattering_color_texmap));
+            bssrdf_params.insert("mfp", insert_texture_and_instance(assembly, m_sss_scattering_color_texmap));
         else
         {
-            const auto color_name = std::string(name) + "_bssrdf_dmfp";
+            const auto color_name = std::string(name) + "_bssrdf_mfp";
             insert_color(assembly, m_sss_scattering_color, color_name.c_str());
-            bssrdf_params.insert("dmfp", color_name);
+            bssrdf_params.insert("mfp", color_name);
         }
 
         // Reflectance.
