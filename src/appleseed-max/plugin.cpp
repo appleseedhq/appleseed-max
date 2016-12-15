@@ -34,6 +34,8 @@
 
 // 3ds Max headers.
 #include <iparamb2.h>
+#include <log.h>
+#include <max.h>
 #include <plugapi.h>
 
 // Windows headers.
@@ -50,12 +52,36 @@ namespace
         const DWORD path_length = sizeof(path) / sizeof(wchar_t);
 
         if (!GetModuleFileName(g_module, path, path_length))
+        {
+            GetCOREInterface()->Log()->LogEntry(
+                SYSLOG_ERROR,
+                FALSE,
+                _T("appleseed"),
+                _T("[appleseed] GetModuleFileName() failed."));
             return false;
+        }
 
         PathCchRemoveFileSpec(path, path_length);
         PathCchAppend(path, path_length, filename);
 
-        return LoadLibrary(path);
+        GetCOREInterface()->Log()->LogEntry(
+            SYSLOG_DEBUG,
+            FALSE,
+            _T("appleseed"),
+            _T("[appleseed] Loading %s..."), path);
+
+        auto result = LoadLibrary(path);
+
+        if (result == nullptr)
+        {
+            GetCOREInterface()->Log()->LogEntry(
+                SYSLOG_ERROR,
+                FALSE,
+                _T("appleseed"),
+                _T("[appleseed] Failed to load %s."), path);
+        }
+
+        return result;
     }
 }
 
@@ -94,6 +120,12 @@ extern "C"
     __declspec(dllexport)
     int LibInitialize()
     {
+        GetCOREInterface()->Log()->LogEntry(
+            SYSLOG_DEBUG,
+            FALSE,
+            _T("appleseed"),
+            _T("[appleseed] Entered LibInitialize()."));
+
         if (load_relative_library(_T("appleseed.dll")) == nullptr)
             return FALSE;
 
