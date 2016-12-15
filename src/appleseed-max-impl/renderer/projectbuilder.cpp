@@ -917,7 +917,6 @@ namespace
     }
 
     asf::auto_release_ptr<asr::Frame> build_frame(
-        const asr::Camera&      camera,
         Bitmap*                 bitmap,
         const RendParams&       rend_params,
         const RendererSettings& settings)
@@ -928,7 +927,7 @@ namespace
                 asr::FrameFactory::create(
                     "beauty",
                     asr::ParamArray()
-                        .insert("camera", camera.get_name())
+                        .insert("camera", "camera")
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(8, 8))
                         .insert("color_space", "linear_rgb")
@@ -941,7 +940,7 @@ namespace
                 asr::FrameFactory::create(
                     "beauty",
                     asr::ParamArray()
-                        .insert("camera", camera.get_name())
+                        .insert("camera", "camera")
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
@@ -1008,15 +1007,10 @@ asf::auto_release_ptr<asr::Project> build_project(
         time);
 
     // Create a camera and bind it to the scene.
-    scene->set_camera(build_camera(view_params, bitmap, time));
+    scene->cameras().insert(build_camera(view_params, bitmap, time));
 
     // Create a frame and bind it to the project.
-    project->set_frame(
-        build_frame(
-            *scene->get_camera(),
-            bitmap,
-            rend_params,
-            settings));
+    project->set_frame(build_frame(bitmap, rend_params, settings));
 
     // Bind the scene to the project.
     project->set_scene(scene);
