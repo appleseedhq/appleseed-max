@@ -237,7 +237,8 @@ namespace
                     const Point3& n = mesh.getFaceNormal(i);
                     const asf::uint32 normal_index =
                         static_cast<asf::uint32>(
-                            object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                            object->push_vertex_normal(
+                                asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                     normal_indices[0] = normal_index;
                     normal_indices[1] = normal_index;
                     normal_indices[2] = normal_index;
@@ -254,7 +255,8 @@ namespace
                             const Point3& n = rvertex.rn.getNormal();
                             normal_indices[j] =
                                 static_cast<asf::uint32>(
-                                    object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                                    object->push_vertex_normal(
+                                        asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                         }
                         else
                         {
@@ -268,7 +270,8 @@ namespace
                                     const Point3& n = rn.getNormal();
                                     normal_indices[j] =
                                         static_cast<asf::uint32>(
-                                            object->push_vertex_normal(asr::GVector3(n.x, n.y, n.z)));
+                                            object->push_vertex_normal(
+                                                asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                                     break;
                                 }
                             }
