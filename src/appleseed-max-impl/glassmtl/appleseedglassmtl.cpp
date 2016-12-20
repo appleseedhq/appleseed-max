@@ -80,6 +80,12 @@ namespace
     enum { ParamBlockIdGlassMtl };
     enum { ParamBlockRefGlassMtl };
 
+    enum MapId
+    {
+        ParamMapIdGlass,
+        ParamMapIdBump
+    };
+
     enum ParamId
     {
         ParamIdSurfaceColor,
@@ -95,7 +101,11 @@ namespace
         ParamIdAnisotropyTexmap,
         ParamIdVolumeColor,
         ParamIdVolumeColorTexmap,
-        ParamIdScale
+        ParamIdScale,
+        ParamIdBumpMethod,
+        ParamIdBumpTexmap,
+        ParamIdBumpAmount,
+        ParamIdBumpUpVector
     };
 
     enum TexmapId
@@ -106,6 +116,7 @@ namespace
         TexmapIdRoughness,
         TexmapIdAnisotropy,
         TexmapIdVolumeColor,
+        TexmapIdBumpMap,
         TexmapCount // keep last
     };
 
@@ -116,7 +127,8 @@ namespace
         _T("Refraction Tint"),
         _T("Roughness"),
         _T("Anisotropy"),
-        _T("Volume Color")
+        _T("Volume Color"),
+        _T("Bump Map")
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -126,7 +138,8 @@ namespace
         ParamIdRefractionTintTexmap,
         ParamIdRoughnessTexmap,
         ParamIdAnisotropyTexmap,
-        ParamIdVolumeColorTexmap
+        ParamIdVolumeColorTexmap,
+        ParamIdBumpTexmap
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -135,86 +148,125 @@ namespace
         _T("appleseedGlassMtlParams"),              // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_glassmtl_classdesc,            // class descriptor
-        P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
+        P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
         ParamBlockRefGlassMtl,                      // parameter block's reference number
 
-        // --- P_AUTO_UI arguments ---
+        // --- P_MULTIMAP arguments ---
+        2,                                          // number of rollups
+
+        // --- P_AUTO_UI arguments for Glass rollup ---
+        ParamMapIdGlass,
         IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
         IDS_FORMVIEW_PARAMS_TITLE,                  // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
         nullptr,                                    // user dialog procedure
 
-        // --- Parameters specifications ---
+        // --- P_AUTO_UI arguments for Bump rollup ---
+        ParamMapIdBump,
+        IDD_FORMVIEW_BUMP_PARAMS,                   // ID of the dialog template
+        IDS_FORMVIEW_BUMP_PARAMS_TITLE,             // ID of the dialog's title string
+        0,                                          // IParamMap2 creation/deletion flag mask
+        0,                                          // rollup creation flag
+        nullptr,                                    // user dialog procedure
+
+        // --- Parameters specifications for Glass rollup ---
 
         ParamIdSurfaceColor, _T("surface_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SURFACE_COLOR,
             p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, TYPE_COLORSWATCH, IDC_SWATCH_SURFACE_COLOR,
+            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_SURFACE_COLOR,
         p_end,
         ParamIdSurfaceColorTexmap, _T("surface_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SURFACE_COLOR,
             p_subtexno, TexmapIdSurfaceColor,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SURFACE_COLOR,
+            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SURFACE_COLOR,
         p_end,
 
         ParamIdReflectionTint, _T("reflection_tint"), TYPE_RGBA, P_ANIMATABLE, IDS_REFLECTION_TINT,
             p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, TYPE_COLORSWATCH, IDC_SWATCH_REFLECTION_TINT,
+            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_REFLECTION_TINT,
         p_end,
         ParamIdReflectionTintTexmap, _T("reflection_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_REFLECTION_TINT,
             p_subtexno, TexmapIdReflectionTint,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFLECTION_TINT,
+            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFLECTION_TINT,
         p_end,
 
         ParamIdRefractionTint, _T("refraction_tint"), TYPE_RGBA, P_ANIMATABLE, IDS_REFRACTION_TINT,
             p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, TYPE_COLORSWATCH, IDC_SWATCH_REFRACTION_TINT,
+            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_REFRACTION_TINT,
         p_end,
         ParamIdRefractionTintTexmap, _T("refraction_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_REFRACTION_TINT,
             p_subtexno, TexmapIdRefractionTint,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFRACTION_TINT,
+            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFRACTION_TINT,
         p_end,
 
         ParamIdIOR, _T("ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
             p_default, 1.5f,
             p_range, 1.0f, 4.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
+            p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
         p_end,
 
         ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
             p_default, 0.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
+            p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
         ParamIdRoughnessTexmap, _T("roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
+            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
 
         ParamIdAnisotropy, _T("anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
             p_default, 0.0f,
             p_range, -1.0f, 1.0f,
-            p_ui, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
+            p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
         p_end,
         ParamIdAnisotropyTexmap, _T("anisotropy_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
             p_subtexno, TexmapIdAnisotropy,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
+            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
 
         ParamIdVolumeColor, _T("volume_color"), TYPE_RGBA, P_ANIMATABLE, IDS_VOLUME_COLOR,
             p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, TYPE_COLORSWATCH, IDC_SWATCH_VOLUME_COLOR,
+            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_VOLUME_COLOR,
         p_end,
         ParamIdVolumeColorTexmap, _T("volume_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_VOLUME_COLOR,
             p_subtexno, TexmapIdVolumeColor,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_VOLUME_COLOR,
+            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_VOLUME_COLOR,
         p_end,
 
         ParamIdScale, _T("scale"), TYPE_FLOAT, P_ANIMATABLE, IDS_SCALE,
             p_default, 0.0f,
             p_range, 0.0f, 1000000.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SCALE, IDC_SPINNER_SCALE, SPIN_AUTOSCALE,
+            p_ui, ParamMapIdGlass, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SCALE, IDC_SPINNER_SCALE, SPIN_AUTOSCALE,
+        p_end,
+
+        // --- Parameters specifications for Bump rollup ---
+
+        ParamIdBumpMethod, _T("bump_method"), TYPE_INT, 0, IDS_BUMP_METHOD,
+            p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_METHOD,
+            2, IDS_COMBO_BUMP_METHOD_BUMPMAP, IDS_COMBO_BUMP_METHOD_NORMALMAP,
+            p_vals, 0, 1,
+            p_default, 0,
+        p_end,
+
+        ParamIdBumpTexmap, _T("bump_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
+            p_subtexno, TexmapIdBumpMap,
+            p_ui, ParamMapIdBump, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
+        p_end,
+
+        ParamIdBumpAmount, _T("bump_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
+            p_default, 1.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, ParamMapIdBump, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_BUMP_AMOUNT, IDC_SPINNER_BUMP_AMOUNT, SPIN_AUTOSCALE,
+        p_end,
+
+        ParamIdBumpUpVector, _T("bump_up_vector"), TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
+            p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_UP_VECTOR,
+            2, IDS_COMBO_BUMP_UP_VECTOR_Y, IDS_COMBO_BUMP_UP_VECTOR_Z,
+            p_vals, 0, 1,
+            p_default, 1,
         p_end,
 
         // --- The end ---
@@ -242,6 +294,10 @@ AppleseedGlassMtl::AppleseedGlassMtl()
   , m_volume_color(1.0f, 1.0f, 1.0f)
   , m_volume_color_texmap(nullptr)
   , m_scale(0.0f)
+  , m_bump_method(0)
+  , m_bump_texmap(nullptr)
+  , m_bump_amount(1.0f)
+  , m_bump_up_vector(1)
 {
     m_params_validity.SetEmpty();
 
@@ -420,6 +476,11 @@ void AppleseedGlassMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdVolumeColorTexmap, t, m_volume_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdScale, t, m_scale, m_params_validity);
+
+        m_pblock->GetValue(ParamIdBumpMethod, t, m_bump_method, m_params_validity);
+        m_pblock->GetValue(ParamIdBumpTexmap, t, m_bump_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdBumpAmount, t, m_bump_amount, m_params_validity);
+        m_pblock->GetValue(ParamIdBumpUpVector, t, m_bump_up_vector, m_params_validity);
 
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
@@ -635,6 +696,23 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Ass
     //
     // Material.
     //
+
+    if (is_bitmap_texture(m_bump_texmap))
+    {
+        material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
+        material_params.insert("displacement_map", insert_texture_and_instance(assembly, m_bump_texmap));
+
+        switch (m_bump_method)
+        {
+          case 0:
+            material_params.insert("bump_amplitude", m_bump_amount);
+            break;
+
+          case 1:
+            material_params.insert("normal_map_up", m_bump_up_vector == 0 ? "y" : "z");
+            break;
+        }
+    }
 
     return asr::GenericMaterialFactory::static_create(name, material_params);
 }

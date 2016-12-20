@@ -151,6 +151,10 @@ class AppleseedSSSMtl
     Texmap*         m_specular_roughness_texmap;
     float           m_specular_anisotropy;
     Texmap*         m_specular_anisotropy_texmap;
+    int             m_bump_method;
+    Texmap*         m_bump_texmap;
+    float           m_bump_amount;
+    int             m_bump_up_vector;
 };
 
 

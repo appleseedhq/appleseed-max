@@ -150,6 +150,10 @@ class AppleseedGlassMtl
     Color           m_volume_color;
     Texmap*         m_volume_color_texmap;
     float           m_scale;
+    int             m_bump_method;
+    Texmap*         m_bump_texmap;
+    float           m_bump_amount;
+    int             m_bump_up_vector;
 };
 
 

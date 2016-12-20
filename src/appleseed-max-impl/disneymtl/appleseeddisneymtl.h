@@ -154,6 +154,10 @@ class AppleseedDisneyMtl
     Texmap*         m_clearcoat_gloss_texmap;
     float           m_alpha;
     Texmap*         m_alpha_texmap;
+    int             m_bump_method;
+    Texmap*         m_bump_texmap;
+    float           m_bump_amount;
+    int             m_bump_up_vector;
 };
 
 
