@@ -30,6 +30,8 @@
 #include "appleseeddisneymtl.h"
 
 // appleseed-max headers.
+#include "bump/bumpparammapdlgproc.h"
+#include "bump/resource.h"
 #include "disneymtl/datachunks.h"
 #include "disneymtl/resource.h"
 #include "main.h"
@@ -540,7 +542,9 @@ Interval AppleseedDisneyMtl::Validity(TimeValue t)
 
 ParamDlg* AppleseedDisneyMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
-    return g_appleseed_disneymtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    ParamDlg* param_dialog = g_appleseed_disneymtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
+    return param_dialog;
 }
 
 IOResult AppleseedDisneyMtl::Save(ISave* isave)

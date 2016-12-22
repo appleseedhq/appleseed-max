@@ -30,6 +30,8 @@
 #include "appleseedglassmtl.h"
 
 // appleseed-max headers.
+#include "bump/bumpparammapdlgproc.h"
+#include "bump/resource.h"
 #include "glassmtl/datachunks.h"
 #include "glassmtl/resource.h"
 #include "main.h"
@@ -503,7 +505,9 @@ Interval AppleseedGlassMtl::Validity(TimeValue t)
 
 ParamDlg* AppleseedGlassMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
-    return g_appleseed_glassmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    ParamDlg* param_dialog = g_appleseed_glassmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
+    return param_dialog;
 }
 
 IOResult AppleseedGlassMtl::Save(ISave* isave)

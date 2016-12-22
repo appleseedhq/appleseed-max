@@ -116,6 +116,12 @@
       <Filter>lightmtl</Filter>
     </ClInclude>
     <ClInclude Include="logtarget.h" />
+    <ClInclude Include="bump\resource.h">
+      <Filter>bump</Filter>
+    </ClInclude>
+    <ClInclude Include="bump\bumpparammapdlgproc.h">
+      <Filter>bump</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="renderer\appleseedrenderer.rc">
@@ -133,6 +139,9 @@
     <ResourceCompile Include="lightmtl\appleseedlightmtl.rc">
       <Filter>lightmtl</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="bump\bump.rc">
+      <Filter>bump</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="renderer">
@@ -149,6 +158,9 @@
     </Filter>
     <Filter Include="lightmtl">
       <UniqueIdentifier>{f7d6f5af-25a2-427e-bf28-a4e46d2ddaf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bump">
+      <UniqueIdentifier>{28dbdbb6-9693-4bb5-bedf-e5f0e52c57ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

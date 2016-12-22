@@ -1,0 +1,134 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_BUMP_PARAMS DIALOGEX 0, 0, 217, 71
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Method:",IDC_LABEL_BUMP_METHOD,7,6,48,8
+    COMBOBOX        IDC_COMBO_BUMP_METHOD,69,4,134,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    LTEXT           "Map:",IDC_LABEL_BUMP_MAP,7,22,55,8
+    CONTROL         "Map",IDC_TEXMAP_BUMP_MAP,"CustButton",WS_TABSTOP,69,21,134,10
+
+    LTEXT           "Amount:",IDC_LABEL_BUMP_AMOUNT,7,38,55,8
+    CONTROL         "Amount Edit",IDC_EDIT_BUMP_AMOUNT,"CustEdit",WS_TABSTOP,69,37,30,10
+    CONTROL         "Amount Spinner",IDC_SPINNER_BUMP_AMOUNT,"SpinnerControl",WS_TABSTOP,101,37,90,13
+
+    LTEXT           "Up Vector:",IDC_LABEL_BUMP_UP_VECTOR,7,54,55,8
+    COMBOBOX        IDC_COMBO_BUMP_UP_VECTOR,69,53,134,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_BUMP_PARAMS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 133
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_BUMP_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_BUMP_PARAMS_TITLE "Bump Parameters"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_COMBO_BUMP_METHOD_BUMPMAP "Bump Mapping"
+    IDS_COMBO_BUMP_METHOD_NORMALMAP "Normal Mapping"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_COMBO_BUMP_UP_VECTOR_Y "Green Channel (Y)"
+    IDS_COMBO_BUMP_UP_VECTOR_Z "Blue Channel (Z)"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

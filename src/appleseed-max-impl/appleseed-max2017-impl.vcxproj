@@ -198,6 +198,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
     <ClCompile Include="version.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bump\bumpparammapdlgproc.h" />
+    <ClInclude Include="bump\resource.h" />
     <ClInclude Include="disneymtl\appleseeddisneymtl.h" />
     <ClInclude Include="disneymtl\datachunks.h" />
     <ClInclude Include="disneymtl\resource.h" />
@@ -227,6 +229,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="bump\bump.rc" />
     <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="glassmtl\appleseedglassmtl.rc" />
     <ResourceCompile Include="lightmtl\appleseedlightmtl.rc" />
