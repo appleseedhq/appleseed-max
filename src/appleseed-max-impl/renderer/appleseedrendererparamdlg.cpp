@@ -115,7 +115,7 @@ namespace
         {
             switch (umsg)
             {
-                case WM_INITDIALOG:
+              case WM_INITDIALOG:
                 {
                     PanelBase* panel = reinterpret_cast<PanelBase*>(lparam);
                     DLSetWindowLongPtr(hwnd, panel);
@@ -123,7 +123,7 @@ namespace
                     return TRUE;
                 }
 
-                default:
+              default:
                 {
                     PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hwnd);
                     return panel->dialog_proc(hwnd, umsg, wparam, lparam);
@@ -216,7 +216,7 @@ namespace
         {
             switch (umsg)
             {
-                case WM_UPDATE_CHECK_DATA:
+              case WM_UPDATE_CHECK_DATA:
                 {
                     m_update_data.reset(reinterpret_cast<UpdateCheckData*>(wparam));
                     if (m_update_data->m_update_available)
@@ -233,29 +233,29 @@ namespace
                     return TRUE;
                 }
 
-                case WM_COMMAND:
-                    switch (LOWORD(wparam))
+              case WM_COMMAND:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_BUTTON_DOWNLOAD:
                     {
-                        case IDC_BUTTON_DOWNLOAD:
-                        {
-                            DbgAssert(m_update_data.get());
-                            DbgAssert(m_update_data->m_update_available);
-                            ShellExecute(
-                                hwnd,
-                                _T("open"),
-                                m_update_data->m_download_url.c_str(),
-                                nullptr,            // application parameters
-                                nullptr,            // working directory
-                                SW_SHOWNORMAL);
-                            return TRUE;
-                        }
-
-                        default:
-                            return FALSE;
+                        DbgAssert(m_update_data.get());
+                        DbgAssert(m_update_data->m_update_available);
+                        ShellExecute(
+                            hwnd,
+                            _T("open"),
+                            m_update_data->m_download_url.c_str(),
+                            nullptr,            // application parameters
+                            nullptr,            // working directory
+                            SW_SHOWNORMAL);
+                        return TRUE;
                     }
 
-                default:
+                  default:
                     return FALSE;
+                }
+
+              default:
+                return FALSE;
             }
         }
     };
@@ -338,27 +338,27 @@ namespace
         {
             switch (umsg)
             {
-                case CC_SPINNER_CHANGE:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_SPINNER_PIXELSAMPLES:
-                            m_settings.m_pixel_samples = m_spinner_pixelsamples->GetIVal();
-                            return TRUE;
+              case CC_SPINNER_CHANGE:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_SPINNER_PIXELSAMPLES:
+                    m_settings.m_pixel_samples = m_spinner_pixelsamples->GetIVal();
+                    return TRUE;
 
-                        case IDC_SPINNER_PASSES:
-                            m_settings.m_passes = m_spinner_passes->GetIVal();
-                            return TRUE;
+                  case IDC_SPINNER_PASSES:
+                    m_settings.m_passes = m_spinner_passes->GetIVal();
+                    return TRUE;
 
-                        case IDC_SPINNER_TILESIZE:
-                            m_settings.m_tile_size = m_spinner_tilesize->GetIVal();
-                            return TRUE;
+                  case IDC_SPINNER_TILESIZE:
+                    m_settings.m_tile_size = m_spinner_tilesize->GetIVal();
+                    return TRUE;
 
-                        default:
-                            return FALSE;
-                    }
-
-                default:
+                  default:
                     return FALSE;
+                }
+
+              default:
+                return FALSE;
             }
         }
     };
@@ -434,40 +434,40 @@ namespace
         {
             switch (umsg)
             {
-                case WM_COMMAND:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_CHECK_GI:
-                            m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
-                            enable_disable_controls();
-                            return TRUE;
+              case WM_COMMAND:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_CHECK_GI:
+                    m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
+                    enable_disable_controls();
+                    return TRUE;
 
-                        case IDC_CHECK_CAUSTICS:
-                            m_settings.m_caustics = IsDlgButtonChecked(hwnd, IDC_CHECK_CAUSTICS) == BST_CHECKED;
-                            return TRUE;
+                  case IDC_CHECK_CAUSTICS:
+                    m_settings.m_caustics = IsDlgButtonChecked(hwnd, IDC_CHECK_CAUSTICS) == BST_CHECKED;
+                    return TRUE;
 
-                        case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
-                            m_settings.m_background_emits_light =
-                                IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
-                            return TRUE;
+                  case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
+                    m_settings.m_background_emits_light =
+                        IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
+                    return TRUE;
 
-                        default:
-                            return FALSE;
-                    }
-
-                case CC_SPINNER_CHANGE:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_SPINNER_BOUNCES:
-                            m_settings.m_bounces = m_spinner_bounces->GetIVal();
-                            return TRUE;
-
-                        default:
-                            return FALSE;
-                    }
-
-                default:
+                  default:
                     return FALSE;
+                }
+
+              case CC_SPINNER_CHANGE:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_SPINNER_BOUNCES:
+                    m_settings.m_bounces = m_spinner_bounces->GetIVal();
+                    return TRUE;
+
+                  default:
+                    return FALSE;
+                }
+
+              default:
+                return FALSE;
             }
         }
     };
@@ -542,52 +542,52 @@ namespace
         {
             switch (umsg)
             {
-                case WM_CUSTEDIT_ENTER:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_TEXT_PROJECT_FILEPATH:
-                            m_text_project_filepath->GetText(m_settings.m_project_file_path);
-                            return TRUE;
+              case WM_CUSTEDIT_ENTER:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_TEXT_PROJECT_FILEPATH:
+                    m_text_project_filepath->GetText(m_settings.m_project_file_path);
+                    return TRUE;
 
-                        default:
-                            return FALSE;
-                    }
-
-                case WM_COMMAND:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_RADIO_RENDER:
-                            m_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
-                            enable_disable_controls();
-                            return TRUE;
-
-                        case IDC_RADIO_SAVEPROJECT:
-                            m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectOnly;
-                            enable_disable_controls();
-                            return TRUE;
-
-                        case IDC_RADIO_SAVEPROJECT_AND_RENDER:
-                            m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectAndRender;
-                            enable_disable_controls();
-                            return TRUE;
-
-                        case IDC_BUTTON_BROWSE:
-                        {
-                            MSTR filepath;
-                            if (get_save_project_filepath(hwnd, filepath))
-                            {
-                                m_settings.m_project_file_path = filepath;
-                                m_text_project_filepath->SetText(filepath);
-                            }
-                            return TRUE;
-                        }
-
-                        default:
-                            return FALSE;
-                    }
-
-                default:
+                  default:
                     return FALSE;
+                }
+
+              case WM_COMMAND:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_RADIO_RENDER:
+                    m_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
+                    enable_disable_controls();
+                    return TRUE;
+
+                  case IDC_RADIO_SAVEPROJECT:
+                    m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectOnly;
+                    enable_disable_controls();
+                    return TRUE;
+
+                  case IDC_RADIO_SAVEPROJECT_AND_RENDER:
+                    m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectAndRender;
+                    enable_disable_controls();
+                    return TRUE;
+
+                  case IDC_BUTTON_BROWSE:
+                    {
+                        MSTR filepath;
+                        if (get_save_project_filepath(hwnd, filepath))
+                        {
+                            m_settings.m_project_file_path = filepath;
+                            m_text_project_filepath->SetText(filepath);
+                        }
+                        return TRUE;
+                    }
+
+                  default:
+                    return FALSE;
+                }
+
+              default:
+                return FALSE;
             }
         }
     };
@@ -647,30 +647,30 @@ namespace
         {
             switch (umsg)
             {
-                case WM_COMMAND:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_CHECK_LOW_PRIORITY_MODE:
-                            m_settings.m_low_priority_mode = IsDlgButtonChecked(hwnd, IDC_CHECK_LOW_PRIORITY_MODE) == BST_CHECKED;
-                            return TRUE;
+              case WM_COMMAND:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_CHECK_LOW_PRIORITY_MODE:
+                    m_settings.m_low_priority_mode = IsDlgButtonChecked(hwnd, IDC_CHECK_LOW_PRIORITY_MODE) == BST_CHECKED;
+                    return TRUE;
 
-                        default:
-                            return FALSE;
-                    }
-
-                case CC_SPINNER_CHANGE:
-                    switch (LOWORD(wparam))
-                    {
-                        case IDC_SPINNER_RENDERINGTHREADS:
-                            m_settings.m_rendering_threads = m_spinner_renderingthreads->GetIVal();
-                            return TRUE;
-
-                        default:
-                            return FALSE;
-                    }
-
-                default:
+                  default:
                     return FALSE;
+                }
+
+              case CC_SPINNER_CHANGE:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_SPINNER_RENDERINGTHREADS:
+                    m_settings.m_rendering_threads = m_spinner_renderingthreads->GetIVal();
+                    return TRUE;
+
+                  default:
+                    return FALSE;
+                }
+
+              default:
+                return FALSE;
             }
         }
     };

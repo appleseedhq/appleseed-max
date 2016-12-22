@@ -124,8 +124,8 @@ bool AppleseedRenderer::HasRequirement(Requirement requirement)
 
     switch (requirement)
     {
-        case kRequirement_Wants32bitFPOutput: return true;
-        case kRequirement_SupportsConcurrentRendering: return true;
+      case kRequirement_Wants32bitFPOutput: return true;
+      case kRequirement_SupportsConcurrentRendering: return true;
     }
 
     return false;
