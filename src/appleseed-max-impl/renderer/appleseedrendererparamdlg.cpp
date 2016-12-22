@@ -123,9 +123,6 @@ namespace
                     return TRUE;
                 }
 
-                case WM_DESTROY:
-                    return TRUE;
-
                 default:
                 {
                     PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hwnd);
