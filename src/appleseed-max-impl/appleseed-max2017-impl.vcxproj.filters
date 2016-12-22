@@ -33,25 +33,13 @@
     <ClCompile Include="disneymtl\appleseeddisneymtl.cpp">
       <Filter>disneymtl</Filter>
     </ClCompile>
-    <ClCompile Include="disneymtl\appleseeddisneymtlparamdlg.cpp">
-      <Filter>disneymtl</Filter>
-    </ClCompile>
     <ClCompile Include="sssmtl\appleseedsssmtl.cpp">
-      <Filter>sssmtl</Filter>
-    </ClCompile>
-    <ClCompile Include="sssmtl\appleseedsssmtlparamdlg.cpp">
       <Filter>sssmtl</Filter>
     </ClCompile>
     <ClCompile Include="glassmtl\appleseedglassmtl.cpp">
       <Filter>glassmtl</Filter>
     </ClCompile>
-    <ClCompile Include="glassmtl\appleseedglassmtlparamdlg.cpp">
-      <Filter>glassmtl</Filter>
-    </ClCompile>
     <ClCompile Include="lightmtl\appleseedlightmtl.cpp">
-      <Filter>lightmtl</Filter>
-    </ClCompile>
-    <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp">
       <Filter>lightmtl</Filter>
     </ClCompile>
     <ClCompile Include="logtarget.cpp" />
@@ -94,9 +82,6 @@
     <ClInclude Include="disneymtl\appleseeddisneymtl.h">
       <Filter>disneymtl</Filter>
     </ClInclude>
-    <ClInclude Include="disneymtl\appleseeddisneymtlparamdlg.h">
-      <Filter>disneymtl</Filter>
-    </ClInclude>
     <ClInclude Include="disneymtl\datachunks.h">
       <Filter>disneymtl</Filter>
     </ClInclude>
@@ -104,9 +89,6 @@
       <Filter>disneymtl</Filter>
     </ClInclude>
     <ClInclude Include="sssmtl\appleseedsssmtl.h">
-      <Filter>sssmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="sssmtl\appleseedsssmtlparamdlg.h">
       <Filter>sssmtl</Filter>
     </ClInclude>
     <ClInclude Include="sssmtl\datachunks.h">
@@ -124,13 +106,7 @@
     <ClInclude Include="glassmtl\resource.h">
       <Filter>glassmtl</Filter>
     </ClInclude>
-    <ClInclude Include="glassmtl\appleseedglassmtlparamdlg.h">
-      <Filter>glassmtl</Filter>
-    </ClInclude>
     <ClInclude Include="lightmtl\appleseedlightmtl.h">
-      <Filter>lightmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="lightmtl\appleseedlightmtlparamdlg.h">
       <Filter>lightmtl</Filter>
     </ClInclude>
     <ClInclude Include="lightmtl\datachunks.h">

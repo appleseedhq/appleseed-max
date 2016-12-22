@@ -30,7 +30,6 @@
 #include "appleseedsssmtl.h"
 
 // appleseed-max headers.
-#include "sssmtl/appleseedsssmtlparamdlg.h"
 #include "sssmtl/datachunks.h"
 #include "sssmtl/resource.h"
 #include "main.h"

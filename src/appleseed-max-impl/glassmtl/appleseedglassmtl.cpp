@@ -30,7 +30,6 @@
 #include "appleseedglassmtl.h"
 
 // appleseed-max headers.
-#include "glassmtl/appleseedglassmtlparamdlg.h"
 #include "glassmtl/datachunks.h"
 #include "glassmtl/resource.h"
 #include "main.h"

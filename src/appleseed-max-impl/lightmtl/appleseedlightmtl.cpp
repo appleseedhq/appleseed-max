@@ -30,7 +30,6 @@
 #include "appleseedlightmtl.h"
 
 // appleseed-max headers.
-#include "lightmtl/appleseedlightmtlparamdlg.h"
 #include "lightmtl/datachunks.h"
 #include "lightmtl/resource.h"
 #include "main.h"

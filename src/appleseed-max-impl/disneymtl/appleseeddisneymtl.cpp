@@ -30,7 +30,6 @@
 #include "appleseeddisneymtl.h"
 
 // appleseed-max headers.
-#include "disneymtl/appleseeddisneymtlparamdlg.h"
 #include "disneymtl/datachunks.h"
 #include "disneymtl/resource.h"
 #include "main.h"
