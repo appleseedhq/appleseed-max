@@ -101,13 +101,13 @@ namespace
     {
         virtual void init(HWND hwnd) = 0;
 
-        virtual INT_PTR CALLBACK window_proc(
+        virtual INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
             LPARAM              lparam) = 0;
 
-        static INT_PTR CALLBACK window_proc_entry(
+        static INT_PTR CALLBACK dialog_proc_entry(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -126,7 +126,7 @@ namespace
                 default:
                 {
                     PanelBase* panel = DLGetWindowLongPtr<PanelBase*>(hwnd);
-                    return panel->window_proc(hwnd, umsg, wparam, lparam);
+                    return panel->dialog_proc(hwnd, umsg, wparam, lparam);
                 }
             }
         }
@@ -162,7 +162,7 @@ namespace
                 rend_params->AddRollupPage(
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_ABOUT),
-                    &window_proc_entry,
+                    &dialog_proc_entry,
                     _T("About"),
                     reinterpret_cast<LPARAM>(this));
         }
@@ -208,7 +208,7 @@ namespace
             std::async(std::launch::async, async_update_check, hwnd);
         }
 
-        virtual INT_PTR CALLBACK window_proc(
+        virtual INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -287,7 +287,7 @@ namespace
                 rend_params->AddRollupPage(
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
-                    &window_proc_entry,
+                    &dialog_proc_entry,
                     _T("Image Sampling"),
                     reinterpret_cast<LPARAM>(this));
         }
@@ -330,7 +330,7 @@ namespace
             m_spinner_tilesize->SetValue(m_settings.m_tile_size, FALSE);
         }
 
-        virtual INT_PTR CALLBACK window_proc(
+        virtual INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -387,7 +387,7 @@ namespace
                 rend_params->AddRollupPage(
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
-                    &window_proc_entry,
+                    &dialog_proc_entry,
                     _T("Lighting"),
                     reinterpret_cast<LPARAM>(this));
         }
@@ -426,7 +426,7 @@ namespace
             EnableWindow(m_check_caustics, m_settings.m_gi ? TRUE : FALSE);
         }
 
-        virtual INT_PTR CALLBACK window_proc(
+        virtual INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -495,7 +495,7 @@ namespace
                 rend_params->AddRollupPage(
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
-                    &window_proc_entry,
+                    &dialog_proc_entry,
                     _T("Output"),
                     reinterpret_cast<LPARAM>(this));
         }
@@ -534,7 +534,7 @@ namespace
             m_button_browse->Enable(save_project);
         }
 
-        virtual INT_PTR CALLBACK window_proc(
+        virtual INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -615,7 +615,7 @@ namespace
                 rend_params->AddRollupPage(
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
-                    &window_proc_entry,
+                    &dialog_proc_entry,
                     _T("System"),
                     reinterpret_cast<LPARAM>(this));
         }
@@ -639,7 +639,7 @@ namespace
             CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
         }
 
-        virtual INT_PTR CALLBACK window_proc(
+        virtual INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
