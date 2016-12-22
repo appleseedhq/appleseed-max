@@ -574,5 +574,5 @@ const MCHAR* AppleseedRendererClassDesc::Category()
 const MCHAR* AppleseedRendererClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseed_renderer");
+    return _T("appleseedRenderer");
 }
