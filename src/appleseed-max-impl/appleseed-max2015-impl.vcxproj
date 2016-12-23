@@ -183,12 +183,9 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="disneymtl\appleseeddisneymtl.cpp" />
-    <ClCompile Include="disneymtl\appleseeddisneymtlparamdlg.cpp" />
     <ClCompile Include="glassmtl\appleseedglassmtl.cpp" />
-    <ClCompile Include="glassmtl\appleseedglassmtlparamdlg.cpp" />
     <ClCompile Include="iappleseedmtl.cpp" />
     <ClCompile Include="lightmtl\appleseedlightmtl.cpp" />
-    <ClCompile Include="lightmtl\appleseedlightmtlparamdlg.cpp" />
     <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
@@ -201,22 +198,20 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
     <ClCompile Include="renderer\tilecallback.cpp" />
     <ClCompile Include="renderer\updatechecker.cpp" />
     <ClCompile Include="sssmtl\appleseedsssmtl.cpp" />
-    <ClCompile Include="sssmtl\appleseedsssmtlparamdlg.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bump\bumpparammapdlgproc.h" />
+    <ClInclude Include="bump\resource.h" />
     <ClInclude Include="disneymtl\appleseeddisneymtl.h" />
-    <ClInclude Include="disneymtl\appleseeddisneymtlparamdlg.h" />
     <ClInclude Include="disneymtl\datachunks.h" />
     <ClInclude Include="disneymtl\resource.h" />
     <ClInclude Include="glassmtl\appleseedglassmtl.h" />
-    <ClInclude Include="glassmtl\appleseedglassmtlparamdlg.h" />
     <ClInclude Include="glassmtl\datachunks.h" />
     <ClInclude Include="glassmtl\resource.h" />
     <ClInclude Include="iappleseedmtl.h" />
     <ClInclude Include="lightmtl\appleseedlightmtl.h" />
-    <ClInclude Include="lightmtl\appleseedlightmtlparamdlg.h" />
     <ClInclude Include="lightmtl\datachunks.h" />
     <ClInclude Include="lightmtl\resource.h" />
     <ClInclude Include="logtarget.h" />
@@ -232,13 +227,13 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
     <ClInclude Include="renderer\tilecallback.h" />
     <ClInclude Include="renderer\updatechecker.h" />
     <ClInclude Include="sssmtl\appleseedsssmtl.h" />
-    <ClInclude Include="sssmtl\appleseedsssmtlparamdlg.h" />
     <ClInclude Include="sssmtl\datachunks.h" />
     <ClInclude Include="sssmtl\resource.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="bump\bump.rc" />
     <ResourceCompile Include="disneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="glassmtl\appleseedglassmtl.rc" />
     <ResourceCompile Include="lightmtl\appleseedlightmtl.rc" />
