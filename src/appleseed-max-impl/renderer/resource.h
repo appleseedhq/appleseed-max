@@ -23,15 +23,17 @@
 #define IDC_CHECK_MAX_RAY_INTENSITY                 304
 #define IDC_TEXT_MAX_RAY_INTENSITY                  305
 #define IDC_SPINNER_MAX_RAY_INTENSITY               306
-#define IDC_TEXT_BOUNCES                            307
-#define IDC_SPINNER_BOUNCES                         308
+#define IDC_STATIC_BOUNCES                          307
+#define IDC_TEXT_BOUNCES                            308
+#define IDC_SPINNER_BOUNCES                         309
 
 #define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          400
 #define IDC_RADIO_RENDER                            401
 #define IDC_RADIO_SAVEPROJECT                       402
 #define IDC_RADIO_SAVEPROJECT_AND_RENDER            403
-#define IDC_TEXT_PROJECT_FILEPATH                   404
-#define IDC_BUTTON_BROWSE                           405
+#define IDC_STATIC_PROJECT_FILEPATH                 404
+#define IDC_TEXT_PROJECT_FILEPATH                   405
+#define IDC_BUTTON_BROWSE                           406
 
 #define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM          500
 #define IDC_TEXT_RENDERINGTHREADS                   501

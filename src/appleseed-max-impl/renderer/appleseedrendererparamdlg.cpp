@@ -373,6 +373,7 @@ namespace
         IRendParams*            m_rend_params;
         RendererSettings&       m_settings;
         HWND                    m_rollup;
+        HWND                    m_static_bounces;
         ICustEdit*              m_text_bounces;
         ISpinnerControl*        m_spinner_bounces;
         HWND                    m_check_caustics;
@@ -404,9 +405,10 @@ namespace
 
         virtual void init(HWND hwnd) override
         {
+            m_static_bounces = GetDlgItem(hwnd, IDC_STATIC_BOUNCES);
             m_text_bounces = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES));
             m_spinner_bounces = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_BOUNCES));
-            m_spinner_bounces->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES), EDITTYPE_INT);
+            m_spinner_bounces->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES), EDITTYPE_POS_INT);
             m_spinner_bounces->SetLimits(0, 1000, FALSE);
             m_spinner_bounces->SetResetValue(RendererSettings::defaults().m_bounces);
             m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
@@ -434,6 +436,7 @@ namespace
 
         void enable_disable_controls()
         {
+            EnableWindow(m_static_bounces, m_settings.m_gi ? TRUE : FALSE);
             m_text_bounces->Enable(m_settings.m_gi);
             m_spinner_bounces->Enable(m_settings.m_gi);
 
@@ -442,6 +445,9 @@ namespace
             EnableWindow(m_check_max_ray_intensity, m_settings.m_gi ? TRUE : FALSE);
             m_text_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
             m_spinner_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
+
+            // Fix wrong background color on label when it becomes enabled.
+            RedrawWindow(m_static_bounces, NULL, NULL, RDW_INVALIDATE);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -510,6 +516,7 @@ namespace
         IRendParams*            m_rend_params;
         RendererSettings&       m_settings;
         HWND                    m_rollup;
+        HWND                    m_static_project_filepath;
         ICustEdit*              m_text_project_filepath;
         ICustButton*            m_button_browse;
 
@@ -537,6 +544,7 @@ namespace
 
         virtual void init(HWND hwnd) override
         {
+            m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
             m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
             m_text_project_filepath->SetText(m_settings.m_project_file_path);
             m_button_browse = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_BROWSE));
@@ -558,8 +566,12 @@ namespace
                 m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
                 m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender;
 
+            EnableWindow(m_static_project_filepath, save_project ? TRUE : FALSE);
             m_text_project_filepath->Enable(save_project);
             m_button_browse->Enable(save_project);
+
+            // Fix wrong background color on label when it becomes enabled.
+            RedrawWindow(m_static_project_filepath, NULL, NULL, RDW_INVALIDATE);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
