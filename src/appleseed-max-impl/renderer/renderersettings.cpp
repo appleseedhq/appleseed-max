@@ -52,11 +52,16 @@ namespace
             m_pixel_samples = 16;
             m_passes = 1;
             m_tile_size = 64;
+
             m_gi = true;
             m_caustics = false;
             m_bounces = 8;
             m_background_emits_light = true;
+            m_max_ray_intensity_set = false;
+            m_max_ray_intensity = 0.0f;
+
             m_output_mode = OutputMode::RenderOnly;
+
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
             m_low_priority_mode = true;
         }
@@ -89,6 +94,9 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     else params.insert_path("pt.max_path_length", 1);
 
     params.insert_path("pt.enable_caustics", m_caustics);
+
+    if (m_max_ray_intensity_set)
+        params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
 
     if (m_rendering_threads == 0)
         params.insert_path("rendering_threads", "auto");
@@ -158,6 +166,14 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsLightingBackgroundEmitsLight);
         success &= write<bool>(isave, m_background_emits_light);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingMaxRayIntensitySet);
+        success &= write<bool>(isave, m_max_ray_intensity_set);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingMaxRayIntensity);
+        success &= write<float>(isave, m_max_ray_intensity);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -316,6 +332,14 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
           case ChunkSettingsLightingBackgroundEmitsLight:
             result = read<bool>(iload, &m_background_emits_light);
+            break;
+
+          case ChunkSettingsLightingMaxRayIntensitySet:
+            result = read<bool>(iload, &m_max_ray_intensity_set);
+            break;
+
+          case ChunkSettingsLightingMaxRayIntensity:
+            result = read<float>(iload, &m_max_ray_intensity);
             break;
         }
 

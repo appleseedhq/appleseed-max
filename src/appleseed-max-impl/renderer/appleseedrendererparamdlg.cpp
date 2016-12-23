@@ -376,6 +376,9 @@ namespace
         ICustEdit*              m_text_bounces;
         ISpinnerControl*        m_spinner_bounces;
         HWND                    m_check_caustics;
+        HWND                    m_check_max_ray_intensity;
+        ICustEdit*              m_text_max_ray_intensity;
+        ISpinnerControl*        m_spinner_max_ray_intensity;
 
         LightingPanel(
             IRendParams*        rend_params,
@@ -416,6 +419,16 @@ namespace
             CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
                 m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
 
+            m_check_max_ray_intensity = GetDlgItem(hwnd, IDC_CHECK_MAX_RAY_INTENSITY);
+            CheckDlgButton(hwnd, IDC_CHECK_MAX_RAY_INTENSITY,
+                m_settings.m_max_ray_intensity_set ? BST_CHECKED : BST_UNCHECKED);
+            m_text_max_ray_intensity = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_MAX_RAY_INTENSITY));
+            m_spinner_max_ray_intensity = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_MAX_RAY_INTENSITY));
+            m_spinner_max_ray_intensity->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_MAX_RAY_INTENSITY), EDITTYPE_POS_FLOAT);
+            m_spinner_max_ray_intensity->SetLimits(0.0f, 1000.0f, FALSE);
+            m_spinner_max_ray_intensity->SetResetValue(RendererSettings::defaults().m_max_ray_intensity);
+            m_spinner_max_ray_intensity->SetValue(m_settings.m_max_ray_intensity, FALSE);
+
             enable_disable_controls();
         }
 
@@ -423,7 +436,12 @@ namespace
         {
             m_text_bounces->Enable(m_settings.m_gi);
             m_spinner_bounces->Enable(m_settings.m_gi);
+
             EnableWindow(m_check_caustics, m_settings.m_gi ? TRUE : FALSE);
+
+            EnableWindow(m_check_max_ray_intensity, m_settings.m_gi ? TRUE : FALSE);
+            m_text_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
+            m_spinner_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -451,6 +469,12 @@ namespace
                         IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
                     return TRUE;
 
+                  case IDC_CHECK_MAX_RAY_INTENSITY:
+                    m_settings.m_max_ray_intensity_set =
+                        IsDlgButtonChecked(hwnd, IDC_CHECK_MAX_RAY_INTENSITY) == BST_CHECKED;
+                    enable_disable_controls();
+                    return TRUE;
+
                   default:
                     return FALSE;
                 }
@@ -460,6 +484,10 @@ namespace
                 {
                   case IDC_SPINNER_BOUNCES:
                     m_settings.m_bounces = m_spinner_bounces->GetIVal();
+                    return TRUE;
+
+                  case IDC_SPINNER_MAX_RAY_INTENSITY:
+                    m_settings.m_max_ray_intensity = m_spinner_max_ray_intensity->GetFVal();
                     return TRUE;
 
                   default:

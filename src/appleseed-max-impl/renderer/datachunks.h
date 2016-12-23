@@ -45,6 +45,8 @@ const USHORT ChunkSettingsLightingGI                    = 0x1210;
 const USHORT ChunkSettingsLightingCaustics              = 0x1215;
 const USHORT ChunkSettingsLightingBounces               = 0x1220;
 const USHORT ChunkSettingsLightingBackgroundEmitsLight  = 0x1230;
+const USHORT ChunkSettingsLightingMaxRayIntensitySet    = 0x1240;
+const USHORT ChunkSettingsLightingMaxRayIntensity       = 0x1250;
 
 const USHORT ChunkSettingsOutput                        = 0x1300;
 const USHORT ChunkSettingsOutputMode                    = 0x1310;

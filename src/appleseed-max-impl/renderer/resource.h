@@ -20,8 +20,11 @@
 #define IDC_CHECK_GI                                301
 #define IDC_CHECK_CAUSTICS                          302
 #define IDC_CHECK_BACKGROUND_EMITS_LIGHT            303
-#define IDC_TEXT_BOUNCES                            304
-#define IDC_SPINNER_BOUNCES                         305
+#define IDC_CHECK_MAX_RAY_INTENSITY                 304
+#define IDC_TEXT_MAX_RAY_INTENSITY                  305
+#define IDC_SPINNER_MAX_RAY_INTENSITY               306
+#define IDC_TEXT_BOUNCES                            307
+#define IDC_SPINNER_BOUNCES                         308
 
 #define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          400
 #define IDC_RADIO_RENDER                            401
