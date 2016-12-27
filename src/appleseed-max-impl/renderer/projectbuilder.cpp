@@ -168,15 +168,23 @@ namespace
         return tri_object;
     }
 
-    bool create_mesh_object(
+    struct ObjectInfo
+    {
+        bool                            m_valid;            // was the object was successfully generated?
+        std::string                     m_name;             // name of the appleseed object
+        std::map<MtlID, asf::uint32>    m_mtlid_to_slot;    // map a 3ds Max's material ID to an appleseed's material slot
+    };
+
+    ObjectInfo create_mesh_object(
         asr::Assembly&          assembly,
         INode*                  object_node,
-        const TimeValue         time,
-        std::string&            object_name)
+        const TimeValue         time)
     {
+        ObjectInfo object_info;
+
         // Compute a unique name for the instantiated object.
-        object_name = wide_to_utf8(object_node->GetName());
-        object_name = make_unique_name(assembly.objects(), object_name);
+        object_info.m_name = wide_to_utf8(object_node->GetName());
+        object_info.m_name = make_unique_name(assembly.objects(), object_info.m_name);
 
         // Retrieve the ObjectState at the desired time.
         const ObjectState object_state = object_node->EvalWorldState(time);
@@ -184,24 +192,21 @@ namespace
         // Convert the object to a TriObject.
         bool must_delete_tri_object;
         TriObject* tri_object = get_tri_object_from_node(object_state, time, must_delete_tri_object);
-        if (tri_object == nullptr)
+        object_info.m_valid = tri_object != nullptr;
+        if (!object_info.m_valid)
         {
             // todo: emit warning message.
-            return false;
+            return object_info;
         }
 
         // Create a new mesh object.
         asf::auto_release_ptr<asr::MeshObject> object(
-            asr::MeshObjectFactory::create(object_name.c_str(), asr::ParamArray()));
+            asr::MeshObjectFactory::create(object_info.m_name.c_str(), asr::ParamArray()));
         {
             Mesh& mesh = tri_object->GetMesh();
 
             // Make sure the input mesh has vertex normals.
             mesh.checkNormals(TRUE);
-
-            // Create a material slot.
-            const asf::uint32 material_slot =
-                static_cast<asf::uint32>(object->push_material_slot("material"));
 
             // Copy vertices to the mesh object.
             object->reserve_vertices(mesh.getNumVerts());
@@ -302,7 +307,20 @@ namespace
                     triangle.m_a1 = asr::Triangle::None;
                     triangle.m_a2 = asr::Triangle::None;
                 }
-                triangle.m_pa = material_slot;
+
+                // Assign to the triangle the material slot corresponding to the face's material ID,
+                // creating a new material slot if necessary.
+                asf::uint32 slot;
+                const MtlID mtlid = face.getMatID();
+                const auto it = object_info.m_mtlid_to_slot.find(mtlid);
+                if (it == object_info.m_mtlid_to_slot.end())
+                {
+                    const auto slot_name = "material_slot_" + asf::to_string(object->get_material_slot_count());
+                    slot = static_cast<asf::uint32>(object->push_material_slot(slot_name.c_str()));
+                    object_info.m_mtlid_to_slot.insert(std::make_pair(mtlid, slot));
+                }
+                else slot = it->second;
+                triangle.m_pa = slot;
 
                 object->push_triangle(triangle);
             }
@@ -317,10 +335,56 @@ namespace
         // Insert the object into the assembly.
         assembly.objects().insert(asf::auto_release_ptr<asr::Object>(object));
 
-        return true;
+        return object_info;
     }
 
     typedef std::map<Mtl*, std::string> MaterialMap;
+
+    struct MaterialInfo
+    {
+        std::string m_name;     // name of the appleseed material
+        int         m_sides;    // sides of the object to which the material must be applied
+    };
+
+    MaterialInfo get_or_create_material(
+        asr::Assembly&          assembly,
+        const std::string&      instance_name,
+        Mtl*                    mtl,
+        MaterialMap&            material_map)
+    {
+        MaterialInfo material_info;
+
+        auto appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl)
+        {
+            // It's an appleseed material.
+            const auto it = material_map.find(mtl);
+            if (it == material_map.end())
+            {
+                // The appleseed material does not exist yet, let the material plugin create it.
+                material_info.m_name =
+                    make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
+                assembly.materials().insert(
+                    appleseed_mtl->create_material(assembly, material_info.m_name.c_str()));
+                material_map.insert(std::make_pair(mtl, material_info.m_name));
+            }
+            else
+            {
+                // The appleseed material already exists.
+                material_info.m_name = it->second;
+            }
+            material_info.m_sides = appleseed_mtl->get_sides();
+        }
+        else
+        {
+            // It's a non-appleseed material: return an empty material that will appear black.
+            material_info.m_name = insert_empty_material(assembly, instance_name + "_mat");
+            material_info.m_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
+        }
+
+        return material_info;
+    }
 
     enum class RenderType
     {
@@ -331,67 +395,71 @@ namespace
     void create_object_instance(
         asr::Assembly&          assembly,
         INode*                  instance_node,
-        const std::string&      object_name,
+        const ObjectInfo&       object_info,
         const RenderType        type,
         const TimeValue         time,
         MaterialMap&            material_map)
     {
         // Compute a unique name for this instance.
         const std::string instance_name =
-            make_unique_name(assembly.object_instances(), object_name + "_inst");
+            make_unique_name(assembly.object_instances(), object_info.m_name + "_inst");
 
-        // Compute the transform of this instance.
-        const asf::Transformd transform =
-            asf::Transformd::from_local_to_parent(
-                to_matrix4d(instance_node->GetObjTMAfterWSM(time)));
-
-        // Name of the material of this instance.
-        std::string material_name;
-        int material_sides = 0;
+        // Material mappings.
+        asf::StringDictionary front_material_mappings;
+        asf::StringDictionary back_material_mappings;
 
         // Retrieve or create an appleseed material.
         Mtl* mtl = instance_node->GetMtl();
         if (mtl)
         {
             // The instance has a material.
-            IAppleseedMtl* appleseed_mtl =
-                static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-            if (appleseed_mtl)
+            const int submtlcount = mtl->NumSubMtls();
+            if (submtlcount > 0)
             {
-                // The instance has an appleseed material.
-                const MaterialMap::const_iterator it = material_map.find(mtl);
-                if (it == material_map.end())
+                for (int i = 0; i < submtlcount; ++i)
                 {
-                    // The appleseed material does not exist yet, let the material plugin create it.
-                    material_name =
-                        make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
-                    assembly.materials().insert(
-                        appleseed_mtl->create_material(assembly, material_name.c_str()));
-                    material_map.insert(std::make_pair(mtl, material_name));
+                    const auto material_info =
+                        get_or_create_material(
+                            assembly,
+                            instance_name,
+                            mtl->GetSubMtl(i),
+                            material_map);
+
+                    const std::string slot_name = "material_slot_" + asf::to_string(i);
+
+                    if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                        front_material_mappings.insert(slot_name, material_info.m_name);
+
+                    if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                        back_material_mappings.insert(slot_name, material_info.m_name);
                 }
-                else
-                {
-                    // The appleseed material exists.
-                    material_name = it->second;
-                }
-                material_sides = appleseed_mtl->get_sides();
             }
             else
             {
-                // The instance has a non-appleseed material: assign it an empty material that will appear black.
-                material_name = insert_empty_material(assembly, instance_name + "_mat");
-                material_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
+                const auto material_info =
+                    get_or_create_material(
+                        assembly,
+                        instance_name,
+                        mtl,
+                        material_map);
+
+                if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                    front_material_mappings.insert("material_slot_0", material_info.m_name);
+
+                if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                    back_material_mappings.insert("material_slot_0", material_info.m_name);
             }
         }
         else
         {
             // The instance does not have a material: create a new default material.
-            material_name =
+            const std::string material_name =
                 insert_default_material(
                     assembly,
                     instance_name + "_mat",
                     to_color3f(Color(instance_node->GetWireColor())));
-            material_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
+            front_material_mappings.insert("material_slot_0", material_name);
+            back_material_mappings.insert("material_slot_0", material_name);
         }
 
         // Parameters.
@@ -399,31 +467,21 @@ namespace
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
-        // Material mappings.
-        asf::StringDictionary front_material_mappings;
-        if (material_sides & asr::ObjectInstance::FrontSide)
-            front_material_mappings.insert("material", material_name);
-        asf::StringDictionary back_material_mappings;
-        if (material_sides & asr::ObjectInstance::BackSide)
-            back_material_mappings.insert("material", material_name);
+        // Compute the transform of this instance.
+        const asf::Transformd transform =
+            asf::Transformd::from_local_to_parent(
+                to_matrix4d(instance_node->GetObjTMAfterWSM(time)));
 
         // Create the instance and insert it into the assembly.
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
                 params,
-                object_name.c_str(),
+                object_info.m_name.c_str(),
                 transform,
                 front_material_mappings,
                 back_material_mappings));
     }
-
-    // Information about an appleseed object.
-    struct ObjectInfo
-    {
-        bool        m_valid;    // the object was successfully generated
-        std::string m_name;     // name of the object
-    };
 
     typedef std::map<Object*, ObjectInfo> ObjectMap;
 
@@ -445,12 +503,7 @@ namespace
         if (it == object_map.end())
         {
             // The appleseed object does not exist yet, create it.
-            object_info.m_valid =
-                create_mesh_object(
-                    assembly,
-                    node,
-                    time,
-                    object_info.m_name);
+            object_info = create_mesh_object(assembly, node, time);
             object_map.insert(std::make_pair(object, object_info));
         }
         else
@@ -465,7 +518,7 @@ namespace
             create_object_instance(
                 assembly,
                 node,
-                object_info.m_name,
+                object_info,
                 type,
                 time,
                 material_map);
