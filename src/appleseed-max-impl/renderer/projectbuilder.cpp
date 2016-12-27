@@ -315,6 +315,7 @@ namespace
                 const auto it = object_info.m_mtlid_to_slot.find(mtlid);
                 if (it == object_info.m_mtlid_to_slot.end())
                 {
+                    // Create a new material slot in the object.
                     const auto slot_name = "material_slot_" + asf::to_string(object->get_material_slot_count());
                     slot = static_cast<asf::uint32>(object->push_material_slot(slot_name.c_str()));
                     object_info.m_mtlid_to_slot.insert(std::make_pair(mtlid, slot));
@@ -416,26 +417,37 @@ namespace
             const int submtlcount = mtl->NumSubMtls();
             if (submtlcount > 0)
             {
+                // It's a multi/sub-object material.
                 for (int i = 0; i < submtlcount; ++i)
                 {
-                    const auto material_info =
-                        get_or_create_material(
-                            assembly,
-                            instance_name,
-                            mtl->GetSubMtl(i),
-                            material_map);
+                    Mtl* submtl = mtl->GetSubMtl(i);
+                    if (submtl != nullptr)
+                    {
+                        const auto material_info =
+                            get_or_create_material(
+                                assembly,
+                                instance_name,
+                                submtl,
+                                material_map);
 
-                    const std::string slot_name = "material_slot_" + asf::to_string(i);
+                        const auto entry = object_info.m_mtlid_to_slot.find(i);
+                        assert(entry != object_info.m_mtlid_to_slot.end());
 
-                    if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                        front_material_mappings.insert(slot_name, material_info.m_name);
+                        const std::string slot_name = "material_slot_" + asf::to_string(entry->second);
 
-                    if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                        back_material_mappings.insert(slot_name, material_info.m_name);
+                        if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                            front_material_mappings.insert(slot_name, material_info.m_name);
+
+                        if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                            back_material_mappings.insert(slot_name, material_info.m_name);
+                    }
                 }
             }
             else
             {
+                // It's a single material.
+
+                // Create the appleseed material.
                 const auto material_info =
                     get_or_create_material(
                         assembly,
@@ -443,11 +455,17 @@ namespace
                         mtl,
                         material_map);
 
-                if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                    front_material_mappings.insert("material_slot_0", material_info.m_name);
+                // Assign it to all material slots.
+                for (const auto& entry : object_info.m_mtlid_to_slot)
+                {
+                    const std::string slot_name = "material_slot_" + asf::to_string(entry.second);
 
-                if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                    back_material_mappings.insert("material_slot_0", material_info.m_name);
+                    if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                        front_material_mappings.insert(slot_name, material_info.m_name);
+
+                    if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                        back_material_mappings.insert(slot_name, material_info.m_name);
+                }
             }
         }
         else
