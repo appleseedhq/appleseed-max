@@ -431,15 +431,16 @@ namespace
                                 material_map);
 
                         const auto entry = object_info.m_mtlid_to_slot.find(i);
-                        assert(entry != object_info.m_mtlid_to_slot.end());
+                        if (entry != object_info.m_mtlid_to_slot.end())
+                        {
+                            const std::string slot_name = "material_slot_" + asf::to_string(entry->second);
 
-                        const std::string slot_name = "material_slot_" + asf::to_string(entry->second);
+                            if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                                front_material_mappings.insert(slot_name, material_info.m_name);
 
-                        if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                            front_material_mappings.insert(slot_name, material_info.m_name);
-
-                        if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                            back_material_mappings.insert(slot_name, material_info.m_name);
+                            if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                                back_material_mappings.insert(slot_name, material_info.m_name);
+                        }
                     }
                 }
             }
