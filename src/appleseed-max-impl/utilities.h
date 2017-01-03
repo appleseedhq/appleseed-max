@@ -43,6 +43,7 @@
 #include <matrix3.h>
 #include <maxtypes.h>
 #include <point3.h>
+#include <point4.h>
 
 // Standard headers.
 #include <cstddef>
@@ -53,6 +54,13 @@ namespace renderer  { class BaseGroup; }
 class BitmapTex;
 class Color;
 class Texmap;
+
+
+//
+// Math functions.
+//
+
+Matrix3 transpose(const Matrix3& matrix);
 
 
 //
@@ -136,6 +144,19 @@ std::string insert_texture_and_instance(
 //
 // Implementation.
 //
+
+inline Matrix3 transpose(const Matrix3& matrix)
+{
+    const Point4 c0 = matrix.GetColumn(0);
+    const Point4 c1 = matrix.GetColumn(1);
+    const Point4 c2 = matrix.GetColumn(2);
+
+    return Matrix3(
+        Point3(c0[0], c0[1], c0[2]),    // first row
+        Point3(c1[0], c1[1], c1[2]),    // second row
+        Point3(c2[0], c2[1], c2[2]),    // third row
+        Point3(0.0f, 0.0f, 0.0f));      // fourth row
+}
 
 inline foundation::Color3f to_color3f(const Color& c)
 {
