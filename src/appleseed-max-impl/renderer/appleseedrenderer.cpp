@@ -55,7 +55,9 @@
 #include <bitmap.h>
 
 // Standard headers.
+#include <clocale>
 #include <cstddef>
+#include <string>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -357,6 +359,8 @@ int AppleseedRenderer::Render(
 {
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
+    std::string previous_locale(std::setlocale(LC_ALL, "C"));
+
     m_time = time;
 
     if (view_params)
@@ -444,6 +448,8 @@ int AppleseedRenderer::Render(
 
     if (progress_cb)
         progress_cb->SetTitle(_T("Done."));
+
+    std::setlocale(LC_ALL, previous_locale.c_str());
 
     // Success.
     return 1;
