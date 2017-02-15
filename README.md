@@ -1,5 +1,4 @@
-appleseed-max
-=============
+## appleseed-max
 
 appleseed-max is an appleseed plugin for [Autodesk® 3ds Max®](http://www.autodesk.com/products/3ds-max/overview).
 
