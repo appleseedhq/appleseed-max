@@ -937,7 +937,8 @@ namespace
                 asr::BackgroundEnvironmentShaderFactory::static_create(
                     "environment_shader",
                     asr::ParamArray()
-                        .insert("color", "environment_map_inst")));
+                        .insert("color", "environment_map_inst")
+                        .insert("alpha", settings.m_background_alpha)));
 
             scene.set_environment(
                 asr::EnvironmentFactory::create(
@@ -975,7 +976,8 @@ namespace
                     asr::EDFEnvironmentShaderFactory::static_create(
                         "environment_shader",
                         asr::ParamArray()
-                            .insert("environment_edf", "environment_edf")));
+                            .insert("environment_edf", "environment_edf")
+                            .insert("alpha_value", settings.m_background_alpha)));
 
                 if (settings.m_background_emits_light)
                 {

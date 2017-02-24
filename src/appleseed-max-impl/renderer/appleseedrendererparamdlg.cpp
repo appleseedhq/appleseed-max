@@ -380,6 +380,8 @@ namespace
         HWND                    m_check_max_ray_intensity;
         ICustEdit*              m_text_max_ray_intensity;
         ISpinnerControl*        m_spinner_max_ray_intensity;
+        ICustEdit*              m_text_background_alpha;
+        ISpinnerControl*        m_spinner_background_alpha;
 
         LightingPanel(
             IRendParams*        rend_params,
@@ -398,6 +400,8 @@ namespace
 
         ~LightingPanel()
         {
+            ReleaseISpinner(m_spinner_background_alpha);
+            ReleaseICustEdit(m_text_background_alpha);
             ReleaseISpinner(m_spinner_bounces);
             ReleaseICustEdit(m_text_bounces);
             m_rend_params->DeleteRollupPage(m_rollup);
@@ -430,6 +434,13 @@ namespace
 
             CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
                 m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
+
+            m_text_background_alpha = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BACKGROUND_ALPHA));
+            m_spinner_background_alpha = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_BACKGROUND_ALPHA));
+            m_spinner_background_alpha->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BACKGROUND_ALPHA), EDITTYPE_POS_FLOAT);
+            m_spinner_background_alpha->SetLimits(0.0f, 1.0f, FALSE);
+            m_spinner_background_alpha->SetResetValue(RendererSettings::defaults().m_background_alpha);
+            m_spinner_background_alpha->SetValue(m_settings.m_background_alpha, FALSE);
 
             enable_disable_controls();
         }
@@ -494,6 +505,10 @@ namespace
 
                   case IDC_SPINNER_MAX_RAY_INTENSITY:
                     m_settings.m_max_ray_intensity = m_spinner_max_ray_intensity->GetFVal();
+                    return TRUE;
+
+                  case IDC_SPINNER_BACKGROUND_ALPHA:
+                    m_settings.m_background_alpha = m_spinner_background_alpha->GetFVal();
                     return TRUE;
 
                   default:

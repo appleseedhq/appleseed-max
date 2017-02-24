@@ -66,6 +66,7 @@ class RendererSettings
     bool        m_max_ray_intensity_set;
     float       m_max_ray_intensity;
     bool        m_background_emits_light;
+    float       m_background_alpha;
 
     //
     // Output.
