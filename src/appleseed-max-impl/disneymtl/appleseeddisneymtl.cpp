@@ -243,7 +243,7 @@ namespace
 
         ParamIdClearcoat, _T("clearcoat"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT,
             p_default, 0.0f,
-            p_range, 0.0f, 100.0f,
+            p_range, 0.0f, 1000.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_CLEARCOAT, IDC_SLIDER_CLEARCOAT, 10.0f,
         p_end,
         ParamIdClearcoatTexmap, _T("clearcoat_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_CLEARCOAT,
