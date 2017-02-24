@@ -80,6 +80,7 @@ class RendererSettings
 
     OutputMode  m_output_mode;
     MSTR        m_project_file_path;
+    float       m_scale_multiplier;
 
     //
     // System.

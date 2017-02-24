@@ -51,6 +51,7 @@ const USHORT ChunkSettingsLightingMaxRayIntensity       = 0x1250;
 const USHORT ChunkSettingsOutput                        = 0x1300;
 const USHORT ChunkSettingsOutputMode                    = 0x1310;
 const USHORT ChunkSettingsOutputProjectFilePath         = 0x1320;
+const USHORT ChunkSettingsOutputScaleMultiplier         = 0x1330;
 
 const USHORT ChunkSettingsSystem                        = 0x1400;
 const USHORT ChunkSettingsSystemRenderingThreads        = 0x1410;

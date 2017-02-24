@@ -61,6 +61,7 @@ namespace
             m_max_ray_intensity = 0.0f;
 
             m_output_mode = OutputMode::RenderOnly;
+            m_scale_multiplier = 1.0f;
 
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
             m_low_priority_mode = true;
@@ -201,6 +202,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsOutputProjectFilePath);
         success &= write(isave, m_project_file_path);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsOutputScaleMultiplier);
+        success &= write<float>(isave, m_scale_multiplier);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -395,6 +400,10 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
 
           case ChunkSettingsOutputProjectFilePath:
             result = read(iload, &m_project_file_path);
+            break;
+
+          case ChunkSettingsOutputScaleMultiplier:
+            result = read(iload, &m_scale_multiplier);
             break;
         }
 

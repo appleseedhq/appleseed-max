@@ -1001,6 +1001,7 @@ namespace
     asf::auto_release_ptr<asr::Camera> build_camera(
         const ViewParams&       view_params,
         Bitmap*                 bitmap,
+        const RendererSettings& settings,
         const TimeValue         time)
     {
         asr::ParamArray params;
@@ -1029,7 +1030,9 @@ namespace
                 : asr::OrthographicCameraFactory::static_create("camera", params);
 
         camera->transform_sequence().set_transform(
-            0.0, asf::Transformd::from_local_to_parent(
+            0.0,
+            asf::Transformd::from_local_to_parent(
+                asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
                 to_matrix4d(Inverse(view_params.affineTM))));
 
         return camera;
@@ -1109,9 +1112,9 @@ asf::auto_release_ptr<asr::Project> build_project(
             "assembly_inst",
             asr::ParamArray(),
             "assembly"));
-    assembly_instance
-        ->transform_sequence()
-            .set_transform(0.0, asf::Transformd::identity());
+    assembly_instance->transform_sequence()
+        .set_transform(0.0, asf::Transformd::from_local_to_parent(
+            asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier))));
     scene->assembly_instances().insert(assembly_instance);
 
     // Insert the assembly into the scene.
@@ -1126,7 +1129,7 @@ asf::auto_release_ptr<asr::Project> build_project(
         time);
 
     // Create a camera and bind it to the scene.
-    scene->cameras().insert(build_camera(view_params, bitmap, time));
+    scene->cameras().insert(build_camera(view_params, bitmap, settings, time));
 
     // Create a frame and bind it to the project.
     project->set_frame(build_frame(bitmap, rend_params, settings));

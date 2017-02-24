@@ -34,6 +34,9 @@
 #define IDC_STATIC_PROJECT_FILEPATH                 404
 #define IDC_TEXT_PROJECT_FILEPATH                   405
 #define IDC_BUTTON_BROWSE                           406
+#define IDC_SCALE_MULTIPLIER                        407
+#define IDC_TEXT_SCALE_MULTIPLIER                   408
+#define IDC_SPINNER_SCALE_MULTIPLIER                409
 
 #define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM          500
 #define IDC_TEXT_RENDERINGTHREADS                   501

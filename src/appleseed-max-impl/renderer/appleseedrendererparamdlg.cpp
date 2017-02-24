@@ -519,6 +519,8 @@ namespace
         HWND                    m_static_project_filepath;
         ICustEdit*              m_text_project_filepath;
         ICustButton*            m_button_browse;
+        ICustEdit*              m_text_scale_multiplier;
+        ISpinnerControl*        m_spinner_scale_multiplier;
 
         OutputPanel(
             IRendParams*        rend_params,
@@ -537,6 +539,8 @@ namespace
 
         ~OutputPanel()
         {
+            ReleaseISpinner(m_spinner_scale_multiplier);
+            ReleaseICustEdit(m_text_scale_multiplier);
             ReleaseICustButton(m_button_browse);
             ReleaseICustEdit(m_text_project_filepath);
             m_rend_params->DeleteRollupPage(m_rollup);
@@ -556,6 +560,14 @@ namespace
                 m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ? IDC_RADIO_RENDER :
                 m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ? IDC_RADIO_SAVEPROJECT :
                 IDC_RADIO_SAVEPROJECT_AND_RENDER);
+
+            // Scale multiplier.
+            m_text_scale_multiplier = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_SCALE_MULTIPLIER));
+            m_spinner_scale_multiplier = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_SCALE_MULTIPLIER));
+            m_spinner_scale_multiplier->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_SCALE_MULTIPLIER), EDITTYPE_POS_FLOAT);
+            m_spinner_scale_multiplier->SetLimits(1.0e-6f, 1.0e6f, FALSE);
+            m_spinner_scale_multiplier->SetResetValue(RendererSettings::defaults().m_scale_multiplier);
+            m_spinner_scale_multiplier->SetValue(m_settings.m_scale_multiplier, FALSE);
 
             enable_disable_controls();
         }
@@ -621,6 +633,17 @@ namespace
                         }
                         return TRUE;
                     }
+
+                  default:
+                    return FALSE;
+                }
+
+              case CC_SPINNER_CHANGE:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_SPINNER_SCALE_MULTIPLIER:
+                    m_settings.m_scale_multiplier = m_spinner_scale_multiplier->GetFVal();
+                    return TRUE;
 
                   default:
                     return FALSE;
