@@ -103,7 +103,7 @@ BEGIN
     LTEXT           "Project File:",IDC_STATIC_PROJECT_FILEPATH,18,59,41,8
     CONTROL         "Project File",IDC_TEXT_PROJECT_FILEPATH,"CustEdit",WS_TABSTOP,61,58,88,10
     CONTROL         "Browse...",IDC_BUTTON_BROWSE,"CustButton",WS_TABSTOP,153,58,42,10
-    LTEXT           "Scale Multiplier:",IDC_SCALE_MULTIPLIER,0,80,50,8
+    LTEXT           "Scale Multiplier:",IDC_STATIC_SCALE_MULTIPLIER,0,80,50,8
     CONTROL         "Scale Multiplier",IDC_TEXT_SCALE_MULTIPLIER,"CustEdit",WS_TABSTOP,52,79,30,10
     CONTROL         "Scale Multiplier",IDC_SPINNER_SCALE_MULTIPLIER,"SpinnerControl",WS_TABSTOP,83,79,6,10
 END

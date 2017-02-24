@@ -19,13 +19,13 @@
 #define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        300
 #define IDC_CHECK_GI                                301
 #define IDC_CHECK_CAUSTICS                          302
-#define IDC_CHECK_BACKGROUND_EMITS_LIGHT            303
-#define IDC_CHECK_MAX_RAY_INTENSITY                 304
-#define IDC_TEXT_MAX_RAY_INTENSITY                  305
-#define IDC_SPINNER_MAX_RAY_INTENSITY               306
-#define IDC_STATIC_BOUNCES                          307
-#define IDC_TEXT_BOUNCES                            308
-#define IDC_SPINNER_BOUNCES                         309
+#define IDC_STATIC_BOUNCES                          303
+#define IDC_TEXT_BOUNCES                            304
+#define IDC_SPINNER_BOUNCES                         305
+#define IDC_CHECK_MAX_RAY_INTENSITY                 306
+#define IDC_TEXT_MAX_RAY_INTENSITY                  307
+#define IDC_SPINNER_MAX_RAY_INTENSITY               308
+#define IDC_CHECK_BACKGROUND_EMITS_LIGHT            309
 
 #define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          400
 #define IDC_RADIO_RENDER                            401
@@ -34,7 +34,7 @@
 #define IDC_STATIC_PROJECT_FILEPATH                 404
 #define IDC_TEXT_PROJECT_FILEPATH                   405
 #define IDC_BUTTON_BROWSE                           406
-#define IDC_SCALE_MULTIPLIER                        407
+#define IDC_STATIC_SCALE_MULTIPLIER                 407
 #define IDC_TEXT_SCALE_MULTIPLIER                   408
 #define IDC_SPINNER_SCALE_MULTIPLIER                409
 

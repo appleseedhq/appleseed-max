@@ -31,6 +31,11 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
+//
+// Changing the values of these constants WILL break compatibility
+// with 3ds Max files saved with older versions of the plugin.
+//
+
 const USHORT ChunkFileFormatVersion                     = 0x0001;
 
 const USHORT ChunkSettings                              = 0x1000;
@@ -44,9 +49,9 @@ const USHORT ChunkSettingsLighting                      = 0x1200;
 const USHORT ChunkSettingsLightingGI                    = 0x1210;
 const USHORT ChunkSettingsLightingCaustics              = 0x1215;
 const USHORT ChunkSettingsLightingBounces               = 0x1220;
-const USHORT ChunkSettingsLightingBackgroundEmitsLight  = 0x1230;
 const USHORT ChunkSettingsLightingMaxRayIntensitySet    = 0x1240;
 const USHORT ChunkSettingsLightingMaxRayIntensity       = 0x1250;
+const USHORT ChunkSettingsLightingBackgroundEmitsLight  = 0x1230;
 
 const USHORT ChunkSettingsOutput                        = 0x1300;
 const USHORT ChunkSettingsOutputMode                    = 0x1310;

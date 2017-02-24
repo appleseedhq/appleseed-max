@@ -63,9 +63,9 @@ class RendererSettings
     bool        m_gi;
     bool        m_caustics;
     int         m_bounces;
-    bool        m_background_emits_light;
     bool        m_max_ray_intensity_set;
     float       m_max_ray_intensity;
+    bool        m_background_emits_light;
 
     //
     // Output.

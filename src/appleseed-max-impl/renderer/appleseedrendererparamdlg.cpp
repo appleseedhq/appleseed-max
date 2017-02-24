@@ -270,8 +270,8 @@ namespace
         IRendParams*            m_rend_params;
         RendererSettings&       m_settings;
         HWND                    m_rollup;
-        ICustEdit*              m_text_pixelsamples;
-        ISpinnerControl*        m_spinner_pixelsamples;
+        ICustEdit*              m_text_pixel_samples;
+        ISpinnerControl*        m_spinner_pixel_samples;
         ICustEdit*              m_text_passes;
         ISpinnerControl*        m_spinner_passes;
         ICustEdit*              m_text_tilesize;
@@ -298,20 +298,20 @@ namespace
             ReleaseICustEdit(m_text_tilesize);
             ReleaseISpinner(m_spinner_passes);
             ReleaseICustEdit(m_text_passes);
-            ReleaseISpinner(m_spinner_pixelsamples);
-            ReleaseICustEdit(m_text_pixelsamples);
+            ReleaseISpinner(m_spinner_pixel_samples);
+            ReleaseICustEdit(m_text_pixel_samples);
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
         virtual void init(HWND hwnd) override
         {
             // Pixel Samples.
-            m_text_pixelsamples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES));
-            m_spinner_pixelsamples = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PIXELSAMPLES));
-            m_spinner_pixelsamples->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
-            m_spinner_pixelsamples->SetLimits(1, 1000000, FALSE);
-            m_spinner_pixelsamples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
-            m_spinner_pixelsamples->SetValue(m_settings.m_pixel_samples, FALSE);
+            m_text_pixel_samples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES));
+            m_spinner_pixel_samples = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PIXELSAMPLES));
+            m_spinner_pixel_samples->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
+            m_spinner_pixel_samples->SetLimits(1, 1000000, FALSE);
+            m_spinner_pixel_samples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
+            m_spinner_pixel_samples->SetValue(m_settings.m_pixel_samples, FALSE);
 
             // Passes.
             m_text_passes = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PASSES));
@@ -342,7 +342,7 @@ namespace
                 switch (LOWORD(wparam))
                 {
                   case IDC_SPINNER_PIXELSAMPLES:
-                    m_settings.m_pixel_samples = m_spinner_pixelsamples->GetIVal();
+                    m_settings.m_pixel_samples = m_spinner_pixel_samples->GetIVal();
                     return TRUE;
 
                   case IDC_SPINNER_PASSES:
@@ -418,9 +418,6 @@ namespace
             m_check_caustics = GetDlgItem(hwnd, IDC_CHECK_CAUSTICS);
             CheckDlgButton(hwnd, IDC_CHECK_CAUSTICS, m_settings.m_caustics ? BST_CHECKED : BST_UNCHECKED);
 
-            CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
-                m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
-
             m_check_max_ray_intensity = GetDlgItem(hwnd, IDC_CHECK_MAX_RAY_INTENSITY);
             CheckDlgButton(hwnd, IDC_CHECK_MAX_RAY_INTENSITY,
                 m_settings.m_max_ray_intensity_set ? BST_CHECKED : BST_UNCHECKED);
@@ -430,6 +427,9 @@ namespace
             m_spinner_max_ray_intensity->SetLimits(0.0f, 1000.0f, FALSE);
             m_spinner_max_ray_intensity->SetResetValue(RendererSettings::defaults().m_max_ray_intensity);
             m_spinner_max_ray_intensity->SetValue(m_settings.m_max_ray_intensity, FALSE);
+
+            CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
+                m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
 
             enable_disable_controls();
         }
@@ -470,15 +470,15 @@ namespace
                     m_settings.m_caustics = IsDlgButtonChecked(hwnd, IDC_CHECK_CAUSTICS) == BST_CHECKED;
                     return TRUE;
 
-                  case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
-                    m_settings.m_background_emits_light =
-                        IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
-                    return TRUE;
-
                   case IDC_CHECK_MAX_RAY_INTENSITY:
                     m_settings.m_max_ray_intensity_set =
                         IsDlgButtonChecked(hwnd, IDC_CHECK_MAX_RAY_INTENSITY) == BST_CHECKED;
                     enable_disable_controls();
+                    return TRUE;
+
+                  case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
+                    m_settings.m_background_emits_light =
+                        IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
                     return TRUE;
 
                   default:

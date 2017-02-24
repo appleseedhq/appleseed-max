@@ -1039,8 +1039,8 @@ namespace
     }
 
     asf::auto_release_ptr<asr::Frame> build_frame(
-        Bitmap*                 bitmap,
         const RendParams&       rend_params,
+        Bitmap*                 bitmap,
         const RendererSettings& settings)
     {
         if (rend_params.inMtlEdit)
@@ -1132,7 +1132,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     scene->cameras().insert(build_camera(view_params, bitmap, settings, time));
 
     // Create a frame and bind it to the project.
-    project->set_frame(build_frame(bitmap, rend_params, settings));
+    project->set_frame(build_frame(rend_params, bitmap, settings));
 
     // Bind the scene to the project.
     project->set_scene(scene);

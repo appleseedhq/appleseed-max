@@ -56,9 +56,9 @@ namespace
             m_gi = true;
             m_caustics = false;
             m_bounces = 8;
-            m_background_emits_light = true;
             m_max_ray_intensity_set = false;
             m_max_ray_intensity = 0.0f;
+            m_background_emits_light = true;
 
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
@@ -165,16 +165,16 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<int>(isave, m_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingBackgroundEmitsLight);
-        success &= write<bool>(isave, m_background_emits_light);
-        isave->EndChunk();
-
         isave->BeginChunk(ChunkSettingsLightingMaxRayIntensitySet);
         success &= write<bool>(isave, m_max_ray_intensity_set);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingMaxRayIntensity);
         success &= write<float>(isave, m_max_ray_intensity);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingBackgroundEmitsLight);
+        success &= write<bool>(isave, m_background_emits_light);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -335,10 +335,6 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
             result = read<int>(iload, &m_bounces);
             break;
 
-          case ChunkSettingsLightingBackgroundEmitsLight:
-            result = read<bool>(iload, &m_background_emits_light);
-            break;
-
           case ChunkSettingsLightingMaxRayIntensitySet:
             result = read<bool>(iload, &m_max_ray_intensity_set);
             break;
@@ -346,6 +342,11 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
           case ChunkSettingsLightingMaxRayIntensity:
             result = read<float>(iload, &m_max_ray_intensity);
             break;
+
+          case ChunkSettingsLightingBackgroundEmitsLight:
+            result = read<bool>(iload, &m_background_emits_light);
+            break;
+
         }
 
         if (result != IO_OK)
