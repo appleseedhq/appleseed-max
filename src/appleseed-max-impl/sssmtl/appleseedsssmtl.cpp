@@ -59,9 +59,6 @@
 // Windows headers.
 #include <tchar.h>
 
-// Standard headers.
-#include <algorithm>
-
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -654,7 +651,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
     {
         asr::ParamArray bssrdf_params;
         bssrdf_params.insert("weight", m_sss_amount / 100.0f);
-        bssrdf_params.insert("mfp_multiplier", std::max(m_sss_scale, 0.1f));
+        bssrdf_params.insert("mfp_multiplier", m_sss_scale);
         bssrdf_params.insert("ior", m_sss_ior);
 
         // Diffuse mean free path.
