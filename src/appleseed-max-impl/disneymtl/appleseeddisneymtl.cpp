@@ -93,6 +93,10 @@ namespace
         ParamIdSpecularTintTexmap,
         ParamIdRoughness,
         ParamIdRoughnessTexmap,
+        ParamIdSheen,
+        ParamIdSheenTexmap,
+        ParamIdSheenTint,
+        ParamIdSheenTintTexmap,
         ParamIdAnisotropy,
         ParamIdAnisotropyTexmap,
         ParamIdClearcoat,
@@ -114,6 +118,8 @@ namespace
         TexmapIdSpecular,
         TexmapIdSpecularTint,
         TexmapIdRoughness,
+        TexmapIdSheen,
+        TexmapIdSheenTint,
         TexmapIdAnisotropy,
         TexmapIdClearcoat,
         TexmapIdClearcoatGloss,
@@ -129,6 +135,8 @@ namespace
         _T("Specular"),
         _T("Specular Tint"),
         _T("Roughness"),
+        _T("Sheen"),
+        _T("Sheen Tint"),
         _T("Anisotropy"),
         _T("Clearcoat"),
         _T("Clearcoat Gloss"),
@@ -143,6 +151,8 @@ namespace
         ParamIdSpecularTexmap,
         ParamIdSpecularTintTexmap,
         ParamIdRoughnessTexmap,
+        ParamIdSheenTexmap,
+        ParamIdSheenTintTexmap,
         ParamIdAnisotropyTexmap,
         ParamIdClearcoatTexmap,
         ParamIdClearcoatGlossTexmap,
@@ -229,6 +239,26 @@ namespace
         ParamIdRoughnessTexmap, _T("roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
+        p_end,
+
+        ParamIdSheen, _T("sheen"), TYPE_FLOAT, P_ANIMATABLE, IDS_SHEEN,
+            p_default, 0.0f,
+            p_range, 0.0f, 1000.0f,
+            p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SHEEN, IDC_SLIDER_SHEEN, 10.0f,
+        p_end,
+        ParamIdSheenTexmap, _T("sheen_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SHEEN,
+            p_subtexno, TexmapIdSheen,
+            p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SHEEN,
+        p_end,
+
+        ParamIdSheenTint, _T("sheen_tint"), TYPE_FLOAT, P_ANIMATABLE, IDS_SHEEN_TINT,
+            p_default, 0.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SHEEN_TINT, IDC_SLIDER_SHEEN_TINT, 10.0f,
+        p_end,
+        ParamIdSheenTintTexmap, _T("sheen_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SHEEN_TINT,
+            p_subtexno, TexmapIdSheenTint,
+            p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SHEEN_TINT,
         p_end,
 
         ParamIdAnisotropy, _T("anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
@@ -319,6 +349,10 @@ AppleseedDisneyMtl::AppleseedDisneyMtl()
   , m_specular_tint_texmap(nullptr)
   , m_roughness(40.0f)
   , m_roughness_texmap(nullptr)
+  , m_sheen(0.0f)
+  , m_sheen_texmap(nullptr)
+  , m_sheen_tint(0.0f)
+  , m_sheen_tint_texmap(nullptr)
   , m_anisotropy(0.0f)
   , m_anisotropy_texmap(nullptr)
   , m_clearcoat(0.0f)
@@ -502,6 +536,12 @@ void AppleseedDisneyMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdRoughness, t, m_roughness, m_params_validity);
         m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, m_params_validity);
+
+        m_pblock->GetValue(ParamIdSheen, t, m_sheen, m_params_validity);
+        m_pblock->GetValue(ParamIdSheenTexmap, t, m_sheen_texmap, m_params_validity);
+
+        m_pblock->GetValue(ParamIdSheenTint, t, m_sheen_tint, m_params_validity);
+        m_pblock->GetValue(ParamIdSheenTintTexmap, t, m_sheen_tint_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdAnisotropy, t, m_anisotropy, m_params_validity);
         m_pblock->GetValue(ParamIdAnisotropyTexmap, t, m_anisotropy_texmap, m_params_validity);
@@ -717,6 +757,8 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
     layer_values.insert("specular_tint", fmt_expr(m_specular_tint / 100.0f, m_specular_tint_texmap));
     layer_values.insert("anisotropic", fmt_expr(m_anisotropy, m_anisotropy_texmap));
     layer_values.insert("roughness", fmt_expr(m_roughness / 100.0f, m_roughness_texmap));
+    layer_values.insert("sheen", fmt_expr(m_sheen/ 100.0f, m_sheen_texmap));
+    layer_values.insert("sheen_tint", fmt_expr(m_sheen_tint / 100.0f, m_sheen_tint_texmap));
     layer_values.insert("clearcoat", fmt_expr(m_clearcoat / 100.0f, m_clearcoat_texmap));
     layer_values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss / 100.0f, m_clearcoat_gloss_texmap));
 

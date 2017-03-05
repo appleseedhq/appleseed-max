@@ -146,6 +146,10 @@ class AppleseedDisneyMtl
     Texmap*         m_specular_tint_texmap;
     float           m_roughness;
     Texmap*         m_roughness_texmap;
+    float           m_sheen;
+    Texmap*         m_sheen_texmap;
+    float           m_sheen_tint;
+    Texmap*         m_sheen_tint_texmap;
     float           m_anisotropy;
     Texmap*         m_anisotropy_texmap;
     float           m_clearcoat;
