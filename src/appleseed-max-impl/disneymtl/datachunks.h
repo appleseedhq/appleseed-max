@@ -31,6 +31,11 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
+//
+// Changing the values of these constants WILL break compatibility
+// with 3ds Max files saved with older versions of the plugin.
+//
+
 const USHORT ChunkFileFormatVersion                 = 0x0001;
 
 const USHORT ChunkMtlBase                           = 0x1000;

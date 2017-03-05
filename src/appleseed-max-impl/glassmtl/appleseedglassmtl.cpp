@@ -89,6 +89,7 @@ namespace
 
     enum ParamId
     {
+        // Changing the order of these parameters WILL break compatibility.
         ParamIdSurfaceColor,
         ParamIdSurfaceColorTexmap,
         ParamIdReflectionTint,
