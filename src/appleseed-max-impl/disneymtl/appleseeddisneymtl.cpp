@@ -93,10 +93,6 @@ namespace
         ParamIdSpecularTintTexmap,
         ParamIdRoughness,
         ParamIdRoughnessTexmap,
-        ParamIdSheen,
-        ParamIdSheenTexmap,
-        ParamIdSheenTint,
-        ParamIdSheenTintTexmap,
         ParamIdAnisotropy,
         ParamIdAnisotropyTexmap,
         ParamIdClearcoat,
@@ -108,7 +104,11 @@ namespace
         ParamIdBumpMethod,
         ParamIdBumpTexmap,
         ParamIdBumpAmount,
-        ParamIdBumpUpVector
+        ParamIdBumpUpVector,
+        ParamIdSheen,
+        ParamIdSheenTexmap,
+        ParamIdSheenTint,
+        ParamIdSheenTintTexmap
     };
 
     enum TexmapId
