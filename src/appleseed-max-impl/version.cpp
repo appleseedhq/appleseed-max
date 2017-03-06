@@ -29,4 +29,4 @@
 // Interface header.
 #include "version.h"
 
-const TCHAR* PluginVersionString = _T("0.4.3-beta");
+const TCHAR* PluginVersionString = _T("0.4.4-beta");
