@@ -678,6 +678,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         const auto bssrdf_name = std::string(name) + "_bssrdf";
         assembly.bssrdfs().insert(
             asr::NormalizedDiffusionBSSRDFFactory::static_create(bssrdf_name.c_str(), bssrdf_params));
+
         material_params.insert("bssrdf", bssrdf_name);
     }
 
@@ -718,6 +719,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         const auto brdf_name = std::string(name) + "_brdf";
         assembly.bsdfs().insert(
             asr::GlossyBRDFFactory::static_create(brdf_name.c_str(), brdf_params));
+
         material_params.insert("bsdf", brdf_name);
     }
 
@@ -728,7 +730,13 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
     if (is_bitmap_texture(m_bump_texmap))
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert("displacement_map", insert_texture_and_instance(assembly, m_bump_texmap));
+        material_params.insert(
+            "displacement_map",
+            insert_texture_and_instance(
+                assembly,
+                m_bump_texmap,
+                asr::ParamArray()
+                    .insert("color_space", "linear_rgb")));
 
         switch (m_bump_method)
         {

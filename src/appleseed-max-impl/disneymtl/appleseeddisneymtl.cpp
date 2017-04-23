@@ -724,7 +724,13 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
     if (is_bitmap_texture(m_bump_texmap))
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert("displacement_map", insert_texture_and_instance(assembly, m_bump_texmap));
+        material_params.insert(
+            "displacement_map",
+            insert_texture_and_instance(
+                assembly,
+                m_bump_texmap,
+                asr::ParamArray()
+                    .insert("color_space", "linear_rgb")));
 
         switch (m_bump_method)
         {
