@@ -677,6 +677,12 @@ void AppleseedDisneyMtl::SetAmbient(Color c, TimeValue t)
 
 void AppleseedDisneyMtl::SetDiffuse(Color c, TimeValue t)
 {
+    Point3 p;
+    Interval iv;
+    m_pblock->SetValue( ParamIdBaseColor, t, Point3(c.r,c.g,c.b));
+
+    m_pblock->GetValue( ParamIdBaseColor, t, p, iv );
+    m_base_color = Color(p.x,p.y,p.z);
 }
 
 void AppleseedDisneyMtl::SetSpecular(Color c, TimeValue t)

@@ -54,6 +54,7 @@
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
+#include <hsv.h>
 
 // Windows headers.
 #include <tchar.h>
@@ -591,7 +592,8 @@ float AppleseedGlassMtl::GetShinStr(int mtlNum, BOOL backFace)
 
 float AppleseedGlassMtl::GetXParency(int mtlNum, BOOL backFace)
 {
-    return 0.0f;
+    Color hsv = RGBtoHSV (m_refraction_tint);
+    return hsv.b;
 }
 
 void AppleseedGlassMtl::SetAmbient(Color c, TimeValue t)
