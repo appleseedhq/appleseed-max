@@ -36,6 +36,9 @@
 // 3ds Max headers.
 #include <modstack.h>
 
+namespace asf = foundation;
+namespace asr = renderer;
+
 AppleseedObjPropsModClassDesc g_appleseed_objpropsmod_classdesc;
 
 
@@ -273,6 +276,44 @@ Class_ID AppleseedObjPropsMod::InputType()
 
 void AppleseedObjPropsMod::ModifyObject(TimeValue t, ModContext& mc, ObjectState* os, INode* node)
 {
+    // Nothing to do.
+}
+
+asr::VisibilityFlags::Type AppleseedObjPropsMod::get_visibility_flags(const TimeValue t) const
+{
+    asr::VisibilityFlags::Type flags = 0;
+
+    Interval params_validity;
+    params_validity.SetInfinite();
+
+    if (m_pblock->GetInt(ParamIdVisibilityCamera, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::CameraRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilityLight, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::LightRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilityShadow, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::ShadowRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilityTransparency, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::TransparencyRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilityProbe, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::ProbeRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilityDiffuse, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::DiffuseRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilityGlossy, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::GlossyRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilitySpecular, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::SpecularRay;
+
+    if (m_pblock->GetInt(ParamIdVisibilitySSS, t, params_validity) != 0)
+        flags |= asr::VisibilityFlags::SubsurfaceRay;
+
+    return flags;
 }
 
 

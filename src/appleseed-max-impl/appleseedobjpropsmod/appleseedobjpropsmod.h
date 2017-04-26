@@ -28,6 +28,9 @@
 
 #pragma once
 
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
@@ -85,6 +88,8 @@ class AppleseedObjPropsMod
     virtual ChannelMask ChannelsChanged() override;
     virtual Class_ID InputType() override;
     virtual void ModifyObject(TimeValue t, ModContext& mc, ObjectState* os, INode* node) override;
+
+    renderer::VisibilityFlags::Type get_visibility_flags(const TimeValue t) const;
 
   private:
     IParamBlock2*   m_pblock;
