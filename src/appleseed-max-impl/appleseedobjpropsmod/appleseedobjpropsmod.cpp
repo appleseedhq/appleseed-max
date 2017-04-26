@@ -35,6 +35,11 @@
 
 // 3ds Max headers.
 #include <modstack.h>
+#include <paramtype.h>
+
+#if MAX_RELEASE == MAX_RELEASE_R17
+#define TYPE_SINGLECHECKBOX TYPE_SINGLECHEKBOX
+#endif
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -292,34 +297,31 @@ asr::VisibilityFlags::Type AppleseedObjPropsMod::get_visibility_flags(const Time
 {
     asr::VisibilityFlags::Type flags = 0;
 
-    Interval params_validity;
-    params_validity.SetInfinite();
-
-    if (m_pblock->GetInt(ParamIdVisibilityCamera, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityCamera, t) != 0)
         flags |= asr::VisibilityFlags::CameraRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityLight, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityLight, t) != 0)
         flags |= asr::VisibilityFlags::LightRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityShadow, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityShadow, t) != 0)
         flags |= asr::VisibilityFlags::ShadowRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityTransparency, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityTransparency, t) != 0)
         flags |= asr::VisibilityFlags::TransparencyRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityProbe, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityProbe, t) != 0)
         flags |= asr::VisibilityFlags::ProbeRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityDiffuse, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityDiffuse, t) != 0)
         flags |= asr::VisibilityFlags::DiffuseRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityGlossy, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityGlossy, t) != 0)
         flags |= asr::VisibilityFlags::GlossyRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilitySpecular, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilitySpecular, t) != 0)
         flags |= asr::VisibilityFlags::SpecularRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilitySSS, t, params_validity) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilitySSS, t) != 0)
         flags |= asr::VisibilityFlags::SubsurfaceRay;
 
     return flags;
