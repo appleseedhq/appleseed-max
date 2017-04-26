@@ -30,6 +30,7 @@
 #include "projectbuilder.h"
 
 // appleseed-max headers.
+#include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedrenderer/maxsceneentities.h"
 #include "appleseedrenderer/renderersettings.h"
 #include "iappleseedmtl.h"
@@ -66,6 +67,7 @@
 #include <genlight.h>
 #include <iInstanceMgr.h>
 #include <INodeTab.h>
+#include <modstack.h>
 #include <object.h>
 #include <triobj.h>
 
@@ -425,6 +427,25 @@ namespace
         return material_info;
     }
 
+    asr::VisibilityFlags::Type get_visibility_flags(Object* object, const TimeValue time)
+    {
+        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+        {
+            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
+            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
+            {
+                Modifier* modifier = derived_object->GetModifier(i);
+                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
+                {
+                    const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+                    return obj_props_mod->get_visibility_flags(time);
+                }
+            }
+        }
+
+        return asr::VisibilityFlags::AllRays;
+    }
+
     enum class RenderType
     {
         Default,
@@ -521,6 +542,10 @@ namespace
 
         // Parameters.
         asr::ParamArray params;
+        params.insert(
+            "visibility",
+            asr::VisibilityFlags::to_dictionary(
+                get_visibility_flags(instance_node->GetObjectRef(), time)));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
