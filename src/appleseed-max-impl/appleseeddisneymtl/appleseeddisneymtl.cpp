@@ -75,7 +75,7 @@ namespace
     enum { ParamBlockIdDisneyMtl };
     enum { ParamBlockRefDisneyMtl };
 
-    enum MapId
+    enum ParamMapId
     {
         ParamMapIdDisney,
         ParamMapIdBump

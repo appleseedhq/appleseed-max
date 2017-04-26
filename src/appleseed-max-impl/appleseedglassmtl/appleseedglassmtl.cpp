@@ -81,7 +81,7 @@ namespace
     enum { ParamBlockIdGlassMtl };
     enum { ParamBlockRefGlassMtl };
 
-    enum MapId
+    enum ParamMapId
     {
         ParamMapIdGlass,
         ParamMapIdBump

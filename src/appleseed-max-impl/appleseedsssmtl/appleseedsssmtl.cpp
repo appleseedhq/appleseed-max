@@ -79,7 +79,7 @@ namespace
     enum { ParamBlockIdSSSMtl };
     enum { ParamBlockRefSSSMtl };
 
-    enum MapId
+    enum ParamMapId
     {
         ParamMapIdSSS,
         ParamMapIdSpecular,

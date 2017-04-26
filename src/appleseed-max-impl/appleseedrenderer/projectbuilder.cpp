@@ -419,7 +419,7 @@ namespace
         }
         else
         {
-            // It's a non-appleseed material: return an empty material that will appear black.
+            // It isn't an appleseed material: return an empty material that will appear black.
             material_info.m_name = insert_empty_material(assembly, instance_name + "_mat");
             material_info.m_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
         }
