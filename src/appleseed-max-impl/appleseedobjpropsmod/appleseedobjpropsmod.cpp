@@ -51,6 +51,11 @@ namespace
     enum { ParamBlockIdObjPropsMod };
     enum { ParamBlockRefObjPropsMod };
 
+    enum ParamMapId
+    {
+        ParamMapIdVisibility
+    };
+
     enum ParamId
     {
         // Changing these value WILL break compatibility.
@@ -71,12 +76,16 @@ namespace
         _T("appleseedObjPropsModParams"),           // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_objpropsmod_classdesc,         // class descriptor
-        P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
+        P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
         ParamBlockRefObjPropsMod,                   // parameter block's reference number
 
-        // --- P_AUTO_UI arguments ---
+        // --- P_MULTIMAP arguments ---
+        1,                                          // number of rollups
+
+        // --- P_AUTO_UI arguments for Visibility rollup ---
+        ParamMapIdVisibility,
         IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
         IDS_FORMVIEW_PARAMS_TITLE,                  // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
@@ -87,39 +96,39 @@ namespace
 
         ParamIdVisibilityCamera, _T("visibility_camera"), TYPE_BOOL, 0, IDS_VISIBILITY_CAMERA,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_CAMERA,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_CAMERA,
         p_end,
         ParamIdVisibilityLight, _T("visibility_light"), TYPE_BOOL, 0, IDS_VISIBILITY_LIGHT,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_LIGHT,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_LIGHT,
         p_end,
         ParamIdVisibilityShadow, _T("visibility_shadow"), TYPE_BOOL, 0, IDS_VISIBILITY_SHADOW,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SHADOW,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SHADOW,
         p_end,
         ParamIdVisibilityTransparency, _T("visibility_transparency"), TYPE_BOOL, 0, IDS_VISIBILITY_TRANSPARENCY,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_TRANSPARENCY,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_TRANSPARENCY,
         p_end,
         ParamIdVisibilityProbe, _T("visibility_probe"), TYPE_BOOL, 0, IDS_VISIBILITY_PROBE,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_PROBE,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_PROBE,
         p_end,
         ParamIdVisibilityDiffuse, _T("visibility_diffuse"), TYPE_BOOL, 0, IDS_VISIBILITY_DIFFUSE,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_DIFFUSE,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_DIFFUSE,
         p_end,
         ParamIdVisibilityGlossy, _T("visibility_glossy"), TYPE_BOOL, 0, IDS_VISIBILITY_GLOSSY,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_GLOSSY,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_GLOSSY,
         p_end,
         ParamIdVisibilitySpecular, _T("visibility_specular"), TYPE_BOOL, 0, IDS_VISIBILITY_SPECULAR,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SPECULAR,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SPECULAR,
         p_end,
         ParamIdVisibilitySSS, _T("visibility_sss"), TYPE_BOOL, 0, IDS_VISIBILITY_SSS,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SSS,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SSS,
         p_end,
 
         // --- The end ---

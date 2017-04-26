@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by appleseedlightmtl.rc
+// Used by appleseedobjpropsmod.rc
 //
 #define IDD_FORMVIEW_PARAMS                 7000
 #define IDS_FORMVIEW_PARAMS_TITLE           7001
