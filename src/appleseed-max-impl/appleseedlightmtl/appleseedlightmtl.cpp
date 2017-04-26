@@ -328,13 +328,8 @@ void AppleseedLightMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdLightPower, t, m_light_power, m_params_validity);
 
-        int emission_front;
-        m_pblock->GetValue(ParamIdEmissionFront, t, emission_front, m_params_validity);
-        m_emission_front = emission_front != 0;
-
-        int emission_back;
-        m_pblock->GetValue(ParamIdEmissionBack, t, emission_back, m_params_validity);
-        m_emission_back = emission_back != 0;
+        m_emission_front = m_pblock->GetInt(ParamIdEmissionFront, t, m_params_validity) != 0;
+        m_emission_back = m_pblock->GetInt(ParamIdEmissionBack, t, m_params_validity) != 0;
 
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
