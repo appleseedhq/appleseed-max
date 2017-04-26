@@ -32,8 +32,8 @@
 // appleseed-max headers.
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
-#include "disneymtl/datachunks.h"
-#include "disneymtl/resource.h"
+#include "appleseeddisneymtl/datachunks.h"
+#include "appleseeddisneymtl/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -83,50 +83,51 @@ namespace
 
     enum ParamId
     {
-        // Changing the order of these parameters WILL break compatibility.
-        ParamIdBaseColor,
-        ParamIdBaseColorTexmap,
-        ParamIdMetallic,
-        ParamIdMetallicTexmap,
-        ParamIdSpecular,
-        ParamIdSpecularTexmap,
-        ParamIdSpecularTint,
-        ParamIdSpecularTintTexmap,
-        ParamIdRoughness,
-        ParamIdRoughnessTexmap,
-        ParamIdAnisotropy,
-        ParamIdAnisotropyTexmap,
-        ParamIdClearcoat,
-        ParamIdClearcoatTexmap,
-        ParamIdClearcoatGloss,
-        ParamIdClearcoatGlossTexmap,
-        ParamIdAlpha,
-        ParamIdAlphaTexmap,
-        ParamIdBumpMethod,
-        ParamIdBumpTexmap,
-        ParamIdBumpAmount,
-        ParamIdBumpUpVector,
-        ParamIdSheen,
-        ParamIdSheenTexmap,
-        ParamIdSheenTint,
-        ParamIdSheenTintTexmap
+        // Changing these value WILL break compatibility.
+        ParamIdBaseColor            = 0,
+        ParamIdBaseColorTexmap      = 1,
+        ParamIdMetallic             = 2,
+        ParamIdMetallicTexmap       = 3,
+        ParamIdSpecular             = 4,
+        ParamIdSpecularTexmap       = 5,
+        ParamIdSpecularTint         = 6,
+        ParamIdSpecularTintTexmap   = 7,
+        ParamIdRoughness            = 8,
+        ParamIdRoughnessTexmap      = 9,
+        ParamIdAnisotropy           = 10,
+        ParamIdAnisotropyTexmap     = 11,
+        ParamIdClearcoat            = 12,
+        ParamIdClearcoatTexmap      = 13,
+        ParamIdClearcoatGloss       = 14,
+        ParamIdClearcoatGlossTexmap = 15,
+        ParamIdAlpha                = 16,
+        ParamIdAlphaTexmap          = 17,
+        ParamIdBumpMethod           = 18,
+        ParamIdBumpTexmap           = 19,
+        ParamIdBumpAmount           = 20,
+        ParamIdBumpUpVector         = 21,
+        ParamIdSheen                = 22,
+        ParamIdSheenTexmap          = 23,
+        ParamIdSheenTint            = 24,
+        ParamIdSheenTintTexmap      = 25
     };
 
     enum TexmapId
     {
-        TexmapIdBase,
-        TexmapIdMetallic,
-        TexmapIdSpecular,
-        TexmapIdSpecularTint,
-        TexmapIdRoughness,
-        TexmapIdSheen,
-        TexmapIdSheenTint,
-        TexmapIdAnisotropy,
-        TexmapIdClearcoat,
-        TexmapIdClearcoatGloss,
-        TexmapIdAlpha,
-        TexmapIdBumpMap,
-        TexmapCount // keep last
+        // Changing these value WILL break compatibility.
+        TexmapIdBase                = 0,
+        TexmapIdMetallic            = 1,
+        TexmapIdSpecular            = 2,
+        TexmapIdSpecularTint        = 3,
+        TexmapIdRoughness           = 4,
+        TexmapIdSheen               = 5,
+        TexmapIdSheenTint           = 6,
+        TexmapIdAnisotropy          = 7,
+        TexmapIdClearcoat           = 8,
+        TexmapIdClearcoatGloss      = 9,
+        TexmapIdAlpha               = 10,
+        TexmapIdBumpMap             = 11,
+        TexmapCount                 // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =

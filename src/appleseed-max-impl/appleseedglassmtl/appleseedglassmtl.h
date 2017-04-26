@@ -187,7 +187,7 @@ class AppleseedGlassMtlClassDesc
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance();
+    virtual HINSTANCE HInstance() override;
 
   private:
     AppleseedGlassMtlBrowserEntryInfo m_browser_entry_info;

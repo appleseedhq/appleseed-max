@@ -1,0 +1,129 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 108, 159
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Visibility",IDC_STATIC,0,3,108,156
+    CONTROL         "Camera",IDC_BUTTON_VISIBILITY_CAMERA,"CustButton",WS_TABSTOP,7,15,94,10
+    CONTROL         "Light",IDC_BUTTON_VISIBILITY_LIGHT,"CustButton",WS_TABSTOP,7,31,94,10
+    CONTROL         "Shadow",IDC_BUTTON_VISIBILITY_SHADOW,"CustButton",WS_TABSTOP,7,47,94,10
+    CONTROL         "Transparency",IDC_BUTTON_VISIBILITY_TRANSPARENCY,"CustButton",WS_TABSTOP,7,63,94,10
+    CONTROL         "Probe",IDC_BUTTON_VISIBILITY_PROBE,"CustButton",WS_TABSTOP,7,79,94,10
+    CONTROL         "Diffuse",IDC_BUTTON_VISIBILITY_DIFFUSE,"CustButton",WS_TABSTOP,7,95,94,10
+    CONTROL         "Glossy",IDC_BUTTON_VISIBILITY_GLOSSY,"CustButton",WS_TABSTOP,7,111,94,10
+    CONTROL         "Specular",IDC_BUTTON_VISIBILITY_SPECULAR,"CustButton",WS_TABSTOP,7,127,94,10
+    CONTROL         "SSS",IDC_BUTTON_VISIBILITY_SSS,"CustButton",WS_TABSTOP,7,143,94,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_PARAMS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 133
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_PARAMS_TITLE "Object Properties"
+    IDS_VISIBILITY_CAMERA "Camera"
+    IDS_VISIBILITY_LIGHT "Light"
+    IDS_VISIBILITY_SHADOW "Shadow"
+    IDS_VISIBILITY_TRANSPARENCY "Transparency"
+    IDS_VISIBILITY_PROBE "Probe"
+    IDS_VISIBILITY_DIFFUSE "Diffuse"
+    IDS_VISIBILITY_GLOSSY "Glossy"
+    IDS_VISIBILITY_SPECULAR "Specular"
+    IDS_VISIBILITY_SSS "SSS"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

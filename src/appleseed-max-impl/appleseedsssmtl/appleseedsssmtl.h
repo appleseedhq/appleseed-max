@@ -58,7 +58,7 @@ class ISave;
 class ShadeContext;
 class Texmap;
 
-class AppleseedLightMtl
+class AppleseedSSSMtl
   : public Mtl
   , public IAppleseedMtl
 {
@@ -66,7 +66,7 @@ class AppleseedLightMtl
     static Class_ID get_class_id();
 
     // Constructor.
-    AppleseedLightMtl();
+    AppleseedSSSMtl();
 
     // InterfaceServer methods.
     virtual BaseInterface* GetInterface(Interface_ID id) override;
@@ -136,19 +136,33 @@ class AppleseedLightMtl
   private:
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
-    Color           m_light_color;
-    Texmap*         m_light_color_texmap;
-    float           m_light_power;
-    bool            m_emission_front;
-    bool            m_emission_back;
+    Color           m_sss_color;
+    Texmap*         m_sss_color_texmap;
+    Color           m_sss_scattering_color;
+    Texmap*         m_sss_scattering_color_texmap;
+    float           m_sss_amount;
+    float           m_sss_scale;
+    float           m_sss_ior;
+    Color           m_specular_color;
+    Texmap*         m_specular_color_texmap;
+    float           m_specular_amount;
+    Texmap*         m_specular_amount_texmap;
+    float           m_specular_roughness;
+    Texmap*         m_specular_roughness_texmap;
+    float           m_specular_anisotropy;
+    Texmap*         m_specular_anisotropy_texmap;
+    int             m_bump_method;
+    Texmap*         m_bump_texmap;
+    float           m_bump_amount;
+    int             m_bump_up_vector;
 };
 
 
 //
-// AppleseedLightMtl material browser info.
+// AppleseedSSSMtl material browser info.
 //
 
-class AppleseedLightMtlBrowserEntryInfo
+class AppleseedSSSMtlBrowserEntryInfo
   : public IMaterialBrowserEntryInfo
 {
   public:
@@ -159,10 +173,10 @@ class AppleseedLightMtlBrowserEntryInfo
 
 
 //
-// AppleseedLightMtl class descriptor.
+// AppleseedSSSMtl class descriptor.
 //
 
-class AppleseedLightMtlClassDesc
+class AppleseedSSSMtlClassDesc
   : public ClassDesc2
 {
   public:
@@ -174,10 +188,10 @@ class AppleseedLightMtlClassDesc
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance();
+    virtual HINSTANCE HInstance() override;
 
   private:
-    AppleseedLightMtlBrowserEntryInfo m_browser_entry_info;
+    AppleseedSSSMtlBrowserEntryInfo m_browser_entry_info;
 };
 
-extern AppleseedLightMtlClassDesc g_appleseed_lightmtl_classdesc;
+extern AppleseedSSSMtlClassDesc g_appleseed_sssmtl_classdesc;

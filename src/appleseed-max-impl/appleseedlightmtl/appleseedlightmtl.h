@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2016-2017 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@ class ISave;
 class ShadeContext;
 class Texmap;
 
-class AppleseedDisneyMtl
+class AppleseedLightMtl
   : public Mtl
   , public IAppleseedMtl
 {
@@ -66,7 +66,7 @@ class AppleseedDisneyMtl
     static Class_ID get_class_id();
 
     // Constructor.
-    AppleseedDisneyMtl();
+    AppleseedLightMtl();
 
     // InterfaceServer methods.
     virtual BaseInterface* GetInterface(Interface_ID id) override;
@@ -136,40 +136,19 @@ class AppleseedDisneyMtl
   private:
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
-    Color           m_base_color;
-    Texmap*         m_base_color_texmap;
-    float           m_metallic;
-    Texmap*         m_metallic_texmap;
-    float           m_specular;
-    Texmap*         m_specular_texmap;
-    float           m_specular_tint;
-    Texmap*         m_specular_tint_texmap;
-    float           m_roughness;
-    Texmap*         m_roughness_texmap;
-    float           m_sheen;
-    Texmap*         m_sheen_texmap;
-    float           m_sheen_tint;
-    Texmap*         m_sheen_tint_texmap;
-    float           m_anisotropy;
-    Texmap*         m_anisotropy_texmap;
-    float           m_clearcoat;
-    Texmap*         m_clearcoat_texmap;
-    float           m_clearcoat_gloss;
-    Texmap*         m_clearcoat_gloss_texmap;
-    float           m_alpha;
-    Texmap*         m_alpha_texmap;
-    int             m_bump_method;
-    Texmap*         m_bump_texmap;
-    float           m_bump_amount;
-    int             m_bump_up_vector;
+    Color           m_light_color;
+    Texmap*         m_light_color_texmap;
+    float           m_light_power;
+    bool            m_emission_front;
+    bool            m_emission_back;
 };
 
 
 //
-// AppleseedDisneyMtl material browser info.
+// AppleseedLightMtl material browser info.
 //
 
-class AppleseedDisneyMtlBrowserEntryInfo
+class AppleseedLightMtlBrowserEntryInfo
   : public IMaterialBrowserEntryInfo
 {
   public:
@@ -180,10 +159,10 @@ class AppleseedDisneyMtlBrowserEntryInfo
 
 
 //
-// AppleseedDisneyMtl class descriptor.
+// AppleseedLightMtl class descriptor.
 //
 
-class AppleseedDisneyMtlClassDesc
+class AppleseedLightMtlClassDesc
   : public ClassDesc2
 {
   public:
@@ -195,10 +174,10 @@ class AppleseedDisneyMtlClassDesc
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance();
+    virtual HINSTANCE HInstance() override;
 
   private:
-    AppleseedDisneyMtlBrowserEntryInfo m_browser_entry_info;
+    AppleseedLightMtlBrowserEntryInfo m_browser_entry_info;
 };
 
-extern AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;
+extern AppleseedLightMtlClassDesc g_appleseed_lightmtl_classdesc;

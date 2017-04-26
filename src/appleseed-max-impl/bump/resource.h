@@ -5,26 +5,26 @@
 #define IDD_FORMVIEW_BUMP_PARAMS            4000
 #define IDS_FORMVIEW_BUMP_PARAMS_TITLE      4001
 
-#define IDC_LABEL_BUMP_METHOD               4100
-#define IDC_COMBO_BUMP_METHOD               4101
-#define IDS_COMBO_BUMP_METHOD_BUMPMAP       4102
-#define IDS_COMBO_BUMP_METHOD_NORMALMAP     4103
-#define IDS_BUMP_METHOD                     4104
+#define IDC_LABEL_BUMP_METHOD               4010
+#define IDC_COMBO_BUMP_METHOD               4011
+#define IDS_COMBO_BUMP_METHOD_BUMPMAP       4012
+#define IDS_COMBO_BUMP_METHOD_NORMALMAP     4013
+#define IDS_BUMP_METHOD                     4014
 
-#define IDC_LABEL_BUMP_MAP                  4200
-#define IDC_TEXMAP_BUMP_MAP                 4201
-#define IDS_TEXMAP_BUMP_MAP                 4202
+#define IDC_LABEL_BUMP_MAP                  4020
+#define IDC_TEXMAP_BUMP_MAP                 4021
+#define IDS_TEXMAP_BUMP_MAP                 4022
 
-#define IDC_LABEL_BUMP_AMOUNT               4300
-#define IDC_EDIT_BUMP_AMOUNT                4301
-#define IDC_SPINNER_BUMP_AMOUNT             4302
-#define IDS_BUMP_AMOUNT                     4304
+#define IDC_LABEL_BUMP_AMOUNT               4030
+#define IDC_EDIT_BUMP_AMOUNT                4031
+#define IDC_SPINNER_BUMP_AMOUNT             4032
+#define IDS_BUMP_AMOUNT                     4034
 
-#define IDC_LABEL_BUMP_UP_VECTOR            4400
-#define IDC_COMBO_BUMP_UP_VECTOR            4401
-#define IDS_COMBO_BUMP_UP_VECTOR_Y          4402
-#define IDS_COMBO_BUMP_UP_VECTOR_Z          4403
-#define IDS_BUMP_UP_VECTOR                  4404
+#define IDC_LABEL_BUMP_UP_VECTOR            4040
+#define IDC_COMBO_BUMP_UP_VECTOR            4041
+#define IDS_COMBO_BUMP_UP_VECTOR_Y          4042
+#define IDS_COMBO_BUMP_UP_VECTOR_Z          4043
+#define IDS_BUMP_UP_VECTOR                  4044
 
 // Next default values for new objects
 // 

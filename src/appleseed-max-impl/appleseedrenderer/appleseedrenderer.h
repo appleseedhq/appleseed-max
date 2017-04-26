@@ -29,8 +29,8 @@
 #pragma once
 
 // appleseed-max headers.
-#include "renderer/maxsceneentities.h"
-#include "renderer/renderersettings.h"
+#include "appleseedrenderer/maxsceneentities.h"
+#include "appleseedrenderer/renderersettings.h"
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers

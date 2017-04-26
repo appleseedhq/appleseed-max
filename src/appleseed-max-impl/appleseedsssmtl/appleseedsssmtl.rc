@@ -1,0 +1,234 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_SSS_PARAMS DIALOGEX 0, 0, 217, 87
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Color:",IDC_LABEL_SSS_COLOR,7,6,48,8
+    CONTROL         "Color Swatch",IDC_SWATCH_SSS_COLOR,"ColorSwatch",WS_TABSTOP,69,5,30,10
+    CONTROL         "Color Map",IDC_TEXMAP_SSS_COLOR,"CustButton",WS_TABSTOP,101,5,102,10
+
+    LTEXT           "Scattering Color:",IDC_LABEL_SSS_SCATTERING_COLOR,7,22,48,8
+    CONTROL         "Scattering Color Swatch",IDC_SWATCH_SSS_SCATTERING_COLOR,"ColorSwatch",WS_TABSTOP,69,21,30,10
+    CONTROL         "Scattering Color Map",IDC_TEXMAP_SSS_SCATTERING_COLOR,"CustButton",WS_TABSTOP,101,21,102,10
+
+    LTEXT           "Amount:",IDC_LABEL_SSS_AMOUNT,7,38,55,8
+    CONTROL         "Amount Edit",IDC_EDIT_SSS_AMOUNT,"CustEdit",WS_TABSTOP,69,37,30,10
+    CONTROL         "Amount Slider",IDC_SLIDER_SSS_AMOUNT,"SliderControl",WS_TABSTOP,101,37,90,13
+
+    LTEXT           "Scale:",IDC_LABEL_SSS_SCALE,7,54,48,8
+    CONTROL         "Scale Edit",IDC_EDIT_SSS_SCALE,"CustEdit",WS_TABSTOP,69,53,30,10
+    CONTROL         "Scale Spinner",IDC_SPINNER_SSS_SCALE,"SpinnerControl",WS_TABSTOP,101,53,6,10
+
+    LTEXT           "IOR:",IDC_LABEL_SSS_IOR,7,70,48,8
+    CONTROL         "IOR Edit",IDC_EDIT_SSS_IOR,"CustEdit",WS_TABSTOP,69,69,30,10
+    CONTROL         "IOR Slider",IDC_SLIDER_SSS_IOR,"SliderControl",WS_TABSTOP,101,69,90,13
+END
+
+IDD_FORMVIEW_SPECULAR_PARAMS DIALOGEX 0, 0, 217, 71
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Color:",IDC_LABEL_SPECULAR_COLOR,7,6,48,8
+    CONTROL         "Color Swatch",IDC_SWATCH_SPECULAR_COLOR,"ColorSwatch",WS_TABSTOP,69,5,30,10
+    CONTROL         "Color Map",IDC_TEXMAP_SPECULAR_COLOR,"CustButton",WS_TABSTOP,101,5,102,10
+
+    LTEXT           "Amount:",IDC_LABEL_SPECULAR_AMOUNT,7,22,55,8
+    CONTROL         "Amount Edit",IDC_EDIT_SPECULAR_AMOUNT,"CustEdit",WS_TABSTOP,69,21,30,10
+    CONTROL         "Amount Slider",IDC_SLIDER_SPECULAR_AMOUNT,"SliderControl",WS_TABSTOP,101,21,90,13
+    CONTROL         "Amount Map",IDC_TEXMAP_SPECULAR_AMOUNT,"CustButton",WS_TABSTOP,194,21,9,10
+
+    LTEXT           "Roughness:",IDC_LABEL_SPECULAR_ROUGHNESS,7,38,55,8
+    CONTROL         "Roughness Edit",IDC_EDIT_SPECULAR_ROUGHNESS,"CustEdit",WS_TABSTOP,69,37,30,10
+    CONTROL         "Roughness Slider",IDC_SLIDER_SPECULAR_ROUGHNESS,"SliderControl",WS_TABSTOP,101,37,90,13
+    CONTROL         "Roughness Map",IDC_TEXMAP_SPECULAR_ROUGHNESS,"CustButton",WS_TABSTOP,194,37,9,10
+
+    LTEXT           "Anisotropy:",IDC_LABEL_SPECULAR_ANISOTROPY,7,54,48,8
+    CONTROL         "Anisotropy Edit",IDC_EDIT_SPECULAR_ANISOTROPY,"CustEdit",WS_TABSTOP,69,53,30,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_SPECULAR_ANISOTROPY,"SliderControl",WS_TABSTOP,101,53,90,13
+    CONTROL         "Anisotropy Map",IDC_TEXMAP_SPECULAR_ANISOTROPY,"CustButton",WS_TABSTOP,194,53,9,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_SSS_PARAMS, DIALOG
+    BEGIN
+    END
+
+    IDD_FORMVIEW_SPECULAR_PARAMS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        TOPMARGIN, 7
+    END
+
+    IDD_FORMVIEW_BUMP_PARAMS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        TOPMARGIN, 7
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_SSS_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FORMVIEW_SPECULAR_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FORMVIEW_BUMP_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_SSS_PARAMS_TITLE "SSS Parameters"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_SPECULAR_PARAMS_TITLE "Specular Parameters"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SSS_COLOR           "Color"
+    IDS_TEXMAP_SSS_COLOR    "Color Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SSS_SCATTERING_COLOR "Color"
+    IDS_TEXMAP_SSS_SCATTERING_COLOR "Color Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SSS_AMOUNT          "Amount"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SSS_SCALE           "Scale"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SSS_IOR             "IOR"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SPECULAR_COLOR      "Color"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TEXMAP_SPECULAR_COLOR "Color Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SPECULAR_AMOUNT     "Amount"
+    IDS_TEXMAP_SPECULAR_AMOUNT "Amount Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SPECULAR_ROUGHNESS  "Roughness"
+    IDS_TEXMAP_SPECULAR_ROUGHNESS "Roughness Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SPECULAR_ANISOTROPY "Anisotropy"
+    IDS_TEXMAP_SPECULAR_ANISOTROPY "Anisotropy Texture Map"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

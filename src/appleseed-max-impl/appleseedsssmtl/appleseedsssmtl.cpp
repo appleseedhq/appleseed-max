@@ -30,10 +30,10 @@
 #include "appleseedsssmtl.h"
 
 // appleseed-max headers.
+#include "appleseedsssmtl/datachunks.h"
+#include "appleseedsssmtl/resource.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
-#include "sssmtl/datachunks.h"
-#include "sssmtl/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -88,38 +88,39 @@ namespace
 
     enum ParamId
     {
-        // Changing the order of these parameters WILL break compatibility.
-        ParamIdSSSColor,
-        ParamIdSSSColorTexmap,
-        ParamIdSSSScatteringColor,
-        ParamIdSSSScatteringColorTexmap,
-        ParamIdSSSAmount,
-        ParamIdSSSScale,
-        ParamIdSSSIOR,
-        ParamIdSpecularColor,
-        ParamIdSpecularColorTexmap,
-        ParamIdSpecularAmount,
-        ParamIdSpecularAmountTexmap,
-        ParamIdSpecularRoughness,
-        ParamIdSpecularRoughnessTexmap,
-        ParamIdSpecularAnisotropy,
-        ParamIdSpecularAnisotropyTexmap,
-        ParamIdBumpMethod,
-        ParamIdBumpTexmap,
-        ParamIdBumpAmount,
-        ParamIdBumpUpVector
+        // Changing these value WILL break compatibility.
+        ParamIdSSSColor                     = 0,
+        ParamIdSSSColorTexmap               = 1,
+        ParamIdSSSScatteringColor           = 2,
+        ParamIdSSSScatteringColorTexmap     = 3,
+        ParamIdSSSAmount                    = 4,
+        ParamIdSSSScale                     = 5,
+        ParamIdSSSIOR                       = 6,
+        ParamIdSpecularColor                = 7,
+        ParamIdSpecularColorTexmap          = 8,
+        ParamIdSpecularAmount               = 9,
+        ParamIdSpecularAmountTexmap         = 10,
+        ParamIdSpecularRoughness            = 11,
+        ParamIdSpecularRoughnessTexmap      = 12,
+        ParamIdSpecularAnisotropy           = 13,
+        ParamIdSpecularAnisotropyTexmap     = 14,
+        ParamIdBumpMethod                   = 15,
+        ParamIdBumpTexmap                   = 16,
+        ParamIdBumpAmount                   = 17,
+        ParamIdBumpUpVector                 = 18
     };
 
     enum TexmapId
     {
-        TexmapIdSSSColor,
-        TexmapIdSSSScatteringColor,
-        TexmapIdSpecularColor,
-        TexmapIdSpecularAmount,
-        TexmapIdSpecularRoughness,
-        TexmapIdSpecularAnisotropy,
-        TexmapIdBumpMap,
-        TexmapCount // keep last
+        // Changing these value WILL break compatibility.
+        TexmapIdSSSColor                    = 0,
+        TexmapIdSSSScatteringColor          = 1,
+        TexmapIdSpecularColor               = 2,
+        TexmapIdSpecularAmount              = 3,
+        TexmapIdSpecularRoughness           = 4,
+        TexmapIdSpecularAnisotropy          = 5,
+        TexmapIdBumpMap                     = 6,
+        TexmapCount                         // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =

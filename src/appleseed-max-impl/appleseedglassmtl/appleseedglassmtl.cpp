@@ -30,10 +30,10 @@
 #include "appleseedglassmtl.h"
 
 // appleseed-max headers.
+#include "appleseedglassmtl/datachunks.h"
+#include "appleseedglassmtl/resource.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
-#include "glassmtl/datachunks.h"
-#include "glassmtl/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -89,37 +89,38 @@ namespace
 
     enum ParamId
     {
-        // Changing the order of these parameters WILL break compatibility.
-        ParamIdSurfaceColor,
-        ParamIdSurfaceColorTexmap,
-        ParamIdReflectionTint,
-        ParamIdReflectionTintTexmap,
-        ParamIdRefractionTint,
-        ParamIdRefractionTintTexmap,
-        ParamIdIOR,
-        ParamIdRoughness,
-        ParamIdRoughnessTexmap,
-        ParamIdAnisotropy,
-        ParamIdAnisotropyTexmap,
-        ParamIdVolumeColor,
-        ParamIdVolumeColorTexmap,
-        ParamIdScale,
-        ParamIdBumpMethod,
-        ParamIdBumpTexmap,
-        ParamIdBumpAmount,
-        ParamIdBumpUpVector
+        // Changing these value WILL break compatibility.
+        ParamIdSurfaceColor         = 0,
+        ParamIdSurfaceColorTexmap   = 1,
+        ParamIdReflectionTint       = 2,
+        ParamIdReflectionTintTexmap = 3,
+        ParamIdRefractionTint       = 4,
+        ParamIdRefractionTintTexmap = 5,
+        ParamIdIOR                  = 6,
+        ParamIdRoughness            = 7,
+        ParamIdRoughnessTexmap      = 8,
+        ParamIdAnisotropy           = 9,
+        ParamIdAnisotropyTexmap     = 10,
+        ParamIdVolumeColor          = 11,
+        ParamIdVolumeColorTexmap    = 12,
+        ParamIdScale                = 13,
+        ParamIdBumpMethod           = 14,
+        ParamIdBumpTexmap           = 15,
+        ParamIdBumpAmount           = 16,
+        ParamIdBumpUpVector         = 17
     };
 
     enum TexmapId
     {
-        TexmapIdSurfaceColor,
-        TexmapIdReflectionTint,
-        TexmapIdRefractionTint,
-        TexmapIdRoughness,
-        TexmapIdAnisotropy,
-        TexmapIdVolumeColor,
-        TexmapIdBumpMap,
-        TexmapCount // keep last
+        // Changing these value WILL break compatibility.
+        TexmapIdSurfaceColor        = 0,
+        TexmapIdReflectionTint      = 1,
+        TexmapIdRefractionTint      = 2,
+        TexmapIdRoughness           = 3,
+        TexmapIdAnisotropy          = 4,
+        TexmapIdVolumeColor         = 5,
+        TexmapIdBumpMap             = 6,
+        TexmapCount                 // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =

@@ -30,8 +30,8 @@
 #include "appleseedlightmtl.h"
 
 // appleseed-max headers.
-#include "lightmtl/datachunks.h"
-#include "lightmtl/resource.h"
+#include "appleseedlightmtl/datachunks.h"
+#include "appleseedlightmtl/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -81,18 +81,19 @@ namespace
 
     enum ParamId
     {
-        // Changing the order of these parameters WILL break compatibility.
-        ParamIdLightColor,
-        ParamIdLightColorTexmap,
-        ParamIdLightPower,
-        ParamIdEmissionFront,
-        ParamIdEmissionBack
+        // Changing these value WILL break compatibility.
+        ParamIdLightColor       = 0,
+        ParamIdLightColorTexmap = 1,
+        ParamIdLightPower       = 2,
+        ParamIdEmissionFront    = 3,
+        ParamIdEmissionBack     = 4
     };
 
     enum TexmapId
     {
-        TexmapIdLightColor,
-        TexmapCount // keep last
+        // Changing these value WILL break compatibility.
+        TexmapIdLightColor      = 0,
+        TexmapCount             // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =

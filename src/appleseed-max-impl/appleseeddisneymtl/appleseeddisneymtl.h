@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2017 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@ class ISave;
 class ShadeContext;
 class Texmap;
 
-class AppleseedSSSMtl
+class AppleseedDisneyMtl
   : public Mtl
   , public IAppleseedMtl
 {
@@ -66,7 +66,7 @@ class AppleseedSSSMtl
     static Class_ID get_class_id();
 
     // Constructor.
-    AppleseedSSSMtl();
+    AppleseedDisneyMtl();
 
     // InterfaceServer methods.
     virtual BaseInterface* GetInterface(Interface_ID id) override;
@@ -136,21 +136,28 @@ class AppleseedSSSMtl
   private:
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
-    Color           m_sss_color;
-    Texmap*         m_sss_color_texmap;
-    Color           m_sss_scattering_color;
-    Texmap*         m_sss_scattering_color_texmap;
-    float           m_sss_amount;
-    float           m_sss_scale;
-    float           m_sss_ior;
-    Color           m_specular_color;
-    Texmap*         m_specular_color_texmap;
-    float           m_specular_amount;
-    Texmap*         m_specular_amount_texmap;
-    float           m_specular_roughness;
-    Texmap*         m_specular_roughness_texmap;
-    float           m_specular_anisotropy;
-    Texmap*         m_specular_anisotropy_texmap;
+    Color           m_base_color;
+    Texmap*         m_base_color_texmap;
+    float           m_metallic;
+    Texmap*         m_metallic_texmap;
+    float           m_specular;
+    Texmap*         m_specular_texmap;
+    float           m_specular_tint;
+    Texmap*         m_specular_tint_texmap;
+    float           m_roughness;
+    Texmap*         m_roughness_texmap;
+    float           m_sheen;
+    Texmap*         m_sheen_texmap;
+    float           m_sheen_tint;
+    Texmap*         m_sheen_tint_texmap;
+    float           m_anisotropy;
+    Texmap*         m_anisotropy_texmap;
+    float           m_clearcoat;
+    Texmap*         m_clearcoat_texmap;
+    float           m_clearcoat_gloss;
+    Texmap*         m_clearcoat_gloss_texmap;
+    float           m_alpha;
+    Texmap*         m_alpha_texmap;
     int             m_bump_method;
     Texmap*         m_bump_texmap;
     float           m_bump_amount;
@@ -159,10 +166,10 @@ class AppleseedSSSMtl
 
 
 //
-// AppleseedSSSMtl material browser info.
+// AppleseedDisneyMtl material browser info.
 //
 
-class AppleseedSSSMtlBrowserEntryInfo
+class AppleseedDisneyMtlBrowserEntryInfo
   : public IMaterialBrowserEntryInfo
 {
   public:
@@ -173,10 +180,10 @@ class AppleseedSSSMtlBrowserEntryInfo
 
 
 //
-// AppleseedSSSMtl class descriptor.
+// AppleseedDisneyMtl class descriptor.
 //
 
-class AppleseedSSSMtlClassDesc
+class AppleseedDisneyMtlClassDesc
   : public ClassDesc2
 {
   public:
@@ -188,10 +195,10 @@ class AppleseedSSSMtlClassDesc
     virtual const MCHAR* Category() override;
     virtual const MCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance();
+    virtual HINSTANCE HInstance() override;
 
   private:
-    AppleseedSSSMtlBrowserEntryInfo m_browser_entry_info;
+    AppleseedDisneyMtlBrowserEntryInfo m_browser_entry_info;
 };
 
-extern AppleseedSSSMtlClassDesc g_appleseed_sssmtl_classdesc;
+extern AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;

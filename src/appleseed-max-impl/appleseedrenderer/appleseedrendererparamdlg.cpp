@@ -30,9 +30,9 @@
 #include "appleseedrendererparamdlg.h"
 
 // appleseed-max headers.
-#include "renderer/renderersettings.h"
-#include "renderer/resource.h"
-#include "renderer/updatechecker.h"
+#include "appleseedrenderer/renderersettings.h"
+#include "appleseedrenderer/resource.h"
+#include "appleseedrenderer/updatechecker.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -458,7 +458,7 @@ namespace
             m_spinner_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
 
             // Fix wrong background color on label when it becomes enabled.
-            RedrawWindow(m_static_bounces, NULL, NULL, RDW_INVALIDATE);
+            RedrawWindow(m_static_bounces, nullptr, nullptr, RDW_INVALIDATE);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -598,7 +598,7 @@ namespace
             m_button_browse->Enable(save_project);
 
             // Fix wrong background color on label when it becomes enabled.
-            RedrawWindow(m_static_project_filepath, NULL, NULL, RDW_INVALIDATE);
+            RedrawWindow(m_static_project_filepath, nullptr, nullptr, RDW_INVALIDATE);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(

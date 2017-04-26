@@ -27,11 +27,12 @@
 //
 
 // appleseed-max headers.
-#include "disneymtl/appleseeddisneymtl.h"
-#include "glassmtl/appleseedglassmtl.h"
-#include "lightmtl/appleseedlightmtl.h"
-#include "renderer/appleseedrenderer.h"
-#include "sssmtl/appleseedsssmtl.h"
+#include "appleseeddisneymtl/appleseeddisneymtl.h"
+#include "appleseedglassmtl/appleseedglassmtl.h"
+#include "appleseedlightmtl/appleseedlightmtl.h"
+#include "appleseedobjpropsmod/appleseedobjpropsmod.h"
+#include "appleseedrenderer/appleseedrenderer.h"
+#include "appleseedsssmtl/appleseedsssmtl.h"
 #include "logtarget.h"
 #include "main.h"
 #include "utilities.h"
@@ -77,7 +78,7 @@ extern "C"
     __declspec(dllexport)
     int LibNumberClasses()
     {
-        return 5;
+        return 6;
     }
 
     __declspec(dllexport)
@@ -90,6 +91,7 @@ extern "C"
           case 2: return &g_appleseed_sssmtl_classdesc;
           case 3: return &g_appleseed_glassmtl_classdesc;
           case 4: return &g_appleseed_lightmtl_classdesc;
+          case 5: return &g_appleseed_objpropsmod_classdesc;
 
           // Make sure to update LibNumberClasses() if you add classes here.
 
