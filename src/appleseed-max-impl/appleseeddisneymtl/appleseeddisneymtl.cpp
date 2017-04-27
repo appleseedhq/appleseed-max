@@ -403,17 +403,17 @@ Class_ID AppleseedDisneyMtl::ClassID()
 
 int AppleseedDisneyMtl::NumSubs()
 {
-    return 1;
+    return NumRefs();
 }
 
 Animatable* AppleseedDisneyMtl::SubAnim(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return GetReference(i);
 }
 
 TSTR AppleseedDisneyMtl::SubAnimName(int i)
 {
-    return i == 0 ? _T("Parameters") : _T("");
+    return i == ParamBlockRefDisneyMtl ? _T("Parameters") : _T("");
 }
 
 int AppleseedDisneyMtl::SubNumToRefNum(int subNum)
@@ -428,7 +428,7 @@ int AppleseedDisneyMtl::NumParamBlocks()
 
 IParamBlock2* AppleseedDisneyMtl::GetParamBlock(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return i == ParamBlockRefDisneyMtl ? m_pblock : nullptr;
 }
 
 IParamBlock2* AppleseedDisneyMtl::GetParamBlockByID(BlockID id)
@@ -478,7 +478,7 @@ RefTargetHandle AppleseedDisneyMtl::Clone(RemapDir& remap)
 {
     AppleseedDisneyMtl* clone = new AppleseedDisneyMtl();
     *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
-    clone->ReplaceReference(0, remap.CloneRef(m_pblock));
+    clone->ReplaceReference(ParamBlockRefDisneyMtl, remap.CloneRef(m_pblock));
     BaseClone(this, clone, remap);
     return clone;
 }

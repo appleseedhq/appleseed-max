@@ -202,17 +202,17 @@ Class_ID AppleseedLightMtl::ClassID()
 
 int AppleseedLightMtl::NumSubs()
 {
-    return 1;
+    return NumRefs();
 }
 
 Animatable* AppleseedLightMtl::SubAnim(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return GetReference(i);
 }
 
 TSTR AppleseedLightMtl::SubAnimName(int i)
 {
-    return i == 0 ? _T("Parameters") : _T("");
+    return i == ParamBlockRefLightMtl ? _T("Parameters") : _T("");
 }
 
 int AppleseedLightMtl::SubNumToRefNum(int subNum)
@@ -227,7 +227,7 @@ int AppleseedLightMtl::NumParamBlocks()
 
 IParamBlock2* AppleseedLightMtl::GetParamBlock(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return i == ParamBlockRefLightMtl ? m_pblock : nullptr;
 }
 
 IParamBlock2* AppleseedLightMtl::GetParamBlockByID(BlockID id)
@@ -277,7 +277,7 @@ RefTargetHandle AppleseedLightMtl::Clone(RemapDir& remap)
 {
     AppleseedLightMtl* clone = new AppleseedLightMtl();
     *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
-    clone->ReplaceReference(0, remap.CloneRef(m_pblock));
+    clone->ReplaceReference(ParamBlockRefLightMtl, remap.CloneRef(m_pblock));
     BaseClone(this, clone, remap);
     return clone;
 }

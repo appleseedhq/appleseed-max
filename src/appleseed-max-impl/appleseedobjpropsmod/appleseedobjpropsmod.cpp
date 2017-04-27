@@ -183,17 +183,17 @@ void AppleseedObjPropsMod::EndEditParams(IObjParam* ip, ULONG flags, Animatable*
 
 int AppleseedObjPropsMod::NumSubs()
 {
-    return 1;
+    return NumRefs();
 }
 
 Animatable* AppleseedObjPropsMod::SubAnim(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return GetReference(i);
 }
 
 TSTR AppleseedObjPropsMod::SubAnimName(int i)
 {
-    return i == 0 ? _T("Parameters") : _T("");
+    return i == ParamBlockRefObjPropsMod ? _T("Parameters") : _T("");
 }
 
 int AppleseedObjPropsMod::SubNumToRefNum(int subNum)
@@ -208,7 +208,7 @@ int AppleseedObjPropsMod::NumParamBlocks()
 
 IParamBlock2* AppleseedObjPropsMod::GetParamBlock(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return i == ParamBlockRefObjPropsMod ? m_pblock : nullptr;
 }
 
 IParamBlock2* AppleseedObjPropsMod::GetParamBlockByID(BlockID id)

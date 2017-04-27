@@ -337,17 +337,17 @@ Class_ID AppleseedGlassMtl::ClassID()
 
 int AppleseedGlassMtl::NumSubs()
 {
-    return 1;
+    return NumRefs();
 }
 
 Animatable* AppleseedGlassMtl::SubAnim(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return GetReference(i);
 }
 
 TSTR AppleseedGlassMtl::SubAnimName(int i)
 {
-    return i == 0 ? _T("Parameters") : _T("");
+    return i == ParamBlockRefGlassMtl ? _T("Parameters") : _T("");
 }
 
 int AppleseedGlassMtl::SubNumToRefNum(int subNum)
@@ -362,7 +362,7 @@ int AppleseedGlassMtl::NumParamBlocks()
 
 IParamBlock2* AppleseedGlassMtl::GetParamBlock(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    return i == ParamBlockRefGlassMtl ? m_pblock : nullptr;
 }
 
 IParamBlock2* AppleseedGlassMtl::GetParamBlockByID(BlockID id)
@@ -412,7 +412,7 @@ RefTargetHandle AppleseedGlassMtl::Clone(RemapDir& remap)
 {
     AppleseedGlassMtl* clone = new AppleseedGlassMtl();
     *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
-    clone->ReplaceReference(0, remap.CloneRef(m_pblock));
+    clone->ReplaceReference(ParamBlockRefGlassMtl, remap.CloneRef(m_pblock));
     BaseClone(this, clone, remap);
     return clone;
 }

@@ -96,7 +96,7 @@ class AppleseedDisneyMtl
         BOOL                propagate) override;
 
     // ReferenceTarget methods.
-    virtual RefTargetHandle Clone(RemapDir &remap) override;
+    virtual RefTargetHandle Clone(RemapDir& remap) override;
 
     // ISubMap methods.
     virtual int NumSubTexmaps() override;
