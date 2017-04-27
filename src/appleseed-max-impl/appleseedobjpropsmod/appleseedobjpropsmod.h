@@ -78,6 +78,9 @@ class AppleseedObjPropsMod
         RefMessage          message,
         BOOL                propagate) override;
 
+    // ReferenceTarget methods.
+    virtual RefTargetHandle Clone(RemapDir& remap) override;
+
     // BaseObject methods.
     virtual CreateMouseCallBack* GetCreateMouseCallBack() override;
     virtual const MCHAR* GetObjectName() override;

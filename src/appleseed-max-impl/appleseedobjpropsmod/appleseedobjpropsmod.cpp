@@ -245,6 +245,14 @@ RefResult AppleseedObjPropsMod::NotifyRefChanged(
     return REF_SUCCEED;
 }
 
+RefTargetHandle AppleseedObjPropsMod::Clone(RemapDir& remap)
+{
+    AppleseedObjPropsMod* clone = new AppleseedObjPropsMod();
+    clone->ReplaceReference(ParamBlockRefObjPropsMod, remap.CloneRef(m_pblock));
+    BaseClone(this, clone, remap);
+    return clone;
+}
+
 CreateMouseCallBack* AppleseedObjPropsMod::GetCreateMouseCallBack()
 {
     return nullptr;
