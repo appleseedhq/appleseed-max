@@ -191,3 +191,4 @@ std::string insert_texture_and_instance(
     }
     return texture_instance_name;
 }
+

@@ -51,10 +51,10 @@
 // 3ds Max headers.
 #include <AssetManagement/AssetUser.h>
 #include <color.h>
+#include <hsv.h>
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
-#include <hsv.h>
 
 // Windows headers.
 #include <tchar.h>
@@ -592,7 +592,7 @@ float AppleseedGlassMtl::GetShinStr(int mtlNum, BOOL backFace)
 
 float AppleseedGlassMtl::GetXParency(int mtlNum, BOOL backFace)
 {
-    Color hsv = RGBtoHSV (m_refraction_tint);
+    const Color hsv = RGBtoHSV (m_refraction_tint);
     return hsv.b;
 }
 
