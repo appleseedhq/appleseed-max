@@ -54,8 +54,10 @@
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
 #include "foundation/image/image.h"
+#include "foundation/math/aabb.h"
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
+#include "foundation/math/vector.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/iostreamop.h"
@@ -69,6 +71,7 @@
 #include <INodeTab.h>
 #include <modstack.h>
 #include <object.h>
+#include <RendType.h>
 #include <triobj.h>
 
 // Standard headers.
@@ -1067,6 +1070,7 @@ namespace
 
     asf::auto_release_ptr<asr::Frame> build_frame(
         const RendParams&       rend_params,
+        const FrameRendParams&  frame_rend_params,
         Bitmap*                 bitmap,
         const RendererSettings& settings)
     {
@@ -1085,7 +1089,7 @@ namespace
         }
         else
         {
-            return
+            asf::auto_release_ptr<asr::Frame> frame(
                 asr::FrameFactory::create(
                     "beauty",
                     asr::ParamArray()
@@ -1094,7 +1098,17 @@ namespace
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
                         .insert("filter", "blackman-harris")
-                        .insert("filter_size", 1.5));
+                        .insert("filter_size", 1.5)));
+
+            if (rend_params.rendType == RENDTYPE_REGION)
+            {
+                frame->set_crop_window(
+                    asf::AABB2u(
+                        asf::Vector2u(frame_rend_params.regxmin, frame_rend_params.regymin),
+                        asf::Vector2u(frame_rend_params.regxmax, frame_rend_params.regymax)));
+            }
+
+            return frame;
         }
     }
 }
@@ -1159,7 +1173,12 @@ asf::auto_release_ptr<asr::Project> build_project(
     scene->cameras().insert(build_camera(view_params, bitmap, settings, time));
 
     // Create a frame and bind it to the project.
-    project->set_frame(build_frame(rend_params, bitmap, settings));
+    project->set_frame(
+        build_frame(
+            rend_params,
+            frame_rend_params,
+            bitmap,
+            settings));
 
     // Bind the scene to the project.
     project->set_scene(scene);
