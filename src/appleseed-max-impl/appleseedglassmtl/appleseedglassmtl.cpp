@@ -592,7 +592,7 @@ float AppleseedGlassMtl::GetShinStr(int mtlNum, BOOL backFace)
 
 float AppleseedGlassMtl::GetXParency(int mtlNum, BOOL backFace)
 {
-    const Color hsv = RGBtoHSV (m_refraction_tint);
+    const Color hsv = RGBtoHSV(m_refraction_tint);
     return hsv.b;
 }
 

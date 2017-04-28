@@ -681,7 +681,7 @@ void AppleseedDisneyMtl::SetDiffuse(Color c, TimeValue t)
     Interval iv;
     m_pblock->SetValue(ParamIdBaseColor, t, c);
 
-    m_pblock->GetValue(ParamIdBaseColor, t, nc, iv );
+    m_pblock->GetValue(ParamIdBaseColor, t, nc, iv);
     m_base_color = nc;
 }
 
