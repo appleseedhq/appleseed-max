@@ -283,12 +283,12 @@ void AppleseedObjPropsMod::NotifyPostCollapse(INode* node, Object* obj, IDerived
 
 ChannelMask AppleseedObjPropsMod::ChannelsUsed()
 {
-    return GEOM_CHANNEL;
+    return 0;
 }
 
 ChannelMask AppleseedObjPropsMod::ChannelsChanged()
 {
-    return GEOM_CHANNEL;
+    return 0;
 }
 
 Class_ID AppleseedObjPropsMod::InputType()
