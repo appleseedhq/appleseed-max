@@ -30,7 +30,6 @@
 #include "main.h"
 
 // 3ds Max headers.
-#include <log.h>
 #include <max.h>
 
 HINSTANCE g_module;
@@ -44,11 +43,8 @@ BOOL APIENTRY DllMain(HINSTANCE module, DWORD reason, LPVOID /*reserved*/)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
-        GetCOREInterface()->Log()->LogEntry(
-            SYSLOG_DEBUG,
-            FALSE,
-            _T("appleseed"),
-            _T("[appleseed] Entered DllMain()."));
+        // Calling GetCOREInterface()->Log()->LogEntry() here occasionally
+        // causes 3ds Max to hang on startup (observed with 3ds Max 2016).
 
         g_module = module;
         MaxSDK::Util::UseLanguagePackLocale();
