@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\appleseedrendererparamdlg.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\maxsceneentities.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\projectbuilder.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\renderercontroller.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\renderersettings.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\tilecallback.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\updatechecker.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="iappleseedmtl.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="version.cpp" />
+    <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedsssmtl\appleseedsssmtl.cpp">
+      <Filter>appleseedsssmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp">
+      <Filter>appleseedglassmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp">
+      <Filter>appleseedlightmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="logtarget.cpp" />
+    <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\appleseedrendererparamdlg.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\datachunks.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\maxsceneentities.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\projectbuilder.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\renderercontroller.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\renderersettings.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\resource.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\tilecallback.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\updatechecker.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="iappleseedmtl.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="appleseeddisneymtl\appleseeddisneymtl.h">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseeddisneymtl\datachunks.h">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseeddisneymtl\resource.h">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h">
+      <Filter>appleseedsssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedsssmtl\datachunks.h">
+      <Filter>appleseedsssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedsssmtl\resource.h">
+      <Filter>appleseedsssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedglassmtl\appleseedglassmtl.h">
+      <Filter>appleseedglassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedglassmtl\datachunks.h">
+      <Filter>appleseedglassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedglassmtl\resource.h">
+      <Filter>appleseedglassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedlightmtl\appleseedlightmtl.h">
+      <Filter>appleseedlightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedlightmtl\datachunks.h">
+      <Filter>appleseedlightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedlightmtl\resource.h">
+      <Filter>appleseedlightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="logtarget.h" />
+    <ClInclude Include="bump\bumpparammapdlgproc.h">
+      <Filter>bump</Filter>
+    </ClInclude>
+    <ClInclude Include="bump\resource.h">
+      <Filter>bump</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedobjpropsmod\resource.h">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
+      <Filter>appleseedrenderer</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc">
+      <Filter>appleseeddisneymtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedsssmtl\appleseedsssmtl.rc">
+      <Filter>appleseedsssmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedglassmtl\appleseedglassmtl.rc">
+      <Filter>appleseedglassmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedlightmtl\appleseedlightmtl.rc">
+      <Filter>appleseedlightmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="bump\bump.rc">
+      <Filter>bump</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="bump">
+      <UniqueIdentifier>{4c69bf69-db56-4c6d-8518-49719a6c8f1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseeddisneymtl">
+      <UniqueIdentifier>{0f63c39e-3c84-4009-a32b-ae9dfec1dc15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedglassmtl">
+      <UniqueIdentifier>{666a1c7e-ebcb-42b1-b62e-a57419733d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedlightmtl">
+      <UniqueIdentifier>{f7d6f5af-25a2-427e-bf28-a4e46d2ddaf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedrenderer">
+      <UniqueIdentifier>{3b53d01d-35e2-4c3e-a0a4-6d9921c729a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedsssmtl">
+      <UniqueIdentifier>{4e79312e-d35e-43b5-bc53-f2bd6ad9d984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedobjpropsmod">
+      <UniqueIdentifier>{b8667bdc-4a40-4ccb-a847-c1a144ea8778}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -129,7 +129,7 @@ extern "C"
         if (load_relative_library(_T("appleseed.dll")) == nullptr)
             return FALSE;
 
-#if MAX_RELEASE == MAX_RELEASE_R17
+#if MAX_RELEASE == MAX_RELEASE_R17 || MAX_RELEASE == MAX_RELEASE_R18
         static const wchar_t PluginImplDLLFilename[] = _T("appleseed-max2015-impl.dll");
 #elif MAX_RELEASE == MAX_RELEASE_R19
         static const wchar_t PluginImplDLLFilename[] = _T("appleseed-max2017-impl.dll");
