@@ -917,24 +917,7 @@ namespace
                 auto bitmap_envmap = static_cast<BitmapTex*>(rend_params.envMap);
                 if (bitmap_envmap)
                 {
-				    auto tex_filename = wide_to_utf8(bitmap_envmap->GetMapName());
-                    env_tex_instance_name = make_unique_name(scene.texture_instances(), tex_filename + "_inst");
-
-                    scene.textures().insert(
-                        asf::auto_release_ptr<asr::Texture>(
-                            asr::DiskTexture2dFactory::static_create(
-                                env_tex_name.c_str(),
-                                asr::ParamArray()
-                                    .insert("color_space", "linear_rgb") //todo: exr and hdr should be linear, others should be srgb
-                                    .insert("filename", tex_filename),
-                                    asf::SearchPaths())));
-
-                    scene.texture_instances().insert(
-                        asf::auto_release_ptr<asr::TextureInstance>(
-                            asr::TextureInstanceFactory::create(
-                                env_tex_instance_name.c_str(),
-                                asr::ParamArray(),
-                                env_tex_name.c_str())));
+                    env_tex_instance_name = insert_texture_and_instance(scene, bitmap_envmap);
                 }
             }
             //in case of unknown class
@@ -1008,13 +991,27 @@ namespace
             //in case of bitmap envmap and unknown class
             else
             {
-                //todo: translate UVoffset to lat/long parameters
+                asr::ParamArray envParams;
+                auto envMap = static_cast<Texmap*>(rend_params.envMap);
+
+                if (envMap)
+                {
+                    UVGen* uvg = envMap->GetTheUVGen();
+				    if (uvg && uvg->IsStdUVGen()) {
+					    StdUVGen *suvg = static_cast<StdUVGen*>(uvg);
+                        envParams.insert("horizontal_shift", suvg->GetUOffs(time) * 180.0f);
+                        envParams.insert("vertical_shift", suvg->GetVOffs(time) * 180.0f);
+                    }
+                }
+                
+                envParams.insert("radiance", env_tex_instance_name.c_str());
+
                 scene.environment_edfs().insert(
                     asf::auto_release_ptr<asr::EnvironmentEDF>(
                         asr::LatLongMapEnvironmentEDFFactory::static_create(
                             env_edf_name.c_str(),
-                            asr::ParamArray()
-                                .insert("radiance", env_tex_instance_name.c_str()))));
+                            envParams)));
+
             }
 
             //insert shader
