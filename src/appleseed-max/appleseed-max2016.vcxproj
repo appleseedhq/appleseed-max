@@ -171,9 +171,9 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"</
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)" 2&gt;nul
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"</Command>
+      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)" 2&gt;nul
+copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

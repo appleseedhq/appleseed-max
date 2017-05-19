@@ -46,6 +46,9 @@
     <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp">
       <Filter>appleseedobjpropsmod</Filter>
     </ClCompile>
+    <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp">
+      <Filter>appleseedenvmap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -131,6 +134,12 @@
     <ClInclude Include="appleseedobjpropsmod\resource.h">
       <Filter>appleseedobjpropsmod</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedenvmap\appleseedenvmap.h">
+      <Filter>appleseedenvmap</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedenvmap\resource.h">
+      <Filter>appleseedenvmap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -154,6 +163,9 @@
     <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc">
       <Filter>appleseedobjpropsmod</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc">
+      <Filter>appleseedenvmap</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="bump">
@@ -176,6 +188,9 @@
     </Filter>
     <Filter Include="appleseedobjpropsmod">
       <UniqueIdentifier>{b8667bdc-4a40-4ccb-a847-c1a144ea8778}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedenvmap">
+      <UniqueIdentifier>{e366da91-8f84-4832-886c-1a73dc7c4a22}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

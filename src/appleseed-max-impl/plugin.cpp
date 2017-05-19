@@ -33,6 +33,7 @@
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
+#include "appleseedenvmap/appleseedenvmap.h"
 #include "logtarget.h"
 #include "main.h"
 #include "utilities.h"
@@ -78,7 +79,7 @@ extern "C"
     __declspec(dllexport)
     int LibNumberClasses()
     {
-        return 6;
+        return 7;
     }
 
     __declspec(dllexport)
@@ -92,6 +93,7 @@ extern "C"
           case 3: return &g_appleseed_glassmtl_classdesc;
           case 4: return &g_appleseed_lightmtl_classdesc;
           case 5: return &g_appleseed_objpropsmod_classdesc;
+          case 6: return &g_appleseed_appleseedenvmap_classdesc;
 
           // Make sure to update LibNumberClasses() if you add classes here.
 
