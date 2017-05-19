@@ -678,7 +678,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
 
         const auto bssrdf_name = std::string(name) + "_bssrdf";
         assembly.bssrdfs().insert(
-            asr::NormalizedDiffusionBSSRDFFactory::static_create(bssrdf_name.c_str(), bssrdf_params));
+            asr::GaussianBSSRDFFactory::static_create(bssrdf_name.c_str(), bssrdf_params));
 
         material_params.insert("bssrdf", bssrdf_name);
     }

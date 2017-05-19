@@ -37,7 +37,7 @@
 #include <modstack.h>
 #include <paramtype.h>
 
-#if MAX_RELEASE == MAX_RELEASE_R17
+#if MAX_RELEASE == MAX_RELEASE_R17 || MAX_RELEASE == MAX_RELEASE_R18
 #define TYPE_SINGLECHECKBOX TYPE_SINGLECHEKBOX
 #endif
 
