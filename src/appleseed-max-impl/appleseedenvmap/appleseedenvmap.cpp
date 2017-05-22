@@ -29,9 +29,6 @@
 // Interface header.
 #include "appleseedenvmap.h"
 
-// appleseed.renderer headers.
-#include "renderer/modeling/environmentedf/hosekenvironmentedf.h"
-
 // appleseed-max headers.
 #include "appleseedenvmap/datachunks.h"
 #include "appleseedenvmap/resource.h"
@@ -47,7 +44,7 @@ namespace
     const TCHAR* AppleseedEnvMapFriendlyClassName = _T("appleseed Environment Map");
 }
 
-AppleseedEnvMapClassDesc g_appleseed_appleseedenvmap_classdesc;
+AppleseedEnvMapClassDesc g_appleseed_envmap_classdesc;
 
 
 //
@@ -59,7 +56,7 @@ namespace
     enum { ParamBlockIdEnvMap };
     enum { ParamBlockRefEnvMap };
 
-    enum ParamId 
+    enum ParamId
     {
         ParamIdSunTheta             = 0,
         ParamIdSunPhi               = 1,
@@ -92,9 +89,9 @@ namespace
 
     ParamBlockDesc2 g_block_desc(
         ParamBlockIdEnvMap,
-        _T("appleseedEnvironmentMapParams"), 
+        _T("appleseedEnvironmentMapParams"),
         0,
-        &g_appleseed_appleseedenvmap_classdesc,
+        &g_appleseed_envmap_classdesc,
         P_AUTO_CONSTRUCT + P_AUTO_UI,
 
          // --- P_AUTO_CONSTRUCT arguments ---
@@ -105,7 +102,7 @@ namespace
         IDS_ENVMAP_PARAMS,                          // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
-        nullptr,   
+        nullptr,
 
         // --- Parameters specifications for Parameters rollup ---
         ParamIdSunTheta, _T("sun_theta"), TYPE_FLOAT, P_ANIMATABLE, IDS_THETA,
@@ -195,7 +192,7 @@ AppleseedEnvMap::AppleseedEnvMap()
   , m_horizon_shift(0.0f)
   , m_ground_albedo(0.3f)
 {
-    g_appleseed_appleseedenvmap_classdesc.MakeAutoParamBlocks(this);
+    g_appleseed_envmap_classdesc.MakeAutoParamBlocks(this);
     Reset();
 }
 
@@ -221,12 +218,12 @@ Class_ID AppleseedEnvMap::ClassID()
 
 int AppleseedEnvMap::NumSubs()
 {
-    return 2; //pblock + subtexture
+    return 2;   // pblock + subtexture
 }
 
 Animatable* AppleseedEnvMap::SubAnim(int i)
 {
-    switch (i) 
+    switch (i)
     {
       case 0: return m_pblock;
       case 1: return m_turbidity_map;
@@ -236,7 +233,7 @@ Animatable* AppleseedEnvMap::SubAnim(int i)
 
 TSTR AppleseedEnvMap::SubAnimName(int i)
 {
-    switch (i) 
+    switch (i)
     {
       case 0: return _T("Parameters");
       case 1: return GetSubTexmapTVName(i - 1);
@@ -266,7 +263,7 @@ IParamBlock2* AppleseedEnvMap::GetParamBlockByID(BlockID id)
 
 int AppleseedEnvMap::NumRefs()
 {
-    return 2; //pblock + subtexture
+    return 2;   // pblock + subtexture
 }
 
 RefTargetHandle AppleseedEnvMap::GetReference(int i)
@@ -293,9 +290,9 @@ RefResult AppleseedEnvMap::NotifyRefChanged(const Interval& /*changeInt*/, RefTa
     switch (message)
     {
       case REFMSG_TARGET_DELETED:
-        if (hTarget == m_pblock) 
-        { 
-            m_pblock = nullptr; 
+        if (hTarget == m_pblock)
+        {
+            m_pblock = nullptr;
         }
         else
         {
@@ -306,6 +303,7 @@ RefResult AppleseedEnvMap::NotifyRefChanged(const Interval& /*changeInt*/, RefTa
             }
         }
         break;
+
       case REFMSG_CHANGE:
         m_params_validity.SetEmpty();
         m_map_validity.SetEmpty();
@@ -313,10 +311,11 @@ RefResult AppleseedEnvMap::NotifyRefChanged(const Interval& /*changeInt*/, RefTa
             g_block_desc.InvalidateUI(m_pblock->LastNotifyParamID());
         break;
     }
+
     return REF_SUCCEED;
 }
 
-RefTargetHandle AppleseedEnvMap::Clone(RemapDir &remap)
+RefTargetHandle AppleseedEnvMap::Clone(RemapDir& remap)
 {
     AppleseedEnvMap* mnew = new AppleseedEnvMap();
     *static_cast<MtlBase*>(mnew) = *static_cast<MtlBase*>(this);
@@ -335,20 +334,20 @@ int AppleseedEnvMap::NumSubTexmaps()
 
 Texmap* AppleseedEnvMap::GetSubTexmap(int i)
 {
-    return (i == 0) ? m_turbidity_map : nullptr;
+    return i == 0 ? m_turbidity_map : nullptr;
 }
 
 void AppleseedEnvMap::SetSubTexmap(int i, Texmap* texmap)
 {
-    if (i > 0)
-      return;
-    ReplaceReference(i + 1, texmap);
-
-    const auto texmap_id = static_cast<TexmapId>(i);
-    const auto param_id = g_texmap_id_to_param_id[texmap_id];
-    m_pblock->SetValue(param_id, 0, texmap);
-    g_block_desc.InvalidateUI( param_id );
-    m_map_validity.SetEmpty();
+    if (i == 0)
+    {
+        ReplaceReference(i + 1, texmap);
+        const auto texmap_id = static_cast<TexmapId>(i);
+        const auto param_id = g_texmap_id_to_param_id[texmap_id];
+        m_pblock->SetValue(param_id, 0, texmap);
+        g_block_desc.InvalidateUI(param_id);
+        m_map_validity.SetEmpty();
+    }
 }
 
 int AppleseedEnvMap::MapSlotType(int i)
@@ -411,12 +410,68 @@ Interval AppleseedEnvMap::Validity(TimeValue t)
     return valid;
 }
 
+namespace
+{
+    class EnvMapParamMapDlgProc
+      : public ParamMap2UserDlgProc
+    {
+      public:
+        virtual void DeleteThis() override
+        {
+            delete this;
+        }
+
+        virtual INT_PTR DlgProc(
+            TimeValue   t,
+            IParamMap2* map,
+            HWND        hwnd,
+            UINT        umsg,
+            WPARAM      wparam,
+            LPARAM      lparam) override
+        {
+            switch (umsg)
+            {
+              case WM_INITDIALOG:
+                enable_disable_controls(hwnd, map);
+                return TRUE;
+
+              case WM_COMMAND:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_COMBO_SKY_TYPE:
+                    switch (HIWORD(wparam))
+                    {
+                      case CBN_SELCHANGE:
+                        enable_disable_controls(hwnd, map);
+                        return TRUE;
+
+                      default:
+                        return FALSE;
+                    }
+
+                  default:
+                    return FALSE;
+                }
+
+              default:
+                return FALSE;
+            }
+        }
+
+      private:
+        void enable_disable_controls(HWND hwnd, IParamMap2* map)
+        {
+            const auto selected = SendMessage(GetDlgItem(hwnd, IDC_COMBO_SKY_TYPE), CB_GETCURSEL, 0, 0);
+            map->Enable(ParamIdGroundAlbedo, selected == 0 ? TRUE : FALSE);
+        }
+    };
+}
+
 ParamDlg* AppleseedEnvMap::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
-    IAutoMParamDlg* masterDlg = g_appleseed_appleseedenvmap_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    IAutoMParamDlg* master_dlg = g_appleseed_envmap_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
     g_block_desc.SetUserDlgProc(new EnvMapParamMapDlgProc());
-
-    return masterDlg;
+    return master_dlg;
 }
 
 IOResult AppleseedEnvMap::Save(ISave* isave)
@@ -473,20 +528,20 @@ IOResult AppleseedEnvMap::Load(ILoad* iload)
 
 AColor AppleseedEnvMap::EvalColor(ShadeContext& sc)
 {
-    Color basecolor (0.13f, 0.58f, 1.0f);
+    const Color base_color(0.13f, 0.58f, 1.0f);
     if (!sc.InMtlEditor())
-        return basecolor;
+        return base_color;
 
     // Render gradient for the thumbnail.
-    Point3 p = sc.UVW(0);
-    Color white (1.0f, 1.0f, 1.0f);
-
-	return AColor((basecolor * (float)p.y) + (white * (float)(1.0-p.y)));
+    const Point3 p = sc.UVW(0);
+    const float y = static_cast<float>(p.y);
+    const Color white(1.0f, 1.0f, 1.0f);
+    return asf::lerp(white, base_color, y);
 }
 
 Point3 AppleseedEnvMap::EvalNormalPerturb(ShadeContext& /*sc*/)
 {
-    return Point3(0, 0, 0);
+    return Point3(0.0f, 0.0f, 0.0f);
 }
 
 asf::auto_release_ptr<asr::EnvironmentEDF> AppleseedEnvMap::create_envmap(const char* name)
@@ -524,59 +579,6 @@ const MCHAR* AppleseedEnvMapBrowserEntryInfo::GetEntryCategory() const
 Bitmap* AppleseedEnvMapBrowserEntryInfo::GetEntryThumbnail() const
 {
     return nullptr;
-}
-
-
-//
-// EnvMapParamMapDlgProc class implementation.
-//
-
-void EnvMapParamMapDlgProc::DeleteThis()
-{
-    delete this;
-}
-
-INT_PTR EnvMapParamMapDlgProc::DlgProc(
-        TimeValue   t,
-        IParamMap2* map,
-        HWND        hwnd,
-        UINT        umsg,
-        WPARAM      wparam,
-        LPARAM      lparam)
-{
-    switch (umsg)
-    {
-      case WM_INITDIALOG:
-        enable_disable_controls(hwnd, map);
-        return TRUE;
-
-      case WM_COMMAND:
-        switch (LOWORD(wparam))
-        {
-          case IDC_COMBO_SKY_TYPE:
-            switch (HIWORD(wparam))
-            {
-              case CBN_SELCHANGE:
-                enable_disable_controls(hwnd, map);
-                return TRUE;
-
-              default:
-                return FALSE;
-            }
-
-          default:
-            return FALSE;
-        }
-
-      default:
-        return FALSE;
-    }
-}
-
-void EnvMapParamMapDlgProc::enable_disable_controls(HWND hwnd, IParamMap2* map)
-{
-    auto selected = SendMessage(GetDlgItem(hwnd, IDC_COMBO_SKY_TYPE), CB_GETCURSEL, 0, 0);
-    map->Enable(ParamIdGroundAlbedo, selected == 0 ? TRUE : FALSE);
 }
 
 

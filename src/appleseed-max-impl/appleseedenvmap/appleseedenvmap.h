@@ -28,12 +28,12 @@
 
 #pragma once
 
+// appleseed.renderer headers.
+#include "renderer/api/environmentedf.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
-
-// appleseed.renderer headers.
-#include "renderer/modeling/environmentedf/environmentedf.h"
 
 // 3ds Max headers.
 #include <IMaterialBrowserEntryInfo.h>
@@ -45,8 +45,8 @@
 #include <stdmat.h>
 #undef base_type
 
-class AppleseedEnvMap 
-  : public Texmap 
+class AppleseedEnvMap
+  : public Texmap
 {
   public:
     static Class_ID get_class_id();
@@ -76,10 +76,10 @@ class AppleseedEnvMap
         PartID&             partID,
         RefMessage          message,
         BOOL                propagate) override;
-        
+
     // ReferenceTarget methods.
-    virtual RefTargetHandle Clone(RemapDir &remap);
-    
+    virtual RefTargetHandle Clone(RemapDir& remap) override;
+
     // ISubMap methods.
     virtual int NumSubTexmaps() override;
     virtual Texmap* GetSubTexmap(int i) override;
@@ -88,23 +88,21 @@ class AppleseedEnvMap
     virtual MSTR GetSubTexmapSlotName(int i) override;
 
     // MtlBase methods.
-    virtual void Update(TimeValue t, Interval& valid);
-    virtual void Reset();
-    virtual Interval Validity(TimeValue t);
-    virtual ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp);
+    virtual void Update(TimeValue t, Interval& valid) override;
+    virtual void Reset() override;
+    virtual Interval Validity(TimeValue t) override;
+    virtual ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp) override;
+    virtual IOResult Save(ISave* isave) override;
+    virtual IOResult Load(ILoad* iload) override;
 
-    // Loading/Saving
-    virtual IOResult Save(ISave *isave);
-    virtual IOResult Load(ILoad *iload);
-    
-    //From Texmap
-    virtual RGBA EvalColor(ShadeContext& sc);
-    virtual Point3 EvalNormalPerturb(ShadeContext& sc);
+    // Texmap methods.
+    virtual RGBA EvalColor(ShadeContext& sc) override;
+    virtual Point3 EvalNormalPerturb(ShadeContext& sc) override;
 
     virtual foundation::auto_release_ptr<renderer::EnvironmentEDF> create_envmap(const char* name);
 
   protected:
-    virtual void SetReference(int i, RefTargetHandle rtarg);
+    virtual void SetReference(int i, RefTargetHandle rtarg) override;
 
   private:
     IParamBlock2*   m_pblock;          // ref 0
@@ -124,25 +122,6 @@ class AppleseedEnvMap
 };
 
 
-class EnvMapParamMapDlgProc
-  : public ParamMap2UserDlgProc
-{
-
-  public:
-    virtual void DeleteThis() override;
-    virtual INT_PTR DlgProc(
-        TimeValue   t,
-        IParamMap2* map,
-        HWND        hwnd,
-        UINT        umsg,
-        WPARAM      wparam,
-        LPARAM      lparam) override;
-
-  private:
-    void enable_disable_controls(HWND hwnd, IParamMap2* map);
-};
-
-
 //
 // AppleseedEnvMap material browser info.
 //
@@ -155,6 +134,11 @@ class AppleseedEnvMapBrowserEntryInfo
     virtual const MCHAR* GetEntryCategory() const override;
     virtual Bitmap* GetEntryThumbnail() const override;
 };
+
+
+//
+// AppleseedEnvMap class descriptor.
+//
 
 class AppleseedEnvMapClassDesc
   : public ClassDesc2
@@ -174,4 +158,4 @@ class AppleseedEnvMapClassDesc
     AppleseedEnvMapBrowserEntryInfo m_browser_entry_info;
 };
 
-extern AppleseedEnvMapClassDesc g_appleseed_appleseedenvmap_classdesc;
+extern AppleseedEnvMapClassDesc g_appleseed_envmap_classdesc;

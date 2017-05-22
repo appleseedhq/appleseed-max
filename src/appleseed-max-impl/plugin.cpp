@@ -93,7 +93,7 @@ extern "C"
           case 3: return &g_appleseed_glassmtl_classdesc;
           case 4: return &g_appleseed_lightmtl_classdesc;
           case 5: return &g_appleseed_objpropsmod_classdesc;
-          case 6: return &g_appleseed_appleseedenvmap_classdesc;
+          case 6: return &g_appleseed_envmap_classdesc;
 
           // Make sure to update LibNumberClasses() if you add classes here.
 
