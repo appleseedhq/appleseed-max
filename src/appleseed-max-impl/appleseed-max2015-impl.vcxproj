@@ -183,6 +183,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp" />
+    <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp" />
     <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp" />
     <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp" />
     <ClCompile Include="iappleseedmtl.cpp" />
@@ -203,6 +204,9 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
     <ClCompile Include="version.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="appleseedenvmap\appleseedenvmap.h" />
+    <ClInclude Include="appleseedenvmap\datachunks.h" />
+    <ClInclude Include="appleseedenvmap\resource.h" />
     <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h" />
     <ClInclude Include="appleseedobjpropsmod\resource.h" />
     <ClInclude Include="bump\bumpparammapdlgproc.h" />
@@ -236,6 +240,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc" />
     <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc" />
     <ResourceCompile Include="bump\bump.rc" />
     <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc" />
