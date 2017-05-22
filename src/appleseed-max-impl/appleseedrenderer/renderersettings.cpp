@@ -91,9 +91,10 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("sampling_mode", "qmc");
 
-    if (m_gi)
-        params.insert_path("pt.max_path_length", m_bounces == 0 ? 0 : m_bounces + 1);
-    else params.insert_path("pt.max_path_length", 1);
+    if (!m_gi)
+        params.insert_path("pt.max_diffuse_bounces", 0);
+
+    params.insert_path("pt.max_bounces", m_bounces);
 
     params.insert_path("pt.enable_caustics", m_caustics);
 

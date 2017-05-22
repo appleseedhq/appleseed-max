@@ -447,10 +447,6 @@ namespace
 
         void enable_disable_controls()
         {
-            EnableWindow(m_static_bounces, m_settings.m_gi ? TRUE : FALSE);
-            m_text_bounces->Enable(m_settings.m_gi);
-            m_spinner_bounces->Enable(m_settings.m_gi);
-
             EnableWindow(m_check_caustics, m_settings.m_gi ? TRUE : FALSE);
 
             EnableWindow(m_check_max_ray_intensity, m_settings.m_gi ? TRUE : FALSE);
