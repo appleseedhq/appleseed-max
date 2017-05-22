@@ -140,6 +140,9 @@
     <ClInclude Include="appleseedenvmap\resource.h">
       <Filter>appleseedenvmap</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedenvmap\datachunks.h">
+      <Filter>appleseedenvmap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">

@@ -910,8 +910,7 @@ namespace
             std::string env_tex_name("environment_map");
             std::string env_tex_instance_name("environment_map_inst");
 
-            //insert textures
-            //in case of bitmap env map
+            // Insert textures.
             if (rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
             {
                 auto bitmap_envmap = static_cast<BitmapTex*>(rend_params.envMap);
@@ -920,10 +919,9 @@ namespace
                     env_tex_instance_name = insert_texture_and_instance(scene, bitmap_envmap);
                 }
             }
-            //in case of unknown class
             else if (!rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
             {
-                //proceed with rendering env map and applying it to background shader
+                // Proceed with rendering env map and applying it to background shader.
                 const size_t TextureWidth = 512;
                 const size_t TextureHeight = 512;
 
@@ -978,8 +976,7 @@ namespace
                             env_tex_name.c_str())));
             }
 
-            //insert EDF
-            //in case of appleseed envmap
+            // Insert EDF.
             if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
             {
                 auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
@@ -988,7 +985,6 @@ namespace
                     scene.environment_edfs().insert(appleseed_envmap->create_envmap(env_edf_name.c_str()));
                 }
             }
-            //in case of bitmap envmap and unknown class
             else
             {
                 asr::ParamArray envParams;
@@ -997,8 +993,9 @@ namespace
                 if (envMap)
                 {
                     UVGen* uvg = envMap->GetTheUVGen();
-				    if (uvg && uvg->IsStdUVGen()) {
-					    StdUVGen *suvg = static_cast<StdUVGen*>(uvg);
+                    if (uvg && uvg->IsStdUVGen())
+                    {
+                        StdUVGen *suvg = static_cast<StdUVGen*>(uvg);
                         envParams.insert("horizontal_shift", suvg->GetUOffs(time) * 180.0f);
                         envParams.insert("vertical_shift", suvg->GetVOffs(time) * 180.0f);
                     }
@@ -1014,8 +1011,7 @@ namespace
 
             }
 
-            //insert shader
-            //in case of appleseed envmap and bitmap envmap
+            // Insert shader.
             if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()) || rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
             {
                 scene.environment_shaders().insert(
@@ -1025,7 +1021,6 @@ namespace
                         .insert("environment_edf", env_edf_name.c_str())
                         .insert("alpha_value", settings.m_background_alpha)));
             }
-            //in case of unknown class
             else
             {
                 scene.environment_shaders().insert(

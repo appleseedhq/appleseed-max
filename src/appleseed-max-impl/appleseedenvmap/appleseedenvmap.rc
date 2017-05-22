@@ -31,18 +31,18 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         "",IDC_EDIT_THETA,"CustEdit",WS_TABSTOP,85,12,35,10
     CONTROL         "",IDC_SPIN_THETA,"SpinnerControl",0x0,121,12,7,10
-    LTEXT           "Theta angle:",IDC_STATIC,13,14,41,8
+    LTEXT           "Theta Angle:",IDC_STATIC,13,14,41,8
     GROUPBOX        "Sun",IDC_STATIC,7,3,203,41
     CONTROL         "",IDC_EDIT_PHI,"CustEdit",WS_TABSTOP,85,24,35,10
     CONTROL         "",IDC_SPIN_PHI,"SpinnerControl",0x0,121,24,7,10
-    LTEXT           "Phi angle:",IDC_STATIC,13,26,32,8
+    LTEXT           "Phi Angle:",IDC_STATIC,13,26,32,8
     GROUPBOX        "Sky",IDC_STATIC,7,45,203,76
     CONTROL         "",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,85,54,35,10
     CONTROL         "",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,121,54,7,10
     LTEXT           "Turbidity:",IDC_STATIC,13,56,30,8
     CONTROL         "",IDC_EDIT_TURB_MULTIPLIER,"CustEdit",WS_TABSTOP,85,67,35,10
     CONTROL         "",IDC_SPIN_TURB_MULTIPLIER,"SpinnerControl",0x0,121,67,7,10
-    LTEXT           "Tubidity Multiplier:",IDC_STATIC,13,68,57,8,SS_CENTERIMAGE
+    LTEXT           "Turbidity Multiplier:",IDC_STATIC,13,68,57,8,SS_CENTERIMAGE
     CONTROL         "",IDC_EDIT_LUMIN_MULTIPLIER,"CustEdit",WS_TABSTOP,85,80,35,10
     CONTROL         "",IDC_SPIN_LUMIN_MULTIPLIER,"SpinnerControl",0x0,121,80,7,10
     LTEXT           "Luminance Multiplier:",IDC_STATIC,13,81,67,8
@@ -128,11 +128,11 @@ BEGIN
     IDS_CLASS_NAME_CDESC    "appleseed Environment Map"
     IDS_THETA               "Sun Theta Angle"
     IDS_PHI                 "Sun Phi Angle"
-    IDS_TURBIDITY           "Tubidity"
-    IDS_TURB_MULTIPLIER     "Tubidity Multiplier"
-    IDS_TURB_MAP            "Tubidity Map"
+    IDS_TURBIDITY           "Turbidity"
+    IDS_TURB_MULTIPLIER     "Turbidity Multiplier"
+    IDS_TURB_MAP            "Turbidity Map"
     IDS_CATEGORY            "appleseed"
-    IDS_TURB_MAP_ON         "Tubidity Map On"
+    IDS_TURB_MAP_ON         "Turbidity Map On"
     IDS_LUMINANCE_MULTIPLIER "Luminance Multiplier"
     IDS_LUMINANCE_GAMMA     "Luminance Gamma"
 END
@@ -142,9 +142,6 @@ BEGIN
     IDS_SAT_MULITPLIER      "Saturation Multiplier"
     IDS_HORIZON_SHIFT       "Horizon Shift"
     IDS_GROUND_ALBEDO       "Ground Albedo"
-    IDS_SKY_TYPE            "Sky EDF Type"
-    IDS_SKY_TYPE_1          "Hosek-Wilkie Model"
-    IDS_SKY_TYPE_2          "Preetham Model"
 END
 
 #endif    // English (United States) resources

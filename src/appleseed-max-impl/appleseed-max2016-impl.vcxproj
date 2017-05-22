@@ -205,6 +205,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationN
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedenvmap\appleseedenvmap.h" />
+    <ClInclude Include="appleseedenvmap\datachunks.h" />
     <ClInclude Include="appleseedenvmap\resource.h" />
     <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h" />
     <ClInclude Include="appleseedobjpropsmod\resource.h" />

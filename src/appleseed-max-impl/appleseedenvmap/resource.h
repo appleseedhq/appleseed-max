@@ -46,9 +46,6 @@
 #define IDS_SAT_MULITPLIER              8016
 #define IDS_HORIZON_SHIFT               8017
 #define IDS_GROUND_ALBEDO               8018
-#define IDS_SKY_TYPE                    8019
-#define IDS_SKY_TYPE_1                  8020
-#define IDS_SKY_TYPE_2                  8021
 
 // Next default values for new objects
 // 

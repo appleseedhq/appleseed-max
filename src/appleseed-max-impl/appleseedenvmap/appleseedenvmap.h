@@ -1,25 +1,54 @@
+
+//
+// This source file is part of appleseed.
+// Visit http://appleseedhq.net/ for additional information and resources.
+//
+// This software is released under the MIT license.
+//
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
 #pragma once
 
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
+
+// appleseed.renderer headers.
 #include "renderer/modeling/environmentedf/environmentedf.h"
 
 // 3ds Max headers.
-#include "appleseedenvmap/resource.h"
-#include <istdplug.h>
+#include <IMaterialBrowserEntryInfo.h>
+#include <imtl.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
+#include <istdplug.h>
 #include <maxtypes.h>
 #include <stdmat.h>
-#include <imtl.h>
-#include <IMaterialBrowserEntryInfo.h>
 #undef base_type
 
-//namespace renderer  { class EnvironmentEDF; }
-
-class AppleseedEnvMap : public Texmap {
-public:
+class AppleseedEnvMap 
+  : public Texmap 
+{
+  public:
     static Class_ID get_class_id();
 
     // Constructor.
@@ -34,7 +63,7 @@ public:
     virtual Animatable* SubAnim(int i) override;
     virtual TSTR SubAnimName(int i) override;
     virtual int SubNumToRefNum(int subNum) override;
-    virtual int	NumParamBlocks() override;
+    virtual int NumParamBlocks() override;
     virtual IParamBlock2* GetParamBlock(int i) override;
     virtual IParamBlock2* GetParamBlockByID(BlockID id) override;
 
@@ -69,42 +98,38 @@ public:
     virtual IOResult Load(ILoad *iload);
     
     //From Texmap
-    virtual RGBA   EvalColor(ShadeContext& sc);
+    virtual RGBA EvalColor(ShadeContext& sc);
     virtual Point3 EvalNormalPerturb(ShadeContext& sc);
 
     virtual foundation::auto_release_ptr<renderer::EnvironmentEDF> create_envmap(const char* name);
 
-protected:
+  protected:
     virtual void SetReference(int i, RefTargetHandle rtarg);
 
-private:
-    IParamBlock2*    m_pblock;          // ref 0
-    Interval         m_params_validity;
-    Interval         m_map_validity;
-
-    float m_sun_theta;
-    float m_sun_phi;
-    float m_turbidity;
-    Texmap* m_turbidity_map;
-    BOOL m_turbidity_map_on;
-    float m_turb_multiplier;
-    float m_lumin_multiplier;
-    float m_lumin_gamma;
-    float m_sat_multiplier;
-    float m_horizon_shift;
-    float m_ground_albedo;
+  private:
+    IParamBlock2*   m_pblock;          // ref 0
+    Interval        m_params_validity;
+    Interval        m_map_validity;
+    float           m_sun_theta;
+    float           m_sun_phi;
+    float           m_turbidity;
+    Texmap*         m_turbidity_map;
+    BOOL            m_turbidity_map_on;
+    float           m_turb_multiplier;
+    float           m_lumin_multiplier;
+    float           m_lumin_gamma;
+    float           m_sat_multiplier;
+    float           m_horizon_shift;
+    float           m_ground_albedo;
 };
 
 
 class EnvMapParamMapDlgProc
-    : public ParamMap2UserDlgProc
+  : public ParamMap2UserDlgProc
 {
-public:
-    virtual void DeleteThis() override
-    {
-        delete this;
-    }
 
+  public:
+    virtual void DeleteThis() override;
     virtual INT_PTR DlgProc(
         TimeValue   t,
         IParamMap2* map,
@@ -112,41 +137,41 @@ public:
         UINT        umsg,
         WPARAM      wparam,
         LPARAM      lparam) override;
-private:
+
+  private:
     void enable_disable_controls(HWND hwnd, IParamMap2* map);
 };
+
 
 //
 // AppleseedEnvMap material browser info.
 //
 
 class AppleseedEnvMapBrowserEntryInfo
-    : public IMaterialBrowserEntryInfo
+  : public IMaterialBrowserEntryInfo
 {
-public:
+  public:
     virtual const MCHAR* GetEntryName() const override;
     virtual const MCHAR* GetEntryCategory() const override;
     virtual Bitmap* GetEntryThumbnail() const override;
 };
 
 class AppleseedEnvMapClassDesc
-    : public ClassDesc2
+  : public ClassDesc2
 {
-public:
+  public:
     virtual int IsPublic() override;
     virtual void* Create(BOOL /*loading = FALSE*/) override;
-    virtual const TCHAR *	ClassName() override;
+    virtual const TCHAR* ClassName() override;
     virtual SClass_ID SuperClassID() override;
     virtual Class_ID ClassID() override;
     virtual const TCHAR* Category() override;
     virtual const TCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
     virtual HINSTANCE HInstance() override;
-private:
+
+  private:
     AppleseedEnvMapBrowserEntryInfo m_browser_entry_info;
 };
 
 extern AppleseedEnvMapClassDesc g_appleseed_appleseedenvmap_classdesc;
-
-
-

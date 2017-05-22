@@ -27,13 +27,13 @@
 //
 
 // appleseed-max headers.
+#include "appleseedenvmap/appleseedenvmap.h"
 #include "appleseeddisneymtl/appleseeddisneymtl.h"
 #include "appleseedglassmtl/appleseedglassmtl.h"
 #include "appleseedlightmtl/appleseedlightmtl.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
-#include "appleseedenvmap/appleseedenvmap.h"
 #include "logtarget.h"
 #include "main.h"
 #include "utilities.h"
