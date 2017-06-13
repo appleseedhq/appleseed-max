@@ -401,6 +401,7 @@ int AppleseedRenderer::Render(
         build_project(
             m_entities,
             m_default_lights,
+            m_view_node,
             m_view_params,
             m_rend_params,
             frame_rend_params,

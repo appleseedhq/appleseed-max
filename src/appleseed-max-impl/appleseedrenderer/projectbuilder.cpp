@@ -74,6 +74,9 @@
 #include <object.h>
 #include <RendType.h>
 #include <triobj.h>
+#if MAX_RELEASE != MAX_RELEASE_R16
+    #include <Scene/IPhysicalCamera.h>
+#endif
 
 // Standard headers.
 #include <cstddef>
@@ -1108,6 +1111,7 @@ namespace
     }
 
     asf::auto_release_ptr<asr::Camera> build_camera(
+        INode*                  view_node,
         const ViewParams&       view_params,
         Bitmap*                 bitmap,
         const RendererSettings& settings,
@@ -1133,10 +1137,44 @@ namespace
 
         params.insert("near_z", -view_params.hither);
 
-        asf::auto_release_ptr<renderer::Camera> camera =
-            view_params.projType == PROJ_PERSPECTIVE
-                ? asr::PinholeCameraFactory::static_create("camera", params)
-                : asr::OrthographicCameraFactory::static_create("camera", params);
+        asf::auto_release_ptr<renderer::Camera> camera;
+        if (view_params.projType == PROJ_PARALLEL)
+        {
+            camera = asr::OrthographicCameraFactory::static_create("camera", params);
+        }
+        else
+        {
+#if MAX_RELEASE == MAX_RELEASE_R16
+            camera = asr::PinholeCameraFactory::static_create("camera", params);
+#else
+            MaxSDK::IPhysicalCamera* phys_camera(nullptr);
+            if (view_node)
+                phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
+            
+            if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
+            {
+                params.insert("f_stop", phys_camera->GetLensApertureFNumber(time, FOREVER));
+                params.insert("focal_distance", phys_camera->GetFocusDistance(time, FOREVER));
+                
+                switch (phys_camera->GetBokehShape(time, FOREVER))
+                {
+                  case MaxSDK::IPhysicalCamera::BokehShape::Circular:
+                    params.insert("diaphragm_blades", 0);
+                    break;
+                  case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
+                    params.insert("diaphragm_blades", phys_camera->GetBokehNumberOfBlades(time, FOREVER));
+                    params.insert("diaphragm_tilt_angle", phys_camera->GetBokehBladesRotationDegrees(time, FOREVER));
+                    break;
+                }
+
+                camera = asr::ThinLensCameraFactory::static_create("camera", params);
+            }
+            else
+            {
+                camera = asr::PinholeCameraFactory::static_create("camera", params);
+            }
+#endif
+        }
 
         camera->transform_sequence().set_transform(
             0.0,
@@ -1195,6 +1233,7 @@ namespace
 asf::auto_release_ptr<asr::Project> build_project(
     const MaxSceneEntities&                 entities,
     const std::vector<DefaultLight>&        default_lights,
+    INode*                                  view_node,
     const ViewParams&                       view_params,
     const RendParams&                       rend_params,
     const FrameRendParams&                  frame_rend_params,
@@ -1249,7 +1288,7 @@ asf::auto_release_ptr<asr::Project> build_project(
         time);
 
     // Create a camera and bind it to the scene.
-    scene->cameras().insert(build_camera(view_params, bitmap, settings, time));
+    scene->cameras().insert(build_camera(view_node, view_params, bitmap, settings, time));
 
     // Create a frame and bind it to the project.
     project->set_frame(
