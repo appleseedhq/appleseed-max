@@ -73,10 +73,10 @@
 #include <modstack.h>
 #include <object.h>
 #include <RendType.h>
-#include <triobj.h>
-#if MAX_RELEASE != MAX_RELEASE_R16
-    #include <Scene/IPhysicalCamera.h>
+#if MAX_RELEASE >= 18000
+#include <Scene/IPhysicalCamera.h>
 #endif
+#include <triobj.h>
 
 // Standard headers.
 #include <cstddef>
@@ -1144,9 +1144,7 @@ namespace
         }
         else
         {
-#if MAX_RELEASE == MAX_RELEASE_R16
-            camera = asr::PinholeCameraFactory::static_create("camera", params);
-#else
+#if MAX_RELEASE >= 18000
             MaxSDK::IPhysicalCamera* phys_camera(nullptr);
             if (view_node)
                 phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
@@ -1173,6 +1171,8 @@ namespace
             {
                 camera = asr::PinholeCameraFactory::static_create("camera", params);
             }
+#else
+            camera = asr::PinholeCameraFactory::static_create("camera", params);
 #endif
         }
 

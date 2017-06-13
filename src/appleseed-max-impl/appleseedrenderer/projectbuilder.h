@@ -35,8 +35,8 @@
 // 3ds Max headers.
 #include <maxtypes.h>
 #include <render.h>
-#if MAX_RELEASE != MAX_RELEASE_R16
-    #include <Scene/IPhysicalCamera.h>
+#if MAX_RELEASE >= 18000
+#include <Scene/IPhysicalCamera.h>
 #endif
 
 // Standard headers.
