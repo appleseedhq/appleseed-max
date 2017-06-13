@@ -30,6 +30,7 @@
 #include "appleseedsssmtl.h"
 
 // appleseed-max headers.
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/datachunks.h"
 #include "appleseedsssmtl/resource.h"
 #include "bump/bumpparammapdlgproc.h"
@@ -780,6 +781,11 @@ Bitmap* AppleseedSSSMtlBrowserEntryInfo::GetEntryThumbnail() const
 // AppleseedSSSMtlClassDesc class implementation.
 //
 
+AppleseedSSSMtlClassDesc::AppleseedSSSMtlClassDesc()
+{
+    IMtlRender_Compatibility_MtlBase::Init(*this);
+}
+
 int AppleseedSSSMtlClassDesc::IsPublic()
 {
     return TRUE;
@@ -827,4 +833,9 @@ FPInterface* AppleseedSSSMtlClassDesc::GetInterface(Interface_ID id)
 HINSTANCE AppleseedSSSMtlClassDesc::HInstance()
 {
     return g_module;
+}
+
+bool AppleseedSSSMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
+{
+    return (renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id()) ? true : false;
 }

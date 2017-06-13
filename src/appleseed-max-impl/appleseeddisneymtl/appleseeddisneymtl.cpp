@@ -30,10 +30,11 @@
 #include "appleseeddisneymtl.h"
 
 // appleseed-max headers.
-#include "bump/bumpparammapdlgproc.h"
-#include "bump/resource.h"
 #include "appleseeddisneymtl/datachunks.h"
 #include "appleseeddisneymtl/resource.h"
+#include "appleseedrenderer/appleseedrenderer.h"
+#include "bump/bumpparammapdlgproc.h"
+#include "bump/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -807,6 +808,11 @@ Bitmap* AppleseedDisneyMtlBrowserEntryInfo::GetEntryThumbnail() const
 // AppleseedDisneyMtlClassDesc class implementation.
 //
 
+AppleseedDisneyMtlClassDesc::AppleseedDisneyMtlClassDesc()
+{
+    IMtlRender_Compatibility_MtlBase::Init(*this);
+}
+
 int AppleseedDisneyMtlClassDesc::IsPublic()
 {
     return TRUE;
@@ -854,4 +860,9 @@ FPInterface* AppleseedDisneyMtlClassDesc::GetInterface(Interface_ID id)
 HINSTANCE AppleseedDisneyMtlClassDesc::HInstance()
 {
     return g_module;
+}
+
+bool AppleseedDisneyMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
+{
+    return (renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id()) ? true : false;
 }

@@ -35,6 +35,9 @@
 // 3ds Max headers.
 #include <maxtypes.h>
 #include <render.h>
+#if MAX_RELEASE != MAX_RELEASE_R16
+    #include <Scene/IPhysicalCamera.h>
+#endif
 
 // Standard headers.
 #include <vector>
@@ -52,6 +55,7 @@ class ViewParams;
 foundation::auto_release_ptr<renderer::Project> build_project(
     const MaxSceneEntities&             entities,
     const std::vector<DefaultLight>&    default_lights,
+    INode*                              view_node,
     const ViewParams&                   view_params,
     const RendParams&                   rend_params,
     const FrameRendParams&              frame_rend_params,

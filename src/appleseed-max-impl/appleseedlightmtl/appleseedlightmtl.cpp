@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedlightmtl/datachunks.h"
 #include "appleseedlightmtl/resource.h"
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -544,6 +545,11 @@ Bitmap* AppleseedLightMtlBrowserEntryInfo::GetEntryThumbnail() const
 // AppleseedLightMtlClassDesc class implementation.
 //
 
+AppleseedLightMtlClassDesc::AppleseedLightMtlClassDesc()
+{
+    IMtlRender_Compatibility_MtlBase::Init(*this);
+}
+
 int AppleseedLightMtlClassDesc::IsPublic()
 {
     return TRUE;
@@ -591,4 +597,9 @@ FPInterface* AppleseedLightMtlClassDesc::GetInterface(Interface_ID id)
 HINSTANCE AppleseedLightMtlClassDesc::HInstance()
 {
     return g_module;
+}
+
+bool AppleseedLightMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
+{
+    return (renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id()) ? true : false;
 }

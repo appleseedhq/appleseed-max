@@ -75,6 +75,11 @@ AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 // AppleseedRenderer class implementation.
 //
 
+Class_ID AppleseedRenderer::get_class_id()
+{
+    return AppleseedRendererClassId;
+}
+
 AppleseedRenderer::AppleseedRenderer()
   : m_settings(RendererSettings::defaults())
 {
@@ -396,6 +401,7 @@ int AppleseedRenderer::Render(
         build_project(
             m_entities,
             m_default_lights,
+            m_view_node,
             m_view_params,
             m_rend_params,
             frame_rend_params,

@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedenvmap/datachunks.h"
 #include "appleseedenvmap/resource.h"
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
@@ -586,6 +587,11 @@ Bitmap* AppleseedEnvMapBrowserEntryInfo::GetEntryThumbnail() const
 // AppleseedEnvMapClassDesc class implementation.
 //
 
+AppleseedEnvMapClassDesc::AppleseedEnvMapClassDesc()
+{
+    IMtlRender_Compatibility_MtlBase::Init(*this);
+}
+
 int AppleseedEnvMapClassDesc::IsPublic()
 {
     return TRUE;
@@ -633,4 +639,9 @@ FPInterface* AppleseedEnvMapClassDesc::GetInterface(Interface_ID id)
 HINSTANCE AppleseedEnvMapClassDesc::HInstance()
 {
     return g_module;
+}
+
+bool AppleseedEnvMapClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
+{
+    return (renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id()) ? true : false;
 }

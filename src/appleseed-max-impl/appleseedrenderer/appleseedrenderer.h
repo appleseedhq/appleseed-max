@@ -51,6 +51,8 @@ class AppleseedRenderer
   : public Renderer
 {
   public:
+    static Class_ID get_class_id();
+
     AppleseedRenderer();
 
     virtual Class_ID ClassID() override;
