@@ -812,5 +812,5 @@ HINSTANCE AppleseedGlassMtlClassDesc::HInstance()
 
 bool AppleseedGlassMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
 {
-    return renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id();
+    return renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id() ? true : false;
 }
