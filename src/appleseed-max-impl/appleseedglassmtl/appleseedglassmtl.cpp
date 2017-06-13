@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedglassmtl/datachunks.h"
 #include "appleseedglassmtl/resource.h"
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
 #include "main.h"
@@ -755,6 +756,11 @@ Bitmap* AppleseedGlassMtlBrowserEntryInfo::GetEntryThumbnail() const
 // AppleseedGlassMtlClassDesc class implementation.
 //
 
+AppleseedGlassMtlClassDesc::AppleseedGlassMtlClassDesc()
+{
+    IMtlRender_Compatibility_MtlBase::Init(*this);
+}
+
 int AppleseedGlassMtlClassDesc::IsPublic()
 {
     return TRUE;
@@ -802,4 +808,9 @@ FPInterface* AppleseedGlassMtlClassDesc::GetInterface(Interface_ID id)
 HINSTANCE AppleseedGlassMtlClassDesc::HInstance()
 {
     return g_module;
+}
+
+bool AppleseedGlassMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
+{
+    return (renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id()) ? true : false;
 }

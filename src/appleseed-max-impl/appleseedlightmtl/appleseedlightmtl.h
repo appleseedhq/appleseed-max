@@ -38,6 +38,7 @@
 // 3ds Max headers.
 #include <color.h>
 #include <IMaterialBrowserEntryInfo.h>
+#include <IMtlRender_Compatibility.h>
 #include <imtl.h>
 #include <interval.h>
 #include <iparamb2.h>
@@ -164,8 +165,10 @@ class AppleseedLightMtlBrowserEntryInfo
 
 class AppleseedLightMtlClassDesc
   : public ClassDesc2
+  , public IMtlRender_Compatibility_MtlBase
 {
   public:
+    AppleseedLightMtlClassDesc();
     virtual int IsPublic() override;
     virtual void* Create(BOOL loading) override;
     virtual const MCHAR* ClassName() override;
@@ -175,6 +178,9 @@ class AppleseedLightMtlClassDesc
     virtual const MCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
     virtual HINSTANCE HInstance() override;
+
+    // From IMtlRender_Compatibility_MtlBase.
+    virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
   private:
     AppleseedLightMtlBrowserEntryInfo m_browser_entry_info;

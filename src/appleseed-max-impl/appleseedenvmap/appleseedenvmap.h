@@ -37,6 +37,7 @@
 
 // 3ds Max headers.
 #include <IMaterialBrowserEntryInfo.h>
+#include <IMtlRender_Compatibility.h>
 #include <imtl.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
@@ -142,8 +143,10 @@ class AppleseedEnvMapBrowserEntryInfo
 
 class AppleseedEnvMapClassDesc
   : public ClassDesc2
+  , public IMtlRender_Compatibility_MtlBase
 {
   public:
+    AppleseedEnvMapClassDesc();
     virtual int IsPublic() override;
     virtual void* Create(BOOL /*loading = FALSE*/) override;
     virtual const TCHAR* ClassName() override;
@@ -153,6 +156,9 @@ class AppleseedEnvMapClassDesc
     virtual const TCHAR* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
     virtual HINSTANCE HInstance() override;
+
+    // From IMtlRender_Compatibility_MtlBase.
+    virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
   private:
     AppleseedEnvMapBrowserEntryInfo m_browser_entry_info;
