@@ -148,7 +148,7 @@ class AppleseedEnvMapClassDesc
   public:
     AppleseedEnvMapClassDesc();
     virtual int IsPublic() override;
-    virtual void* Create(BOOL /*loading = FALSE*/) override;
+    virtual void* Create(BOOL loading) override;
     virtual const TCHAR* ClassName() override;
     virtual SClass_ID SuperClassID() override;
     virtual Class_ID ClassID() override;
@@ -157,7 +157,7 @@ class AppleseedEnvMapClassDesc
     virtual FPInterface* GetInterface(Interface_ID id) override;
     virtual HINSTANCE HInstance() override;
 
-    // From IMtlRender_Compatibility_MtlBase.
+    // IMtlRender_Compatibility_MtlBase methods.
     virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
   private:

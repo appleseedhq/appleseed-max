@@ -200,7 +200,7 @@ class AppleseedDisneyMtlClassDesc
     virtual FPInterface* GetInterface(Interface_ID id) override;
     virtual HINSTANCE HInstance() override;
 
-    // From IMtlRender_Compatibility_MtlBase.
+    // IMtlRender_Compatibility_MtlBase methods.
     virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
   private:

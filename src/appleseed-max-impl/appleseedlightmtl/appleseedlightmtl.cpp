@@ -601,5 +601,5 @@ HINSTANCE AppleseedLightMtlClassDesc::HInstance()
 
 bool AppleseedLightMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
 {
-    return (renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id()) ? true : false;
+    return renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id();
 }
