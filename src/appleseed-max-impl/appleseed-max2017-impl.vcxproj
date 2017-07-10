@@ -85,7 +85,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;Pathcch.lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -98,7 +98,12 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
 
 copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
 copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+
+mkdir "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\" 2&gt;nul
+del /Q "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\*.oso"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +129,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -136,7 +141,12 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
 
 copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
 copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+
+mkdir "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\" 2&gt;nul
+del /Q "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\*.oso"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -162,7 +172,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Pathcch.lib;Paramblk2.lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -174,7 +184,12 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
 
 copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
 copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"
+
+mkdir "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\" 2&gt;nul
+del /Q "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\*.oso"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\shaders\"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -186,6 +201,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
     <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="oslutils.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp" />
     <ClCompile Include="appleseedrenderer\appleseedrendererparamdlg.cpp" />
@@ -196,6 +212,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
     <ClCompile Include="appleseedrenderer\tilecallback.cpp" />
     <ClCompile Include="appleseedrenderer\updatechecker.cpp" />
     <ClCompile Include="appleseedsssmtl\appleseedsssmtl.cpp" />
+    <ClCompile Include="seexprutils.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
@@ -232,6 +249,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationN
     <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h" />
     <ClInclude Include="appleseedsssmtl\datachunks.h" />
     <ClInclude Include="appleseedsssmtl\resource.h" />
+    <ClInclude Include="oslutils.h" />
+    <ClInclude Include="seexprutils.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>

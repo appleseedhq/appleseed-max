@@ -36,12 +36,14 @@
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
 #include "main.h"
+#include "oslutils.h"
 #include "utilities.h"
 #include "version.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
+#include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -52,6 +54,9 @@
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
+
+// Standard headers.
+#include <string>
 
 // Windows headers.
 #include <tchar.h>
@@ -711,10 +716,48 @@ bool AppleseedDisneyMtl::can_emit_light() const
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)
 {
     //
+    // Shader group.
+    //
+
+    auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
+    auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
+
+    connect_color_texture(shader_group.ref(), name, "BaseColor", m_base_color_texmap, m_base_color);
+    connect_float_texture(shader_group.ref(), name, "Metallic", m_metallic_texmap, m_metallic / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Specular", m_specular_texmap, m_specular / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "SpecularTint", m_specular_tint_texmap, m_specular_tint / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Sheen", m_sheen_texmap, m_sheen / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "SheenTint", m_sheen_tint_texmap, m_sheen_tint / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy);
+    connect_float_texture(shader_group.ref(), name, "Clearcoat", m_clearcoat_texmap, m_clearcoat / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "ClearcoatGloss", m_clearcoat_gloss_texmap, m_clearcoat_gloss / 100.0f);
+
+    if (is_bitmap_texture(m_bump_texmap))
+    {
+        if (m_bump_method == 0)
+        {
+            // Bump mapping.
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+        }
+        else
+        {
+            // Normal mapping.
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector);
+        }
+    }
+
+    // Must come last.
+    shader_group->add_shader("surface", "as_max_disney_material", name, asr::ParamArray());
+
+    assembly.shader_groups().insert(shader_group);
+
+    //
     // Material.
     //
 
     asr::ParamArray material_params;
+    material_params.insert("osl_surface", shader_group_name);
 
     if (is_bitmap_texture(m_alpha_texmap))
     {
@@ -729,57 +772,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
     }
     else material_params.insert("alpha_map", m_alpha / 100.0f);
 
-    if (is_bitmap_texture(m_bump_texmap))
-    {
-        material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert(
-            "displacement_map",
-            insert_texture_and_instance(
-                assembly,
-                m_bump_texmap,
-                asr::ParamArray()
-                    .insert("color_space", "linear_rgb")));
-
-        switch (m_bump_method)
-        {
-          case 0:
-            material_params.insert("bump_amplitude", m_bump_amount);
-            break;
-
-          case 1:
-            material_params.insert("normal_map_up", m_bump_up_vector == 0 ? "y" : "z");
-            break;
-        }
-    }
-
-    auto material = asr::DisneyMaterialFactory::static_create(name, material_params);
-    auto disney_material = static_cast<asr::DisneyMaterial*>(material.get());
-
-    //
-    // Unique layer of the material.
-    //
-
-    auto layer_values = asr::DisneyMaterialLayer::get_default_values();
-
-    // The Disney material expects sRGB colors, so we have to convert input colors to sRGB.
-
-    if (is_bitmap_texture(m_base_color_texmap))
-        layer_values.insert("base_color", fmt_expr(static_cast<BitmapTex*>(m_base_color_texmap)));
-    else layer_values.insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(to_color3f(m_base_color))));
-
-    layer_values.insert("metallic", fmt_expr(m_metallic / 100.0f, m_metallic_texmap));
-    layer_values.insert("specular", fmt_expr(m_specular / 100.0f, m_specular_texmap));
-    layer_values.insert("specular_tint", fmt_expr(m_specular_tint / 100.0f, m_specular_tint_texmap));
-    layer_values.insert("anisotropic", fmt_expr(m_anisotropy, m_anisotropy_texmap));
-    layer_values.insert("roughness", fmt_expr(m_roughness / 100.0f, m_roughness_texmap));
-    layer_values.insert("sheen", fmt_expr(m_sheen/ 100.0f, m_sheen_texmap));
-    layer_values.insert("sheen_tint", fmt_expr(m_sheen_tint / 100.0f, m_sheen_tint_texmap));
-    layer_values.insert("clearcoat", fmt_expr(m_clearcoat / 100.0f, m_clearcoat_texmap));
-    layer_values.insert("clearcoat_gloss", fmt_expr(m_clearcoat_gloss / 100.0f, m_clearcoat_gloss_texmap));
-
-    disney_material->add_layer(layer_values);
-
-    return material;
+    return asr::OSLMaterialFactory::static_create(name, material_params);
 }
 
 
