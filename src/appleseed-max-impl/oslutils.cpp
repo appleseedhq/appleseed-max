@@ -56,9 +56,9 @@ std::string fmt_osl_expr(const float value)
     return asf::format("float {0}", value);
 }
 
-std::string fmt_osl_expr(const asf::Color3f& srgb)
+std::string fmt_osl_expr(const asf::Color3f& linear_rgb)
 {
-    return asf::format("color {0} {1} {2}", srgb.r, srgb.g, srgb.b);
+    return asf::format("color {0} {1} {2}", linear_rgb.r, linear_rgb.g, linear_rgb.b);
 }
 
 std::string fmt_osl_expr(Texmap* texmap)
@@ -102,7 +102,7 @@ void connect_color_texture(
     shader_group.add_shader("shader", "as_max_color_texture", layer_name.c_str(),
         asr::ParamArray()
             .insert("Filename", fmt_osl_expr(texmap))
-            .insert("Multiplier", fmt_osl_expr(asf::linear_rgb_to_srgb(to_color3f(multiplier)))));
+            .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
 
     shader_group.add_connection(
         layer_name.c_str(), "ColorOut",
