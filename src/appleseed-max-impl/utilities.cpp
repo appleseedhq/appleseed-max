@@ -29,9 +29,11 @@
 // Interface header.
 #include "utilities.h"
 
+// appleseed-max headers.
+#include "main.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/color.h"
-#include "renderer/api/scene.h"
 #include "renderer/api/texture.h"
 
 // appleseed.foundation headers.
@@ -45,6 +47,9 @@
 #include <imtl.h>
 #include <plugapi.h>
 #include <stdmat.h>
+
+// Windows headers.
+#include <Shlwapi.h>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -113,33 +118,17 @@ bool is_bitmap_texture(Texmap* map)
     return true;
 }
 
-std::string fmt_expr(const asf::Color3f& srgb)
+std::string get_root_path()
 {
-    return asf::format("[{0}, {1}, {2}]", srgb.r, srgb.g, srgb.b);
-}
+    wchar_t path[MAX_PATH];
+    const DWORD path_length = sizeof(path) / sizeof(wchar_t);
 
-std::string fmt_expr(BitmapTex* bitmap_tex)
-{
-    DbgAssert(bitmap_tex != nullptr);
-    const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
+    const auto result = GetModuleFileName(g_module, path, path_length);
+    DbgAssert(result != 0);
 
-    Bitmap* bitmap = bitmap_tex->GetBitmap(0);
-    DbgAssert(bitmap != nullptr);
+    PathRemoveFileSpec(path);
 
-    const int width = bitmap->Width();
-    const int height = bitmap->Height();
-
-    return asf::format("texture(\"{0}\", $u % {1}, $v % {2})", filepath, width, height);
-}
-
-std::string fmt_expr(const float scalar, Texmap* map)
-{
-    auto value = asf::to_string(scalar);
-
-    if (is_bitmap_texture(map))
-        value += asf::format(" * {0}", fmt_expr(static_cast<BitmapTex*>(map)));
-
-    return value;
+    return wide_to_utf8(path);
 }
 
 void insert_color(asr::BaseGroup& base_group, const Color& color, const char* name)

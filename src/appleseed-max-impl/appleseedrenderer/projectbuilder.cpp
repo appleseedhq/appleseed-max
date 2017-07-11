@@ -35,6 +35,7 @@
 #include "appleseedrenderer/maxsceneentities.h"
 #include "appleseedrenderer/renderersettings.h"
 #include "iappleseedmtl.h"
+#include "seexprutils.h"
 #include "utilities.h"
 
 // appleseed.renderer headers.
@@ -92,17 +93,6 @@ namespace asr = renderer;
 
 namespace
 {
-    template <typename EntityContainer>
-    std::string make_unique_name(
-        const EntityContainer&  entities,
-        const std::string&      name)
-    {
-        return
-            entities.get_by_name(name.c_str()) == nullptr
-                ? name
-                : asr::make_unique_name(name + "_", entities);
-    }
-
     std::string insert_color(
         asr::BaseGroup&         base_group,
         std::string             name,
@@ -149,7 +139,7 @@ namespace
         // The Disney material expects sRGB colors, so we have to convert the input color to sRGB.
         static_cast<asr::DisneyMaterial*>(material.get())->add_layer(
             asr::DisneyMaterialLayer::get_default_values()
-                .insert("base_color", fmt_expr(asf::linear_rgb_to_srgb(linear_rgb)))
+                .insert("base_color", fmt_se_expr(asf::linear_rgb_to_srgb(linear_rgb)))
                 .insert("specular", 1.0)
                 .insert("roughness", 0.625));
 
@@ -1244,6 +1234,10 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
         asr::ProjectFactory::create("project"));
+
+    // Initialize search paths.
+    project->search_paths().set_root_path(get_root_path());
+    project->search_paths().push_back("shaders");
 
     // Add default configurations to the project.
     project->add_default_configurations();

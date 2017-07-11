@@ -49,6 +49,8 @@
     <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp">
       <Filter>appleseedenvmap</Filter>
     </ClCompile>
+    <ClCompile Include="seexprutils.cpp" />
+    <ClCompile Include="oslutils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -143,6 +145,8 @@
     <ClInclude Include="appleseedenvmap\resource.h">
       <Filter>appleseedenvmap</Filter>
     </ClInclude>
+    <ClInclude Include="seexprutils.h" />
+    <ClInclude Include="oslutils.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">

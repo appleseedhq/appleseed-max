@@ -29,6 +29,7 @@
 #pragma once
 
 // appleseed.renderer headers.
+#include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -51,7 +52,6 @@
 
 // Forward declarations.
 namespace renderer  { class BaseGroup; }
-class BitmapTex;
 class Color;
 class Texmap;
 
@@ -93,25 +93,20 @@ std::wstring utf8_to_wide(const char* str);
 
 
 //
-// Formatting functions.
+// Bitmap functions.
 //
 
 // Return true if a given map is a valid bitmap texture.
 bool is_bitmap_texture(Texmap* map);
 
-// Format an sRGB color as an SeExpr expression.
-std::string fmt_expr(const foundation::Color3f& srgb);
-
-// Format a bitmap texture as an SeExpr expression.
-std::string fmt_expr(BitmapTex* bitmap_tex);
-
-// Format a scalar x map product as an SeExpr expression.
-std::string fmt_expr(const float scalar, Texmap* map);
-
 
 //
 // I/O functions.
 //
+
+// Return the root path of the plugin, i.e. the path to the directory containing the plugin DLLs
+// as an UTF-8 string, for instance: "C:\Program Files\Autodesk\3ds Max 2017\Plugins\appleseed"
+std::string get_root_path();
 
 // Write a block of data to a 3ds Max file. Return true on success.
 bool write(ISave* isave, const void* data, const size_t size);
@@ -128,6 +123,11 @@ IOResult read(ILoad* iload, T* object);
 //
 // Project construction functions.
 //
+
+template <typename EntityContainer>
+std::string make_unique_name(
+    const EntityContainer&  entities,
+    const std::string&      name);
 
 void insert_color(
     renderer::BaseGroup&    base_group,
@@ -247,4 +247,15 @@ inline IOResult read(ILoad* iload, MSTR* s)
     if (result == IO_OK)
         *s = buf;
     return result;
+}
+
+template <typename EntityContainer>
+std::string make_unique_name(
+    const EntityContainer&  entities,
+    const std::string&      name)
+{
+    return
+        entities.get_by_name(name.c_str()) == nullptr
+            ? name
+            : asr::make_unique_name(name + "_", entities);
 }
