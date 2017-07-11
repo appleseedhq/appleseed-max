@@ -102,11 +102,11 @@
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,11 +138,11 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"<
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -175,11 +175,11 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"<
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
