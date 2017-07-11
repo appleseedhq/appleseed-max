@@ -92,19 +92,25 @@
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
 
-mkdir "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\" 2&gt;nul
-del /Q "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\*.oso"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\"
-</Command>
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\*.oso"
+del /Q "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\*.oso"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,19 +142,25 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Fi
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
 
-mkdir "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\" 2&gt;nul
-del /Q "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\*.oso"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\"
-</Command>
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\*.oso"
+del /Q "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\*.oso"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -181,19 +193,25 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Fi
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\appleseed-max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
 
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.pdb" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\"
 
-mkdir "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\" 2&gt;nul
-del /Q "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\*.oso"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "C:\Program Files\Autodesk\3ds Max 2015\plugins\appleseed\shaders\"
-</Command>
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\*.oso"
+del /Q "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\*.oso"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2015\$(Platform)\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2015\$(Platform)\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

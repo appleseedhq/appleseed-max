@@ -101,9 +101,11 @@
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2017\$(Platform)\$(Configuration)" 2&gt;nul
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2017\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2017\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2017\$(Platform)\Current" 2&gt;nul
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Platform)\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,9 +136,11 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\applesee
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2017\$(Platform)\$(Configuration)" 2&gt;nul
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2017\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2017\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2017\$(Platform)\Current" 2&gt;nul
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Platform)\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -167,9 +171,11 @@ copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\applesee
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2017\$(Platform)\$(Configuration)" 2&gt;nul
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2017\$(Platform)\$(Configuration)\"
-copy /Y "$(TargetPath)" "C:\Program Files\Autodesk\3ds Max 2017\plugins\appleseed\"</Command>
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2017\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2017\$(Platform)\Current" 2&gt;nul
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Platform)\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

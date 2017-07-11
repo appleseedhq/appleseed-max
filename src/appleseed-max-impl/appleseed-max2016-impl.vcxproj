@@ -92,19 +92,25 @@
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
 
-mkdir "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\" 2&gt;nul
-del /Q "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\*.oso"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\"
-</Command>
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\*.oso"
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\*.oso"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,19 +142,25 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
 
-mkdir "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\" 2&gt;nul
-del /Q "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\*.oso"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\"
-</Command>
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\*.oso"
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\*.oso"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -181,19 +193,25 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\bin\appleseed-max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
-copy /Y "$(SolutionDir)..\..\appleseed\build\vc11\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\build\vc14\src\appleseed\$(ConfigurationName)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\"
 
-mkdir "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\" 2&gt;nul
-del /Q "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\*.oso"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\..\appleseed-max2016-plugin-folder\shaders\"
-</Command>
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\*.oso"
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\*.oso"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Platform)\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Platform)\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
