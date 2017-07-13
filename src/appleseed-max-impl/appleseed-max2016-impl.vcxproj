@@ -98,6 +98,9 @@ mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
 
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
+
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\Current\"
 
@@ -145,6 +148,9 @@ mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\Current\"
@@ -194,6 +200,9 @@ mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\Current\"

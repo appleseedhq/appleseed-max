@@ -106,7 +106,10 @@
 mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +145,10 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
 mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -179,7 +185,10 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
 mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
 
 copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
