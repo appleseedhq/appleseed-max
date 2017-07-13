@@ -1,6 +1,6 @@
 .vs/
-bin/
 build/
+sandbox/
 *.aps
 *.db
 *.opendb
