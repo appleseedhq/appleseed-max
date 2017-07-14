@@ -104,6 +104,9 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\Current\"
 
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
+
 mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\" 2&gt;nul
 mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\" 2&gt;nul
 
@@ -154,6 +157,9 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
 mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\" 2&gt;nul
 mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\" 2&gt;nul
@@ -206,6 +212,9 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2016\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
 mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\" 2&gt;nul
 mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\" 2&gt;nul
