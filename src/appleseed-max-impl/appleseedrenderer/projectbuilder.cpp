@@ -52,6 +52,7 @@
 #include "renderer/api/scene.h"
 #include "renderer/api/texture.h"
 #include "renderer/api/utility.h"
+#include "renderer/modeling/input/source.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
@@ -78,6 +79,7 @@
 #include <Scene/IPhysicalCamera.h>
 #endif
 #include <triobj.h>
+#include <trig.h>
 
 // Standard headers.
 #include <cstddef>
@@ -698,8 +700,36 @@ namespace
         assembly.lights().insert(light);
     }
 
+    void add_sun_light(
+        asr::Assembly&          assembly,
+        const std::string&      light_name,
+        const asf::Transformd&  transform,
+        const std::string&      color_name,
+        const float             intensity,
+        const float             size_mult,
+        const char*             sky_name)
+    {
+        asf::auto_release_ptr<asr::Light> light(
+            asr::SunLightFactory::static_create(
+                light_name.c_str(),
+                asr::ParamArray()
+                .insert("radiance_multiplier", intensity * asf::Pi<float>())
+                .insert("turbidity", 1.0)
+                .insert("environment_edf", sky_name)
+                .insert("size_multiplier", size_mult)));
+        light->set_transform(transform);
+        assembly.lights().insert(light);
+    }
+
+    bool has_appleseed_sky_environment(const RendParams& rend_params)
+    {
+        return (rend_params.envMap != nullptr &&
+            rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()));
+    }
+
     void add_light(
         asr::Assembly&          assembly,
+        const RendParams&       rend_params,
         INode*                  light_node,
         const TimeValue         time)
     {
@@ -726,7 +756,30 @@ namespace
         const std::string color_name =
             insert_color(assembly, light_name + "_color", color);
 
-        if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
+        // Get light from envmap
+        INode* sun_node(nullptr);
+        BOOL sun_node_on(false);
+        float sun_size_mult;
+        if (has_appleseed_sky_environment(rend_params))
+        {
+            AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
+            env_map->GetParamBlock(0)->GetValueByName(_T("sun_node"), time, sun_node, FOREVER);
+            env_map->GetParamBlock(0)->GetValueByName(_T("sun_node_on"), time, sun_node_on, FOREVER);
+            env_map->GetParamBlock(0)->GetValueByName(_T("sun_size_multiplier"), time, sun_size_mult, FOREVER);
+        }
+
+        if (sun_node && sun_node_on && (light_node == sun_node))
+        {
+            add_sun_light(
+                assembly,
+                light_name,
+                transform,
+                color_name,
+                intensity,
+                sun_size_mult,
+                "environment_edf");
+        }        
+        else if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
         {
             add_omni_light(
                 assembly,
@@ -770,13 +823,14 @@ namespace
 
     void add_lights(
         asr::Assembly&          assembly,
+        const RendParams        rend_params,
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
         for (const auto& light_info : entities.m_lights)
         {
             if (light_info.m_enabled)
-                add_light(assembly, light_info.m_light, time);
+                add_light(assembly, rend_params, light_info.m_light, time);
         }
     }
 
@@ -873,6 +927,7 @@ namespace
 
     void populate_assembly(
         asr::Assembly&                      assembly,
+        const RendParams&                   rend_params,
         const MaxSceneEntities&             entities,
         const std::vector<DefaultLight>&    default_lights,
         const RenderType                    type,
@@ -885,9 +940,11 @@ namespace
         add_objects(assembly, entities, type, time, object_map, material_map);
 
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
-        add_lights(assembly, entities, time);
+        add_lights(assembly, rend_params, entities, time);
 
-        if (entities.m_lights.empty() && !has_light_emitting_materials(material_map))
+        if (entities.m_lights.empty() 
+            && !has_light_emitting_materials(material_map)
+            && !has_appleseed_sky_environment(rend_params))
         {
             // No non-physical light or light-emitting material: add Max's default lights.
             add_default_lights(assembly, default_lights);
@@ -975,12 +1032,49 @@ namespace
             }
 
             // Insert EDF.
-            if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
+            if (has_appleseed_sky_environment(rend_params))
             {
                 auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
                 if (appleseed_envmap)
                 {
-                    scene.environment_edfs().insert(appleseed_envmap->create_envmap(env_edf_name.c_str()));
+                    auto env_map = appleseed_envmap->create_envmap(env_edf_name.c_str());
+                    
+                    INode* sun_node(nullptr);
+                    BOOL sun_node_on(false);
+                    appleseed_envmap->GetParamBlock(0)->GetValueByName(_T("sun_node"), time, sun_node, FOREVER);
+                    appleseed_envmap->GetParamBlock(0)->GetValueByName(_T("sun_node_on"), time, sun_node_on, FOREVER);
+
+                    float sun_theta, sun_phi;
+                    if (sun_node && sun_node_on)
+                    {
+                        Matrix3 sun_transform = sun_node->GetObjTMAfterWSM(time);
+                        sun_transform.NoTrans();
+                        Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
+
+                        sun_theta = std::acosf(sun_dir.z);
+
+                        float cos_phi = sun_dir.x / sqrtf(1.0f - std::powf(sun_dir.z, 2));
+                        if (cos_phi > 1.0f)
+                          cos_phi = 1.0f;
+                        sun_phi = std::acosf(cos_phi);
+
+                        if (sun_dir.y > 0)
+                        {
+                            sun_phi = asf::TwoPi<float>() - sun_phi;
+                        }
+                        sun_theta = asf::rad_to_deg(sun_theta);
+                        sun_phi = asf::rad_to_deg(sun_phi);
+                    }
+                    else
+                    {
+                        appleseed_envmap->GetParamBlock(0)->GetValueByName(_T("sun_theta"), time, sun_theta, FOREVER);
+                        appleseed_envmap->GetParamBlock(0)->GetValueByName(_T("sun_phi"), time, sun_phi, FOREVER);
+                    }
+
+                    env_map->get_parameters().set("sun_theta", sun_theta);
+                    env_map->get_parameters().set("sun_phi", sun_phi);
+                    
+                    scene.environment_edfs().insert(env_map);
                 }
             }
             else
@@ -1254,6 +1348,7 @@ asf::auto_release_ptr<asr::Project> build_project(
         rend_params.inMtlEdit ? RenderType::MaterialPreview : RenderType::Default;
     populate_assembly(
         assembly.ref(),
+        rend_params,
         entities,
         default_lights,
         type,
