@@ -1054,14 +1054,15 @@ namespace
                         sun_theta = std::acosf(sun_dir.z);
 
                         float cos_phi = sun_dir.x / sqrtf(1.0f - std::powf(sun_dir.z, 2));
+                        
                         if (cos_phi > 1.0f)
-                          cos_phi = 1.0f;
+                            cos_phi = 1.0f;
+
                         sun_phi = std::acosf(cos_phi);
 
                         if (sun_dir.y > 0)
-                        {
                             sun_phi = asf::TwoPi<float>() - sun_phi;
-                        }
+                        
                         sun_theta = asf::rad_to_deg(sun_theta);
                         sun_phi = asf::rad_to_deg(sun_phi);
                     }

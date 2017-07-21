@@ -136,9 +136,9 @@ namespace
         p_end,
 
         ParamIdSunNodeOn, _T("sun_node_on"), TYPE_BOOL, 0, IDS_TURB_MAP_ON,
-        p_default, TRUE,
-        p_ui, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
-        p_accessor, &g_sun_node_accessor,
+            p_default, TRUE,
+            p_ui, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
+            p_accessor, &g_sun_node_accessor,
         p_end,
 
         ParamIdTurbidity, _T("turbidity"), TYPE_FLOAT, P_ANIMATABLE, IDS_TURBIDITY,
@@ -599,23 +599,23 @@ void SunNodePBAccessor::TabChanged(
     int               tabIndex, 
     int               count)
 {
-  if (id == ParamIdSunNode)
-  {
-    if (changeCode == tab_ref_deleted)
+    if (id == ParamIdSunNode)
     {
-      AppleseedEnvMap* p = (AppleseedEnvMap*)owner;
-      IParamBlock2* pblock = p->GetParamBlock(0);
-      if (pblock)
-      {
-        IParamMap2* map = pblock->GetMap();
-        if (map)
+        if (changeCode == tab_ref_deleted)
         {
-          map->Enable(ParamIdSunTheta, TRUE);
-          map->Enable(ParamIdSunPhi, TRUE);
+            AppleseedEnvMap* p = (AppleseedEnvMap*)owner;
+            IParamBlock2* pblock = p->GetParamBlock(0);
+            if (pblock)
+            {
+                IParamMap2* map = pblock->GetMap();
+                if (map)
+                {
+                    map->Enable(ParamIdSunTheta, TRUE);
+                    map->Enable(ParamIdSunPhi, TRUE);
+                }
+            }
         }
-      }
     }
-  }
 }
 
 void SunNodePBAccessor::Set(
@@ -664,11 +664,11 @@ void SunNodePBAccessor::Set(
 
 BOOL SunNodePBValidator::Validate(PB2Value & v)
 {
-  INode *node = (INode*)v.r;
-  Object *obj = node->GetObjectRef();
+    INode *node = (INode*)v.r;
+    Object *obj = node->GetObjectRef();
 
-  return obj->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
-    obj->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0) ? true : false;
+    return obj->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
+      obj->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0) ? true : false;
 }
 
 
