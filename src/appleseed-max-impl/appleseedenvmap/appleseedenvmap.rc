@@ -25,43 +25,47 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ENVMAP_PANEL DIALOGEX 0, 0, 217, 166
+IDD_ENVMAP_PANEL DIALOGEX 0, 0, 217, 175
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         "",IDC_EDIT_THETA,"CustEdit",WS_TABSTOP,85,12,35,10
     CONTROL         "",IDC_SPIN_THETA,"SpinnerControl",0x0,121,12,7,10
     LTEXT           "Theta Angle:",IDC_STATIC,13,14,41,8
-    GROUPBOX        "Sun",IDC_STATIC,7,3,203,41
+    GROUPBOX        "Sun",IDC_STATIC,7,3,203,49
     CONTROL         "",IDC_EDIT_PHI,"CustEdit",WS_TABSTOP,85,24,35,10
     CONTROL         "",IDC_SPIN_PHI,"SpinnerControl",0x0,121,24,7,10
     LTEXT           "Phi Angle:",IDC_STATIC,13,26,32,8
-    GROUPBOX        "Sky",IDC_STATIC,7,45,203,76
-    CONTROL         "",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,85,54,35,10
-    CONTROL         "",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,121,54,7,10
-    LTEXT           "Turbidity:",IDC_STATIC,13,56,30,8
-    CONTROL         "",IDC_EDIT_TURB_MULTIPLIER,"CustEdit",WS_TABSTOP,85,67,35,10
-    CONTROL         "",IDC_SPIN_TURB_MULTIPLIER,"SpinnerControl",0x0,121,67,7,10
-    LTEXT           "Turbidity Multiplier:",IDC_STATIC,13,68,57,8,SS_CENTERIMAGE
-    CONTROL         "",IDC_EDIT_LUMIN_MULTIPLIER,"CustEdit",WS_TABSTOP,85,80,35,10
-    CONTROL         "",IDC_SPIN_LUMIN_MULTIPLIER,"SpinnerControl",0x0,121,80,7,10
-    LTEXT           "Luminance Multiplier:",IDC_STATIC,13,81,67,8
-    CONTROL         "",IDC_EDIT_LUMIN_GAMMA,"CustEdit",WS_TABSTOP,85,93,35,10
-    CONTROL         "",IDC_SPIN_LUMIN_GAMMA,"SpinnerControl",0x0,121,93,7,10
-    LTEXT           "Luminance Gamma:",IDC_STATIC,13,94,64,8
-    CONTROL         "",IDC_EDIT_SATUR_MULTIPLIER,"CustEdit",WS_TABSTOP,85,106,35,10
-    CONTROL         "",IDC_SPIN_SATUR_MULTIPLIER,"SpinnerControl",0x0,121,106,7,10
-    LTEXT           "Saturation Multiplier:",IDC_STATIC,13,106,64,8
-    CONTROL         "None",IDC_PICK_TURB_TEXTURE,"CustButton",WS_TABSTOP,136,53,56,14
-    GROUPBOX        "Ground",IDC_STATIC,7,122,203,36
-    CONTROL         "",IDC_EDIT_HORIZON_SHIFT,"CustEdit",WS_TABSTOP,85,131,35,10
-    CONTROL         "",IDC_SPIN_HORIZON_SHIFT,"SpinnerControl",0x0,121,131,7,10
-    LTEXT           "Horizon Shift:",IDC_STATIC,13,133,43,8
-    CONTROL         "",IDC_EDIT_GROUND_ALBEDO,"CustEdit",WS_TABSTOP,85,144,35,10
-    CONTROL         "",IDC_SPIN_GROUND_ALBEDO,"SpinnerControl",0x0,121,144,7,10
-    LTEXT           "Ground Albedo:",IDC_STATIC,13,144,50,8
-    CONTROL         "Pick Sun Light",IDC_PICK_SUN,"CustButton",NOT WS_VISIBLE | WS_TABSTOP,136,12,68,14
-    CONTROL         "",IDC_TURB_TEX_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,196,56,8,10
+    GROUPBOX        "Sky",IDC_STATIC,7,55,203,76
+    CONTROL         "",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,85,64,35,10
+    CONTROL         "",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,121,64,7,10
+    LTEXT           "Turbidity:",IDC_STATIC,13,66,30,8
+    CONTROL         "",IDC_EDIT_TURB_MULTIPLIER,"CustEdit",WS_TABSTOP,85,77,35,10
+    CONTROL         "",IDC_SPIN_TURB_MULTIPLIER,"SpinnerControl",0x0,121,77,7,10
+    LTEXT           "Turbidity Multiplier:",IDC_STATIC,13,78,57,8,SS_CENTERIMAGE
+    CONTROL         "",IDC_EDIT_LUMIN_MULTIPLIER,"CustEdit",WS_TABSTOP,85,90,35,10
+    CONTROL         "",IDC_SPIN_LUMIN_MULTIPLIER,"SpinnerControl",0x0,121,90,7,10
+    LTEXT           "Luminance Multiplier:",IDC_STATIC,13,91,67,8
+    CONTROL         "",IDC_EDIT_LUMIN_GAMMA,"CustEdit",WS_TABSTOP,85,103,35,10
+    CONTROL         "",IDC_SPIN_LUMIN_GAMMA,"SpinnerControl",0x0,121,103,7,10
+    LTEXT           "Luminance Gamma:",IDC_STATIC,13,104,64,8
+    CONTROL         "",IDC_EDIT_SATUR_MULTIPLIER,"CustEdit",WS_TABSTOP,85,116,35,10
+    CONTROL         "",IDC_SPIN_SATUR_MULTIPLIER,"SpinnerControl",0x0,121,116,7,10
+    LTEXT           "Saturation Multiplier:",IDC_STATIC,13,116,64,8
+    CONTROL         "None",IDC_PICK_TURB_TEXTURE,"CustButton",WS_TABSTOP,136,63,56,14
+    GROUPBOX        "Ground",IDC_STATIC,7,132,203,36
+    CONTROL         "",IDC_EDIT_HORIZON_SHIFT,"CustEdit",WS_TABSTOP,85,142,35,10
+    CONTROL         "",IDC_SPIN_HORIZON_SHIFT,"SpinnerControl",0x0,121,142,7,10
+    LTEXT           "Horizon Shift:",IDC_STATIC,13,143,43,8
+    CONTROL         "",IDC_EDIT_GROUND_ALBEDO,"CustEdit",WS_TABSTOP,85,154,35,10
+    CONTROL         "",IDC_SPIN_GROUND_ALBEDO,"SpinnerControl",0x0,121,154,7,10
+    LTEXT           "Ground Albedo:",IDC_STATIC,13,154,50,8
+    CONTROL         "Pick Sun Light",IDC_PICK_SUN_NODE,"CustButton",WS_TABSTOP,136,12,56,14
+    CONTROL         "",IDC_TURB_TEX_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,196,66,8,10
+    CONTROL         "",IDC_SUN_NODE_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,196,15,8,10
+    CONTROL         "",IDC_EDIT_SIZE_MULTIPLIER,"CustEdit",WS_TABSTOP,85,36,35,10
+    CONTROL         "",IDC_SPIN_SIZE_MULTIPLIER,"SpinnerControl",0x0,121,36,7,10
+    LTEXT           "Size Multiplier:",IDC_STATIC,13,38,58,8
 END
 
 
@@ -80,8 +84,10 @@ BEGIN
         VERTGUIDE, 13
         VERTGUIDE, 85
         VERTGUIDE, 128
+        VERTGUIDE, 136
+        VERTGUIDE, 192
         TOPMARGIN, 7
-        BOTTOMMARGIN, 159
+        BOTTOMMARGIN, 168
         HORZGUIDE, 12
     END
 END
@@ -117,16 +123,29 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ENVMAP_PANEL AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE
 BEGIN
-    IDS_LIBDESCRIPTION      "appleseed Environment Map"
-    IDS_CLASS_NAME          "appleseed Env Map"
-    IDS_ENVMAP_PARAMS       "appleseed Environment Map Parameters"
-    IDS_CLASS_NAME_CDESC    "appleseed Environment Map"
+    IDS_LIBDESCRIPTION      "appleseed Sky"
+    IDS_SUN_NODE            "Sun Node"
+    IDS_CLASS_NAME          "appleseed Sky"
+    IDS_ENVMAP_PARAMS       "appleseed Sky Parameters"
+    IDS_CLASS_NAME_CDESC    "appleseed Sky"
     IDS_THETA               "Sun Theta Angle"
+    IDS_PICK_SUN_PROMPT     "Pick Directional Light"
     IDS_PHI                 "Sun Phi Angle"
     IDS_TURBIDITY           "Turbidity"
     IDS_TURB_MULTIPLIER     "Turbidity Multiplier"
@@ -142,6 +161,8 @@ BEGIN
     IDS_SAT_MULITPLIER      "Saturation Multiplier"
     IDS_HORIZON_SHIFT       "Horizon Shift"
     IDS_GROUND_ALBEDO       "Ground Albedo"
+    IDS_SUN_NODE_ON         "Sun Node On"
+    IDS_SIZE_MULTIPLIER     "Sun Size Multiplier"
 END
 
 #endif    // English (United States) resources
