@@ -135,7 +135,7 @@ namespace
             p_accessor, &g_sun_node_accessor,
         p_end,
 
-        ParamIdSunNodeOn, _T("sun_node_on"), TYPE_BOOL, 0, IDS_TURB_MAP_ON,
+        ParamIdSunNodeOn, _T("sun_node_on"), TYPE_BOOL, 0, IDS_SUN_NODE_ON,
             p_default, TRUE,
             p_ui, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
             p_accessor, &g_sun_node_accessor,
@@ -308,26 +308,22 @@ void AppleseedEnvMap::SetReference(int i, RefTargetHandle rtarg)
 }
 
 RefResult AppleseedEnvMap::NotifyRefChanged(
-    const Interval& /*changeInt*/,
-    RefTargetHandle hTarget,
-    PartID& partID,
-    RefMessage message,
-    BOOL /*propagate*/)
+    const Interval&   /*changeInt*/,
+    RefTargetHandle   hTarget,
+    PartID&           partID,
+    RefMessage        message,
+    BOOL              /*propagate*/)
 {
     switch (message)
     {
       case REFMSG_TARGET_DELETED:
         if (hTarget == m_pblock)
-        {
             m_pblock = nullptr;
-        }
         break;
-      
+
       case REFMSG_CHANGE:
         if (hTarget == m_pblock)
-        {
             g_block_desc.InvalidateUI(m_pblock->LastNotifyParamID());
-        }
         break;
     }
 
@@ -352,13 +348,13 @@ int AppleseedEnvMap::NumSubTexmaps()
 
 Texmap* AppleseedEnvMap::GetSubTexmap(int i)
 {
-    Texmap *sm1 = nullptr;
+    Texmap* texmap = nullptr;
     Interval iv;
     if (i == 0)
     {
-        m_pblock->GetValue(ParamIdTurbidityMap, 0, sm1, iv);
+        m_pblock->GetValue(ParamIdTurbidityMap, 0, texmap, iv);
     }
-    return sm1;
+    return texmap;
 }
 
 void AppleseedEnvMap::SetSubTexmap(int i, Texmap* texmap)
@@ -448,7 +444,7 @@ namespace
             switch (umsg)
             {
               case WM_INITDIALOG:
-                enable_controls(hwnd, map);
+                enable_disable_controls(hwnd, map);
                 return TRUE;
 
               default:
@@ -457,7 +453,7 @@ namespace
         }
 
       private:
-        void enable_controls(HWND hwnd, IParamMap2* map)
+        void enable_disable_controls(HWND hwnd, IParamMap2* map)
         {
             INode* sun_node;
             int sun_node_on;
@@ -591,6 +587,7 @@ Bitmap* AppleseedEnvMapBrowserEntryInfo::GetEntryThumbnail() const
 //
 // SunNodePBAccessor class implementation
 //
+
 void SunNodePBAccessor::TabChanged(
     tab_changes       changeCode, 
     Tab<PB2Value>*    tab,
@@ -625,8 +622,8 @@ void SunNodePBAccessor::Set(
     int               tabIndex,
     TimeValue         t)
 {
-    AppleseedEnvMap* p = (AppleseedEnvMap*)owner;
-    IParamBlock2* pblock = p->GetParamBlock(0);
+    AppleseedEnvMap* envmap = (AppleseedEnvMap*)owner;
+    IParamBlock2* pblock = envmap->GetParamBlock(0);
     INode* sun_node;
     if (pblock)
     {
@@ -664,11 +661,11 @@ void SunNodePBAccessor::Set(
 
 BOOL SunNodePBValidator::Validate(PB2Value & v)
 {
-    INode *node = (INode*)v.r;
-    Object *obj = node->GetObjectRef();
+    INode* node = (INode*)v.r;
+    Object* obj = node->GetObjectRef();
 
     return obj->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
-      obj->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0) ? true : false;
+      obj->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0) ? TRUE : FALSE;
 }
 
 

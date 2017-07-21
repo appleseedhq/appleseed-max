@@ -52,7 +52,6 @@
 #include "renderer/api/scene.h"
 #include "renderer/api/texture.h"
 #include "renderer/api/utility.h"
-#include "renderer/modeling/input/source.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
@@ -78,8 +77,8 @@
 #if MAX_RELEASE >= 18000
 #include <Scene/IPhysicalCamera.h>
 #endif
-#include <triobj.h>
 #include <trig.h>
+#include <triobj.h>
 
 // Standard headers.
 #include <cstddef>
@@ -713,18 +712,18 @@ namespace
             asr::SunLightFactory::static_create(
                 light_name.c_str(),
                 asr::ParamArray()
-                .insert("radiance_multiplier", intensity * asf::Pi<float>())
-                .insert("turbidity", 1.0)
-                .insert("environment_edf", sky_name)
-                .insert("size_multiplier", size_mult)));
+                  .insert("radiance_multiplier", intensity * asf::Pi<float>())
+                  .insert("turbidity", 1.0)
+                  .insert("environment_edf", sky_name)
+                  .insert("size_multiplier", size_mult)));
         light->set_transform(transform);
         assembly.lights().insert(light);
     }
 
     bool has_appleseed_sky_environment(const RendParams& rend_params)
     {
-        return (rend_params.envMap != nullptr &&
-            rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()));
+        return rend_params.envMap != nullptr &&
+            rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id());
     }
 
     void add_light(
@@ -758,7 +757,7 @@ namespace
 
         // Get light from envmap
         INode* sun_node(nullptr);
-        BOOL sun_node_on(false);
+        BOOL sun_node_on(FALSE);
         float sun_size_mult;
         if (has_appleseed_sky_environment(rend_params))
         {
@@ -768,7 +767,7 @@ namespace
             env_map->GetParamBlock(0)->GetValueByName(_T("sun_size_multiplier"), time, sun_size_mult, FOREVER);
         }
 
-        if (sun_node && sun_node_on && (light_node == sun_node))
+        if (sun_node && sun_node_on && light_node == sun_node)
         {
             add_sun_light(
                 assembly,
@@ -823,7 +822,7 @@ namespace
 
     void add_lights(
         asr::Assembly&          assembly,
-        const RendParams        rend_params,
+        const RendParams&       rend_params,
         const MaxSceneEntities& entities,
         const TimeValue         time)
     {
@@ -1040,7 +1039,7 @@ namespace
                     auto env_map = appleseed_envmap->create_envmap(env_edf_name.c_str());
                     
                     INode* sun_node(nullptr);
-                    BOOL sun_node_on(false);
+                    BOOL sun_node_on(FALSE);
                     appleseed_envmap->GetParamBlock(0)->GetValueByName(_T("sun_node"), time, sun_node, FOREVER);
                     appleseed_envmap->GetParamBlock(0)->GetValueByName(_T("sun_node_on"), time, sun_node_on, FOREVER);
 
@@ -1049,18 +1048,17 @@ namespace
                     {
                         Matrix3 sun_transform = sun_node->GetObjTMAfterWSM(time);
                         sun_transform.NoTrans();
-                        Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
+                        const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
 
                         sun_theta = std::acosf(sun_dir.z);
 
-                        float cos_phi = sun_dir.x / sqrtf(1.0f - std::powf(sun_dir.z, 2));
+                        float cos_phi = sun_dir.x / sqrtf(1.0f - (sun_dir.z * sun_dir.z));
                         
-                        if (cos_phi > 1.0f)
-                            cos_phi = 1.0f;
+                        cos_phi = asf::clamp(cos_phi, -1.0f, 1.0f);
 
                         sun_phi = std::acosf(cos_phi);
 
-                        if (sun_dir.y > 0)
+                        if (sun_dir.y > 0.0f)
                             sun_phi = asf::TwoPi<float>() - sun_phi;
                         
                         sun_theta = asf::rad_to_deg(sun_theta);

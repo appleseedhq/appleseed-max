@@ -22,12 +22,9 @@
 #define IDS_HORIZON_SHIFT               8017
 #define IDS_GROUND_ALBEDO               8018
 #define IDS_SUN_NODE_ON                 8019
-#define IDC_CLOSEBUTTON                 8020
-#define IDC_DOSTUFF                     8020
 #define IDS_SIZE_MULTIPLIER             8020
 #define IDC_PICK_SUN                    8022
 #define IDC_PICK_SUN_NODE               8022
-#define IDC_BUTTON3                     8023
 #define IDC_PICK_TURB_TEXTURE           8024
 #define IDC_COMBO_SKY_TYPE              8025
 #define IDC_TURB_TEX_ON                 8026

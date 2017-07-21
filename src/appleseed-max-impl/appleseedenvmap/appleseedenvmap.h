@@ -144,7 +144,7 @@ class SunNodePBAccessor
 //
 
 class SunNodePBValidator 
-    : public PBValidator 
+  : public PBValidator 
 {
   public:
     virtual BOOL Validate(PB2Value& v);
