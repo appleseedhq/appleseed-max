@@ -42,11 +42,12 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedEnvMapFriendlyClassName = _T("appleseed Environment Map");
+    const TCHAR* AppleseedEnvMapFriendlyClassName = _T("appleseed Sky");
 }
 
 AppleseedEnvMapClassDesc g_appleseed_envmap_classdesc;
-
+SunNodePBAccessor g_sun_node_accessor;
+SunNodePBValidator g_sun_node_validator;
 
 //
 // AppleseedEnvMap class implementation.
@@ -69,7 +70,10 @@ namespace
         ParamIdLuminGamma           = 7,
         ParamIdSatMultiplier        = 8,
         ParamIdHorizonShift         = 10,
-        ParamIdGroundAlbedo         = 11
+        ParamIdGroundAlbedo         = 11,
+        ParamIdSunNode              = 12,
+        ParamIdSunNodeOn            = 13,
+        ParamIdSunSizeMultiplier    = 14
     };
 
     enum TexmapId
@@ -116,6 +120,25 @@ namespace
             p_default, 0.0f,
             p_range, 0.0f, 360.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_PHI, IDC_SPIN_PHI, 0.01f,
+        p_end,
+
+        ParamIdSunSizeMultiplier, _T("sun_size_multiplier"), TYPE_FLOAT, P_ANIMATABLE, IDS_SIZE_MULTIPLIER,
+            p_default, 1.0f,
+            p_range, 0.0f, 1000.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SIZE_MULTIPLIER, IDC_SPIN_SIZE_MULTIPLIER, 0.1f,
+        p_end,
+
+        ParamIdSunNode, _T("sun_node"), TYPE_INODE, 0, IDS_SUN_NODE,
+            p_ui, TYPE_PICKNODEBUTTON, IDC_PICK_SUN_NODE,
+            p_prompt, IDS_PICK_SUN_PROMPT,
+            p_validator, &g_sun_node_validator,
+            p_accessor, &g_sun_node_accessor,
+        p_end,
+
+        ParamIdSunNodeOn, _T("sun_node_on"), TYPE_BOOL, 0, IDS_SUN_NODE_ON,
+            p_default, TRUE,
+            p_ui, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
+            p_accessor, &g_sun_node_accessor,
         p_end,
 
         ParamIdTurbidity, _T("turbidity"), TYPE_FLOAT, P_ANIMATABLE, IDS_TURBIDITY,
@@ -183,6 +206,8 @@ AppleseedEnvMap::AppleseedEnvMap()
   : m_pblock(nullptr)
   , m_sun_theta(45.0f)
   , m_sun_phi(90.0f)
+  , m_sun_size_multiplier(1.0f)
+  , m_sun_node(nullptr)
   , m_turbidity(1.0f)
   , m_turbidity_map(nullptr)
   , m_turbidity_map_on(true)
@@ -204,7 +229,7 @@ void AppleseedEnvMap::DeleteThis()
 
 void AppleseedEnvMap::GetClassName(TSTR& s)
 {
-    s = _T("appleseedEnvMap");
+    s = _T("appleseedSky");
 }
 
 SClass_ID AppleseedEnvMap::SuperClassID()
@@ -219,7 +244,7 @@ Class_ID AppleseedEnvMap::ClassID()
 
 int AppleseedEnvMap::NumSubs()
 {
-    return 2;   // pblock + subtexture
+    return 1;   // pblock
 }
 
 Animatable* AppleseedEnvMap::SubAnim(int i)
@@ -227,7 +252,6 @@ Animatable* AppleseedEnvMap::SubAnim(int i)
     switch (i)
     {
       case 0: return m_pblock;
-      case 1: return m_turbidity_map;
       default: return nullptr;
     }
 }
@@ -237,7 +261,6 @@ TSTR AppleseedEnvMap::SubAnimName(int i)
     switch (i)
     {
       case 0: return _T("Parameters");
-      case 1: return GetSubTexmapTVName(i - 1);
       default: return nullptr;
     }
 }
@@ -264,7 +287,7 @@ IParamBlock2* AppleseedEnvMap::GetParamBlockByID(BlockID id)
 
 int AppleseedEnvMap::NumRefs()
 {
-    return 2;   // pblock + subtexture
+    return 1;   // pblock
 }
 
 RefTargetHandle AppleseedEnvMap::GetReference(int i)
@@ -272,7 +295,6 @@ RefTargetHandle AppleseedEnvMap::GetReference(int i)
     switch (i)
     {
       case ParamBlockIdEnvMap: return m_pblock;
-      case 1: return m_turbidity_map;
       default: return nullptr;
     }
 }
@@ -282,32 +304,24 @@ void AppleseedEnvMap::SetReference(int i, RefTargetHandle rtarg)
     switch (i)
     {
       case ParamBlockIdEnvMap: m_pblock = (IParamBlock2 *)rtarg; break;
-      case 1: m_turbidity_map = (Texmap *)rtarg; break;
     }
 }
 
-RefResult AppleseedEnvMap::NotifyRefChanged(const Interval& /*changeInt*/, RefTargetHandle hTarget, PartID& /*partID*/, RefMessage message, BOOL /*propagate*/)
+RefResult AppleseedEnvMap::NotifyRefChanged(
+    const Interval&   /*changeInt*/,
+    RefTargetHandle   hTarget,
+    PartID&           partID,
+    RefMessage        message,
+    BOOL              /*propagate*/)
 {
     switch (message)
     {
       case REFMSG_TARGET_DELETED:
         if (hTarget == m_pblock)
-        {
             m_pblock = nullptr;
-        }
-        else
-        {
-            if (m_turbidity_map == hTarget)
-            {
-                m_turbidity_map = nullptr;
-                break;
-            }
-        }
         break;
 
       case REFMSG_CHANGE:
-        m_params_validity.SetEmpty();
-        m_map_validity.SetEmpty();
         if (hTarget == m_pblock)
             g_block_desc.InvalidateUI(m_pblock->LastNotifyParamID());
         break;
@@ -320,11 +334,10 @@ RefTargetHandle AppleseedEnvMap::Clone(RemapDir& remap)
 {
     AppleseedEnvMap* mnew = new AppleseedEnvMap();
     *static_cast<MtlBase*>(mnew) = *static_cast<MtlBase*>(this);
+    BaseClone(this, mnew, remap);
 
     mnew->ReplaceReference(0, remap.CloneRef(m_pblock));
-    mnew->ReplaceReference(1, remap.CloneRef(m_turbidity_map));
 
-    BaseClone(this, mnew, remap);
     return (RefTargetHandle)mnew;
 }
 
@@ -335,19 +348,23 @@ int AppleseedEnvMap::NumSubTexmaps()
 
 Texmap* AppleseedEnvMap::GetSubTexmap(int i)
 {
-    return i == 0 ? m_turbidity_map : nullptr;
+    Texmap* texmap = nullptr;
+    Interval iv;
+    if (i == 0)
+    {
+        m_pblock->GetValue(ParamIdTurbidityMap, 0, texmap, iv);
+    }
+    return texmap;
 }
 
 void AppleseedEnvMap::SetSubTexmap(int i, Texmap* texmap)
 {
     if (i == 0)
     {
-        ReplaceReference(i + 1, texmap);
         const auto texmap_id = static_cast<TexmapId>(i);
         const auto param_id = g_texmap_id_to_param_id[texmap_id];
         m_pblock->SetValue(param_id, 0, texmap);
         g_block_desc.InvalidateUI(param_id);
-        m_map_validity.SetEmpty();
     }
 }
 
@@ -366,42 +383,36 @@ void AppleseedEnvMap::Update(TimeValue t, Interval& valid)
 {
     if (!m_params_validity.InInterval(t))
     {
-        m_params_validity.SetInfinite();
-
-        m_pblock->GetValue(ParamIdSunTheta, t, m_sun_theta, m_params_validity);
-        m_pblock->GetValue(ParamIdSunPhi, t, m_sun_phi, m_params_validity);
-
-        m_pblock->GetValue(ParamIdTurbidity, t, m_turbidity, m_params_validity);
-        m_pblock->GetValue(ParamIdTurbidityMap, t, m_turbidity_map, m_params_validity);
-        m_pblock->GetValue(ParamIdTurbidityMapOn, t, m_turbidity_map_on, m_params_validity);
-
-        m_pblock->GetValue(ParamIdTurbMultiplier, t, m_turb_multiplier, m_params_validity);
-        m_pblock->GetValue(ParamIdLuminMultiplier, t, m_lumin_multiplier, m_params_validity);
-        m_pblock->GetValue(ParamIdLuminGamma, t, m_lumin_gamma, m_params_validity);
-        m_pblock->GetValue(ParamIdSatMultiplier, t, m_sat_multiplier, m_params_validity);
-        m_pblock->GetValue(ParamIdHorizonShift, t, m_horizon_shift, m_params_validity);
-        m_pblock->GetValue(ParamIdGroundAlbedo, t, m_ground_albedo, m_params_validity);
-
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
+    m_params_validity.SetInfinite();
 
-    if (!m_map_validity.InInterval(t))
-    {
-        m_map_validity.SetInfinite();
-        if (m_turbidity_map)
-        {
-            m_turbidity_map->Update(t,m_map_validity);
-        }
-    }
+    m_pblock->GetValue(ParamIdSunTheta, t, m_sun_theta, m_params_validity);
+    m_pblock->GetValue(ParamIdSunPhi, t, m_sun_phi, m_params_validity);
+    m_pblock->GetValue(ParamIdSunSizeMultiplier, t, m_sun_size_multiplier, m_params_validity);
+    m_pblock->GetValue(ParamIdSunNode, t, m_sun_node, m_params_validity);
+    m_pblock->GetValue(ParamIdSunNodeOn, t, m_sun_node_on, m_params_validity);
+    
+    m_pblock->GetValue(ParamIdTurbidity, t, m_turbidity, m_params_validity);
+    m_pblock->GetValue(ParamIdTurbidityMap, t, m_turbidity_map, m_params_validity);
+    m_pblock->GetValue(ParamIdTurbidityMapOn, t, m_turbidity_map_on, m_params_validity);
 
-    valid &= m_map_validity;
-    valid &= m_params_validity;
+    m_pblock->GetValue(ParamIdTurbMultiplier, t, m_turb_multiplier, m_params_validity);
+    m_pblock->GetValue(ParamIdLuminMultiplier, t, m_lumin_multiplier, m_params_validity);
+    m_pblock->GetValue(ParamIdLuminGamma, t, m_lumin_gamma, m_params_validity);
+    m_pblock->GetValue(ParamIdSatMultiplier, t, m_sat_multiplier, m_params_validity);
+    m_pblock->GetValue(ParamIdHorizonShift, t, m_horizon_shift, m_params_validity);
+    m_pblock->GetValue(ParamIdGroundAlbedo, t, m_ground_albedo, m_params_validity);
+
+    if (m_turbidity_map)
+        m_turbidity_map->Update(t, m_params_validity);
+
+    valid = m_params_validity;
 }
 
 void AppleseedEnvMap::Reset()
 {
     m_params_validity.SetEmpty();
-    m_map_validity.SetEmpty();
 }
 
 Interval AppleseedEnvMap::Validity(TimeValue t)
@@ -436,24 +447,6 @@ namespace
                 enable_disable_controls(hwnd, map);
                 return TRUE;
 
-              case WM_COMMAND:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_COMBO_SKY_TYPE:
-                    switch (HIWORD(wparam))
-                    {
-                      case CBN_SELCHANGE:
-                        enable_disable_controls(hwnd, map);
-                        return TRUE;
-
-                      default:
-                        return FALSE;
-                    }
-
-                  default:
-                    return FALSE;
-                }
-
               default:
                 return FALSE;
             }
@@ -462,8 +455,16 @@ namespace
       private:
         void enable_disable_controls(HWND hwnd, IParamMap2* map)
         {
-            const auto selected = SendMessage(GetDlgItem(hwnd, IDC_COMBO_SKY_TYPE), CB_GETCURSEL, 0, 0);
-            map->Enable(ParamIdGroundAlbedo, selected == 0 ? TRUE : FALSE);
+            INode* sun_node;
+            int sun_node_on;
+            IParamBlock2* pblock = map->GetParamBlock();
+            if (pblock)
+            {
+                pblock->GetValue(ParamIdSunNode, 0, sun_node, FOREVER);
+                pblock->GetValue(ParamIdSunNodeOn, 0, sun_node_on, FOREVER);
+            }
+            map->Enable(ParamIdSunTheta, (sun_node_on && sun_node) ? FALSE : TRUE);
+            map->Enable(ParamIdSunPhi, (sun_node_on && sun_node) ? FALSE : TRUE);
         }
     };
 }
@@ -580,6 +581,91 @@ const MCHAR* AppleseedEnvMapBrowserEntryInfo::GetEntryCategory() const
 Bitmap* AppleseedEnvMapBrowserEntryInfo::GetEntryThumbnail() const
 {
     return nullptr;
+}
+
+
+//
+// SunNodePBAccessor class implementation
+//
+
+void SunNodePBAccessor::TabChanged(
+    tab_changes       changeCode, 
+    Tab<PB2Value>*    tab,
+    ReferenceMaker*   owner, 
+    ParamID           id, 
+    int               tabIndex, 
+    int               count)
+{
+    if (id == ParamIdSunNode)
+    {
+        if (changeCode == tab_ref_deleted)
+        {
+            AppleseedEnvMap* p = (AppleseedEnvMap*)owner;
+            IParamBlock2* pblock = p->GetParamBlock(0);
+            if (pblock)
+            {
+                IParamMap2* map = pblock->GetMap();
+                if (map)
+                {
+                    map->Enable(ParamIdSunTheta, TRUE);
+                    map->Enable(ParamIdSunPhi, TRUE);
+                }
+            }
+        }
+    }
+}
+
+void SunNodePBAccessor::Set(
+    PB2Value&         v,
+    ReferenceMaker*   owner,
+    ParamID           id,
+    int               tabIndex,
+    TimeValue         t)
+{
+    AppleseedEnvMap* envmap = (AppleseedEnvMap*)owner;
+    IParamBlock2* pblock = envmap->GetParamBlock(0);
+    INode* sun_node;
+    if (pblock)
+    {
+        IParamMap2* map = pblock->GetMap();
+        pblock->GetValue(ParamIdSunNode, 0, sun_node, FOREVER);
+        if (map)
+        {
+            switch (id)
+            {
+              case ParamIdSunNodeOn:
+              {
+                  map->Enable(ParamIdSunTheta, (v.i && sun_node) ? FALSE : TRUE);
+                  map->Enable(ParamIdSunPhi, (v.i && sun_node) ? FALSE : TRUE);
+              }
+              break;
+              case ParamIdSunNode:
+              {
+                  if (v.r)
+                  {
+                      pblock->SetValue(ParamIdSunNodeOn, t, TRUE);
+                      map->Enable(ParamIdSunTheta, FALSE);
+                      map->Enable(ParamIdSunPhi, FALSE);
+                  }
+              }
+              break;
+            }
+        }
+    }
+}
+
+
+//
+// SunNodePBValidator class implementation
+//
+
+BOOL SunNodePBValidator::Validate(PB2Value & v)
+{
+    INode* node = (INode*)v.r;
+    Object* obj = node->GetObjectRef();
+
+    return obj->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
+      obj->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0) ? TRUE : FALSE;
 }
 
 

@@ -107,10 +107,12 @@ class AppleseedEnvMap
 
   private:
     IParamBlock2*   m_pblock;          // ref 0
-    Interval        m_params_validity;
-    Interval        m_map_validity;
     float           m_sun_theta;
     float           m_sun_phi;
+    float           m_sun_size_multiplier;
+    INode*          m_sun_node;
+    BOOL            m_sun_node_on;
+    Interval        m_params_validity;
     float           m_turbidity;
     Texmap*         m_turbidity_map;
     BOOL            m_turbidity_map_on;
@@ -120,6 +122,32 @@ class AppleseedEnvMap
     float           m_sat_multiplier;
     float           m_horizon_shift;
     float           m_ground_albedo;
+};
+
+
+//
+// Sun node parameter accessor class declaration
+//
+
+class SunNodePBAccessor
+    : public PBAccessor
+{
+  public:
+    void TabChanged(tab_changes changeCode, Tab<PB2Value>* tab,
+      ReferenceMaker* owner, ParamID id, int tabIndex, int count) override;
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override;
+};
+
+
+//
+// Sun node parameter validator class declaration
+//
+
+class SunNodePBValidator 
+  : public PBValidator 
+{
+  public:
+    virtual BOOL Validate(PB2Value& v);
 };
 
 
