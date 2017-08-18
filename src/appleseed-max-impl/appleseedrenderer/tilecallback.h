@@ -44,7 +44,7 @@ namespace renderer  { class Frame; }
 class Bitmap;
 
 class TileCallback
-  : public renderer::ITileCallback
+  : public renderer::TileCallbackBase
 {
   public:
     TileCallback(
@@ -53,19 +53,18 @@ class TileCallback
 
     virtual void release() override;
 
-    virtual void pre_render(
-        const size_t                    x,
-        const size_t                    y,
-        const size_t                    width,
-        const size_t                    height) override;
-
-    virtual void post_render_tile(
+    virtual void on_tile_begin(
         const renderer::Frame*          frame,
         const size_t                    tile_x,
         const size_t                    tile_y) override;
 
-    virtual void post_render(
-        const renderer::Frame*  frame) override;
+    virtual void on_tile_end(
+        const renderer::Frame*          frame,
+        const size_t                    tile_x,
+        const size_t                    tile_y) override;
+
+    virtual void on_progressive_frame_end(
+        const renderer::Frame*          frame) override;
 
   private:
     Bitmap*                             m_bitmap;
