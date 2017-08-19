@@ -133,30 +133,7 @@ void TileCallback::release()
     delete this;
 }
 
-void TileCallback::pre_render(
-    const size_t            x,
-    const size_t            y,
-    const size_t            width,
-    const size_t            height)
-{
-    // Draw a bracket around the tile.
-    const int BracketExtent = 5;
-    BMM_Color_fl BracketColor(1.0f, 1.0f, 1.0f, 1.0f);
-    draw_bracket(
-        m_bitmap,
-        static_cast<int>(x),
-        static_cast<int>(y),
-        static_cast<int>(width),
-        static_cast<int>(height),
-        BracketExtent,
-        &BracketColor);
-
-    // Partially refresh the display window.
-    RECT rect = make_rect(x, y, width, height);
-    m_bitmap->RefreshWindow(&rect);
-}
-
-void TileCallback::post_render_tile(
+void TileCallback::on_tile_begin(
     const asr::Frame*       frame,
     const size_t            tile_x,
     const size_t            tile_y)
@@ -168,13 +145,47 @@ void TileCallback::post_render_tile(
     DbgAssert(props.m_canvas_height == m_bitmap->Height());
     DbgAssert(props.m_channel_count == 4);
 
+    const asf::Tile& tile = image.tile(tile_x, tile_y);
+    const size_t x = tile_x * props.m_tile_width;
+    const size_t y = tile_y * props.m_tile_height;
+
+    // Draw a bracket around the tile.
+    const int BracketExtent = 5;
+    BMM_Color_fl BracketColor(1.0f, 1.0f, 1.0f, 1.0f);
+    draw_bracket(
+        m_bitmap,
+        static_cast<int>(x),
+        static_cast<int>(y),
+        static_cast<int>(tile.get_width()),
+        static_cast<int>(tile.get_height()),
+        BracketExtent,
+        &BracketColor);
+
+    // Partially refresh the display window.
+    RECT rect = make_rect(x, y, tile.get_width(), tile.get_height());
+    m_bitmap->RefreshWindow(&rect);
+}
+
+void TileCallback::on_tile_end(
+    const asr::Frame*       frame,
+    const size_t            tile_x,
+    const size_t            tile_y)
+{
+    const asf::Image& image = frame->image();
+    const asf::CanvasProperties& props = image.properties();
+
+    DbgAssert(props.m_canvas_width == m_bitmap->Width());
+    DbgAssert(props.m_canvas_height == m_bitmap->Height());
+    DbgAssert(props.m_channel_count == 4);
+
+    const asf::Tile& tile = image.tile(tile_x, tile_y);
+    const size_t x = tile_x * props.m_tile_width;
+    const size_t y = tile_y * props.m_tile_height;
+
     // Blit the tile to the destination bitmap.
     blit_tile(*frame, tile_x, tile_y);
 
     // Partially refresh the display window.
-    const asf::Tile& tile = image.tile(tile_x, tile_y);
-    const size_t x = tile_x * props.m_tile_width;
-    const size_t y = tile_y * props.m_tile_height;
     RECT rect = make_rect(x, y, tile.get_width(), tile.get_height());
     m_bitmap->RefreshWindow(&rect);
 
@@ -182,8 +193,8 @@ void TileCallback::post_render_tile(
     asf::atomic_inc(m_rendered_tile_count);
 }
 
-void TileCallback::post_render(
-    const asr::Frame*   frame)
+void TileCallback::on_progressive_frame_end(
+    const asr::Frame*       frame)
 {
     const asf::CanvasProperties& props = frame->image().properties();
 
