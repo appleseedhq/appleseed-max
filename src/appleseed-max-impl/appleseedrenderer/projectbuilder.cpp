@@ -720,7 +720,7 @@ namespace
         assembly.lights().insert(light);
     }
 
-    bool has_appleseed_sky_environment(const RendParams& rend_params)
+    static bool has_appleseed_sky_environment(const RendParams& rend_params)
     {
         return rend_params.envMap != nullptr &&
             rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id());
@@ -970,9 +970,7 @@ namespace
             {
                 auto bitmap_envmap = static_cast<BitmapTex*>(rend_params.envMap);
                 if (bitmap_envmap)
-                {
                     env_tex_instance_name = insert_texture_and_instance(scene, bitmap_envmap);
-                }
             }
             else if (!rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
             {
@@ -1031,32 +1029,28 @@ namespace
                             env_tex_name.c_str())));
             }
 
-            // Insert EDF.
+            // Insert environment EDF.
             if (has_appleseed_sky_environment(rend_params))
             {
                 auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-                if (appleseed_envmap)
+                if (appleseed_envmap != nullptr)
                 {
-                    auto env_map = appleseed_envmap->create_envmap(env_edf_name.c_str());
-                    
                     INode* sun_node(nullptr);
                     BOOL sun_node_on(FALSE);
                     GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
                     GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_node_on"), time, sun_node_on, FOREVER);
 
                     float sun_theta, sun_phi;
-                    if (sun_node && sun_node_on)
+                    if (sun_node != nullptr && sun_node_on)
                     {
                         Matrix3 sun_transform = sun_node->GetObjTMAfterWSM(time);
                         sun_transform.NoTrans();
-                        const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
 
+                        const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
                         sun_theta = std::acosf(sun_dir.z);
 
                         float cos_phi = sun_dir.x / sqrtf(1.0f - (sun_dir.z * sun_dir.z));
-                        
                         cos_phi = asf::clamp(cos_phi, -1.0f, 1.0f);
-
                         sun_phi = std::acosf(cos_phi);
 
                         if (sun_dir.y > 0.0f)
@@ -1071,40 +1065,40 @@ namespace
                         GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_phi"), time, sun_phi, FOREVER);
                     }
 
+                    auto env_map = appleseed_envmap->create_envmap(env_edf_name.c_str());
                     env_map->get_parameters().set("sun_theta", sun_theta);
                     env_map->get_parameters().set("sun_phi", sun_phi);
-                    
                     scene.environment_edfs().insert(env_map);
                 }
             }
             else
             {
-                asr::ParamArray envParams;
-                auto envMap = static_cast<Texmap*>(rend_params.envMap);
+                asr::ParamArray env_edf_params;
+                auto env_map = static_cast<Texmap*>(rend_params.envMap);
 
-                if (envMap)
+                if (env_map != nullptr)
                 {
-                    UVGen* uvg = envMap->GetTheUVGen();
+                    UVGen* uvg = env_map->GetTheUVGen();
                     if (uvg && uvg->IsStdUVGen())
                     {
                         StdUVGen *suvg = static_cast<StdUVGen*>(uvg);
-                        envParams.insert("horizontal_shift", suvg->GetUOffs(time) * 180.0f);
-                        envParams.insert("vertical_shift", suvg->GetVOffs(time) * 180.0f);
+                        env_edf_params.insert("horizontal_shift", suvg->GetUOffs(time) * 180.0f);
+                        env_edf_params.insert("vertical_shift", suvg->GetVOffs(time) * 180.0f);
                     }
                 }
                 
-                envParams.insert("radiance", env_tex_instance_name.c_str());
+                env_edf_params.insert("radiance", env_tex_instance_name.c_str());
 
                 scene.environment_edfs().insert(
                     asf::auto_release_ptr<asr::EnvironmentEDF>(
                         asr::LatLongMapEnvironmentEDFFactory::static_create(
                             env_edf_name.c_str(),
-                            envParams)));
-
+                            env_edf_params)));
             }
 
-            // Insert shader.
-            if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()) || rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
+            // Insert environment shader.
+            if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()) ||
+                rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
             {
                 scene.environment_shaders().insert(
                 asr::EDFEnvironmentShaderFactory::static_create(
