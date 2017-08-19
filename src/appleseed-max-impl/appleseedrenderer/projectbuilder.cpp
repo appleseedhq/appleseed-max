@@ -762,10 +762,10 @@ namespace
         if (has_appleseed_sky_environment(rend_params))
         {
             AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-            env_map->GetPBlockValueByName(env_map->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
-            env_map->GetPBlockValueByName(env_map->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
-            env_map->GetPBlockValueByName(env_map->GetParamBlock(0), _T("sun_node_on"), time, sun_node_on, FOREVER);
-            env_map->GetPBlockValueByName(env_map->GetParamBlock(0), _T("sun_size_multiplier"), time, sun_size_mult, FOREVER);
+            GetParamBlockValueByName(env_map->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
+            GetParamBlockValueByName(env_map->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
+            GetParamBlockValueByName(env_map->GetParamBlock(0), _T("sun_node_on"), time, sun_node_on, FOREVER);
+            GetParamBlockValueByName(env_map->GetParamBlock(0), _T("sun_size_multiplier"), time, sun_size_mult, FOREVER);
         }
 
         if (sun_node && sun_node_on && light_node == sun_node)
@@ -1041,8 +1041,8 @@ namespace
                     
                     INode* sun_node(nullptr);
                     BOOL sun_node_on(FALSE);
-                    appleseed_envmap->GetPBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
-                    appleseed_envmap->GetPBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_node_on"), time, sun_node_on, FOREVER);
+                    GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_node"), time, sun_node, FOREVER);
+                    GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_node_on"), time, sun_node_on, FOREVER);
 
                     float sun_theta, sun_phi;
                     if (sun_node && sun_node_on)
@@ -1067,8 +1067,8 @@ namespace
                     }
                     else
                     {
-                        appleseed_envmap->GetPBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_theta"), time, sun_theta, FOREVER);
-                        appleseed_envmap->GetPBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_phi"), time, sun_phi, FOREVER);
+                        GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_theta"), time, sun_theta, FOREVER);
+                        GetParamBlockValueByName(appleseed_envmap->GetParamBlock(0), _T("sun_phi"), time, sun_phi, FOREVER);
                     }
 
                     env_map->get_parameters().set("sun_theta", sun_theta);

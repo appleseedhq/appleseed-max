@@ -102,32 +102,6 @@ class AppleseedEnvMap
 
     virtual foundation::auto_release_ptr<renderer::EnvironmentEDF> create_envmap(const char* name);
 
-    // GetValueByName replacement for 2015 compatibility.
-    template <typename T>
-    BOOL GetPBlockValueByName(
-      IParamBlock2*       pblock,
-      const MCHAR *const  param_name,
-      const TimeValue     t,
-      T&                  value,
-      Interval&           validity,
-      const int           tab_index = 0)
-    {
-        ParamBlockDesc2* const pb_desc = pblock->GetDesc();
-        if (DbgVerify(pb_desc != nullptr))
-        {
-            const int param_index = pb_desc->NameToIndex(param_name);
-            if (DbgVerify(param_index >= 0))
-            {
-                const ParamDef* const param_def = pb_desc->GetParamDefByIndex(param_index);
-                if (DbgVerify(param_def != nullptr))
-                {
-                    return DbgVerify(pblock->GetValue(param_def->ID, t, value, validity, tab_index) != 0);
-                }
-            }
-        }
-        return FALSE;
-    }
-
   protected:
     virtual void SetReference(int i, RefTargetHandle rtarg) override;
 
