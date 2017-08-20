@@ -533,14 +533,22 @@ namespace
         }
         else
         {
-            // The instance does not have a material: create a new default material.
+            // The instance does not have a material.
+
+            // Create a new default material.
             const std::string material_name =
                 insert_default_material(
                     assembly,
                     instance_name + "_mat",
                     to_color3f(Color(instance_node->GetWireColor())));
-            front_material_mappings.insert("material_slot_0", material_name);
-            back_material_mappings.insert("material_slot_0", material_name);
+
+            // Assign it to all material slots.
+            for (const auto& entry : object_info.m_mtlid_to_slot)
+            {
+                const std::string slot_name = "material_slot_" + asf::to_string(entry.second);
+                front_material_mappings.insert(slot_name, material_name);
+                back_material_mappings.insert(slot_name, material_name);
+            }
         }
 
         // Parameters.
