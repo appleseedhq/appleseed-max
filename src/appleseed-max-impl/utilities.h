@@ -39,8 +39,10 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include <assert1.h>
 #include <color.h>
 #include <ioapi.h>
+#include <iparamb2.h>
 #include <matrix3.h>
 #include <maxtypes.h>
 #include <point3.h>
@@ -52,7 +54,7 @@
 
 // Forward declarations.
 namespace renderer  { class BaseGroup; }
-class Color;
+class Interval;
 class Texmap;
 
 
@@ -118,6 +120,20 @@ bool write(ISave* isave, const T& object);
 // Read a typed object from a 3ds Max file. Return true on success.
 template <typename T>
 IOResult read(ILoad* iload, T* object);
+
+
+//
+// Parameter blocks functions.
+//
+
+template <typename T>
+BOOL GetParamBlockValueByName(
+    IParamBlock2*           param_block,
+    const MCHAR* const      param_name,
+    const TimeValue         t,
+    T&                      value,
+    Interval&               validity,
+    const int               tab_index = 0);
 
 
 //
@@ -247,6 +263,27 @@ inline IOResult read(ILoad* iload, MSTR* s)
     if (result == IO_OK)
         *s = buf;
     return result;
+}
+
+template <typename T>
+BOOL GetParamBlockValueByName(
+    IParamBlock2*           param_block,
+    const MCHAR* const      param_name,
+    const TimeValue         t,
+    T&                      value,
+    Interval&               validity,
+    const int               tab_index)
+{
+    ParamBlockDesc2* const pb_desc = param_block->GetDesc();
+    DbgAssert(pb_desc != nullptr);
+
+    const int param_index = pb_desc->NameToIndex(param_name);
+    DbgAssert(param_index >= 0);
+
+    const ParamID param_id = pb_desc->IndextoID(param_index);
+    DbgAssert(param_id >= 0);
+
+    return param_block->GetValue(param_id, t, value, validity, tab_index);
 }
 
 template <typename EntityContainer>
