@@ -240,9 +240,6 @@ void TileCallback::blit_tile(
         asf::PixelFormatFloat,
         m_float_tile_storage->get_storage());
 
-    // Transform the tile to the color space of the frame.
-    frame.transform_to_output_color_space(fp_tile);
-
     // Blit the time into the bitmap.
     const size_t dest_x = tile_x * props.m_tile_width;
     const size_t dest_y = tile_y * props.m_tile_height;
