@@ -43,6 +43,7 @@
 #include <vector>
 
 // Forward declarations.
+namespace renderer { class Camera; }
 namespace renderer  { class Project; }
 class Bitmap;
 class FrameRendParams;
@@ -62,3 +63,10 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const RendererSettings&             settings,
     Bitmap*                             bitmap,
     const TimeValue                     time);
+
+foundation::auto_release_ptr<renderer::Camera> build_camera(
+    INode*                  view_node,
+    const ViewParams&       view_params,
+    Bitmap*                 bitmap,
+    const RendererSettings& settings,
+    const TimeValue         time);

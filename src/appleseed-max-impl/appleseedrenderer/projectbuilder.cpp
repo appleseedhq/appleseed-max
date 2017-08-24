@@ -1196,81 +1196,6 @@ namespace
         }
     }
 
-    asf::auto_release_ptr<asr::Camera> build_camera(
-        INode*                  view_node,
-        const ViewParams&       view_params,
-        Bitmap*                 bitmap,
-        const RendererSettings& settings,
-        const TimeValue         time)
-    {
-        asr::ParamArray params;
-
-        if (view_params.projType == PROJ_PERSPECTIVE)
-        {
-            params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
-            params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
-        }
-        else
-        {
-            DbgAssert(view_params.projType == PROJ_PARALLEL);
-
-            const float ViewDefaultWidth = 400.0f;
-            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
-            const float film_width = ViewDefaultWidth * view_params.zoom;
-            const float film_height = film_width * aspect;
-            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
-        }
-
-        params.insert("near_z", -view_params.hither);
-
-        asf::auto_release_ptr<renderer::Camera> camera;
-        if (view_params.projType == PROJ_PARALLEL)
-        {
-            camera = asr::OrthographicCameraFactory::static_create("camera", params);
-        }
-        else
-        {
-#if MAX_RELEASE >= 18000
-            MaxSDK::IPhysicalCamera* phys_camera(nullptr);
-            if (view_node)
-                phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
-            
-            if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
-            {
-                params.insert("f_stop", phys_camera->GetLensApertureFNumber(time, FOREVER));
-                params.insert("focal_distance", phys_camera->GetFocusDistance(time, FOREVER));
-                
-                switch (phys_camera->GetBokehShape(time, FOREVER))
-                {
-                  case MaxSDK::IPhysicalCamera::BokehShape::Circular:
-                    params.insert("diaphragm_blades", 0);
-                    break;
-                  case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
-                    params.insert("diaphragm_blades", phys_camera->GetBokehNumberOfBlades(time, FOREVER));
-                    params.insert("diaphragm_tilt_angle", phys_camera->GetBokehBladesRotationDegrees(time, FOREVER));
-                    break;
-                }
-
-                camera = asr::ThinLensCameraFactory::static_create("camera", params);
-            }
-            else
-            {
-                camera = asr::PinholeCameraFactory::static_create("camera", params);
-            }
-#else
-            camera = asr::PinholeCameraFactory::static_create("camera", params);
-#endif
-        }
-
-        camera->transform_sequence().set_transform(
-            0.0,
-            asf::Transformd::from_local_to_parent(
-                asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
-                to_matrix4d(Inverse(view_params.affineTM))));
-
-        return camera;
-    }
-
     asf::auto_release_ptr<asr::Frame> build_frame(
         const RendParams&       rend_params,
         const FrameRendParams&  frame_rend_params,
@@ -1314,6 +1239,81 @@ namespace
             return frame;
         }
     }
+}
+
+asf::auto_release_ptr<asr::Camera> build_camera(
+    INode*                  view_node,
+    const ViewParams&       view_params,
+    Bitmap*                 bitmap,
+    const RendererSettings& settings,
+    const TimeValue         time)
+{
+    asr::ParamArray params;
+
+    if (view_params.projType == PROJ_PERSPECTIVE)
+    {
+        params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
+        params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
+    }
+    else
+    {
+        DbgAssert(view_params.projType == PROJ_PARALLEL);
+
+        const float ViewDefaultWidth = 400.0f;
+        const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
+        const float film_width = ViewDefaultWidth * view_params.zoom;
+        const float film_height = film_width * aspect;
+        params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
+    }
+
+    params.insert("near_z", -view_params.hither);
+
+    asf::auto_release_ptr<renderer::Camera> camera;
+    if (view_params.projType == PROJ_PARALLEL)
+    {
+        camera = asr::OrthographicCameraFactory::static_create("camera", params);
+    }
+    else
+    {
+#if MAX_RELEASE >= 18000
+        MaxSDK::IPhysicalCamera* phys_camera(nullptr);
+        if (view_node)
+            phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
+
+        if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
+        {
+            params.insert("f_stop", phys_camera->GetLensApertureFNumber(time, FOREVER));
+            params.insert("focal_distance", phys_camera->GetFocusDistance(time, FOREVER));
+
+            switch (phys_camera->GetBokehShape(time, FOREVER))
+            {
+            case MaxSDK::IPhysicalCamera::BokehShape::Circular:
+                params.insert("diaphragm_blades", 0);
+                break;
+            case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
+                params.insert("diaphragm_blades", phys_camera->GetBokehNumberOfBlades(time, FOREVER));
+                params.insert("diaphragm_tilt_angle", phys_camera->GetBokehBladesRotationDegrees(time, FOREVER));
+                break;
+            }
+
+            camera = asr::ThinLensCameraFactory::static_create("camera", params);
+        }
+        else
+        {
+            camera = asr::PinholeCameraFactory::static_create("camera", params);
+        }
+#else
+        camera = asr::PinholeCameraFactory::static_create("camera", params);
+#endif
+    }
+
+    camera->transform_sequence().set_transform(
+        0.0,
+        asf::Transformd::from_local_to_parent(
+            asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
+            to_matrix4d(Inverse(view_params.affineTM))));
+
+    return camera;
 }
 
 asf::auto_release_ptr<asr::Project> build_project(

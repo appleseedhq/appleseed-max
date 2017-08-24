@@ -47,6 +47,10 @@
 // Standard headers.
 #include <vector>
 
+// Forward declarations.
+class AppleseedIInteractiveRender;
+
+
 class AppleseedRenderer
   : public Renderer
 {
@@ -60,6 +64,11 @@ class AppleseedRenderer
     virtual void GetClassName(MSTR& s) override;
 
     virtual void DeleteThis() override;
+
+    // Animatable.
+    virtual void* GetInterface(ULONG id) override;
+
+    AppleseedIInteractiveRender* m_interactive_renderer;
 
 #if MAX_RELEASE == MAX_RELEASE_R19
 
@@ -81,6 +90,8 @@ class AppleseedRenderer
     virtual void GetPlatformInformation(MSTR& info) const override;
 
 #endif
+
+    virtual RefTargetHandle	Clone(RemapDir	&remap) override;
 
     virtual RefResult NotifyRefChanged(
         const Interval&         changeInt,
