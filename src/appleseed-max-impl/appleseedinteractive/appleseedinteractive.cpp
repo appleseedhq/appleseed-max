@@ -1,11 +1,38 @@
 
+//
+// This source file is part of appleseed.
+// Visit http://appleseedhq.net/ for additional information and resources.
+//
+// This software is released under the MIT license.
+//
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
 // Interface header.
 #include "appleseedinteractive.h"
 
 // appleseed-max headers.
 #include "appleseedinteractive/interactiverenderercontroller.h"
-#include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedinteractive/interactivesession.h"
+#include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
 
@@ -14,7 +41,6 @@
 
 namespace asf = foundation;
 namespace asr = renderer;
-
 
 namespace
 {
@@ -26,8 +52,7 @@ namespace
         if (view_exp.IsAlive())
         {
             Matrix3 v_mat;
-            ViewExp13* vp13 = NULL;
-            vp13 = reinterpret_cast<ViewExp13*>(view_exp.Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
+            ViewExp13* vp13 = reinterpret_cast<ViewExp13*>(view_exp.Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
             vp13->GetAffineTM(v_mat);
             view_params.affineTM = v_mat;
             view_params.prevAffineTM = view_params.affineTM;
@@ -48,8 +73,8 @@ namespace
         const ObjectState& os = view_node->EvalWorldState(time);
         switch (os.obj->SuperClassID())
         {
-        case CAMERA_CLASS_ID:
-        {
+          case CAMERA_CLASS_ID:
+          {
             CameraObject* cam = static_cast<CameraObject*>(os.obj);
 
             Interval validity_interval;
@@ -76,24 +101,24 @@ namespace
                 view_params.hither = 0.001f;
                 view_params.yon = 1.0e38f;
             }
-        }
-        break;
+          }
+          break;
 
-        case LIGHT_CLASS_ID:
-        {
+          case LIGHT_CLASS_ID:
+          {
             DbgAssert(!"Not implemented yet.");
-        }
-        break;
+          }
+          break;
 
-        default:
+          default:
             DbgAssert(!"Unexpected super class ID for camera.");
         }
     }
 
     class RenderBeginProc
-        : public RefEnumProc
+      : public RefEnumProc
     {
-    public:
+      public:
         explicit RenderBeginProc(const TimeValue time)
             : m_time(time)
         {
@@ -105,14 +130,14 @@ namespace
             return REF_ENUM_CONTINUE;
         }
 
-    private:
+      private:
         const TimeValue m_time;
     };
 
     class RenderEndProc
-        : public RefEnumProc
+      : public RefEnumProc
     {
-    public:
+      public:
         explicit RenderEndProc(const TimeValue time)
             : m_time(time)
         {
@@ -124,7 +149,7 @@ namespace
             return REF_ENUM_CONTINUE;
         }
 
-    private:
+      private:
         const TimeValue m_time;
     };
 
@@ -155,12 +180,12 @@ namespace
     }
 
     class SceneChangeCallback
-        : public INodeEventCallback
+      : public INodeEventCallback
     {
-    public:
-        SceneChangeCallback(AppleseedIInteractiveRender* renderer, INode* camera)
-            : m_renderer(renderer)
-            , m_active_camera(camera)
+      public:
+        SceneChangeCallback(AppleseedInteractiveRender* renderer, INode* camera)
+          : m_renderer(renderer)
+          , m_active_camera(camera)
         {
         }
 
@@ -168,8 +193,8 @@ namespace
         {
             if (m_active_camera == nullptr || m_renderer == nullptr)
                 return;
-
-            for (int i = 0; i < nodes.Count(); i++)
+            
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
                 if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
                 {
@@ -180,41 +205,39 @@ namespace
             }
         }
 
-    private:
-        AppleseedIInteractiveRender*    m_renderer;
+      private:
+        AppleseedInteractiveRender*    m_renderer;
         INode*                          m_active_camera;
     };
 }
 
 //
-// IInteractiveRender
+// AppleseedInteractiveRender class implementation.
 //
 
-AppleseedIInteractiveRender::AppleseedIInteractiveRender()
-    : m_owner_wnd(0)
-    , m_currently_rendering(false)
-    , m_bitmap(nullptr)
-    , m_iirender_mgr(nullptr)
-    , m_scene_inode(nullptr)
-    , m_use_view_inode(false)
-    , m_view_inode(nullptr)
-    , m_view_exp(nullptr)
-    , m_progress_cb(nullptr)
+AppleseedInteractiveRender::AppleseedInteractiveRender()
+  : m_owner_wnd(0)
+  , m_bitmap(nullptr)
+  , m_iirender_mgr(nullptr)
+  , m_scene_inode(nullptr)
+  , m_use_view_inode(false)
+  , m_view_inode(nullptr)
+  , m_view_exp(nullptr)
+  , m_progress_cb(nullptr)
 {
     m_entities.clear();
 }
 
-AppleseedIInteractiveRender::~AppleseedIInteractiveRender(void)
+AppleseedInteractiveRender::~AppleseedInteractiveRender()
 {
     // Make sure the active shade session has stopped
     EndSession();
 }
 
-asf::auto_release_ptr<asr::Project> AppleseedIInteractiveRender::prepare_project(
+asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     const RendererSettings&     renderer_settings,
     const ViewParams&           view_params,
-    const TimeValue             time
-)
+    const TimeValue             time)
 {
     std::string previous_locale(std::setlocale(LC_ALL, "C"));
 
@@ -261,13 +284,13 @@ asf::auto_release_ptr<asr::Project> AppleseedIInteractiveRender::prepare_project
     return project;
 }
 
-void AppleseedIInteractiveRender::update_camera(INode* camera)
+void AppleseedInteractiveRender::update_camera(INode* camera)
 {
     ViewParams view_params;
     get_view_params_from_view_node(view_params, camera, m_time);
 
     m_project->get_scene()->get_active_camera()->transform_sequence().set_transform(
-        (float)m_time,
+        static_cast<float>(m_time),
         asf::Transformd::from_local_to_parent(to_matrix4d(Inverse(view_params.affineTM))));
 }
 
@@ -275,48 +298,42 @@ void AppleseedIInteractiveRender::update_camera(INode* camera)
 // IInteractiveRender implementation
 //
 
-void AppleseedIInteractiveRender::BeginSession()
+void AppleseedInteractiveRender::BeginSession()
 {
-    if (m_render_session == nullptr)
-    {
-        RendererSettings renderer_settings = RendererSettings::defaults();
+    DbgAssert(m_render_session == nullptr);
+    
+    RendererSettings renderer_settings = RendererSettings::defaults();
 
-        m_time = GetCOREInterface()->GetTime();
+    m_time = GetCOREInterface()->GetTime();
 
-        ViewExp13* vp13 = reinterpret_cast<ViewExp13*>(GetViewExp()->Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
-        INode* active_cam = vp13->GetViewCamera();
+    ViewExp13* vp13 = reinterpret_cast<ViewExp13*>(GetViewExp()->Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
+    INode* active_cam = vp13->GetViewCamera();
 
-        ViewParams view_params;
-        if (GetUseViewINode())
-            get_view_params_from_view_node(view_params, GetViewINode(), m_time);
-        else
-            get_view_params_from_viewport(view_params, *GetViewExp(), m_time);
+    ViewParams view_params;
+    if (GetUseViewINode())
+        get_view_params_from_view_node(view_params, GetViewINode(), m_time);
+    else
+        get_view_params_from_viewport(view_params, *GetViewExp(), m_time);
 
-        m_project = prepare_project(renderer_settings, view_params, m_time);
+    m_project = prepare_project(renderer_settings, view_params, m_time);
 
-        m_render_session.reset(new InteractiveSession(
-            m_iirender_mgr, 
-            m_project.get(),
-            renderer_settings,
-            m_bitmap
-            ));
+    m_render_session.reset(new InteractiveSession(
+        m_iirender_mgr, 
+        m_project.get(),
+        renderer_settings,
+        m_bitmap));
 
-        if (m_progress_cb)
-            m_progress_cb->SetTitle(_T("Rendering..."));
+    if (m_progress_cb)
+        m_progress_cb->SetTitle(_T("Rendering..."));
 
-        m_currently_rendering = true;
+    m_node_callback.reset(new SceneChangeCallback(this, active_cam));
+    m_callback_key = GetISceneEventManager()->RegisterCallback(m_node_callback.get(), false, 100, true);
 
-        m_node_callback.reset(new SceneChangeCallback(this, active_cam));
-        m_callback_key = GetISceneEventManager()->RegisterCallback(m_node_callback.get(), false, 100, true);
-
-        m_render_session->start_render();
-    }
+    m_render_session->start_render();
 }
 
-void AppleseedIInteractiveRender::EndSession()
+void AppleseedInteractiveRender::EndSession()
 {
-    m_currently_rendering = false;
-
     if (m_render_session != nullptr)
     {
         GetISceneEventManager()->UnRegisterCallback(m_callback_key);
@@ -324,12 +341,12 @@ void AppleseedIInteractiveRender::EndSession()
 
         m_render_session->abort_render();
 
-        //drain ui message queue to process bitmap updates posted from tilecallback
+        // Drain UI message queue to process bitmap updates posted from tilecallback.
         MSG msg;
         while (PeekMessage(&msg, GetCOREInterface()->GetMAXHWnd(), 0, 0, PM_REMOVE))
         {
-          TranslateMessage(&msg);
-          DispatchMessage(&msg);
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
 
         m_render_session->end_render();
@@ -343,142 +360,141 @@ void AppleseedIInteractiveRender::EndSession()
         m_progress_cb->SetTitle(_T("Done."));
 }
 
-void AppleseedIInteractiveRender::SetOwnerWnd(HWND hOwnerWnd)
+void AppleseedInteractiveRender::SetOwnerWnd(HWND owner_wnd)
 {
-    m_owner_wnd = hOwnerWnd;
+    m_owner_wnd = owner_wnd;
 }
 
-HWND AppleseedIInteractiveRender::GetOwnerWnd() const
+HWND AppleseedInteractiveRender::GetOwnerWnd() const
 {
     return m_owner_wnd;
 }
 
-void AppleseedIInteractiveRender::SetIIRenderMgr(IIRenderMgr* pIIRenderMgr)
+void AppleseedInteractiveRender::SetIIRenderMgr(IIRenderMgr* iirender_mgr)
 {
-    m_iirender_mgr = pIIRenderMgr;
+    m_iirender_mgr = iirender_mgr;
 }
 
-IIRenderMgr* AppleseedIInteractiveRender::GetIIRenderMgr(IIRenderMgr* pIIRenderMgr) const
+IIRenderMgr* AppleseedInteractiveRender::GetIIRenderMgr(IIRenderMgr* iirender_mgr) const
 {
     return m_iirender_mgr;
 }
 
-void AppleseedIInteractiveRender::SetBitmap(Bitmap* pDestBitmap)
+void AppleseedInteractiveRender::SetBitmap(Bitmap* bitmap)
 {
-    m_bitmap = pDestBitmap;
+    m_bitmap = bitmap;
 }
 
-Bitmap* AppleseedIInteractiveRender::GetBitmap(Bitmap* pDestBitmap) const
+Bitmap* AppleseedInteractiveRender::GetBitmap(Bitmap* bitmap) const
 {
     return m_bitmap;
 }
 
-void AppleseedIInteractiveRender::SetSceneINode(INode* pSceneINode)
+void AppleseedInteractiveRender::SetSceneINode(INode* scene_inode)
 {
-    m_scene_inode = pSceneINode;
+    m_scene_inode = scene_inode;
 }
 
-INode* AppleseedIInteractiveRender::GetSceneINode() const
+INode* AppleseedInteractiveRender::GetSceneINode() const
 {
     return m_scene_inode;
 }
 
-void AppleseedIInteractiveRender::SetUseViewINode(bool bUseViewINode)
+void AppleseedInteractiveRender::SetUseViewINode(bool use_view_inode)
 {
-    m_use_view_inode = bUseViewINode;
+    m_use_view_inode = use_view_inode;
 }
 
-bool AppleseedIInteractiveRender::GetUseViewINode() const
+bool AppleseedInteractiveRender::GetUseViewINode() const
 {
     return m_use_view_inode;
 }
 
-void AppleseedIInteractiveRender::SetViewINode(INode* pViewINode)
+void AppleseedInteractiveRender::SetViewINode(INode* view_inode)
 {
-    m_view_inode = pViewINode;
+    m_view_inode = view_inode;
 }
 
-INode* AppleseedIInteractiveRender::GetViewINode() const
+INode* AppleseedInteractiveRender::GetViewINode() const
 {
     return m_view_inode;
 }
 
-void AppleseedIInteractiveRender::SetViewExp(ViewExp* pViewExp)
+void AppleseedInteractiveRender::SetViewExp(ViewExp* view_exp)
 {
-    m_view_exp = pViewExp;
+    m_view_exp = view_exp;
 }
 
-ViewExp* AppleseedIInteractiveRender::GetViewExp() const
+ViewExp* AppleseedInteractiveRender::GetViewExp() const
 {
     return m_view_exp;
 }
 
-void AppleseedIInteractiveRender::SetRegion(const Box2& region)
+void AppleseedInteractiveRender::SetRegion(const Box2& region)
 {
     m_region = region;
 }
 
-const Box2& AppleseedIInteractiveRender::GetRegion() const
+const Box2& AppleseedInteractiveRender::GetRegion() const
 {
     return m_region;
 }
 
-void AppleseedIInteractiveRender::SetDefaultLights(DefaultLight* pDefLights, int numDefLights)
+void AppleseedInteractiveRender::SetDefaultLights(DefaultLight* def_lights, int num_def_lights)
 {
     m_default_lights.clear();
-    if (pDefLights != nullptr)
+    if (def_lights != nullptr)
     {
-        m_default_lights.insert(m_default_lights.begin(), pDefLights, pDefLights + numDefLights);
+        m_default_lights.insert(m_default_lights.begin(), def_lights, def_lights + num_def_lights);
     }
 }
 
-const DefaultLight* AppleseedIInteractiveRender::GetDefaultLights(int& numDefLights) const
+const DefaultLight* AppleseedInteractiveRender::GetDefaultLights(int& num_def_lights) const
 {
-    numDefLights = int(m_default_lights.size());
+    num_def_lights = static_cast<int>(m_default_lights.size());
     return m_default_lights.data();
 }
 
-void AppleseedIInteractiveRender::SetProgressCallback(IRenderProgressCallback* pProgCB)
+void AppleseedInteractiveRender::SetProgressCallback(IRenderProgressCallback* prog_cb)
 {
-    m_progress_cb = pProgCB;
+    m_progress_cb = prog_cb;
 }
 
-const IRenderProgressCallback* AppleseedIInteractiveRender::GetProgressCallback() const
+const IRenderProgressCallback* AppleseedInteractiveRender::GetProgressCallback() const
 {
     return m_progress_cb;
 }
 
-void AppleseedIInteractiveRender::Render(Bitmap* pDestBitmap)
+void AppleseedInteractiveRender::Render(Bitmap* bitmap)
 {
-    return;
 }
 
-ULONG AppleseedIInteractiveRender::GetNodeHandle(int x, int y)
+ULONG AppleseedInteractiveRender::GetNodeHandle(int x, int y)
 {
     return 0;
 }
 
-bool AppleseedIInteractiveRender::GetScreenBBox(Box2& sBBox, INode * pINode)
+bool AppleseedInteractiveRender::GetScreenBBox(Box2& s_bbox, INode * inode)
 {
     return FALSE;
 }
 
-ActionTableId AppleseedIInteractiveRender::GetActionTableId()
+ActionTableId AppleseedInteractiveRender::GetActionTableId()
 {
     return NULL;
 }
 
-ActionCallback* AppleseedIInteractiveRender::GetActionCallback()
+ActionCallback* AppleseedInteractiveRender::GetActionCallback()
 {
-    return NULL;
+    return nullptr;
 }
 
-BOOL AppleseedIInteractiveRender::IsRendering()
+BOOL AppleseedInteractiveRender::IsRendering()
 {
-    return m_currently_rendering;
+    return m_render_session != nullptr;
 }
 
-void AppleseedIInteractiveRender::AbortRender()
+void AppleseedInteractiveRender::AbortRender()
 {
     EndSession();
 }

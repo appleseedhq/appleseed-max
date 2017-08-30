@@ -46,32 +46,37 @@
 
 namespace asf = foundation;
 
-#define WM_TRIGGER_CALLBACK WM_USER+4764
-
 namespace
 {
-  struct message_data
-  {
-      std::vector<std::string> lines;
-      DWORD type;
-  };
+    const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
 
-  void ui_log_writer(UINT_PTR param_ptr)
-  {
-     message_data* data_ptr = reinterpret_cast<message_data*>(param_ptr);
-
-    for (auto line : data_ptr->lines)
+    struct MessageData
     {
-      GetCOREInterface()->Log()->LogEntry(
-        data_ptr->type,
-        FALSE,
-        _T("appleseed"),
-        _T("[appleseed] %s"),
-        utf8_to_wide(line).c_str());
+        std::vector<std::string> lines;
+        DWORD type;
+    };
+   
+    void write_log_lines(const std::vector<std::string>& lines, const int type)
+    {
+        for (auto line : lines)
+        {
+            GetCOREInterface()->Log()->LogEntry(
+                type,
+                FALSE,
+                _T("appleseed"),
+                _T("[appleseed] %s"),
+                utf8_to_wide(line).c_str());
+        }
     }
 
-    delete data_ptr;
-  }
+    void ui_log_writer(UINT_PTR param_ptr)
+    {
+        MessageData* data_ptr = reinterpret_cast<MessageData*>(param_ptr);
+
+        write_log_lines(data_ptr->lines, data_ptr->type);
+
+        delete data_ptr;
+    }
 }
 
 void LogTarget::release()
@@ -105,20 +110,11 @@ void LogTarget::write(
     {
         std::vector<std::string> lines;
         asf::split(message, "\n", lines);
-        for (auto line : lines)
-        {
-            GetCOREInterface()->Log()->LogEntry(
-              type,
-              FALSE,
-              _T("appleseed"),
-              _T("[appleseed] %s"),
-              utf8_to_wide(line).c_str());
-        }
+        write_log_lines(lines, type);
     }
     else
     {
-        message_data* data = new message_data();
-        data->lines.clear();
+        MessageData* data = new MessageData();
         asf::split(message, "\n", data->lines);
         data->type = type;
 

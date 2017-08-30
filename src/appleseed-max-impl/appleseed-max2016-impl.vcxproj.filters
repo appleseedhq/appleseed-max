@@ -54,13 +54,13 @@
     <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp">
       <Filter>appleseedinteractive</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedinteractive\interacitverenderercontroller.cpp">
-      <Filter>appleseedinteractive</Filter>
-    </ClCompile>
     <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp">
       <Filter>appleseedinteractive</Filter>
     </ClCompile>
     <ClCompile Include="appleseedinteractive\interactivesession.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp">
       <Filter>appleseedinteractive</Filter>
     </ClCompile>
   </ItemGroup>

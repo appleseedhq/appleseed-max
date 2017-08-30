@@ -26,45 +26,27 @@
 // THE SOFTWARE.
 //
 
-#pragma once
+// Interface header.
+#include "interactiverenderercontroller.h"
 
-// appleseed-max headers.
-#include "appleseedrenderer/renderersettings.h"
-
-// Standard headers.
-#include <memory>
-#include <thread>
-
-// Forward declarations.
-namespace renderer { class Project; }
-class IRenderProgressCallback;
-class IIRenderMgr;
-class Bitmap;
-class InteractiveRendererController;
-
-namespace asf = foundation;
 namespace asr = renderer;
 
-class InteractiveSession
+InteractiveRendererController::InteractiveRendererController()
+  : m_status(ContinueRendering)
 {
-  public:
-    InteractiveSession(
-        IIRenderMgr*                iirender_mgr,
-        asr::Project*               project,
-        const RendererSettings&     settings,
-        Bitmap*                     bitmap);
+}
 
-    void render_thread();
-    void start_render();
-    void abort_render();
-    void reininitialize_render();
-    void end_render();
+void InteractiveRendererController::on_rendering_begin()
+{
+    m_status = ContinueRendering;
+}
 
-  private:
-    std::unique_ptr<InteractiveRendererController>  m_render_ctrl;
-    std::thread                                     m_render_thread;
-    Bitmap*                                         m_bitmap;
-    IIRenderMgr*                                    m_iirender_mgr;
-    asr::Project*                                   m_project;
-    RendererSettings                                m_renderer_settings;
-};
+asr::IRendererController::Status InteractiveRendererController::get_status() const
+{
+    return m_status;
+}
+
+void InteractiveRendererController::set_status(const Status status)
+{
+    m_status = status;
+}

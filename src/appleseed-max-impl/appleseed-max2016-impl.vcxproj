@@ -231,7 +231,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp" />
     <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp" />
     <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp" />
-    <ClCompile Include="appleseedinteractive\interacitverenderercontroller.cpp" />
+    <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp" />
     <ClCompile Include="appleseedinteractive\interactivesession.cpp" />
     <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp" />
     <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp" />

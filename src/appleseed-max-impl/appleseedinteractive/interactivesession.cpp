@@ -1,4 +1,31 @@
 
+//
+// This source file is part of appleseed.
+// Visit http://appleseedhq.net/ for additional information and resources.
+//
+// This software is released under the MIT license.
+//
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
 // Interface header.
 #include "appleseedinteractive/interactivesession.h"
 
@@ -11,16 +38,16 @@
 #include "renderer/api/rendering.h"
 
 // 3ds Max headers.
-#include "bitmap.h"
-#include "interactiverender.h"
+#include <interactiverender.h>
 
+// Forward declarations.
+class Bitmap;
 
 InteractiveSession::InteractiveSession(
     IIRenderMgr*                            iirender_mgr,
     asr::Project*                           project,
     const RendererSettings&                 settings,
-    Bitmap*                                 bitmap
-)
+    Bitmap*                                 bitmap)
     : m_project(project)
     , m_iirender_mgr(iirender_mgr)
     , m_renderer_settings(settings)
@@ -41,7 +68,7 @@ void InteractiveSession::render_thread()
     std::auto_ptr<asr::MasterRenderer> renderer(
         new asr::MasterRenderer(
             *m_project,
-            (*m_project).configurations().get_by_name("interactive")->get_inherited_parameters(),
+            m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),
             m_render_ctrl.get(),
             &m_tile_callback));
 

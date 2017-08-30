@@ -53,9 +53,9 @@
 
 // 3ds Max headers.
 #include <assert1.h>
+#include <bitmap.h>
 #include <iimageviewer.h>
 #include <interactiverender.h>
-#include <bitmap.h>
 
 // Standard headers.
 #include <clocale>
@@ -102,8 +102,7 @@ void AppleseedRenderer::GetClassName(MSTR& s)
 
 void AppleseedRenderer::DeleteThis()
 {
-    if (m_interactive_renderer != nullptr)
-        delete m_interactive_renderer;
+    delete m_interactive_renderer;
     delete this;
 }
 
@@ -112,9 +111,7 @@ void* AppleseedRenderer::GetInterface(ULONG id)
     if (id == I_RENDER_ID)
     {
         if (m_interactive_renderer == nullptr)
-        {
-            m_interactive_renderer = new AppleseedIInteractiveRender();
-        }
+            m_interactive_renderer = new AppleseedInteractiveRender();
 
         return static_cast<IInteractiveRender*>(m_interactive_renderer);
     }
@@ -188,16 +185,14 @@ void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
 
 #endif
 
-RefTargetHandle	AppleseedRenderer::Clone(RemapDir &remap)
+RefTargetHandle AppleseedRenderer::Clone(RemapDir& remap)
 {
     AppleseedRenderer* new_rend = static_cast<AppleseedRenderer*>(g_appleseed_renderer_classdesc.Create(false));
-    if (DbgVerify(new_rend != nullptr))
+    if (DbgAssert(new_rend != nullptr))
     {
-        const int num_refs = NumRefs();
-        for (int i = 0; i < num_refs; ++i)
-        {
+        for (int i = 0, e = NumRefs(); i < e; ++i)
             new_rend->ReplaceReference(i, remap.CloneRef(GetReference(i)));
-        }
+        
         BaseClone(this, new_rend, remap);
     }
 

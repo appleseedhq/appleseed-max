@@ -48,7 +48,7 @@
 #include <vector>
 
 // Forward declarations.
-class AppleseedIInteractiveRender;
+class AppleseedInteractiveRender;
 
 
 class AppleseedRenderer
@@ -67,8 +67,6 @@ class AppleseedRenderer
 
     // Animatable.
     virtual void* GetInterface(ULONG id) override;
-
-    AppleseedIInteractiveRender* m_interactive_renderer;
 
 #if MAX_RELEASE == MAX_RELEASE_R19
 
@@ -91,7 +89,7 @@ class AppleseedRenderer
 
 #endif
 
-    virtual RefTargetHandle	Clone(RemapDir	&remap) override;
+    virtual RefTargetHandle Clone(RemapDir& remap) override;
 
     virtual RefResult NotifyRefChanged(
         const Interval&         changeInt,
@@ -132,6 +130,7 @@ class AppleseedRenderer
     virtual IOResult Load(ILoad* iload) override;
 
   private:
+    AppleseedInteractiveRender* m_interactive_renderer;
     RendererSettings            m_settings;
     INode*                      m_scene;
     INode*                      m_view_node;
