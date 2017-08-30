@@ -62,12 +62,11 @@ void InteractiveTileCallback::on_progressive_frame_end(
 {
     TileCallback::on_progressive_frame_end(frame);
 
-    //wait until ui proc gets handled to ensure class object is valid
+    // Wait until UI proc gets handled to ensure class object is valid.
     m_ui_promise = std::promise<void>();
     if (m_renderer_ctrl->get_status() == asr::IRendererController::ContinueRendering)
     {
-        std::future<int> ui_future = m_ui_promise.get_future();
         PostMessage(GetCOREInterface()->GetMAXHWnd(), WM_TRIGGER_CALLBACK, (UINT_PTR)update_caller, (UINT_PTR)this);
-        ui_future.wait();
+        m_ui_promise.get_future().wait();
     }
 }

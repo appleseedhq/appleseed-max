@@ -54,13 +54,14 @@ class InteractiveSession
         const RendererSettings&     settings,
         Bitmap*                     bitmap);
 
-    void render_thread();
     void start_render();
     void abort_render();
     void reininitialize_render();
     void end_render();
 
   private:
+    void render_thread();
+
     std::unique_ptr<InteractiveRendererController>  m_render_ctrl;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;

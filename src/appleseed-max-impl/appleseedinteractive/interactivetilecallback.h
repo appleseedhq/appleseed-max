@@ -59,9 +59,10 @@ class InteractiveTileCallback
         renderer::IRendererController*  render_controller);
 
     virtual void on_progressive_frame_end(const renderer::Frame* frame) override;
-    static void update_caller(UINT_PTR param_ptr);
 
   private:
+    static void update_caller(UINT_PTR param_ptr);
+
     volatile foundation::uint32     m_rendered_tile_count;
     Bitmap*                         m_bitmap;
     IIRenderMgr*                    m_iimanager;
