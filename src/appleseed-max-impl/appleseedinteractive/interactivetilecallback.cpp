@@ -40,7 +40,7 @@ InteractiveTileCallback::InteractiveTileCallback(
     Bitmap*                         bitmap,
     IIRenderMgr*                    iimanager,
     asr::IRendererController*       render_controller)
-    : TileCallback(bitmap, 0)
+    : TileCallback(bitmap, &m_rendered_tile_count)
     , m_bitmap(bitmap)
     , m_iimanager(iimanager)
     , m_renderer_ctrl(render_controller)

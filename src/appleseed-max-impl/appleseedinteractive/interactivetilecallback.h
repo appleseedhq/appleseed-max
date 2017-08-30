@@ -62,7 +62,7 @@ class InteractiveTileCallback
     static void update_caller(UINT_PTR param_ptr);
 
   private:
-    
+    volatile foundation::uint32     m_rendered_tile_count;
     Bitmap*                         m_bitmap;
     IIRenderMgr*                    m_iimanager;
     renderer::IRendererController*  m_renderer_ctrl;

@@ -199,14 +199,14 @@ namespace
                 if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
                 {
                     m_renderer->update_camera(m_active_camera);
-                    m_renderer->m_render_session->reininitialize_render();
+                    m_renderer->get_render_session()->reininitialize_render();
                     break;
                 }
             }
         }
 
       private:
-        AppleseedInteractiveRender*    m_renderer;
+        AppleseedInteractiveRender*     m_renderer;
         INode*                          m_active_camera;
     };
 }
@@ -292,6 +292,11 @@ void AppleseedInteractiveRender::update_camera(INode* camera)
     m_project->get_scene()->get_active_camera()->transform_sequence().set_transform(
         static_cast<float>(m_time),
         asf::Transformd::from_local_to_parent(to_matrix4d(Inverse(view_params.affineTM))));
+}
+
+InteractiveSession* AppleseedInteractiveRender::get_render_session()
+{
+    return m_render_session.get();
 }
 
 //
@@ -481,7 +486,7 @@ bool AppleseedInteractiveRender::GetScreenBBox(Box2& s_bbox, INode * inode)
 
 ActionTableId AppleseedInteractiveRender::GetActionTableId()
 {
-    return NULL;
+    return 0;
 }
 
 ActionCallback* AppleseedInteractiveRender::GetActionCallback()

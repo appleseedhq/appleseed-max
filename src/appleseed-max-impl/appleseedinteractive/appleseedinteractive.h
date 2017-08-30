@@ -93,8 +93,7 @@ class AppleseedInteractiveRender
     virtual void AbortRender() override;
 
     void update_camera(INode* camera);
-
-    std::unique_ptr<InteractiveSession> m_render_session;
+    InteractiveSession* get_render_session();
 
 private:
     asf::auto_release_ptr<asr::Project> prepare_project(
@@ -102,6 +101,7 @@ private:
         const ViewParams&           view_params,
         const TimeValue             time);
 
+    std::unique_ptr<InteractiveSession> m_render_session;
     std::unique_ptr<INodeEventCallback> m_node_callback;
     SceneEventNamespace::CallbackKey    m_callback_key;
     asf::auto_release_ptr<asr::Project> m_project;

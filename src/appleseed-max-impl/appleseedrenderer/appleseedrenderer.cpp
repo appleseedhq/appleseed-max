@@ -188,13 +188,13 @@ void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
 RefTargetHandle AppleseedRenderer::Clone(RemapDir& remap)
 {
     AppleseedRenderer* new_rend = static_cast<AppleseedRenderer*>(g_appleseed_renderer_classdesc.Create(false));
-    if (DbgAssert(new_rend != nullptr))
-    {
-        for (int i = 0, e = NumRefs(); i < e; ++i)
-            new_rend->ReplaceReference(i, remap.CloneRef(GetReference(i)));
+    
+    DbgAssert(new_rend != nullptr);
+    
+    for (int i = 0, e = NumRefs(); i < e; ++i)
+        new_rend->ReplaceReference(i, remap.CloneRef(GetReference(i)));
         
-        BaseClone(this, new_rend, remap);
-    }
+    BaseClone(this, new_rend, remap);
 
     return new_rend;
 }
