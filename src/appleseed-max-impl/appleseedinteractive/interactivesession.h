@@ -37,20 +37,16 @@
 
 // Forward declarations.
 namespace renderer { class Project; }
-class IRenderProgressCallback;
-class IIRenderMgr;
 class Bitmap;
+class IIRenderMgr;
 class InteractiveRendererController;
-
-namespace asf = foundation;
-namespace asr = renderer;
 
 class InteractiveSession
 {
   public:
     InteractiveSession(
         IIRenderMgr*                iirender_mgr,
-        asr::Project*               project,
+        renderer::Project*          project,
         const RendererSettings&     settings,
         Bitmap*                     bitmap);
 
@@ -66,6 +62,6 @@ class InteractiveSession
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
     IIRenderMgr*                                    m_iirender_mgr;
-    asr::Project*                                   m_project;
+    renderer::Project*                              m_project;
     RendererSettings                                m_renderer_settings;
 };

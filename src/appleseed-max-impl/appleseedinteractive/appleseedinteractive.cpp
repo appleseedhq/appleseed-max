@@ -36,6 +36,10 @@
 #include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
 
+// 3ds Max headers.
+#include <assert1.h>
+#include <matrix3.h>
+
 // Standard headers.
 #include <clocale>
 
@@ -74,41 +78,39 @@ namespace
         switch (os.obj->SuperClassID())
         {
           case CAMERA_CLASS_ID:
-          {
-            CameraObject* cam = static_cast<CameraObject*>(os.obj);
-
-            Interval validity_interval;
-            validity_interval.SetInfinite();
-
-            Matrix3 cam_to_world = view_node->GetObjTMAfterWSM(time, &validity_interval);
-            cam_to_world.NoScale();
-
-            view_params.affineTM = Inverse(cam_to_world);
-
-            CameraState cam_state;
-            cam->EvalCameraState(time, validity_interval, &cam_state);
-
-            view_params.projType = PROJ_PERSPECTIVE;
-            view_params.fov = cam_state.fov;
-
-            if (cam_state.manualClip)
             {
-                view_params.hither = cam_state.hither;
-                view_params.yon = cam_state.yon;
+                CameraObject* cam = static_cast<CameraObject*>(os.obj);
+
+                Interval validity_interval;
+                validity_interval.SetInfinite();
+
+                Matrix3 cam_to_world = view_node->GetObjTMAfterWSM(time, &validity_interval);
+                cam_to_world.NoScale();
+
+                view_params.affineTM = Inverse(cam_to_world);
+
+                CameraState cam_state;
+                cam->EvalCameraState(time, validity_interval, &cam_state);
+
+                view_params.projType = PROJ_PERSPECTIVE;
+                view_params.fov = cam_state.fov;
+
+                if (cam_state.manualClip)
+                {
+                    view_params.hither = cam_state.hither;
+                    view_params.yon = cam_state.yon;
+                }
+                else
+                {
+                    view_params.hither = 0.001f;
+                    view_params.yon = 1.0e38f;
+                }
             }
-            else
-            {
-                view_params.hither = 0.001f;
-                view_params.yon = 1.0e38f;
-            }
-          }
-          break;
+            break;
 
           case LIGHT_CLASS_ID:
-          {
             DbgAssert(!"Not implemented yet.");
-          }
-          break;
+            break;
 
           default:
             DbgAssert(!"Unexpected super class ID for camera.");
@@ -120,7 +122,7 @@ namespace
     {
       public:
         explicit RenderBeginProc(const TimeValue time)
-            : m_time(time)
+          : m_time(time)
         {
         }
 
@@ -139,7 +141,7 @@ namespace
     {
       public:
         explicit RenderEndProc(const TimeValue time)
-            : m_time(time)
+          : m_time(time)
         {
         }
 
@@ -211,6 +213,7 @@ namespace
     };
 }
 
+
 //
 // AppleseedInteractiveRender class implementation.
 //
@@ -230,7 +233,7 @@ AppleseedInteractiveRender::AppleseedInteractiveRender()
 
 AppleseedInteractiveRender::~AppleseedInteractiveRender()
 {
-    // Make sure the active shade session has stopped
+    // Make sure the ActiveShade session has stopped.
     EndSession();
 }
 
@@ -298,10 +301,6 @@ InteractiveSession* AppleseedInteractiveRender::get_render_session()
 {
     return m_render_session.get();
 }
-
-//
-// IInteractiveRender implementation
-//
 
 void AppleseedInteractiveRender::BeginSession()
 {
@@ -448,10 +447,9 @@ const Box2& AppleseedInteractiveRender::GetRegion() const
 void AppleseedInteractiveRender::SetDefaultLights(DefaultLight* def_lights, int num_def_lights)
 {
     m_default_lights.clear();
+
     if (def_lights != nullptr)
-    {
         m_default_lights.insert(m_default_lights.begin(), def_lights, def_lights + num_def_lights);
-    }
 }
 
 const DefaultLight* AppleseedInteractiveRender::GetDefaultLights(int& num_def_lights) const
@@ -479,7 +477,7 @@ ULONG AppleseedInteractiveRender::GetNodeHandle(int x, int y)
     return 0;
 }
 
-bool AppleseedInteractiveRender::GetScreenBBox(Box2& s_bbox, INode * inode)
+bool AppleseedInteractiveRender::GetScreenBBox(Box2& s_bbox, INode* inode)
 {
     return FALSE;
 }

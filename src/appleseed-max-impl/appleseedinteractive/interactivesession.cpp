@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedinteractive/interactivesession.h"
+#include "interactivesession.h"
 
 // appleseed-max headers.
 #include "appleseedinteractive/interactiverenderercontroller.h"
@@ -37,22 +37,19 @@
 #include "renderer/api/project.h"
 #include "renderer/api/rendering.h"
 
-// 3ds Max headers.
-#include <interactiverender.h>
-
-// Forward declarations.
-class Bitmap;
+namespace asf = foundation;
+namespace asr = renderer;
 
 InteractiveSession::InteractiveSession(
-    IIRenderMgr*                            iirender_mgr,
-    asr::Project*                           project,
-    const RendererSettings&                 settings,
-    Bitmap*                                 bitmap)
-    : m_project(project)
-    , m_iirender_mgr(iirender_mgr)
-    , m_renderer_settings(settings)
-    , m_bitmap(bitmap)
-    , m_render_ctrl(nullptr)
+    IIRenderMgr*                iirender_mgr,
+    asr::Project*               project,
+    const RendererSettings&     settings,
+    Bitmap*                     bitmap)
+  : m_project(project)
+  , m_iirender_mgr(iirender_mgr)
+  , m_renderer_settings(settings)
+  , m_bitmap(bitmap)
+  , m_render_ctrl(nullptr)
 {
 }
 

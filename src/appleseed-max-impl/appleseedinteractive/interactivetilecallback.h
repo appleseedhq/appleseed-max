@@ -32,28 +32,23 @@
 #include "appleseedrenderer/tilecallback.h"
 
 // appleseed.foundation headers.
-#include "foundation/image/tile.h"
 #include "foundation/platform/types.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// 3ds Max headers.
-#include <bitmap.h>
-#include <interactiverender.h>
+#include "foundation/platform/windows.h"
 
 // Standard headers.
 #include <future>
 
 // Forward declarations.
 namespace renderer  { class Frame; }
+namespace renderer  { class IRendererController; }
 class Bitmap;
 class IIRenderMgr;
-
 
 class InteractiveTileCallback
   : public TileCallback
 {
   public:
-      InteractiveTileCallback(
+    InteractiveTileCallback(
         Bitmap*                         bitmap,
         IIRenderMgr*                    iimanager,
         renderer::IRendererController*  render_controller);
@@ -61,11 +56,11 @@ class InteractiveTileCallback
     virtual void on_progressive_frame_end(const renderer::Frame* frame) override;
 
   private:
-    static void update_caller(UINT_PTR param_ptr);
+    volatile foundation::uint32         m_rendered_tile_count;
+    Bitmap*                             m_bitmap;
+    IIRenderMgr*                        m_iimanager;
+    renderer::IRendererController*      m_renderer_ctrl;
+    std::promise<void>                  m_ui_promise;
 
-    volatile foundation::uint32     m_rendered_tile_count;
-    Bitmap*                         m_bitmap;
-    IIRenderMgr*                    m_iimanager;
-    renderer::IRendererController*  m_renderer_ctrl;
-    std::promise<void>              m_ui_promise;
+    static void update_caller(UINT_PTR param_ptr);
 };

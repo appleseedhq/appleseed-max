@@ -41,15 +41,14 @@
 #include <render.h>
 #undef base_type
 
-// Windows headers.
-#include <tchar.h>
-
 // Standard headers.
 #include <vector>
 
+// Windows headers.
+#include <tchar.h>
+
 // Forward declarations.
 class AppleseedInteractiveRender;
-
 
 class AppleseedRenderer
   : public Renderer
