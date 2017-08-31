@@ -123,6 +123,12 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
 
 void RendererSettings::apply_settings_to_interactive_config(asr::Project& project) const
 {
+    asr::ParamArray& params = project.configurations().get_by_name("interactive")->get_parameters();
+
+    params.insert_path("frame_renderer", "progressive");
+    params.insert_path("sample_generator", "generic");
+    params.insert_path("sample_renderer", "generic");
+
 }
 
 bool RendererSettings::save(ISave* isave) const

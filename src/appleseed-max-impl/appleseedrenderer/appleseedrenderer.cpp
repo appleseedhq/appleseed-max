@@ -30,6 +30,7 @@
 #include "appleseedrenderer.h"
 
 // appleseed-max headers.
+#include "appleseedinteractive/appleseedinteractive.h"
 #include "appleseedrenderer/appleseedrendererparamdlg.h"
 #include "appleseedrenderer/datachunks.h"
 #include "appleseedrenderer/projectbuilder.h"
@@ -53,6 +54,8 @@
 // 3ds Max headers.
 #include <assert1.h>
 #include <bitmap.h>
+#include <iimageviewer.h>
+#include <interactiverender.h>
 
 // Standard headers.
 #include <clocale>
@@ -82,6 +85,7 @@ Class_ID AppleseedRenderer::get_class_id()
 
 AppleseedRenderer::AppleseedRenderer()
   : m_settings(RendererSettings::defaults())
+  , m_interactive_renderer(nullptr)
 {
     clear();
 }
@@ -98,7 +102,23 @@ void AppleseedRenderer::GetClassName(MSTR& s)
 
 void AppleseedRenderer::DeleteThis()
 {
+    delete m_interactive_renderer;
     delete this;
+}
+
+void* AppleseedRenderer::GetInterface(ULONG id)
+{
+    if (id == I_RENDER_ID)
+    {
+        if (m_interactive_renderer == nullptr)
+            m_interactive_renderer = new AppleseedInteractiveRender();
+
+        return static_cast<IInteractiveRender*>(m_interactive_renderer);
+    }
+    else
+    {
+        return Renderer::GetInterface(id);
+    }
 }
 
 #if MAX_RELEASE == MAX_RELEASE_R19
@@ -164,6 +184,20 @@ void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
 }
 
 #endif
+
+RefTargetHandle AppleseedRenderer::Clone(RemapDir& remap)
+{
+    AppleseedRenderer* new_rend = static_cast<AppleseedRenderer*>(g_appleseed_renderer_classdesc.Create(false));
+    
+    DbgAssert(new_rend != nullptr);
+    
+    for (int i = 0, e = NumRefs(); i < e; ++i)
+        new_rend->ReplaceReference(i, remap.CloneRef(GetReference(i)));
+        
+    BaseClone(this, new_rend, remap);
+
+    return new_rend;
+}
 
 RefResult AppleseedRenderer::NotifyRefChanged(
     const Interval&         changeInt,

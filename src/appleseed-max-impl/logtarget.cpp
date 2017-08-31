@@ -46,6 +46,39 @@
 
 namespace asf = foundation;
 
+namespace
+{
+    const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
+
+    struct MessageData
+    {
+        std::vector<std::string> lines;
+        DWORD type;
+    };
+   
+    void write_log_lines(const std::vector<std::string>& lines, const int type)
+    {
+        for (auto line : lines)
+        {
+            GetCOREInterface()->Log()->LogEntry(
+                type,
+                FALSE,
+                _T("appleseed"),
+                _T("[appleseed] %s"),
+                utf8_to_wide(line).c_str());
+        }
+    }
+
+    void ui_log_writer(UINT_PTR param_ptr)
+    {
+        MessageData* data_ptr = reinterpret_cast<MessageData*>(param_ptr);
+
+        write_log_lines(data_ptr->lines, data_ptr->type);
+
+        delete data_ptr;
+    }
+}
+
 void LogTarget::release()
 {
     delete this;
@@ -71,16 +104,20 @@ void LogTarget::write(
         break;
     }
 
-    std::vector<std::string> lines;
-    asf::split(message, "\n", lines);
+    auto is_ui_thread = GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
 
-    for (auto line : lines)
+    if (is_ui_thread)
     {
-        GetCOREInterface()->Log()->LogEntry(
-            type,
-            FALSE,
-            _T("appleseed"),
-            _T("[appleseed] %s"),
-            utf8_to_wide(line).c_str());
+        std::vector<std::string> lines;
+        asf::split(message, "\n", lines);
+        write_log_lines(lines, type);
+    }
+    else
+    {
+        MessageData* data = new MessageData();
+        asf::split(message, "\n", data->lines);
+        data->type = type;
+
+        PostMessage(GetCOREInterface()->GetMAXHWnd(), WM_TRIGGER_CALLBACK, (UINT_PTR)ui_log_writer, (UINT_PTR)data);
     }
 }

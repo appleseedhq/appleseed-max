@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,45 +28,44 @@
 
 #pragma once
 
+// appleseed-max headers.
+#include "appleseedrenderer/tilecallback.h"
+
 // appleseed.foundation headers.
+#include "foundation/image/tile.h"
+#include "foundation/platform/types.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
-#include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
-#include <maxtypes.h>
-#include <render.h>
-#if MAX_RELEASE >= 18000
-#include <Scene/IPhysicalCamera.h>
-#endif
+#include <bitmap.h>
+#include <interactiverender.h>
 
 // Standard headers.
-#include <vector>
+#include <future>
 
 // Forward declarations.
-namespace renderer { class Camera; }
-namespace renderer { class Project; }
+namespace renderer  { class Frame; }
 class Bitmap;
-class FrameRendParams;
-class MaxSceneEntities;
-class RendererSettings;
-class RendParams;
-class ViewParams;
+class IIRenderMgr;
 
-// Build an appleseed project from the current 3ds Max scene.
-foundation::auto_release_ptr<renderer::Project> build_project(
-    const MaxSceneEntities&             entities,
-    const std::vector<DefaultLight>&    default_lights,
-    INode*                              view_node,
-    const ViewParams&                   view_params,
-    const RendParams&                   rend_params,
-    const FrameRendParams&              frame_rend_params,
-    const RendererSettings&             settings,
-    Bitmap*                             bitmap,
-    const TimeValue                     time);
 
-foundation::auto_release_ptr<renderer::Camera> build_camera(
-    INode*                              view_node,
-    const ViewParams&                   view_params,
-    Bitmap*                             bitmap,
-    const RendererSettings&             settings,
-    const TimeValue                     time);
+class InteractiveTileCallback
+  : public TileCallback
+{
+  public:
+      InteractiveTileCallback(
+        Bitmap*                         bitmap,
+        IIRenderMgr*                    iimanager,
+        renderer::IRendererController*  render_controller);
+
+    virtual void on_progressive_frame_end(const renderer::Frame* frame) override;
+
+  private:
+    static void update_caller(UINT_PTR param_ptr);
+
+    volatile foundation::uint32     m_rendered_tile_count;
+    Bitmap*                         m_bitmap;
+    IIRenderMgr*                    m_iimanager;
+    renderer::IRendererController*  m_renderer_ctrl;
+    std::promise<void>              m_ui_promise;
+};
