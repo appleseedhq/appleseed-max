@@ -224,6 +224,10 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp" />
+    <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp" />
+    <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp" />
+    <ClCompile Include="appleseedinteractive\interactivesession.cpp" />
+    <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp" />
     <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp" />
     <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp" />
     <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp" />
@@ -250,6 +254,10 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClInclude Include="appleseedenvmap\appleseedenvmap.h" />
     <ClInclude Include="appleseedenvmap\datachunks.h" />
     <ClInclude Include="appleseedenvmap\resource.h" />
+    <ClInclude Include="appleseedinteractive\appleseedinteractive.h" />
+    <ClInclude Include="appleseedinteractive\interactiverenderercontroller.h" />
+    <ClInclude Include="appleseedinteractive\interactivesession.h" />
+    <ClInclude Include="appleseedinteractive\interactivetilecallback.h" />
     <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h" />
     <ClInclude Include="appleseedobjpropsmod\resource.h" />
     <ClInclude Include="bump\bumpparammapdlgproc.h" />
