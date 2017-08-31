@@ -51,6 +51,18 @@
     </ClCompile>
     <ClCompile Include="oslutils.cpp" />
     <ClCompile Include="seexprutils.cpp" />
+    <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactivesession.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -147,6 +159,18 @@
     </ClInclude>
     <ClInclude Include="oslutils.h" />
     <ClInclude Include="seexprutils.h" />
+    <ClInclude Include="appleseedinteractive\appleseedinteractive.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedinteractive\interactiverenderercontroller.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedinteractive\interactivesession.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedinteractive\interactivetilecallback.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -198,6 +222,9 @@
     </Filter>
     <Filter Include="appleseedenvmap">
       <UniqueIdentifier>{32a147ec-9009-4e65-a98c-21f5225a13b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedinteractive">
+      <UniqueIdentifier>{47c2de1a-3cbc-4249-82e7-7f658a1c7291}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
