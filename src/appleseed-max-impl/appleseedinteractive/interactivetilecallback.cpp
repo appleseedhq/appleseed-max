@@ -27,7 +27,11 @@
 //
 
 // Interface header.
-#include "appleseedinteractive/interactivetilecallback.h"
+#include "interactivetilecallback.h"
+
+// 3ds Max headers.
+#include <bitmap.h>
+#include <interactiverender.h>
 
 namespace asr = renderer;
 
@@ -37,28 +41,18 @@ namespace
 }
 
 InteractiveTileCallback::InteractiveTileCallback(
-    Bitmap*                         bitmap,
-    IIRenderMgr*                    iimanager,
-    asr::IRendererController*       render_controller)
-    : TileCallback(bitmap, &m_rendered_tile_count)
-    , m_bitmap(bitmap)
-    , m_iimanager(iimanager)
-    , m_renderer_ctrl(render_controller)
+    Bitmap*                     bitmap,
+    IIRenderMgr*                iimanager,
+    asr::IRendererController*   render_controller)
+  : TileCallback(bitmap, &m_rendered_tile_count)
+  , m_bitmap(bitmap)
+  , m_iimanager(iimanager)
+  , m_renderer_ctrl(render_controller)
 {
-}
-
-void InteractiveTileCallback::update_caller(UINT_PTR param_ptr)
-{
-    InteractiveTileCallback* object_ptr = reinterpret_cast<InteractiveTileCallback*>(param_ptr);
-    
-    if (object_ptr->m_iimanager->IsRendering())
-        object_ptr->m_iimanager->UpdateDisplay();
-
-    object_ptr->m_ui_promise.set_value();
 }
 
 void InteractiveTileCallback::on_progressive_frame_end(
-    const asr::Frame* frame)
+    const asr::Frame*           frame)
 {
     TileCallback::on_progressive_frame_end(frame);
 
@@ -66,7 +60,21 @@ void InteractiveTileCallback::on_progressive_frame_end(
     m_ui_promise = std::promise<void>();
     if (m_renderer_ctrl->get_status() == asr::IRendererController::ContinueRendering)
     {
-        PostMessage(GetCOREInterface()->GetMAXHWnd(), WM_TRIGGER_CALLBACK, (UINT_PTR)update_caller, (UINT_PTR)this);
+        PostMessage(
+            GetCOREInterface()->GetMAXHWnd(),
+            WM_TRIGGER_CALLBACK,
+            reinterpret_cast<UINT_PTR>(update_caller),
+            reinterpret_cast<UINT_PTR>(this));
         m_ui_promise.get_future().wait();
     }
+}
+
+void InteractiveTileCallback::update_caller(UINT_PTR param_ptr)
+{
+    auto tile_callback = reinterpret_cast<InteractiveTileCallback*>(param_ptr);
+    
+    if (tile_callback->m_iimanager->IsRendering())
+        tile_callback->m_iimanager->UpdateDisplay();
+
+    tile_callback->m_ui_promise.set_value();
 }

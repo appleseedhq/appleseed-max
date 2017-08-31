@@ -30,26 +30,25 @@
 
 // appleseed-max headers.
 #include "appleseedrenderer/maxsceneentities.h"
-#include "appleseedrenderer/renderersettings.h"
 
 // appleseed.foundation headers.
+#include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
-#include <Rendering/IAbortableRenderer.h>
 #include <interactiverender.h>
 #include <ISceneEventManager.h>
+#include <Rendering/IAbortableRenderer.h>
 
 // Standard headers.
 #include <memory>
+#include <vector>
 
 // Forward declarations.
 namespace renderer { class Project; }
 class AppleseedRenderer;
 class InteractiveSession;
-
-namespace asf = foundation;
-namespace asr = renderer;
+class RendererSettings;
 
 class AppleseedInteractiveRender
   : public IInteractiveRender
@@ -59,7 +58,7 @@ class AppleseedInteractiveRender
     AppleseedInteractiveRender();
     virtual ~AppleseedInteractiveRender();
 
-    // IInteractiveRender
+    // IInteractiveRender methods.
     virtual void BeginSession() override;
     virtual void EndSession() override;
     virtual void SetOwnerWnd(HWND owner_wnd) override;
@@ -84,37 +83,37 @@ class AppleseedInteractiveRender
     virtual const IRenderProgressCallback* GetProgressCallback() const override;
     virtual void Render(Bitmap* bitmap) override;
     virtual ULONG GetNodeHandle(int x, int y) override;
-    virtual bool GetScreenBBox(Box2 & s_bbox, INode* inode) override;
+    virtual bool GetScreenBBox(Box2& s_bbox, INode* inode) override;
     virtual ActionTableId GetActionTableId() override;
     virtual ActionCallback* GetActionCallback() override;
     virtual BOOL IsRendering() override;
 
-    // IAbortable
+    // IAbortableRenderer methods.
     virtual void AbortRender() override;
 
     void update_camera(INode* camera);
     InteractiveSession* get_render_session();
 
-private:
-    asf::auto_release_ptr<asr::Project> prepare_project(
+  private:
+    std::unique_ptr<InteractiveSession>             m_render_session;
+    std::unique_ptr<INodeEventCallback>             m_node_callback;
+    SceneEventNamespace::CallbackKey                m_callback_key;
+    foundation::auto_release_ptr<renderer::Project> m_project;
+    Bitmap*                                         m_bitmap;
+    std::vector<DefaultLight>                       m_default_lights;
+    IIRenderMgr*                                    m_iirender_mgr;
+    HWND                                            m_owner_wnd;
+    IRenderProgressCallback*                        m_progress_cb;
+    MaxSceneEntities                                m_entities;
+    TimeValue                                       m_time;
+    Box2                                            m_region;
+    INode*                                          m_scene_inode;
+    ViewExp*                                        m_view_exp;
+    INode*                                          m_view_inode;
+    bool                                            m_use_view_inode;
+
+    foundation::auto_release_ptr<renderer::Project> prepare_project(
         const RendererSettings&     renderer_settings,
         const ViewParams&           view_params,
         const TimeValue             time);
-
-    std::unique_ptr<InteractiveSession> m_render_session;
-    std::unique_ptr<INodeEventCallback> m_node_callback;
-    SceneEventNamespace::CallbackKey    m_callback_key;
-    asf::auto_release_ptr<asr::Project> m_project;
-    Bitmap*                             m_bitmap;
-    std::vector<DefaultLight>           m_default_lights;
-    IIRenderMgr*                        m_iirender_mgr;
-    HWND                                m_owner_wnd;
-    IRenderProgressCallback*            m_progress_cb;
-    MaxSceneEntities                    m_entities;
-    TimeValue                           m_time;
-    Box2                                m_region;
-    INode*                              m_scene_inode;
-    ViewExp*                            m_view_exp;
-    INode*                              m_view_inode;
-    bool                                m_use_view_inode;
 };
