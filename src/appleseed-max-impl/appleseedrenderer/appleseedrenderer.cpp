@@ -108,6 +108,7 @@ void AppleseedRenderer::DeleteThis()
 
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
+#if MAX_RELEASE != MAX_RELEASE_R19
     if (id == I_RENDER_ID)
     {
         if (m_interactive_renderer == nullptr)
@@ -116,6 +117,7 @@ void* AppleseedRenderer::GetInterface(ULONG id)
         return static_cast<IInteractiveRender*>(m_interactive_renderer);
     }
     else
+#endif
     {
         return Renderer::GetInterface(id);
     }
@@ -170,7 +172,10 @@ bool AppleseedRenderer::CompatibleWithRenderElement(IRenderElement& pIRenderElem
 
 IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
 {
-    return nullptr;
+    if (m_interactive_renderer == nullptr)
+        m_interactive_renderer = new AppleseedInteractiveRender();
+
+    return static_cast<IInteractiveRender*>(m_interactive_renderer);
 }
 
 void AppleseedRenderer::GetVendorInformation(MSTR& info) const

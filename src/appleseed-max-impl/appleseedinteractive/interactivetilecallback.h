@@ -56,7 +56,6 @@ class InteractiveTileCallback
     virtual void on_progressive_frame_end(const renderer::Frame* frame) override;
 
   private:
-    volatile foundation::uint32         m_rendered_tile_count;
     Bitmap*                             m_bitmap;
     IIRenderMgr*                        m_iimanager;
     renderer::IRendererController*      m_renderer_ctrl;

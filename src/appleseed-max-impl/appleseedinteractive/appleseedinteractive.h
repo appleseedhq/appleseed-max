@@ -52,7 +52,9 @@ class RendererSettings;
 
 class AppleseedInteractiveRender
   : public IInteractiveRender
+#if MAX_RELEASE != MAX_RELEASE_R19
   , public MaxSDK::IAbortableRenderer
+#endif
 {
   public:
     AppleseedInteractiveRender();
