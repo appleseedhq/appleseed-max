@@ -40,12 +40,16 @@ namespace renderer { class Project; }
 class Bitmap;
 class IIRenderMgr;
 class InteractiveRendererController;
+class RendProgressCallback;
+class IInteractiveRender;
 
 class InteractiveSession
 {
   public:
     InteractiveSession(
         IIRenderMgr*                iirender_mgr,
+        IInteractiveRender*         renderer,
+        RendProgressCallback*       progress_cb,
         renderer::Project*          project,
         const RendererSettings&     settings,
         Bitmap*                     bitmap);
@@ -58,10 +62,12 @@ class InteractiveSession
   private:
     void render_thread();
 
+    RendProgressCallback*                           m_progress_cb;
     std::unique_ptr<InteractiveRendererController>  m_render_ctrl;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
     IIRenderMgr*                                    m_iirender_mgr;
+    IInteractiveRender*                             m_renderer;
     renderer::Project*                              m_project;
     RendererSettings                                m_renderer_settings;
 };

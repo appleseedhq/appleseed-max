@@ -52,7 +52,7 @@ class RendererSettings;
 
 class AppleseedInteractiveRender
   : public IInteractiveRender
-#if MAX_RELEASE != MAX_RELEASE_R19
+#if MAX_RELEASE == MAX_RELEASE_R18
   , public MaxSDK::IAbortableRenderer
 #endif
 {
@@ -91,10 +91,14 @@ class AppleseedInteractiveRender
     virtual BOOL IsRendering() override;
 
     // IAbortableRenderer methods.
+#if MAX_RELEASE > MAX_RELEASE_R17
     virtual void AbortRender() override;
+#endif
 
     void update_camera(INode* camera);
     InteractiveSession* get_render_session();
+
+    bool                                            m_currently_rendering;
 
   private:
     std::unique_ptr<InteractiveSession>             m_render_session;

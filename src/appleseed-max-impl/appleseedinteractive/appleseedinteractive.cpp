@@ -227,6 +227,7 @@ AppleseedInteractiveRender::AppleseedInteractiveRender()
   , m_view_inode(nullptr)
   , m_view_exp(nullptr)
   , m_progress_cb(nullptr)
+  , m_currently_rendering(false)
 {
     m_entities.clear();
 }
@@ -321,8 +322,12 @@ void AppleseedInteractiveRender::BeginSession()
 
     m_project = prepare_project(renderer_settings, view_params, m_time);
 
+    m_currently_rendering = true;
+
     m_render_session.reset(new InteractiveSession(
-        m_iirender_mgr, 
+        m_iirender_mgr,
+        this,
+        m_progress_cb,
         m_project.get(),
         renderer_settings,
         m_bitmap));
@@ -352,6 +357,8 @@ void AppleseedInteractiveRender::EndSession()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
+        m_currently_rendering = false;
 
         m_render_session->end_render();
 
@@ -494,10 +501,12 @@ ActionCallback* AppleseedInteractiveRender::GetActionCallback()
 
 BOOL AppleseedInteractiveRender::IsRendering()
 {
-    return m_render_session != nullptr;
+    return m_currently_rendering;
 }
 
+#if MAX_RELEASE > MAX_RELEASE_R17
 void AppleseedInteractiveRender::AbortRender()
 {
     EndSession();
 }
+#endif

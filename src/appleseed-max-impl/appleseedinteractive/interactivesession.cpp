@@ -30,6 +30,7 @@
 #include "interactivesession.h"
 
 // appleseed-max headers.
+#include "appleseedinteractive/appleseedinteractive.h"
 #include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 
@@ -42,21 +43,25 @@ namespace asr = renderer;
 
 InteractiveSession::InteractiveSession(
     IIRenderMgr*                iirender_mgr,
+    IInteractiveRender*         renderer,
+    RendProgressCallback*       progress_cb,
     asr::Project*               project,
     const RendererSettings&     settings,
     Bitmap*                     bitmap)
   : m_project(project)
   , m_iirender_mgr(iirender_mgr)
+  , m_renderer(renderer)
   , m_renderer_settings(settings)
   , m_bitmap(bitmap)
   , m_render_ctrl(nullptr)
+  , m_progress_cb(progress_cb)
 {
 }
 
 void InteractiveSession::render_thread()
 {
     // Create the renderer controller.
-    m_render_ctrl.reset(new InteractiveRendererController());
+    m_render_ctrl.reset(new InteractiveRendererController(m_progress_cb));
 
     // Create the tile callback.
     InteractiveTileCallback m_tile_callback(m_bitmap, m_iirender_mgr, m_render_ctrl.get());
@@ -71,6 +76,8 @@ void InteractiveSession::render_thread()
 
     // Render the frame.
     renderer->render();
+
+    dynamic_cast<AppleseedInteractiveRender*>(m_renderer)->m_currently_rendering = false;
 }
 
 void InteractiveSession::start_render()
