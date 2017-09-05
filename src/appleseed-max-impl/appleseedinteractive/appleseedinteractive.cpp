@@ -34,6 +34,7 @@
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/projectbuilder.h"
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "utilities.h"
 
 // 3ds Max headers.
@@ -218,7 +219,7 @@ namespace
 // AppleseedInteractiveRender class implementation.
 //
 
-AppleseedInteractiveRender::AppleseedInteractiveRender()
+AppleseedInteractiveRender::AppleseedInteractiveRender(AppleseedRenderer* renderer)
   : m_owner_wnd(0)
   , m_bitmap(nullptr)
   , m_iirender_mgr(nullptr)
@@ -228,6 +229,7 @@ AppleseedInteractiveRender::AppleseedInteractiveRender()
   , m_view_exp(nullptr)
   , m_progress_cb(nullptr)
   , m_currently_rendering(false)
+  , m_prod_renderer(renderer)
 {
     m_entities.clear();
 }
@@ -236,6 +238,7 @@ AppleseedInteractiveRender::~AppleseedInteractiveRender()
 {
     // Make sure the ActiveShade session has stopped.
     EndSession();
+    m_prod_renderer->g_interactive_renderer = nullptr;
 }
 
 asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
@@ -303,6 +306,13 @@ InteractiveSession* AppleseedInteractiveRender::get_render_session()
     return m_render_session.get();
 }
 
+#if MAX_RELEASE == MAX_RELEASE_R17
+void AppleseedInteractiveRender::AbortRender()
+{
+    m_currently_rendering = false;
+}
+#endif
+
 void AppleseedInteractiveRender::BeginSession()
 {
     DbgAssert(m_render_session == nullptr);
@@ -343,6 +353,8 @@ void AppleseedInteractiveRender::BeginSession()
 
 void AppleseedInteractiveRender::EndSession()
 {
+    m_currently_rendering = false;
+
     if (m_render_session != nullptr)
     {
         GetISceneEventManager()->UnRegisterCallback(m_callback_key);
@@ -357,8 +369,6 @@ void AppleseedInteractiveRender::EndSession()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-
-        m_currently_rendering = false;
 
         m_render_session->end_render();
 

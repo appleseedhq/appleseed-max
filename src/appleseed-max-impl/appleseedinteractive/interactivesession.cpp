@@ -77,7 +77,9 @@ void InteractiveSession::render_thread()
     // Render the frame.
     renderer->render();
 
-    dynamic_cast<AppleseedInteractiveRender*>(m_renderer)->m_currently_rendering = false;
+#if MAX_RELEASE == MAX_RELEASE_R17
+    static_cast<AppleseedInteractiveRender*>(m_renderer)->AbortRender();
+#endif
 }
 
 void InteractiveSession::start_render()

@@ -32,6 +32,7 @@
 // 3ds Max headers.
 #include <bitmap.h>
 #include <interactiverender.h>
+#include <max.h>
 
 namespace asr = renderer;
 
