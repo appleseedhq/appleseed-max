@@ -185,7 +185,7 @@ bool AppleseedRenderer::CompatibleWithRenderElement(IRenderElement& pIRenderElem
 IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
 {
     if (m_interactive_renderer == nullptr)
-        m_interactive_renderer = new AppleseedInteractiveRender();
+        m_interactive_renderer = new AppleseedInteractiveRender(this);
 
     return static_cast<IInteractiveRender*>(m_interactive_renderer);
 }
