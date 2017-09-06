@@ -44,17 +44,13 @@ class InteractiveRendererController
   : public renderer::DefaultRendererController
 {
   public:
-    InteractiveRendererController(RendProgressCallback* progress_cb);
+    InteractiveRendererController();
 
     virtual void on_rendering_begin() override;
     virtual Status get_status() const override;
-#if MAX_RELEASE == MAX_RELEASE_R17
-    virtual void on_progress() override;
-#endif
 
     void set_status(const Status status);
 
   private:
-    RendProgressCallback*   m_progress_cb;
     Status                  m_status;
 };

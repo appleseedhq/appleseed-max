@@ -34,7 +34,6 @@
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/projectbuilder.h"
-#include "appleseedrenderer/appleseedrenderer.h"
 #include "utilities.h"
 
 // 3ds Max headers.
@@ -219,7 +218,7 @@ namespace
 // AppleseedInteractiveRender class implementation.
 //
 
-AppleseedInteractiveRender::AppleseedInteractiveRender(AppleseedRenderer* renderer)
+AppleseedInteractiveRender::AppleseedInteractiveRender()
   : m_owner_wnd(0)
   , m_bitmap(nullptr)
   , m_iirender_mgr(nullptr)
@@ -228,8 +227,6 @@ AppleseedInteractiveRender::AppleseedInteractiveRender(AppleseedRenderer* render
   , m_view_inode(nullptr)
   , m_view_exp(nullptr)
   , m_progress_cb(nullptr)
-  , m_currently_rendering(false)
-  , m_prod_renderer(renderer)
 {
     m_entities.clear();
 }
@@ -238,7 +235,6 @@ AppleseedInteractiveRender::~AppleseedInteractiveRender()
 {
     // Make sure the ActiveShade session has stopped.
     EndSession();
-    m_prod_renderer->g_interactive_renderer = nullptr;
 }
 
 asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
@@ -306,13 +302,6 @@ InteractiveSession* AppleseedInteractiveRender::get_render_session()
     return m_render_session.get();
 }
 
-#if MAX_RELEASE == MAX_RELEASE_R17
-void AppleseedInteractiveRender::AbortRender()
-{
-    m_currently_rendering = false;
-}
-#endif
-
 void AppleseedInteractiveRender::BeginSession()
 {
     DbgAssert(m_render_session == nullptr);
@@ -332,12 +321,8 @@ void AppleseedInteractiveRender::BeginSession()
 
     m_project = prepare_project(renderer_settings, view_params, m_time);
 
-    m_currently_rendering = true;
-
     m_render_session.reset(new InteractiveSession(
         m_iirender_mgr,
-        this,
-        m_progress_cb,
         m_project.get(),
         renderer_settings,
         m_bitmap));
@@ -353,8 +338,6 @@ void AppleseedInteractiveRender::BeginSession()
 
 void AppleseedInteractiveRender::EndSession()
 {
-    m_currently_rendering = false;
-
     if (m_render_session != nullptr)
     {
         GetISceneEventManager()->UnRegisterCallback(m_callback_key);
@@ -511,7 +494,7 @@ ActionCallback* AppleseedInteractiveRender::GetActionCallback()
 
 BOOL AppleseedInteractiveRender::IsRendering()
 {
-    return m_currently_rendering;
+    return m_render_session != nullptr;
 }
 
 #if MAX_RELEASE > MAX_RELEASE_R17

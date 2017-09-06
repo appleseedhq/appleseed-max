@@ -73,8 +73,6 @@ namespace
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 
-AppleseedInteractiveRender* AppleseedRenderer::g_interactive_renderer;
-
 //
 // AppleseedRenderer class implementation.
 //
@@ -109,21 +107,12 @@ void AppleseedRenderer::DeleteThis()
 
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
-#if MAX_RELEASE == MAX_RELEASE_R17 || MAX_RELEASE == MAX_RELEASE_R18
+#if MAX_RELEASE == MAX_RELEASE_R18  // No interactive render for max 2015.
     if (id == I_RENDER_ID)
     {
-#if MAX_RELEASE == MAX_RELEASE_R17
-        if (g_interactive_renderer != nullptr)
-        {
-            g_interactive_renderer->EndSession();
-            g_interactive_renderer = nullptr;
-            return Renderer::GetInterface(id);
-        }
-#endif
         if (m_interactive_renderer == nullptr)
         {
-            m_interactive_renderer = new AppleseedInteractiveRender(this);
-            g_interactive_renderer = m_interactive_renderer;
+            m_interactive_renderer = new AppleseedInteractiveRender();
         }
 
         return static_cast<IInteractiveRender*>(m_interactive_renderer);
@@ -185,7 +174,7 @@ bool AppleseedRenderer::CompatibleWithRenderElement(IRenderElement& pIRenderElem
 IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
 {
     if (m_interactive_renderer == nullptr)
-        m_interactive_renderer = new AppleseedInteractiveRender(this);
+        m_interactive_renderer = new AppleseedInteractiveRender();
 
     return static_cast<IInteractiveRender*>(m_interactive_renderer);
 }

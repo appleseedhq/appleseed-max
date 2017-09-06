@@ -128,8 +128,6 @@ class AppleseedRenderer
     virtual IOResult Save(ISave* isave) override;
     virtual IOResult Load(ILoad* iload) override;
 
-    static AppleseedInteractiveRender* g_interactive_renderer;
-
   private:
     AppleseedInteractiveRender* m_interactive_renderer;
     RendererSettings            m_settings;

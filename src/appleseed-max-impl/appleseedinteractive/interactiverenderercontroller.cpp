@@ -34,10 +34,8 @@
 
 namespace asr = renderer;
 
-InteractiveRendererController::InteractiveRendererController(
-    RendProgressCallback* progress_cb)
+InteractiveRendererController::InteractiveRendererController()
     : m_status(ContinueRendering)
-    , m_progress_cb(progress_cb)
 {
 }
 
@@ -56,13 +54,3 @@ void InteractiveRendererController::set_status(const Status status)
     m_status = status;
 }
 
-#if MAX_RELEASE == MAX_RELEASE_R17
-void InteractiveRendererController::on_progress()
-{
-    auto progress_cb = dynamic_cast<IRenderProgressCallback*>(m_progress_cb);
-
-    m_status = progress_cb->Progress(0, 0) == RENDPROG_CONTINUE
-        ? m_status
-        : AbortRendering;
-}
-#endif

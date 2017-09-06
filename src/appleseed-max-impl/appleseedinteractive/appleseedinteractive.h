@@ -60,7 +60,7 @@ class AppleseedInteractiveRender
 #endif
 {
   public:
-    AppleseedInteractiveRender(AppleseedRenderer* renderer);
+    AppleseedInteractiveRender();
     virtual ~AppleseedInteractiveRender();
 
     // IInteractiveRender methods.
@@ -98,16 +98,10 @@ class AppleseedInteractiveRender
     virtual void AbortRender() override;
 #endif
 
-#if MAX_RELEASE == MAX_RELEASE_R17
-    void AbortRender();
-#endif
-
     void update_camera(INode* camera);
     InteractiveSession* get_render_session();
 
   private:
-    bool                                            m_currently_rendering;
-    AppleseedRenderer*                              m_prod_renderer;
     std::unique_ptr<InteractiveSession>             m_render_session;
     std::unique_ptr<INodeEventCallback>             m_node_callback;
     SceneEventNamespace::CallbackKey                m_callback_key;
