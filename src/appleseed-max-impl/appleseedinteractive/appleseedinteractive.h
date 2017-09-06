@@ -38,7 +38,9 @@
 // 3ds Max headers.
 #include <interactiverender.h>
 #include <ISceneEventManager.h>
+#if MAX_RELEASE == MAX_RELEASE_R18
 #include <Rendering/IAbortableRenderer.h>
+#endif
 
 // Standard headers.
 #include <memory>
@@ -46,13 +48,15 @@
 
 // Forward declarations.
 namespace renderer { class Project; }
-class AppleseedRenderer;
 class InteractiveSession;
 class RendererSettings;
+class ViewParams;
 
 class AppleseedInteractiveRender
   : public IInteractiveRender
+#if MAX_RELEASE == MAX_RELEASE_R18
   , public MaxSDK::IAbortableRenderer
+#endif
 {
   public:
     AppleseedInteractiveRender();
@@ -88,8 +92,10 @@ class AppleseedInteractiveRender
     virtual ActionCallback* GetActionCallback() override;
     virtual BOOL IsRendering() override;
 
+#if MAX_RELEASE > MAX_RELEASE_R17
     // IAbortableRenderer methods.
     virtual void AbortRender() override;
+#endif
 
     void update_camera(INode* camera);
     InteractiveSession* get_render_session();

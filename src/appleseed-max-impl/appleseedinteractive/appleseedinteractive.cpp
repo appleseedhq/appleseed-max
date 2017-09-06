@@ -322,7 +322,7 @@ void AppleseedInteractiveRender::BeginSession()
     m_project = prepare_project(renderer_settings, view_params, m_time);
 
     m_render_session.reset(new InteractiveSession(
-        m_iirender_mgr, 
+        m_iirender_mgr,
         m_project.get(),
         renderer_settings,
         m_bitmap));
@@ -497,7 +497,9 @@ BOOL AppleseedInteractiveRender::IsRendering()
     return m_render_session != nullptr;
 }
 
+#if MAX_RELEASE > MAX_RELEASE_R17
 void AppleseedInteractiveRender::AbortRender()
 {
     EndSession();
 }
+#endif

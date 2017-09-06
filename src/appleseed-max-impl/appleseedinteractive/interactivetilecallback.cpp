@@ -32,6 +32,7 @@
 // 3ds Max headers.
 #include <bitmap.h>
 #include <interactiverender.h>
+#include <maxapi.h>
 
 namespace asr = renderer;
 
@@ -44,7 +45,7 @@ InteractiveTileCallback::InteractiveTileCallback(
     Bitmap*                     bitmap,
     IIRenderMgr*                iimanager,
     asr::IRendererController*   render_controller)
-  : TileCallback(bitmap, &m_rendered_tile_count)
+  : TileCallback(bitmap, nullptr)
   , m_bitmap(bitmap)
   , m_iimanager(iimanager)
   , m_renderer_ctrl(render_controller)

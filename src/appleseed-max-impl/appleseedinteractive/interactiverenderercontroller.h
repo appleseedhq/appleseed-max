@@ -39,7 +39,7 @@ class InteractiveRendererController
 
     virtual void on_rendering_begin() override;
     virtual Status get_status() const override;
-    
+
     void set_status(const Status status);
 
   private:

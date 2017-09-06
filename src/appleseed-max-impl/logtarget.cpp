@@ -104,7 +104,10 @@ void LogTarget::write(
         break;
     }
 
-    auto is_ui_thread = GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
+    bool is_ui_thread = true;
+#if MAX_RELEASE > MAX_RELEASE_R17
+    is_ui_thread = GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
+#endif
 
     if (is_ui_thread)
     {
