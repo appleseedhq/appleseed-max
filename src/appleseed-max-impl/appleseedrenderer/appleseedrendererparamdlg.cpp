@@ -610,6 +610,11 @@ namespace
                 {
                   case IDC_TEXT_PROJECT_FILEPATH:
                     m_text_project_filepath->GetText(m_settings.m_project_file_path);
+                    if (!m_settings.m_project_file_path.EndsWith(L".appleseed"))
+                    {
+                        m_settings.m_project_file_path.Append(L".appleseed");
+                        m_text_project_filepath->SetText(m_settings.m_project_file_path);
+                    }
                     return TRUE;
 
                   default:
