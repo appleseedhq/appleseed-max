@@ -31,15 +31,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// 3ds Max headers.
-#include <plugapi.h>
-
-// Forward declarations.
-class RendProgressCallback;
-
 class InteractiveRendererController
   : public renderer::DefaultRendererController
 {

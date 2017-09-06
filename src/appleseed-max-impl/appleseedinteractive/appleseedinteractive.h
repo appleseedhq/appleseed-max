@@ -48,7 +48,6 @@
 
 // Forward declarations.
 namespace renderer { class Project; }
-class AppleseedRenderer;
 class InteractiveSession;
 class RendererSettings;
 class ViewParams;

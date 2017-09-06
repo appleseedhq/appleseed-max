@@ -30,7 +30,6 @@
 #include "interactivesession.h"
 
 // appleseed-max headers.
-#include "appleseedinteractive/appleseedinteractive.h"
 #include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 
