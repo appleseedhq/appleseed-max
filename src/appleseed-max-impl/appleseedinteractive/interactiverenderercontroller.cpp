@@ -35,7 +35,7 @@
 namespace asr = renderer;
 
 InteractiveRendererController::InteractiveRendererController()
-    : m_status(ContinueRendering)
+  : m_status(ContinueRendering)
 {
 }
 
@@ -53,4 +53,3 @@ void InteractiveRendererController::set_status(const Status status)
 {
     m_status = status;
 }
-

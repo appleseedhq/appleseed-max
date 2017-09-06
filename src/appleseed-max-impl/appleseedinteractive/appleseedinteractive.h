@@ -93,8 +93,8 @@ class AppleseedInteractiveRender
     virtual ActionCallback* GetActionCallback() override;
     virtual BOOL IsRendering() override;
 
-    // IAbortableRenderer methods.
 #if MAX_RELEASE > MAX_RELEASE_R17
+    // IAbortableRenderer methods.
     virtual void AbortRender() override;
 #endif
 

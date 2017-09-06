@@ -73,6 +73,7 @@ namespace
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 
+
 //
 // AppleseedRenderer class implementation.
 //

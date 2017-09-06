@@ -52,5 +52,5 @@ class InteractiveRendererController
     void set_status(const Status status);
 
   private:
-    Status                  m_status;
+    Status m_status;
 };
