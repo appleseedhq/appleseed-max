@@ -763,7 +763,7 @@ namespace
         const std::string color_name =
             insert_color(assembly, light_name + "_color", color);
 
-        // Get light from envmap
+        // Get light from envmap.
         INode* sun_node(nullptr);
         BOOL sun_node_on(FALSE);
         float sun_size_mult;
@@ -934,6 +934,7 @@ namespace
     }
 
     void populate_assembly(
+        asr::Scene&                         scene,
         asr::Assembly&                      assembly,
         const RendParams&                   rend_params,
         const MaxSceneEntities&             entities,
@@ -950,13 +951,14 @@ namespace
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
         add_lights(assembly, rend_params, entities, time);
 
-        if (entities.m_lights.empty() 
-            && !has_light_emitting_materials(material_map)
-            && !has_appleseed_sky_environment(rend_params))
-        {
-            // No non-physical light or light-emitting material: add Max's default lights.
+        // Add Max's default lights if
+        // - the scene does not contain non-physical lights (point lights, spot lights, etc.)
+        // - the scene does not contain light-emitting materials
+        // - the scene does not contain a light-emitting environment.
+        if (entities.m_lights.empty() &&
+            !has_light_emitting_materials(material_map) &&
+            scene.get_environment()->get_parameters().get_optional<std::string>("environment_edf").empty())
             add_default_lights(assembly, default_lights);
-        }
     }
 
     void setup_environment(
@@ -1341,6 +1343,14 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Create a scene.
     asf::auto_release_ptr<asr::Scene> scene(asr::SceneFactory::create());
 
+    // Setup the environment.
+    setup_environment(
+        scene.ref(),
+        rend_params,
+        frame_rend_params,
+        settings,
+        time);
+
     // Create an assembly.
     asf::auto_release_ptr<asr::Assembly> assembly(
         asr::AssemblyFactory::static_create("assembly"));
@@ -1349,6 +1359,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     const RenderType type =
         rend_params.inMtlEdit ? RenderType::MaterialPreview : RenderType::Default;
     populate_assembly(
+        scene.ref(),
         assembly.ref(),
         rend_params,
         entities,
@@ -1370,16 +1381,9 @@ asf::auto_release_ptr<asr::Project> build_project(
     // Insert the assembly into the scene.
     scene->assemblies().insert(assembly);
 
-    // Setup the environment.
-    setup_environment(
-        scene.ref(),
-        rend_params,
-        frame_rend_params,
-        settings,
-        time);
-
     // Create a camera and bind it to the scene.
-    scene->cameras().insert(build_camera(view_node, view_params, bitmap, settings, time));
+    scene->cameras().insert(
+        build_camera(view_node, view_params, bitmap, settings, time));
 
     // Create a frame and bind it to the project.
     project->set_frame(
