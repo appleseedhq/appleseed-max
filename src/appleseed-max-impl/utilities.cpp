@@ -181,3 +181,11 @@ std::string insert_texture_and_instance(
 
     return texture_instance_name;
 }
+
+WStr replace_extension(const WStr& file_path, const WStr& new_ext)
+{
+    const int i = file_path.last(L'.');
+    WStr new_file_path = i == -1 ? file_path : file_path.Substr(0, i);
+    new_file_path.Append(new_ext);
+    return new_file_path;
+}

@@ -103,12 +103,15 @@ bool is_bitmap_texture(Texmap* map);
 
 
 //
-// I/O functions.
+// I/O and paths functions.
 //
 
 // Return the root path of the plugin, i.e. the path to the directory containing the plugin DLLs
 // as an UTF-8 string, for instance: "C:\Program Files\Autodesk\3ds Max 2017\Plugins\appleseed"
 std::string get_root_path();
+
+// Replace the file extension in `file_path` by `new_ext` (which must be of the form ".ext").
+WStr replace_extension(const WStr& file_path, const WStr& new_ext);
 
 // Write a block of data to a 3ds Max file. Return true on success.
 bool write(ISave* isave, const void* data, const size_t size);
