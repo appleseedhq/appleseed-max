@@ -2,6 +2,9 @@
 // Interface
 #include "maxproctexturesource.h"
 
+// appleseed.renderer headers.
+#include "renderer/modeling/color/colorspace.h"
+
 // appleseed.foundation headers.
 #include "foundation/utility/siphash.h"
 
@@ -9,13 +12,90 @@
 #include "imtl.h"
 #include "maxapi.h"
 
+namespace asf = foundation;
+namespace asr = renderer;
+
+//
+// MaxSource class implementation.
+//
+
 MaxProceduralSource::MaxProceduralSource(
     Texmap* max_texmap)
-    : m_texmap(max_texmap)
+    : asr::Source(false)
+    , m_texmap(max_texmap)
 {
 }
 
 MaxProceduralSource::~MaxProceduralSource()
+{
+}
+
+inline void MaxProceduralSource::evaluate(
+    asr::TextureCache&               texture_cache,
+    const asf::Vector2f&             uv,
+    float&                           scalar) const
+{
+    const asf::Color4f color = sample_max_texture(uv);
+    scalar = color[0];
+}
+
+inline void MaxProceduralSource::evaluate(
+    asr::TextureCache&               texture_cache,
+    const asf::Vector2f&             uv,
+    asf::Color3f&                    linear_rgb) const
+{
+    const asf::Color4f color = sample_max_texture(uv);
+    linear_rgb = color.rgb();
+}
+
+inline void MaxProceduralSource::evaluate(
+    asr::TextureCache&               texture_cache,
+    const asf::Vector2f&             uv,
+    asr::Spectrum&                   spectrum) const
+{
+    const asf::Color4f color = sample_max_texture(uv);
+    spectrum[0] = color.rgb().r;
+    spectrum[1] = color.rgb().g;
+    spectrum[2] = color.rgb().b;
+}
+
+inline void MaxProceduralSource::evaluate(
+    asr::TextureCache&               texture_cache,
+    const asf::Vector2f&             uv,
+    asr::Alpha&                      alpha) const
+{
+    const asf::Color4f color = sample_max_texture(uv);
+    evaluate_alpha(color, alpha);
+}
+
+inline void MaxProceduralSource::evaluate(
+    asr::TextureCache&               texture_cache,
+    const asf::Vector2f&             uv,
+    asf::Color3f&                    linear_rgb,
+    asr::Alpha&                      alpha) const
+{
+    const asf::Color4f color = sample_max_texture(uv);
+    linear_rgb = color.rgb();
+    evaluate_alpha(color, alpha);
+}
+
+inline void MaxProceduralSource::evaluate(
+    asr::TextureCache&               texture_cache,
+    const asf::Vector2f&             uv,
+    asr::Spectrum&                   spectrum,
+    asr::Alpha&                      alpha) const
+{
+    const asf::Color4f color = sample_max_texture(uv);
+    spectrum[0] = color.rgb().r;
+    spectrum[1] = color.rgb().g;
+    spectrum[2] = color.rgb().b;
+
+    evaluate_alpha(color, alpha);
+}
+
+inline void MaxProceduralSource::evaluate_alpha(
+    const asf::Color4f&              color,
+    asr::Alpha&                      alpha) const
 {
 }
 
@@ -93,7 +173,6 @@ foundation::Color4f MaxProceduralSource::sample_max_texture(
     maxsc.mtlNum = 1;
     //maxsc.globContext = sc.globContext;
 
-    m_texmap->Update(GetCOREInterface()->GetTime(), FOREVER); //this should be called once per frame per map
     AColor color = m_texmap->EvalColor(maxsc);
 
     return foundation::Color4f(color.r, color.g, color.b, color.a);

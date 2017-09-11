@@ -513,6 +513,7 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
             const std::string texture_name = wide_to_utf8(m_light_color_texmap->GetName());
             if (assembly.source_entities().get_by_name(texture_name.c_str()) == nullptr)
             {
+                m_light_color_texmap->Update(GetCOREInterface()->GetTime(), FOREVER); //this should be called once per frame per map
                 assembly.source_entities().insert(
                     asf::auto_release_ptr<asr::SourceEntity>(
                         new asr::SourceEntity(

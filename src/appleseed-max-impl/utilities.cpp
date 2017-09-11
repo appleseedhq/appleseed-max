@@ -125,6 +125,9 @@ bool is_supported_texture(Texmap* map)
 
     switch (map->ClassID().PartA())
     {
+      case 0x64035FB9:              // Tiles
+        if (map->ClassID().PartB() != 0x69664CDC)
+            return false;
       case CHECKER_CLASS_ID:
       case MARBLE_CLASS_ID:
       case MASK_CLASS_ID:
