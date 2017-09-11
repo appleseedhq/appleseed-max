@@ -36,12 +36,14 @@
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
+#include "maxtextures/maxproctexturesource.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/edf.h"
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
+#include "renderer/modeling/texture/sourceentity.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
@@ -59,6 +61,7 @@
 
 // Standard headers.
 #include <algorithm>
+#include <string>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -482,7 +485,9 @@ bool AppleseedLightMtl::can_emit_light() const
     return true;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Assembly& assembly, const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
+    asr::Assembly& assembly,
+    const char* name)
 {
     asr::ParamArray material_params;
 
@@ -495,7 +500,30 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Ass
 
         // Radiance.
         if (is_bitmap_texture(m_light_color_texmap))
-            edf_params.insert("radiance", insert_texture_and_instance(assembly, m_light_color_texmap));
+        {
+            std::string texture_instance_name = insert_texture_and_instance(assembly, m_light_color_texmap);
+            edf_params.insert("radiance", texture_instance_name);
+        }
+        else if (is_supported_texture(m_light_color_texmap))
+        {
+
+            asr::ParamArray maxproc_params;
+            maxproc_params.insert("color_space", "linear_rgb");
+
+            const std::string texture_name = wide_to_utf8(m_light_color_texmap->GetName());
+            if (assembly.source_entities().get_by_name(texture_name.c_str()) == nullptr)
+            {
+                assembly.source_entities().insert(
+                    asf::auto_release_ptr<asr::SourceEntity>(
+                        new asr::SourceEntity(
+                            texture_name.c_str(),
+                            maxproc_params,
+                            new MaxProceduralSource(m_light_color_texmap))));
+
+                edf_params.insert("radiance", texture_name);
+            }
+        }
+        
         else
         {
             const auto color_name = std::string(name) + "_edf_radiance";

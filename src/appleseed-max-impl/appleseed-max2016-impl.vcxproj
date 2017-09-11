@@ -239,6 +239,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="maxtextures\maxproctexturesource.cpp" />
     <ClCompile Include="oslutils.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp" />
@@ -291,6 +292,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h" />
     <ClInclude Include="appleseedsssmtl\datachunks.h" />
     <ClInclude Include="appleseedsssmtl\resource.h" />
+    <ClInclude Include="maxtextures\maxproctexturesource.h" />
     <ClInclude Include="oslutils.h" />
     <ClInclude Include="seexprutils.h" />
     <ClInclude Include="utilities.h" />

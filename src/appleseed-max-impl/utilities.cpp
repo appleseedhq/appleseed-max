@@ -118,6 +118,47 @@ bool is_bitmap_texture(Texmap* map)
     return true;
 }
 
+bool is_supported_texture(Texmap* map)
+{
+    if (map == nullptr)
+        return false;
+
+    switch (map->ClassID().PartA())
+    {
+      case CHECKER_CLASS_ID:
+      case MARBLE_CLASS_ID:
+      case MASK_CLASS_ID:
+      case MIX_CLASS_ID:
+      case NOISE_CLASS_ID:
+      case GRADIENT_CLASS_ID:
+      case TINT_CLASS_ID:
+      case BMTEX_CLASS_ID:
+      //case ACUBIC_CLASS_ID:       // Reflect/refract.
+      //case MIRROR_CLASS_ID:       // Flat mirror.
+      case COMPOSITE_CLASS_ID:
+      case RGBMULT_CLASS_ID:
+      //case FALLOFF_CLASS_ID:      // Falloff texture.
+      case OUTPUT_CLASS_ID:
+      //case PLATET_CLASS_ID:       // Plate glass texture
+      case COLORCORRECTION_CLASS_ID:
+      case 0x0000214:               // WOOD_CLASS_ID
+      case 0x0000218:               // DENT_CLASS_ID
+      case 0x46396cf1:              // PLANET_CLASS_ID
+      case 0x7712634e:              // WATER_CLASS_ID
+      case 0xa845e7c:               // SMOKE_CLASS_ID
+      case 0x62c32b8a:              // SPECKLE_CLASS_ID
+      case 0x90b04f9:               // SPLAT_CLASS_ID
+      case 0x9312fbe:               // STUCCO_CLASS_ID
+          return true;
+          break;
+      default:
+          return false;
+          break;
+    }
+    
+    return true;
+}
+
 std::string get_root_path()
 {
     wchar_t path[MAX_PATH];
