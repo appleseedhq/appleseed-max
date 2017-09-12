@@ -43,7 +43,7 @@
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
-#include "renderer/modeling/texture/sourceentity.h"
+#include "renderer/modeling/input/sourceentity.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
