@@ -93,11 +93,12 @@ namespace
     };
 
     ParamBlockDesc2 g_block_desc(
-        ParamBlockIdEnvMap,
-        L"appleseedEnvironmentMapParams",
-        0,
-        &g_appleseed_envmap_classdesc,
-        P_AUTO_CONSTRUCT + P_AUTO_UI,
+        // --- Required arguments ---
+        ParamBlockIdEnvMap,                         // parameter block's ID
+        L"appleseedEnvironmentMapParams",           // internal parameter block's name
+        0,                                          // ID of the localized name string
+        &g_appleseed_envmap_classdesc,              // class descriptor
+        P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
 
          // --- P_AUTO_CONSTRUCT arguments ---
         ParamBlockRefEnvMap,                        // parameter block's reference number

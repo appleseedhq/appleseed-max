@@ -164,9 +164,9 @@ std::string insert_texture_and_instance(
     {
         base_group.textures().insert(
             asr::DiskTexture2dFactory::static_create(
-            texture_name.c_str(),
-            texture_params,
-            asf::SearchPaths()));
+                texture_name.c_str(),
+                texture_params,
+                asf::SearchPaths()));
     }
 
     const std::string texture_instance_name = texture_name + "_inst";
@@ -174,9 +174,9 @@ std::string insert_texture_and_instance(
     {
         base_group.texture_instances().insert(
             asr::TextureInstanceFactory::create(
-            texture_instance_name.c_str(),
-            texture_instance_params,
-            texture_name.c_str()));
+                texture_instance_name.c_str(),
+                texture_instance_params,
+                texture_name.c_str()));
     }
 
     return texture_instance_name;
