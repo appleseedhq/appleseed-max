@@ -256,7 +256,7 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     
     // Collect the entities we're interested in.
     if (m_progress_cb)
-        m_progress_cb->SetTitle(_T("Collecting Entities..."));
+        m_progress_cb->SetTitle(L"Collecting Entities...");
 
     m_entities.clear();
 
@@ -268,7 +268,7 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
 
     // Build the project.
     if (m_progress_cb)
-        m_progress_cb->SetTitle(_T("Building Project..."));
+        m_progress_cb->SetTitle(L"Building Project...");
 
     asf::auto_release_ptr<asr::Project> project(
         build_project(
@@ -328,7 +328,7 @@ void AppleseedInteractiveRender::BeginSession()
         m_bitmap));
 
     if (m_progress_cb)
-        m_progress_cb->SetTitle(_T("Rendering..."));
+        m_progress_cb->SetTitle(L"Rendering...");
 
     m_node_callback.reset(new SceneChangeCallback(this, active_cam));
     m_callback_key = GetISceneEventManager()->RegisterCallback(m_node_callback.get(), false, 100, true);
@@ -361,7 +361,7 @@ void AppleseedInteractiveRender::EndSession()
     render_end(m_entities.m_objects, m_time);
 
     if (m_progress_cb)
-        m_progress_cb->SetTitle(_T("Done."));
+        m_progress_cb->SetTitle(L"Done.");
 }
 
 void AppleseedInteractiveRender::SetOwnerWnd(HWND owner_wnd)

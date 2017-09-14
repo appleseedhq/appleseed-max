@@ -66,7 +66,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedDisneyMtlFriendlyClassName = _T("appleseed Disney Material");
+    const TCHAR* AppleseedDisneyMtlFriendlyClassName = L"appleseed Disney Material";
 }
 
 AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;
@@ -138,18 +138,18 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        _T("Base Color"),
-        _T("Metallic"),
-        _T("Specular"),
-        _T("Specular Tint"),
-        _T("Roughness"),
-        _T("Sheen"),
-        _T("Sheen Tint"),
-        _T("Anisotropy"),
-        _T("Clearcoat"),
-        _T("Clearcoat Gloss"),
-        _T("Alpha"),
-        _T("Bump Map")
+        L"Base Color",
+        L"Metallic",
+        L"Specular",
+        L"Specular Tint",
+        L"Roughness",
+        L"Sheen",
+        L"Sheen Tint",
+        L"Anisotropy",
+        L"Clearcoat",
+        L"Clearcoat Gloss",
+        L"Alpha",
+        L"Bump Map"
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -171,7 +171,7 @@ namespace
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdDisneyMtl,                      // parameter block's ID
-        _T("appleseedDisneyMtlParams"),             // internal parameter block's name
+        L"appleseedDisneyMtlParams",                // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_disneymtl_classdesc,           // class descriptor
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
@@ -200,136 +200,136 @@ namespace
 
         // --- Parameters specifications for Disney rollup ---
 
-        ParamIdBaseColor, _T("base_color"), TYPE_RGBA, P_ANIMATABLE, IDS_BASE_COLOR,
+        ParamIdBaseColor, L"base_color", TYPE_RGBA, P_ANIMATABLE, IDS_BASE_COLOR,
             p_default, Color(0.9f, 0.9f, 0.9f),
             p_ui, ParamMapIdDisney, TYPE_COLORSWATCH, IDC_SWATCH_BASE_COLOR,
         p_end,
-        ParamIdBaseColorTexmap, _T("base_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_BASE_COLOR,
+        ParamIdBaseColorTexmap, L"base_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BASE_COLOR,
             p_subtexno, TexmapIdBase,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BASE_COLOR,
         p_end,
 
-        ParamIdMetallic, _T("metallic"), TYPE_FLOAT, P_ANIMATABLE, IDS_METALLIC,
+        ParamIdMetallic, L"metallic", TYPE_FLOAT, P_ANIMATABLE, IDS_METALLIC,
             p_default, 0.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_METALLIC, IDC_SLIDER_METALLIC, 10.0f,
         p_end,
-        ParamIdMetallicTexmap, _T("metallic_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_METALLIC,
+        ParamIdMetallicTexmap, L"metallic_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_METALLIC,
             p_subtexno, TexmapIdMetallic,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_METALLIC,
         p_end,
 
-        ParamIdSpecular, _T("specular"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR,
+        ParamIdSpecular, L"specular", TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR,
             p_default, 90.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR, IDC_SLIDER_SPECULAR, 10.0f,
         p_end,
-        ParamIdSpecularTexmap, _T("specular_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR,
+        ParamIdSpecularTexmap, L"specular_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR,
             p_subtexno, TexmapIdSpecular,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR,
         p_end,
 
-        ParamIdSpecularTint, _T("specular_tint"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_TINT,
+        ParamIdSpecularTint, L"specular_tint", TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_TINT,
             p_default, 0.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_TINT, IDC_SLIDER_SPECULAR_TINT, 10.0f,
         p_end,
-        ParamIdSpecularTintTexmap, _T("specular_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_TINT,
+        ParamIdSpecularTintTexmap, L"specular_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_TINT,
             p_subtexno, TexmapIdSpecularTint,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_TINT,
         p_end,
 
-        ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
+        ParamIdRoughness, L"roughness", TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
             p_default, 40.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
-        ParamIdRoughnessTexmap, _T("roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
+        ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
 
-        ParamIdSheen, _T("sheen"), TYPE_FLOAT, P_ANIMATABLE, IDS_SHEEN,
+        ParamIdSheen, L"sheen", TYPE_FLOAT, P_ANIMATABLE, IDS_SHEEN,
             p_default, 0.0f,
             p_range, 0.0f, 1000.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SHEEN, IDC_SLIDER_SHEEN, 10.0f,
         p_end,
-        ParamIdSheenTexmap, _T("sheen_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SHEEN,
+        ParamIdSheenTexmap, L"sheen_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SHEEN,
             p_subtexno, TexmapIdSheen,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SHEEN,
         p_end,
 
-        ParamIdSheenTint, _T("sheen_tint"), TYPE_FLOAT, P_ANIMATABLE, IDS_SHEEN_TINT,
+        ParamIdSheenTint, L"sheen_tint", TYPE_FLOAT, P_ANIMATABLE, IDS_SHEEN_TINT,
             p_default, 0.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SHEEN_TINT, IDC_SLIDER_SHEEN_TINT, 10.0f,
         p_end,
-        ParamIdSheenTintTexmap, _T("sheen_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SHEEN_TINT,
+        ParamIdSheenTintTexmap, L"sheen_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SHEEN_TINT,
             p_subtexno, TexmapIdSheenTint,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SHEEN_TINT,
         p_end,
 
-        ParamIdAnisotropy, _T("anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
+        ParamIdAnisotropy, L"anisotropy", TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
             p_default, 0.0f,
             p_range, -1.0f, 1.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
         p_end,
-        ParamIdAnisotropyTexmap, _T("anisotropy_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
+        ParamIdAnisotropyTexmap, L"anisotropy_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
             p_subtexno, TexmapIdAnisotropy,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
 
-        ParamIdClearcoat, _T("clearcoat"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT,
+        ParamIdClearcoat, L"clearcoat", TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT,
             p_default, 0.0f,
             p_range, 0.0f, 1000.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_CLEARCOAT, IDC_SLIDER_CLEARCOAT, 10.0f,
         p_end,
-        ParamIdClearcoatTexmap, _T("clearcoat_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_CLEARCOAT,
+        ParamIdClearcoatTexmap, L"clearcoat_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_CLEARCOAT,
             p_subtexno, TexmapIdClearcoat,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_CLEARCOAT,
         p_end,
 
-        ParamIdClearcoatGloss, _T("clearcoat_gloss"), TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT_GLOSS,
+        ParamIdClearcoatGloss, L"clearcoat_gloss", TYPE_FLOAT, P_ANIMATABLE, IDS_CLEARCOAT_GLOSS,
             p_default, 0.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_CLEARCOAT_GLOSS, IDC_SLIDER_CLEARCOAT_GLOSS, 10.0f,
         p_end,
-        ParamIdClearcoatGlossTexmap, _T("clearcoat_gloss_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_CLEARCOAT_GLOSS,
+        ParamIdClearcoatGlossTexmap, L"clearcoat_gloss_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_CLEARCOAT_GLOSS,
             p_subtexno, TexmapIdClearcoatGloss,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_CLEARCOAT_GLOSS,
         p_end,
 
-        ParamIdAlpha, _T("alpha"), TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
+        ParamIdAlpha, L"alpha", TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdDisney, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
         p_end,
-        ParamIdAlphaTexmap, _T("alpha_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ALPHA,
+        ParamIdAlphaTexmap, L"alpha_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ALPHA,
             p_subtexno, TexmapIdAlpha,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
         p_end,
 
         // --- Parameters specifications for Bump rollup ---
 
-        ParamIdBumpMethod, _T("bump_method"), TYPE_INT, 0, IDS_BUMP_METHOD,
+        ParamIdBumpMethod, L"bump_method", TYPE_INT, 0, IDS_BUMP_METHOD,
             p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_METHOD,
             2, IDS_COMBO_BUMP_METHOD_BUMPMAP, IDS_COMBO_BUMP_METHOD_NORMALMAP,
             p_vals, 0, 1,
             p_default, 0,
         p_end,
 
-        ParamIdBumpTexmap, _T("bump_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
+        ParamIdBumpTexmap, L"bump_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
             p_subtexno, TexmapIdBumpMap,
             p_ui, ParamMapIdBump, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
         p_end,
 
-        ParamIdBumpAmount, _T("bump_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
+        ParamIdBumpAmount, L"bump_amount", TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
             p_default, 1.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdBump, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_BUMP_AMOUNT, IDC_SPINNER_BUMP_AMOUNT, SPIN_AUTOSCALE,
         p_end,
 
-        ParamIdBumpUpVector, _T("bump_up_vector"), TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
+        ParamIdBumpUpVector, L"bump_up_vector", TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
             p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_UP_VECTOR,
             2, IDS_COMBO_BUMP_UP_VECTOR_Y, IDS_COMBO_BUMP_UP_VECTOR_Z,
             p_vals, 0, 1,
@@ -394,7 +394,7 @@ void AppleseedDisneyMtl::DeleteThis()
 
 void AppleseedDisneyMtl::GetClassName(TSTR& s)
 {
-    s = _T("appleseedDisneyMtl");
+    s = L"appleseedDisneyMtl";
 }
 
 SClass_ID AppleseedDisneyMtl::SuperClassID()
@@ -419,7 +419,7 @@ Animatable* AppleseedDisneyMtl::SubAnim(int i)
 
 TSTR AppleseedDisneyMtl::SubAnimName(int i)
 {
-    return i == ParamBlockRefDisneyMtl ? _T("Parameters") : _T("");
+    return i == ParamBlockRefDisneyMtl ? L"Parameters" : L"";
 }
 
 int AppleseedDisneyMtl::SubNumToRefNum(int subNum)
@@ -787,7 +787,7 @@ const MCHAR* AppleseedDisneyMtlBrowserEntryInfo::GetEntryName() const
 
 const MCHAR* AppleseedDisneyMtlBrowserEntryInfo::GetEntryCategory() const
 {
-    return _T("Materials\\appleseed");
+    return L"Materials\\appleseed";
 }
 
 Bitmap* AppleseedDisneyMtlBrowserEntryInfo::GetEntryThumbnail() const
@@ -833,13 +833,13 @@ Class_ID AppleseedDisneyMtlClassDesc::ClassID()
 
 const MCHAR* AppleseedDisneyMtlClassDesc::Category()
 {
-    return _T("");
+    return L"";
 }
 
 const MCHAR* AppleseedDisneyMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedDisneyMtl");
+    return L"appleseedDisneyMtl";
 }
 
 FPInterface* AppleseedDisneyMtlClassDesc::GetInterface(Interface_ID id)

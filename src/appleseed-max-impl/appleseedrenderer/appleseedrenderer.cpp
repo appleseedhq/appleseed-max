@@ -68,7 +68,7 @@ namespace asr = renderer;
 namespace
 {
     const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
-    const TCHAR* AppleseedRendererClassName = _T("appleseed Renderer");
+    const TCHAR* AppleseedRendererClassName = L"appleseed Renderer";
 }
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
@@ -182,7 +182,7 @@ IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
 
 void AppleseedRenderer::GetVendorInformation(MSTR& info) const
 {
-    info = _T("appleseed-max ");
+    info = L"appleseed-max ";
     info += PluginVersionString;
 }
 
@@ -427,7 +427,7 @@ int AppleseedRenderer::Render(
 
     // Collect the entities we're interested in.
     if (progress_cb)
-        progress_cb->SetTitle(_T("Collecting Entities..."));
+        progress_cb->SetTitle(L"Collecting Entities...");
     m_entities.clear();
     MaxSceneEntityCollector collector(m_entities);
     collector.collect(m_scene);
@@ -437,7 +437,7 @@ int AppleseedRenderer::Render(
 
     // Build the project.
     if (progress_cb)
-        progress_cb->SetTitle(_T("Building Project..."));
+        progress_cb->SetTitle(L"Building Project...");
     asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,
@@ -457,7 +457,7 @@ int AppleseedRenderer::Render(
 
         // Render the project.
         if (progress_cb)
-            progress_cb->SetTitle(_T("Rendering..."));
+            progress_cb->SetTitle(L"Rendering...");
         render(project.ref(), m_settings, bitmap, progress_cb);
     }
     else
@@ -467,7 +467,7 @@ int AppleseedRenderer::Render(
             m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
         {
             if (progress_cb)
-                progress_cb->SetTitle(_T("Writing Project To Disk..."));
+                progress_cb->SetTitle(L"Writing Project To Disk...");
             asr::ProjectFileWriter::write(
                 project.ref(),
                 wide_to_utf8(m_settings.m_project_file_path).c_str());
@@ -478,7 +478,7 @@ int AppleseedRenderer::Render(
             m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
         {
             if (progress_cb)
-                progress_cb->SetTitle(_T("Rendering..."));
+                progress_cb->SetTitle(L"Rendering...");
             if (m_settings.m_low_priority_mode)
             {
                 asf::ProcessPriorityContext background_context(
@@ -494,7 +494,7 @@ int AppleseedRenderer::Render(
     }
 
     if (progress_cb)
-        progress_cb->SetTitle(_T("Done."));
+        progress_cb->SetTitle(L"Done.");
 
     std::setlocale(LC_ALL, previous_locale.c_str());
 
@@ -621,11 +621,11 @@ Class_ID AppleseedRendererClassDesc::ClassID()
 
 const MCHAR* AppleseedRendererClassDesc::Category()
 {
-    return _T("");
+    return L"";
 }
 
 const MCHAR* AppleseedRendererClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedRenderer");
+    return L"appleseedRenderer";
 }

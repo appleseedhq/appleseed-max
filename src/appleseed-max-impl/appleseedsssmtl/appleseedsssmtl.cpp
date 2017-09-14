@@ -65,7 +65,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedSSSMtlFriendlyClassName = _T("appleseed SSS Material");
+    const TCHAR* AppleseedSSSMtlFriendlyClassName = L"appleseed SSS Material";
 }
 
 AppleseedSSSMtlClassDesc g_appleseed_sssmtl_classdesc;
@@ -126,13 +126,13 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        _T("SSS Color"),
-        _T("SSS Scattering Color")
-        _T("Specular Color"),
-        _T("Specular Amount"),
-        _T("Specular Roughness"),
-        _T("Specular Anisotropy"),
-        _T("Bump Map")
+        L"SSS Color",
+        L"SSS Scattering Color"
+        L"Specular Color",
+        L"Specular Amount",
+        L"Specular Roughness",
+        L"Specular Anisotropy",
+        L"Bump Map"
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -149,7 +149,7 @@ namespace
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdSSSMtl,                         // parameter block's ID
-        _T("appleseedSSSMtlParams"),                // internal parameter block's name
+        L"appleseedSSSMtlParams",                   // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_sssmtl_classdesc,              // class descriptor
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
@@ -186,37 +186,37 @@ namespace
 
         // --- Parameters specifications for SSS rollup ---
 
-        ParamIdSSSColor, _T("sss_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SSS_COLOR,
+        ParamIdSSSColor, L"sss_color", TYPE_RGBA, P_ANIMATABLE, IDS_SSS_COLOR,
             p_default, Color(0.9f, 0.9f, 0.9f),
             p_ui, ParamMapIdSSS, TYPE_COLORSWATCH, IDC_SWATCH_SSS_COLOR,
         p_end,
-        ParamIdSSSColorTexmap, _T("sss_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_COLOR,
+        ParamIdSSSColorTexmap, L"sss_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_COLOR,
             p_subtexno, TexmapIdSSSColor,
             p_ui, ParamMapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SSS_COLOR,
         p_end,
 
-        ParamIdSSSScatteringColor, _T("sss_scattering_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SSS_SCATTERING_COLOR,
+        ParamIdSSSScatteringColor, L"sss_scattering_color", TYPE_RGBA, P_ANIMATABLE, IDS_SSS_SCATTERING_COLOR,
             p_default, Color(0.9f, 0.9f, 0.9f),
             p_ui, ParamMapIdSSS, TYPE_COLORSWATCH, IDC_SWATCH_SSS_SCATTERING_COLOR,
         p_end,
-        ParamIdSSSScatteringColorTexmap, _T("sss_scattering_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_SCATTERING_COLOR,
+        ParamIdSSSScatteringColorTexmap, L"sss_scattering_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SSS_SCATTERING_COLOR,
             p_subtexno, TexmapIdSSSScatteringColor,
             p_ui, ParamMapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SSS_SCATTERING_COLOR,
         p_end,
 
-        ParamIdSSSAmount, _T("sss_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_AMOUNT,
+        ParamIdSSSAmount, L"sss_amount", TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_AMOUNT,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_AMOUNT, IDC_SLIDER_SSS_AMOUNT, 10.0f,
         p_end,
 
-        ParamIdSSSScale, _T("sss_scale"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_SCALE,
+        ParamIdSSSScale, L"sss_scale", TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_SCALE,
             p_default, 1.0f,
             p_range, 0.0f, 1000000.0f,
             p_ui, ParamMapIdSSS, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SSS_SCALE, IDC_SPINNER_SSS_SCALE, SPIN_AUTOSCALE,
         p_end,
 
-        ParamIdSSSIOR, _T("sss_ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_IOR,
+        ParamIdSSSIOR, L"sss_ior", TYPE_FLOAT, P_ANIMATABLE, IDS_SSS_IOR,
             p_default, 1.3f,
             p_range, 1.0f, 4.0f,
             p_ui, ParamMapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_IOR, IDC_SLIDER_SSS_IOR, 0.1f,
@@ -224,66 +224,66 @@ namespace
 
         // --- Parameters specifications for Specular rollup ---
 
-        ParamIdSpecularColor, _T("specular_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SPECULAR_COLOR,
+        ParamIdSpecularColor, L"specular_color", TYPE_RGBA, P_ANIMATABLE, IDS_SPECULAR_COLOR,
             p_default, Color(0.9f, 0.9f, 0.9f),
             p_ui, ParamMapIdSpecular, TYPE_COLORSWATCH, IDC_SWATCH_SPECULAR_COLOR,
         p_end,
-        ParamIdSpecularColorTexmap, _T("specular_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_COLOR,
+        ParamIdSpecularColorTexmap, L"specular_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_COLOR,
             p_subtexno, TexmapIdSpecularColor,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_COLOR,
         p_end,
 
-        ParamIdSpecularAmount, _T("specular_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_AMOUNT,
+        ParamIdSpecularAmount, L"specular_amount", TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_AMOUNT,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_AMOUNT, IDC_SLIDER_SPECULAR_AMOUNT, 10.0f,
         p_end,
-        ParamIdSpecularAmountTexmap, _T("specular_amount_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_AMOUNT,
+        ParamIdSpecularAmountTexmap, L"specular_amount_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_AMOUNT,
             p_subtexno, TexmapIdSpecularAmount,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_AMOUNT,
         p_end,
 
-        ParamIdSpecularRoughness, _T("specular_roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ROUGHNESS,
+        ParamIdSpecularRoughness, L"specular_roughness", TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ROUGHNESS,
             p_default, 40.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_ROUGHNESS, IDC_SLIDER_SPECULAR_ROUGHNESS, 10.0f,
         p_end,
-        ParamIdSpecularRoughnessTexmap, _T("specular_roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ROUGHNESS,
+        ParamIdSpecularRoughnessTexmap, L"specular_roughness_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ROUGHNESS,
             p_subtexno, TexmapIdSpecularRoughness,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_ROUGHNESS,
         p_end,
 
-        ParamIdSpecularAnisotropy, _T("specular_anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ANISOTROPY,
+        ParamIdSpecularAnisotropy, L"specular_anisotropy", TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_ANISOTROPY,
             p_default, 0.0f,
             p_range, -1.0f, 1.0f,
             p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_ANISOTROPY, IDC_SLIDER_SPECULAR_ANISOTROPY, 0.1f,
         p_end,
-        ParamIdSpecularAnisotropyTexmap, _T("specular_anisotropy_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ANISOTROPY,
+        ParamIdSpecularAnisotropyTexmap, L"specular_anisotropy_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ANISOTROPY,
             p_subtexno, TexmapIdSpecularAnisotropy,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_ANISOTROPY,
         p_end,
 
         // --- Parameters specifications for Bump rollup ---
 
-        ParamIdBumpMethod, _T("bump_method"), TYPE_INT, 0, IDS_BUMP_METHOD,
+        ParamIdBumpMethod, L"bump_method", TYPE_INT, 0, IDS_BUMP_METHOD,
             p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_METHOD,
             2, IDS_COMBO_BUMP_METHOD_BUMPMAP, IDS_COMBO_BUMP_METHOD_NORMALMAP,
             p_vals, 0, 1,
             p_default, 0,
         p_end,
 
-        ParamIdBumpTexmap, _T("bump_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
+        ParamIdBumpTexmap, L"bump_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
             p_subtexno, TexmapIdBumpMap,
             p_ui, ParamMapIdBump, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
         p_end,
 
-        ParamIdBumpAmount, _T("bump_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
+        ParamIdBumpAmount, L"bump_amount", TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
             p_default, 1.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdBump, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_BUMP_AMOUNT, IDC_SPINNER_BUMP_AMOUNT, SPIN_AUTOSCALE,
         p_end,
 
-        ParamIdBumpUpVector, _T("bump_up_vector"), TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
+        ParamIdBumpUpVector, L"bump_up_vector", TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
             p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_UP_VECTOR,
             2, IDS_COMBO_BUMP_UP_VECTOR_Y, IDS_COMBO_BUMP_UP_VECTOR_Z,
             p_vals, 0, 1,
@@ -341,7 +341,7 @@ void AppleseedSSSMtl::DeleteThis()
 
 void AppleseedSSSMtl::GetClassName(TSTR& s)
 {
-    s = _T("appleseedSSSMtl");
+    s = L"appleseedSSSMtl";
 }
 
 SClass_ID AppleseedSSSMtl::SuperClassID()
@@ -366,7 +366,7 @@ Animatable* AppleseedSSSMtl::SubAnim(int i)
 
 TSTR AppleseedSSSMtl::SubAnimName(int i)
 {
-    return i == ParamBlockRefSSSMtl ? _T("Parameters") : _T("");
+    return i == ParamBlockRefSSSMtl ? L"Parameters" : L"";
 }
 
 int AppleseedSSSMtl::SubNumToRefNum(int subNum)
@@ -767,7 +767,7 @@ const MCHAR* AppleseedSSSMtlBrowserEntryInfo::GetEntryName() const
 
 const MCHAR* AppleseedSSSMtlBrowserEntryInfo::GetEntryCategory() const
 {
-    return _T("Materials\\appleseed");
+    return L"Materials\\appleseed";
 }
 
 Bitmap* AppleseedSSSMtlBrowserEntryInfo::GetEntryThumbnail() const
@@ -813,13 +813,13 @@ Class_ID AppleseedSSSMtlClassDesc::ClassID()
 
 const MCHAR* AppleseedSSSMtlClassDesc::Category()
 {
-    return _T("");
+    return L"";
 }
 
 const MCHAR* AppleseedSSSMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedSSSMtl");
+    return L"appleseedSSSMtl";
 }
 
 FPInterface* AppleseedSSSMtlClassDesc::GetInterface(Interface_ID id)

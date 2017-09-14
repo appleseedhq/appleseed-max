@@ -78,7 +78,7 @@ namespace
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdObjPropsMod,                    // parameter block's ID
-        _T("appleseedObjPropsModParams"),           // internal parameter block's name
+        L"appleseedObjPropsModParams",              // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_objpropsmod_classdesc,         // class descriptor
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
@@ -99,39 +99,39 @@ namespace
 
         // --- Parameters specifications ---
 
-        ParamIdVisibilityCamera, _T("visibility_camera"), TYPE_BOOL, 0, IDS_VISIBILITY_CAMERA,
+        ParamIdVisibilityCamera, L"visibility_camera", TYPE_BOOL, 0, IDS_VISIBILITY_CAMERA,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_CAMERA,
         p_end,
-        ParamIdVisibilityLight, _T("visibility_light"), TYPE_BOOL, 0, IDS_VISIBILITY_LIGHT,
+        ParamIdVisibilityLight, L"visibility_light", TYPE_BOOL, 0, IDS_VISIBILITY_LIGHT,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_LIGHT,
         p_end,
-        ParamIdVisibilityShadow, _T("visibility_shadow"), TYPE_BOOL, 0, IDS_VISIBILITY_SHADOW,
+        ParamIdVisibilityShadow, L"visibility_shadow", TYPE_BOOL, 0, IDS_VISIBILITY_SHADOW,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SHADOW,
         p_end,
-        ParamIdVisibilityTransparency, _T("visibility_transparency"), TYPE_BOOL, 0, IDS_VISIBILITY_TRANSPARENCY,
+        ParamIdVisibilityTransparency, L"visibility_transparency", TYPE_BOOL, 0, IDS_VISIBILITY_TRANSPARENCY,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_TRANSPARENCY,
         p_end,
-        ParamIdVisibilityProbe, _T("visibility_probe"), TYPE_BOOL, 0, IDS_VISIBILITY_PROBE,
+        ParamIdVisibilityProbe, L"visibility_probe", TYPE_BOOL, 0, IDS_VISIBILITY_PROBE,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_PROBE,
         p_end,
-        ParamIdVisibilityDiffuse, _T("visibility_diffuse"), TYPE_BOOL, 0, IDS_VISIBILITY_DIFFUSE,
+        ParamIdVisibilityDiffuse, L"visibility_diffuse", TYPE_BOOL, 0, IDS_VISIBILITY_DIFFUSE,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_DIFFUSE,
         p_end,
-        ParamIdVisibilityGlossy, _T("visibility_glossy"), TYPE_BOOL, 0, IDS_VISIBILITY_GLOSSY,
+        ParamIdVisibilityGlossy, L"visibility_glossy", TYPE_BOOL, 0, IDS_VISIBILITY_GLOSSY,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_GLOSSY,
         p_end,
-        ParamIdVisibilitySpecular, _T("visibility_specular"), TYPE_BOOL, 0, IDS_VISIBILITY_SPECULAR,
+        ParamIdVisibilitySpecular, L"visibility_specular", TYPE_BOOL, 0, IDS_VISIBILITY_SPECULAR,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SPECULAR,
         p_end,
-        ParamIdVisibilitySSS, _T("visibility_sss"), TYPE_BOOL, 0, IDS_VISIBILITY_SSS,
+        ParamIdVisibilitySSS, L"visibility_sss", TYPE_BOOL, 0, IDS_VISIBILITY_SSS,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SSS,
         p_end,
@@ -158,7 +158,7 @@ void AppleseedObjPropsMod::DeleteThis()
 
 void AppleseedObjPropsMod::GetClassName(TSTR& s)
 {
-    s = _T("appleseedObjPropsMod");
+    s = L"appleseedObjPropsMod";
 }
 
 SClass_ID AppleseedObjPropsMod::SuperClassID()
@@ -193,7 +193,7 @@ Animatable* AppleseedObjPropsMod::SubAnim(int i)
 
 TSTR AppleseedObjPropsMod::SubAnimName(int i)
 {
-    return i == ParamBlockRefObjPropsMod ? _T("Parameters") : _T("");
+    return i == ParamBlockRefObjPropsMod ? L"Parameters" : L"";
 }
 
 int AppleseedObjPropsMod::SubNumToRefNum(int subNum)
@@ -261,7 +261,7 @@ CreateMouseCallBack* AppleseedObjPropsMod::GetCreateMouseCallBack()
 const MCHAR* AppleseedObjPropsMod::GetObjectName()
 {
     // Name that appears in the modifier stack.
-    return _T("appleseed Object Properties");
+    return L"appleseed Object Properties";
 }
 
 void AppleseedObjPropsMod::NotifyPostCollapse(INode* node, Object* obj, IDerivedObject* derObj, int index)
@@ -353,7 +353,7 @@ void* AppleseedObjPropsModClassDesc::Create(BOOL loading)
 const MCHAR* AppleseedObjPropsModClassDesc::ClassName()
 {
     // Name that appears in the list of available modifiers.
-    return _T("Object Properties");
+    return L"Object Properties";
 }
 
 SClass_ID AppleseedObjPropsModClassDesc::SuperClassID()
@@ -368,13 +368,13 @@ Class_ID AppleseedObjPropsModClassDesc::ClassID()
 
 const MCHAR* AppleseedObjPropsModClassDesc::Category()
 {
-    return _T("appleseed");
+    return L"appleseed";
 }
 
 const MCHAR* AppleseedObjPropsModClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedObjPropsMod");
+    return L"appleseedObjPropsMod";
 }
 
 HINSTANCE AppleseedObjPropsModClassDesc::HInstance()

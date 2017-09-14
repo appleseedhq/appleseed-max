@@ -42,7 +42,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedEnvMapFriendlyClassName = _T("appleseed Sky");
+    const TCHAR* AppleseedEnvMapFriendlyClassName = L"appleseed Sky";
 }
 
 AppleseedEnvMapClassDesc g_appleseed_envmap_classdesc;
@@ -84,7 +84,7 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        _T("Turbidity"),
+        L"Turbidity",
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -94,7 +94,7 @@ namespace
 
     ParamBlockDesc2 g_block_desc(
         ParamBlockIdEnvMap,
-        _T("appleseedEnvironmentMapParams"),
+        L"appleseedEnvironmentMapParams",
         0,
         &g_appleseed_envmap_classdesc,
         P_AUTO_CONSTRUCT + P_AUTO_UI,
@@ -110,84 +110,84 @@ namespace
         nullptr,
 
         // --- Parameters specifications for Parameters rollup ---
-        ParamIdSunTheta, _T("sun_theta"), TYPE_FLOAT, P_ANIMATABLE, IDS_THETA,
+        ParamIdSunTheta, L"sun_theta", TYPE_FLOAT, P_ANIMATABLE, IDS_THETA,
             p_default, 45.0f,
             p_range, 0.0f, 180.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_THETA, IDC_SPIN_THETA, 0.01f,
         p_end,
 
-        ParamIdSunPhi, _T("sun_phi"), TYPE_FLOAT, P_ANIMATABLE, IDS_PHI,
+        ParamIdSunPhi, L"sun_phi", TYPE_FLOAT, P_ANIMATABLE, IDS_PHI,
             p_default, 0.0f,
             p_range, 0.0f, 360.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_PHI, IDC_SPIN_PHI, 0.01f,
         p_end,
 
-        ParamIdSunSizeMultiplier, _T("sun_size_multiplier"), TYPE_FLOAT, P_ANIMATABLE, IDS_SIZE_MULTIPLIER,
+        ParamIdSunSizeMultiplier, L"sun_size_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_SIZE_MULTIPLIER,
             p_default, 1.0f,
             p_range, 0.0f, 1000.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SIZE_MULTIPLIER, IDC_SPIN_SIZE_MULTIPLIER, 0.1f,
         p_end,
 
-        ParamIdSunNode, _T("sun_node"), TYPE_INODE, 0, IDS_SUN_NODE,
+        ParamIdSunNode, L"sun_node", TYPE_INODE, 0, IDS_SUN_NODE,
             p_ui, TYPE_PICKNODEBUTTON, IDC_PICK_SUN_NODE,
             p_prompt, IDS_PICK_SUN_PROMPT,
             p_validator, &g_sun_node_validator,
             p_accessor, &g_sun_node_accessor,
         p_end,
 
-        ParamIdSunNodeOn, _T("sun_node_on"), TYPE_BOOL, 0, IDS_SUN_NODE_ON,
+        ParamIdSunNodeOn, L"sun_node_on", TYPE_BOOL, 0, IDS_SUN_NODE_ON,
             p_default, TRUE,
             p_ui, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
             p_accessor, &g_sun_node_accessor,
         p_end,
 
-        ParamIdTurbidity, _T("turbidity"), TYPE_FLOAT, P_ANIMATABLE, IDS_TURBIDITY,
+        ParamIdTurbidity, L"turbidity", TYPE_FLOAT, P_ANIMATABLE, IDS_TURBIDITY,
             p_default, 1.0f,
             p_range, 0.0f, 1.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_TURBIDITY, IDC_SPIN_TURBIDITY, 0.01f,
         p_end,
 
-        ParamIdTurbidityMap, _T("turbidity_map"), TYPE_TEXMAP, 0, IDS_TURB_MAP,
+        ParamIdTurbidityMap, L"turbidity_map", TYPE_TEXMAP, 0, IDS_TURB_MAP,
             p_subtexno, TexmapIdTurbidity,
             p_ui, TYPE_TEXMAPBUTTON, IDC_PICK_TURB_TEXTURE,
         p_end,
 
-        ParamIdTurbidityMapOn, _T("turbidity_map_on"), TYPE_BOOL, 0, IDS_TURB_MAP_ON,
+        ParamIdTurbidityMapOn, L"turbidity_map_on", TYPE_BOOL, 0, IDS_TURB_MAP_ON,
             p_default, TRUE,
             p_ui, TYPE_SINGLECHEKBOX, IDC_TURB_TEX_ON,
         p_end,
 
-        ParamIdTurbMultiplier, _T("turbidity_multiplier"), TYPE_FLOAT, P_ANIMATABLE, IDS_TURB_MULTIPLIER,
+        ParamIdTurbMultiplier, L"turbidity_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_TURB_MULTIPLIER,
             p_default, 2.0f,
             p_range, 0.0f, 8.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_TURB_MULTIPLIER, IDC_SPIN_TURB_MULTIPLIER, 0.01f,
         p_end,
 
-        ParamIdLuminMultiplier, _T("luminance_multiplier"), TYPE_FLOAT, P_ANIMATABLE, IDS_LUMINANCE_MULTIPLIER,
+        ParamIdLuminMultiplier, L"luminance_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_LUMINANCE_MULTIPLIER,
             p_default, 1.0f,
             p_range, 0.0f, 10.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LUMIN_MULTIPLIER, IDC_SPIN_LUMIN_MULTIPLIER, 0.01f,
         p_end,
 
-        ParamIdLuminGamma, _T("luminance_gamma"), TYPE_FLOAT, P_ANIMATABLE, IDS_LUMINANCE_GAMMA,
+        ParamIdLuminGamma, L"luminance_gamma", TYPE_FLOAT, P_ANIMATABLE, IDS_LUMINANCE_GAMMA,
             p_default, 1.0f,
             p_range, 0.0f, 3.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LUMIN_GAMMA, IDC_SPIN_LUMIN_GAMMA, 0.01f,
         p_end,
 
-        ParamIdSatMultiplier, _T("saturation_multiplier"), TYPE_FLOAT, P_ANIMATABLE, IDS_SAT_MULITPLIER,
+        ParamIdSatMultiplier, L"saturation_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_SAT_MULITPLIER,
             p_default, 1.0f,
             p_range, 0.0f, 10.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SATUR_MULTIPLIER, IDC_SPIN_SATUR_MULTIPLIER, 0.01f,
         p_end,
 
-        ParamIdHorizonShift, _T("horizon_shift"), TYPE_FLOAT, P_ANIMATABLE, IDS_HORIZON_SHIFT,
+        ParamIdHorizonShift, L"horizon_shift", TYPE_FLOAT, P_ANIMATABLE, IDS_HORIZON_SHIFT,
             p_default, 0.0f,
             p_range, -10.0f, 10.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_HORIZON_SHIFT, IDC_SPIN_HORIZON_SHIFT, 0.01f,
         p_end,
 
-        ParamIdGroundAlbedo, _T("ground_albedo"), TYPE_FLOAT, P_ANIMATABLE, IDS_GROUND_ALBEDO,
+        ParamIdGroundAlbedo, L"ground_albedo", TYPE_FLOAT, P_ANIMATABLE, IDS_GROUND_ALBEDO,
             p_default, 0.3f,
             p_range, 0.0f, 1.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_GROUND_ALBEDO, IDC_SPIN_GROUND_ALBEDO, 0.01f,
@@ -229,7 +229,7 @@ void AppleseedEnvMap::DeleteThis()
 
 void AppleseedEnvMap::GetClassName(TSTR& s)
 {
-    s = _T("appleseedSky");
+    s = L"appleseedSky";
 }
 
 SClass_ID AppleseedEnvMap::SuperClassID()
@@ -260,7 +260,7 @@ TSTR AppleseedEnvMap::SubAnimName(int i)
 {
     switch (i)
     {
-      case 0: return _T("Parameters");
+      case 0: return L"Parameters";
       default: return nullptr;
     }
 }
@@ -575,7 +575,7 @@ const MCHAR* AppleseedEnvMapBrowserEntryInfo::GetEntryName() const
 
 const MCHAR* AppleseedEnvMapBrowserEntryInfo::GetEntryCategory() const
 {
-    return _T("Maps\\appleseed");
+    return L"Maps\\appleseed";
 }
 
 Bitmap* AppleseedEnvMapBrowserEntryInfo::GetEntryThumbnail() const
@@ -705,13 +705,13 @@ Class_ID AppleseedEnvMapClassDesc::ClassID()
 
 const MCHAR* AppleseedEnvMapClassDesc::Category()
 {
-    return _T("");
+    return L"";
 }
 
 const MCHAR* AppleseedEnvMapClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedEnvMap");
+    return L"appleseedEnvMap";
 }
 
 FPInterface* AppleseedEnvMapClassDesc::GetInterface(Interface_ID id)

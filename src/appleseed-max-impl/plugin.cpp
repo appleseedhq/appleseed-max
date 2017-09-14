@@ -73,7 +73,7 @@ extern "C"
     __declspec(dllexport)
     const TCHAR* LibDescription()
     {
-        return _T("appleseed Renderer");
+        return L"appleseed Renderer";
     }
 
     __declspec(dllexport)

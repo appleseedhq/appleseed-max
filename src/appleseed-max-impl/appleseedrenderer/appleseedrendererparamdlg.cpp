@@ -78,16 +78,16 @@ namespace
     bool get_save_project_filepath(HWND parent_hwnd, MSTR& filepath)
     {
         FilterList filter;
-        filter.Append(_T("Project Files (*.appleseed)"));
-        filter.Append(_T("*.appleseed"));
-        filter.Append(_T("All Files (*.*)"));
-        filter.Append(_T("*.*"));
+        filter.Append(L"Project Files (*.appleseed)");
+        filter.Append(L"*.appleseed");
+        filter.Append(L"All Files (*.*)");
+        filter.Append(L"*.*");
 
         MSTR initial_dir;
         return
             GetCOREInterface14()->DoMaxSaveAsDialog(
                 parent_hwnd,
-                _T("Save Project As..."),
+                L"Save Project As...",
                 filepath,
                 initial_dir,
                 filter);
@@ -163,7 +163,7 @@ namespace
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_ABOUT),
                     &dialog_proc_entry,
-                    _T("About"),
+                    L"About",
                     reinterpret_cast<LPARAM>(this));
         }
 
@@ -242,7 +242,7 @@ namespace
                         DbgAssert(m_update_data->m_update_available);
                         ShellExecute(
                             hwnd,
-                            _T("open"),
+                            L"open",
                             m_update_data->m_download_url.c_str(),
                             nullptr,            // application parameters
                             nullptr,            // working directory
@@ -288,7 +288,7 @@ namespace
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
                     &dialog_proc_entry,
-                    _T("Image Sampling"),
+                    L"Image Sampling",
                     reinterpret_cast<LPARAM>(this));
         }
 
@@ -394,7 +394,7 @@ namespace
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
                     &dialog_proc_entry,
-                    _T("Lighting"),
+                    L"Lighting",
                     reinterpret_cast<LPARAM>(this));
         }
 
@@ -544,7 +544,7 @@ namespace
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
                     &dialog_proc_entry,
-                    _T("Output"),
+                    L"Output",
                     reinterpret_cast<LPARAM>(this));
         }
 
@@ -692,7 +692,7 @@ namespace
                     g_module,
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
                     &dialog_proc_entry,
-                    _T("System"),
+                    L"System",
                     reinterpret_cast<LPARAM>(this));
         }
 
