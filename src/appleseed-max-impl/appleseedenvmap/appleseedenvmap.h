@@ -177,11 +177,11 @@ class AppleseedEnvMapClassDesc
     AppleseedEnvMapClassDesc();
     virtual int IsPublic() override;
     virtual void* Create(BOOL loading) override;
-    virtual const TCHAR* ClassName() override;
+    virtual const wchar_t* ClassName() override;
     virtual SClass_ID SuperClassID() override;
     virtual Class_ID ClassID() override;
-    virtual const TCHAR* Category() override;
-    virtual const TCHAR* InternalName() override;
+    virtual const wchar_t* Category() override;
+    virtual const wchar_t* InternalName() override;
     virtual FPInterface* GetInterface(Interface_ID id) override;
     virtual HINSTANCE HInstance() override;
 

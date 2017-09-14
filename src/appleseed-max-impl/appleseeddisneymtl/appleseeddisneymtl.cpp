@@ -66,7 +66,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedDisneyMtlFriendlyClassName = L"appleseed Disney Material";
+    const wchar_t* AppleseedDisneyMtlFriendlyClassName = L"appleseed Disney Material";
 }
 
 AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;

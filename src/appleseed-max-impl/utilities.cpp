@@ -68,7 +68,7 @@ std::string wide_to_utf8(const std::wstring& wstr)
     return result;
 }
 
-std::string wide_to_utf8(const TCHAR* wstr)
+std::string wide_to_utf8(const wchar_t* wstr)
 {
     const int result_size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, nullptr, 0, nullptr, nullptr);
 

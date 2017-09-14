@@ -75,8 +75,8 @@ namespace
 
     DWORD query_release_information(std::string& response)
     {
-        static const TCHAR* Host = L"api.github.com";
-        static const TCHAR* Path = L"/repos/appleseedhq/appleseed-max/releases";
+        static const wchar_t* Host = L"api.github.com";
+        static const wchar_t* Path = L"/repos/appleseedhq/appleseed-max/releases";
 
         response.clear();
 
@@ -103,7 +103,7 @@ namespace
         if (!connection)
             return GetLastError();
 
-        static const TCHAR* AcceptTypes[] = { L"application/json", nullptr };
+        static const wchar_t* AcceptTypes[] = { L"application/json", nullptr };
         const HInternet request =
             HttpOpenRequest(
                 connection,

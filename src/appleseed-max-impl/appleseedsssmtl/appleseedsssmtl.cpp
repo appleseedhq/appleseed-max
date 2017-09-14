@@ -65,7 +65,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedSSSMtlFriendlyClassName = L"appleseed SSS Material";
+    const wchar_t* AppleseedSSSMtlFriendlyClassName = L"appleseed SSS Material";
 }
 
 AppleseedSSSMtlClassDesc g_appleseed_sssmtl_classdesc;

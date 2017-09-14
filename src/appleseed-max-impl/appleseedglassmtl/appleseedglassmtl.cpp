@@ -68,7 +68,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedGlassMtlFriendlyClassName = L"appleseed Glass Material";
+    const wchar_t* AppleseedGlassMtlFriendlyClassName = L"appleseed Glass Material";
 }
 
 AppleseedGlassMtlClassDesc g_appleseed_glassmtl_classdesc;

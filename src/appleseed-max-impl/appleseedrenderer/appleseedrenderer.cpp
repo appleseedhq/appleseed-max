@@ -68,7 +68,7 @@ namespace asr = renderer;
 namespace
 {
     const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
-    const TCHAR* AppleseedRendererClassName = L"appleseed Renderer";
+    const wchar_t* AppleseedRendererClassName = L"appleseed Renderer";
 }
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;

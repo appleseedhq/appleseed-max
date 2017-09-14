@@ -42,7 +42,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedEnvMapFriendlyClassName = L"appleseed Sky";
+    const wchar_t* AppleseedEnvMapFriendlyClassName = L"appleseed Sky";
 }
 
 AppleseedEnvMapClassDesc g_appleseed_envmap_classdesc;

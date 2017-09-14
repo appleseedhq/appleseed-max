@@ -65,7 +65,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedLightMtlFriendlyClassName = L"appleseed Light Material";
+    const wchar_t* AppleseedLightMtlFriendlyClassName = L"appleseed Light Material";
 }
 
 AppleseedLightMtlClassDesc g_appleseed_lightmtl_classdesc;
