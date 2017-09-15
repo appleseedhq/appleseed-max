@@ -71,9 +71,9 @@ namespace
 extern "C"
 {
     __declspec(dllexport)
-    const TCHAR* LibDescription()
+    const wchar_t* LibDescription()
     {
-        return _T("appleseed Renderer");
+        return L"appleseed Renderer";
     }
 
     __declspec(dllexport)

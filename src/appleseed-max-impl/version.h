@@ -35,7 +35,7 @@
 #include <tchar.h>
 
 // Plugin version string.
-extern const TCHAR* PluginVersionString;
+extern const wchar_t* PluginVersionString;
 
 // Version of the file format.
 // Increment when making incompatible changes to the file format.

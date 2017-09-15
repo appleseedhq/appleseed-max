@@ -56,8 +56,8 @@ namespace
             GetCOREInterface()->Log()->LogEntry(
                 SYSLOG_ERROR,
                 FALSE,
-                _T("appleseed"),
-                _T("[appleseed] GetModuleFileName() failed."));
+                L"appleseed",
+                L"[appleseed] GetModuleFileName() failed.");
             return false;
         }
 
@@ -67,8 +67,8 @@ namespace
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_DEBUG,
             FALSE,
-            _T("appleseed"),
-            _T("[appleseed] Loading %s..."), path);
+            L"appleseed",
+            L"[appleseed] Loading %s...", path);
 
         auto result = LoadLibrary(path);
 
@@ -77,8 +77,8 @@ namespace
             GetCOREInterface()->Log()->LogEntry(
                 SYSLOG_ERROR,
                 FALSE,
-                _T("appleseed"),
-                _T("[appleseed] Failed to load %s."), path);
+                L"appleseed",
+                L"[appleseed] Failed to load %s.", path);
         }
 
         return result;
@@ -88,9 +88,9 @@ namespace
 extern "C"
 {
     __declspec(dllexport)
-    const TCHAR* LibDescription()
+    const wchar_t* LibDescription()
     {
-        return _T("appleseed Renderer");
+        return L"appleseed Renderer";
     }
 
     __declspec(dllexport)
@@ -123,18 +123,18 @@ extern "C"
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_DEBUG,
             FALSE,
-            _T("appleseed"),
-            _T("[appleseed] Entered LibInitialize()."));
+            L"appleseed",
+            L"[appleseed] Entered LibInitialize().");
 
-        if (load_relative_library(_T("appleseed.dll")) == nullptr)
+        if (load_relative_library(L"appleseed.dll") == nullptr)
             return FALSE;
 
 #if MAX_RELEASE == MAX_RELEASE_R17
-        static const wchar_t PluginImplDLLFilename[] = _T("appleseed-max2015-impl.dll");
+        static const wchar_t PluginImplDLLFilename[] = L"appleseed-max2015-impl.dll";
 #elif MAX_RELEASE == MAX_RELEASE_R18
-        static const wchar_t PluginImplDLLFilename[] = _T("appleseed-max2016-impl.dll");
+        static const wchar_t PluginImplDLLFilename[] = L"appleseed-max2016-impl.dll";
 #elif MAX_RELEASE == MAX_RELEASE_R19
-        static const wchar_t PluginImplDLLFilename[] = _T("appleseed-max2017-impl.dll");
+        static const wchar_t PluginImplDLLFilename[] = L"appleseed-max2017-impl.dll";
 #else
 #error This version of 3ds Max is not supported by the appleseed plugin.
 #endif

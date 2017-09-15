@@ -63,8 +63,8 @@ namespace
             GetCOREInterface()->Log()->LogEntry(
                 type,
                 FALSE,
-                _T("appleseed"),
-                _T("[appleseed] %s"),
+                L"appleseed",
+                L"[appleseed] %s",
                 utf8_to_wide(line).c_str());
         }
     }

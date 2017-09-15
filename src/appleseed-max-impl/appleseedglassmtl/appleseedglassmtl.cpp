@@ -68,7 +68,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedGlassMtlFriendlyClassName = _T("appleseed Glass Material");
+    const wchar_t* AppleseedGlassMtlFriendlyClassName = L"appleseed Glass Material";
 }
 
 AppleseedGlassMtlClassDesc g_appleseed_glassmtl_classdesc;
@@ -127,13 +127,13 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        _T("Surface Color"),
-        _T("Reflection Tint")
-        _T("Refraction Tint"),
-        _T("Roughness"),
-        _T("Anisotropy"),
-        _T("Volume Color"),
-        _T("Bump Map")
+        L"Surface Color",
+        L"Reflection Tint"
+        L"Refraction Tint",
+        L"Roughness",
+        L"Anisotropy",
+        L"Volume Color",
+        L"Bump Map"
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -150,7 +150,7 @@ namespace
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdGlassMtl,                       // parameter block's ID
-        _T("appleseedGlassMtlParams"),              // internal parameter block's name
+        L"appleseedGlassMtlParams",                 // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_glassmtl_classdesc,            // class descriptor
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
@@ -179,69 +179,69 @@ namespace
 
         // --- Parameters specifications for Glass rollup ---
 
-        ParamIdSurfaceColor, _T("surface_color"), TYPE_RGBA, P_ANIMATABLE, IDS_SURFACE_COLOR,
+        ParamIdSurfaceColor, L"surface_color", TYPE_RGBA, P_ANIMATABLE, IDS_SURFACE_COLOR,
             p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_SURFACE_COLOR,
         p_end,
-        ParamIdSurfaceColorTexmap, _T("surface_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_SURFACE_COLOR,
+        ParamIdSurfaceColorTexmap, L"surface_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SURFACE_COLOR,
             p_subtexno, TexmapIdSurfaceColor,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SURFACE_COLOR,
         p_end,
 
-        ParamIdReflectionTint, _T("reflection_tint"), TYPE_RGBA, P_ANIMATABLE, IDS_REFLECTION_TINT,
+        ParamIdReflectionTint, L"reflection_tint", TYPE_RGBA, P_ANIMATABLE, IDS_REFLECTION_TINT,
             p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_REFLECTION_TINT,
         p_end,
-        ParamIdReflectionTintTexmap, _T("reflection_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_REFLECTION_TINT,
+        ParamIdReflectionTintTexmap, L"reflection_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_REFLECTION_TINT,
             p_subtexno, TexmapIdReflectionTint,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFLECTION_TINT,
         p_end,
 
-        ParamIdRefractionTint, _T("refraction_tint"), TYPE_RGBA, P_ANIMATABLE, IDS_REFRACTION_TINT,
+        ParamIdRefractionTint, L"refraction_tint", TYPE_RGBA, P_ANIMATABLE, IDS_REFRACTION_TINT,
             p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_REFRACTION_TINT,
         p_end,
-        ParamIdRefractionTintTexmap, _T("refraction_tint_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_REFRACTION_TINT,
+        ParamIdRefractionTintTexmap, L"refraction_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_REFRACTION_TINT,
             p_subtexno, TexmapIdRefractionTint,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFRACTION_TINT,
         p_end,
 
-        ParamIdIOR, _T("ior"), TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
+        ParamIdIOR, L"ior", TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
             p_default, 1.5f,
             p_range, 1.0f, 4.0f,
             p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
         p_end,
 
-        ParamIdRoughness, _T("roughness"), TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
+        ParamIdRoughness, L"roughness", TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
             p_default, 0.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
-        ParamIdRoughnessTexmap, _T("roughness_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
+        ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
 
-        ParamIdAnisotropy, _T("anisotropy"), TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
+        ParamIdAnisotropy, L"anisotropy", TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
             p_default, 0.0f,
             p_range, -1.0f, 1.0f,
             p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
         p_end,
-        ParamIdAnisotropyTexmap, _T("anisotropy_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
+        ParamIdAnisotropyTexmap, L"anisotropy_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
             p_subtexno, TexmapIdAnisotropy,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
 
-        ParamIdVolumeColor, _T("volume_color"), TYPE_RGBA, P_ANIMATABLE, IDS_VOLUME_COLOR,
+        ParamIdVolumeColor, L"volume_color", TYPE_RGBA, P_ANIMATABLE, IDS_VOLUME_COLOR,
             p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_VOLUME_COLOR,
         p_end,
-        ParamIdVolumeColorTexmap, _T("volume_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_VOLUME_COLOR,
+        ParamIdVolumeColorTexmap, L"volume_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_VOLUME_COLOR,
             p_subtexno, TexmapIdVolumeColor,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_VOLUME_COLOR,
         p_end,
 
-        ParamIdScale, _T("scale"), TYPE_FLOAT, P_ANIMATABLE, IDS_SCALE,
+        ParamIdScale, L"scale", TYPE_FLOAT, P_ANIMATABLE, IDS_SCALE,
             p_default, 0.0f,
             p_range, 0.0f, 1000000.0f,
             p_ui, ParamMapIdGlass, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SCALE, IDC_SPINNER_SCALE, SPIN_AUTOSCALE,
@@ -249,25 +249,25 @@ namespace
 
         // --- Parameters specifications for Bump rollup ---
 
-        ParamIdBumpMethod, _T("bump_method"), TYPE_INT, 0, IDS_BUMP_METHOD,
+        ParamIdBumpMethod, L"bump_method", TYPE_INT, 0, IDS_BUMP_METHOD,
             p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_METHOD,
             2, IDS_COMBO_BUMP_METHOD_BUMPMAP, IDS_COMBO_BUMP_METHOD_NORMALMAP,
             p_vals, 0, 1,
             p_default, 0,
         p_end,
 
-        ParamIdBumpTexmap, _T("bump_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
+        ParamIdBumpTexmap, L"bump_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
             p_subtexno, TexmapIdBumpMap,
             p_ui, ParamMapIdBump, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
         p_end,
 
-        ParamIdBumpAmount, _T("bump_amount"), TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
+        ParamIdBumpAmount, L"bump_amount", TYPE_FLOAT, P_ANIMATABLE, IDS_BUMP_AMOUNT,
             p_default, 1.0f,
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdBump, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_BUMP_AMOUNT, IDC_SPINNER_BUMP_AMOUNT, SPIN_AUTOSCALE,
         p_end,
 
-        ParamIdBumpUpVector, _T("bump_up_vector"), TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
+        ParamIdBumpUpVector, L"bump_up_vector", TYPE_INT, 0, IDS_BUMP_UP_VECTOR,
             p_ui, ParamMapIdBump, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_UP_VECTOR,
             2, IDS_COMBO_BUMP_UP_VECTOR_Y, IDS_COMBO_BUMP_UP_VECTOR_Z,
             p_vals, 0, 1,
@@ -324,7 +324,7 @@ void AppleseedGlassMtl::DeleteThis()
 
 void AppleseedGlassMtl::GetClassName(TSTR& s)
 {
-    s = _T("appleseedGlassMtl");
+    s = L"appleseedGlassMtl";
 }
 
 SClass_ID AppleseedGlassMtl::SuperClassID()
@@ -349,7 +349,7 @@ Animatable* AppleseedGlassMtl::SubAnim(int i)
 
 TSTR AppleseedGlassMtl::SubAnimName(int i)
 {
-    return i == ParamBlockRefGlassMtl ? _T("Parameters") : _T("");
+    return i == ParamBlockRefGlassMtl ? L"Parameters" : L"";
 }
 
 int AppleseedGlassMtl::SubNumToRefNum(int subNum)
@@ -742,7 +742,7 @@ const MCHAR* AppleseedGlassMtlBrowserEntryInfo::GetEntryName() const
 
 const MCHAR* AppleseedGlassMtlBrowserEntryInfo::GetEntryCategory() const
 {
-    return _T("Materials\\appleseed");
+    return L"Materials\\appleseed";
 }
 
 Bitmap* AppleseedGlassMtlBrowserEntryInfo::GetEntryThumbnail() const
@@ -788,13 +788,13 @@ Class_ID AppleseedGlassMtlClassDesc::ClassID()
 
 const MCHAR* AppleseedGlassMtlClassDesc::Category()
 {
-    return _T("");
+    return L"";
 }
 
 const MCHAR* AppleseedGlassMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedGlassMtl");
+    return L"appleseedGlassMtl";
 }
 
 FPInterface* AppleseedGlassMtlClassDesc::GetInterface(Interface_ID id)

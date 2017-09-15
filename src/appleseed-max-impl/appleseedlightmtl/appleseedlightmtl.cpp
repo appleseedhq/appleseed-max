@@ -65,7 +65,7 @@ namespace asr = renderer;
 
 namespace
 {
-    const TCHAR* AppleseedLightMtlFriendlyClassName = _T("appleseed Light Material");
+    const wchar_t* AppleseedLightMtlFriendlyClassName = L"appleseed Light Material";
 }
 
 AppleseedLightMtlClassDesc g_appleseed_lightmtl_classdesc;
@@ -99,7 +99,7 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        _T("Light Color")
+        L"Light Color"
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -110,7 +110,7 @@ namespace
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdLightMtl,                       // parameter block's ID
-        _T("appleseedLightMtlParams"),              // internal parameter block's name
+        L"appleseedLightMtlParams",                 // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_lightmtl_classdesc,            // class descriptor
         P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
@@ -127,26 +127,26 @@ namespace
 
         // --- Parameters specifications ---
 
-        ParamIdLightColor, _T("light_color"), TYPE_RGBA, P_ANIMATABLE, IDS_LIGHT_COLOR,
+        ParamIdLightColor, L"light_color", TYPE_RGBA, P_ANIMATABLE, IDS_LIGHT_COLOR,
             p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, TYPE_COLORSWATCH, IDC_SWATCH_LIGHT_COLOR,
         p_end,
-        ParamIdLightColorTexmap, _T("light_color_texmap"), TYPE_TEXMAP, 0, IDS_TEXMAP_LIGHT_COLOR,
+        ParamIdLightColorTexmap, L"light_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_LIGHT_COLOR,
             p_subtexno, TexmapIdLightColor,
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_LIGHT_COLOR,
         p_end,
 
-        ParamIdLightPower, _T("light_power"), TYPE_FLOAT, P_ANIMATABLE, IDS_LIGHT_POWER,
+        ParamIdLightPower, L"light_power", TYPE_FLOAT, P_ANIMATABLE, IDS_LIGHT_POWER,
             p_default, 1.0f,
             p_range, 0.0f, 1000000.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_POWER, IDC_SPINNER_LIGHT_POWER, SPIN_AUTOSCALE,
         p_end,
 
-        ParamIdEmissionFront, _T("emission_front"), TYPE_BOOL, 0, IDS_EMISSION_FRONT,
+        ParamIdEmissionFront, L"emission_front", TYPE_BOOL, 0, IDS_EMISSION_FRONT,
             p_default, TRUE,
             p_ui, TYPE_CHECKBUTTON, IDC_BUTTON_EMISSION_FRONT,
         p_end,
-        ParamIdEmissionBack, _T("emission_back"), TYPE_BOOL, 0, IDS_EMISSION_BACK,
+        ParamIdEmissionBack, L"emission_back", TYPE_BOOL, 0, IDS_EMISSION_BACK,
             p_default, FALSE,
             p_ui, TYPE_CHECKBUTTON, IDC_BUTTON_EMISSION_BACK,
         p_end,
@@ -188,7 +188,7 @@ void AppleseedLightMtl::DeleteThis()
 
 void AppleseedLightMtl::GetClassName(TSTR& s)
 {
-    s = _T("appleseedLightMtl");
+    s = L"appleseedLightMtl";
 }
 
 SClass_ID AppleseedLightMtl::SuperClassID()
@@ -213,7 +213,7 @@ Animatable* AppleseedLightMtl::SubAnim(int i)
 
 TSTR AppleseedLightMtl::SubAnimName(int i)
 {
-    return i == ParamBlockRefLightMtl ? _T("Parameters") : _T("");
+    return i == ParamBlockRefLightMtl ? L"Parameters" : L"";
 }
 
 int AppleseedLightMtl::SubNumToRefNum(int subNum)
@@ -531,7 +531,7 @@ const MCHAR* AppleseedLightMtlBrowserEntryInfo::GetEntryName() const
 
 const MCHAR* AppleseedLightMtlBrowserEntryInfo::GetEntryCategory() const
 {
-    return _T("Materials\\appleseed");
+    return L"Materials\\appleseed";
 }
 
 Bitmap* AppleseedLightMtlBrowserEntryInfo::GetEntryThumbnail() const
@@ -577,13 +577,13 @@ Class_ID AppleseedLightMtlClassDesc::ClassID()
 
 const MCHAR* AppleseedLightMtlClassDesc::Category()
 {
-    return _T("");
+    return L"";
 }
 
 const MCHAR* AppleseedLightMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return _T("appleseedLightMtl");
+    return L"appleseedLightMtl";
 }
 
 FPInterface* AppleseedLightMtlClassDesc::GetInterface(Interface_ID id)
