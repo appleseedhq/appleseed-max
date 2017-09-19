@@ -128,7 +128,7 @@ namespace
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
         L"Surface Color",
-        L"Reflection Tint"
+        L"Reflection Tint",
         L"Refraction Tint",
         L"Roughness",
         L"Anisotropy",

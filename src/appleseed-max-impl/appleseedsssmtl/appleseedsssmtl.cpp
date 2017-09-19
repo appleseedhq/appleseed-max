@@ -127,7 +127,7 @@ namespace
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
         L"SSS Color",
-        L"SSS Scattering Color"
+        L"SSS Scattering Color",
         L"Specular Color",
         L"Specular Amount",
         L"Specular Roughness",
