@@ -85,11 +85,11 @@ foundation::Matrix4d to_matrix4d(const Matrix3& input);
 //   http://stackoverflow.com/a/3999597/393756
 //
 
-// Convert a wide Unicode string to an UTF-8 string.
+// Convert a wide string to an UTF-8 string.
 std::string wide_to_utf8(const std::wstring& wstr);
 std::string wide_to_utf8(const wchar_t* wstr);
 
-// Convert an UTF-8 string to a wide Unicode string.
+// Convert an UTF-8 string to a wide string.
 std::wstring utf8_to_wide(const std::string& str);
 std::wstring utf8_to_wide(const char* str);
 
