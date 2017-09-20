@@ -36,29 +36,27 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/string.h"
 
+// Boost headers.
+#include "boost/thread/locks.hpp"
+#include "boost/thread/mutex.hpp"
+
 // 3ds Max headers.
 #include <log.h>
 #include <max.h>
 
 // Standard headers.
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace asf = foundation;
 
 namespace
 {
-    const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
+    typedef std::vector<std::string> StringVec;
 
-    struct MessageData
+    void emit_message(const DWORD type, const StringVec& lines)
     {
-        std::vector<std::string> lines;
-        DWORD type;
-    };
-   
-    void write_log_lines(const std::vector<std::string>& lines, const int type)
-    {
-        for (auto line : lines)
+        for (const auto& line : lines)
         {
             GetCOREInterface()->Log()->LogEntry(
                 type,
@@ -69,13 +67,44 @@ namespace
         }
     }
 
-    void ui_log_writer(UINT_PTR param_ptr)
+    struct Message
     {
-        MessageData* data_ptr = reinterpret_cast<MessageData*>(param_ptr);
+        DWORD               m_type;
+        StringVec           m_lines;
+    };
 
-        write_log_lines(data_ptr->lines, data_ptr->type);
+    boost::mutex            g_message_queue_mutex;
+    std::vector<Message>    g_message_queue;
 
-        delete data_ptr;
+    void push_message(const DWORD type, const StringVec& lines)
+    {
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+
+        Message message;
+        message.m_type = type;
+        message.m_lines = lines;
+        g_message_queue.push_back(message);
+    }
+
+    void emit_pending_messages()
+    {
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+
+        for (const auto& message : g_message_queue)
+            emit_message(message.m_type, message.m_lines);
+
+        g_message_queue.clear();
+    }
+
+    const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
+
+    bool is_main_thread()
+    {
+        // There does not appear to be a GetCOREInterface15() function in the 3ds Max 2015 SDK.
+        Interface15* interface15 =
+            reinterpret_cast<Interface15*>(GetCOREInterface14()->GetInterface(Interface15::kInterface15InterfaceID));
+
+        return interface15->GetMainThreadID() == GetCurrentThreadId();
     }
 }
 
@@ -104,23 +133,18 @@ void LogTarget::write(
         break;
     }
 
-    bool is_ui_thread = true;
-#if MAX_RELEASE > MAX_RELEASE_R17
-    is_ui_thread = GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
-#endif
+    std::vector<std::string> lines;
+    asf::split(message, "\n", lines);
 
-    if (is_ui_thread)
-    {
-        std::vector<std::string> lines;
-        asf::split(message, "\n", lines);
-        write_log_lines(lines, type);
-    }
+    if (is_main_thread())
+        emit_message(type, lines);
     else
     {
-        MessageData* data = new MessageData();
-        asf::split(message, "\n", data->lines);
-        data->type = type;
-
-        PostMessage(GetCOREInterface()->GetMAXHWnd(), WM_TRIGGER_CALLBACK, (UINT_PTR)ui_log_writer, (UINT_PTR)data);
+        push_message(type, lines);
+        PostMessage(
+            GetCOREInterface()->GetMAXHWnd(),
+            WM_TRIGGER_CALLBACK,
+            reinterpret_cast<WPARAM>(emit_pending_messages),
+            0);
     }
 }
