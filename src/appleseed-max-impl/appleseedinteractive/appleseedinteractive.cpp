@@ -33,6 +33,7 @@
 #include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
 
@@ -306,8 +307,6 @@ void AppleseedInteractiveRender::BeginSession()
 {
     DbgAssert(m_render_session == nullptr);
     
-    RendererSettings renderer_settings = RendererSettings::defaults();
-
     m_time = GetCOREInterface()->GetTime();
 
     ViewExp13* vp13 = reinterpret_cast<ViewExp13*>(GetViewExp()->Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
@@ -319,6 +318,16 @@ void AppleseedInteractiveRender::BeginSession()
     else
         get_view_params_from_viewport(view_params, *GetViewExp(), m_time);
 
+    RendererSettings renderer_settings = RendererSettings::defaults();
+    
+    Renderer* curr_renderer = GetCOREInterface()->GetCurrentRenderer(false);
+    if (curr_renderer && curr_renderer->ClassID() == AppleseedRenderer::get_class_id())
+    {
+        AppleseedRenderer* appleseed_renderer = static_cast<AppleseedRenderer*>(curr_renderer);
+        renderer_settings = appleseed_renderer->get_renderer_settings();
+        renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
+    }
+    
     m_project = prepare_project(renderer_settings, view_params, m_time);
 
     m_render_session.reset(new InteractiveSession(

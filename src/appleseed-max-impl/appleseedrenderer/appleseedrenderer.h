@@ -60,6 +60,8 @@ class AppleseedRenderer
 
     AppleseedRenderer();
 
+    RendererSettings get_renderer_settings();
+
     virtual Class_ID ClassID() override;
 
     virtual void GetClassName(MSTR& s) override;
