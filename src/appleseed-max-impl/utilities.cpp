@@ -34,6 +34,7 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/color.h"
+#include "renderer/api/source.h"
 #include "renderer/api/texture.h"
 
 // appleseed.foundation headers.
@@ -47,12 +48,386 @@
 #include <imtl.h>
 #include <plugapi.h>
 #include <stdmat.h>
+#include <maxapi.h>
 
 // Windows headers.
 #include <Shlwapi.h>
 
 namespace asf = foundation;
 namespace asr = renderer;
+
+namespace
+{
+    class MaxShadeContext
+      : public ShadeContext
+    {
+      public:
+        TimeValue   cur_time;
+        Point2      duv;
+        Point2      uv;
+        int         proj_type;
+
+        MaxShadeContext()
+          : curve(0.0f)
+          , dp(Point3(0.0f, 0.0f, 0.0f))
+        {
+            doMaps = TRUE;
+        }
+
+        BOOL InMtlEditor() override
+        {
+            return false;
+        }
+
+        LightDesc* Light(int n) override
+        {
+            return nullptr;
+        }
+
+        TimeValue CurTime() override
+        {
+            return cur_time;
+        }
+
+        int NodeID() override
+        {
+            return -1;
+        }
+
+        int FaceNumber() override
+        {
+            return 0;
+        }
+
+        int ProjType() override
+        {
+            return proj_type;
+        }
+
+        Point3 Normal() override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        Point3 GNormal() override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        Point3 ReflectVector() override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        Point3 RefractVector(float ior) override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        Point3 CamPos() override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        Point3 V() override
+        {
+            return view;
+        }
+
+        void SetView(Point3 v) override
+        {
+            view = v;
+        }
+
+        Point3 P() override
+        {
+            return light_pos;
+        }
+
+        Point3 DP() override
+        {
+            return dp;
+        }
+
+        Point3 PObj() override
+        {
+            return light_pos;
+        }
+
+        Point3 DPObj() override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        Box3 ObjectBox() override
+        {
+            return Box3(Point3(-1, -1, -1), Point3(1, 1, 1));
+        }
+
+        Point3 PObjRelBox() override
+        {
+            return view;
+        }
+
+        Point3 DPObjRelBox() override
+        {
+            return Point3(0, 0, 0);
+        }
+
+        void ScreenUV(Point2& UV, Point2 &Duv) override
+        {
+            UV = uv;
+            Duv = duv;
+        }
+
+        IPoint2 ScreenCoord() override
+        {
+            return scr_pos;
+        }
+
+        Point3 UVW(int chan) override
+        {
+            return Point3(uv.x, uv.y, 0.0f);
+        }
+
+        Point3 DUVW(int chan) override
+        {
+            return Point3(duv.x, duv.y, 0.0f);
+        }
+
+        void DPdUVW(Point3 dP[3], int chan) override
+        {
+        }
+
+        void GetBGColor(Color &bgcol, Color& transp, BOOL fogBG = TRUE)
+        {
+        }
+
+        float Curve() override
+        {
+            return curve;
+        }
+
+        Point3 PointTo(const Point3& p, RefFrame ito)
+        {
+            return p;
+        }
+
+        Point3 PointFrom(const Point3& p, RefFrame ifrom)
+        {
+            return p;
+        }
+
+        Point3 VectorTo(const Point3& p, RefFrame ito)
+        {
+            return p;
+        }
+
+        Point3 VectorFrom(const Point3& p, RefFrame ifrom)
+        {
+            return p;
+        }
+
+      private:
+        Point3      light_pos;   // Position of point in light space.
+        Point3      view;        // Unit vector from light to point, in light space.
+        IPoint2     scr_pos;
+        Point3      dp;
+        float       curve;
+    };
+}
+
+namespace
+{
+    class MaxProceduralTextureSource
+        : public asr::Source
+    {
+    public:
+        MaxProceduralTextureSource(Texmap* texmap)
+            : asr::Source(false)
+            , m_texmap(texmap)
+        {
+        }
+
+        virtual asf::uint64 compute_signature() const override
+        {
+            return 0;
+        }
+
+        virtual void evaluate(
+            asr::TextureCache&          texture_cache,
+            const asf::Vector2f&        uv,
+            float&                      scalar) const override
+        {
+            scalar = evaluate_float(uv);
+        }
+
+        virtual void evaluate(
+            asr::TextureCache&          texture_cache,
+            const asf::Vector2f&        uv,
+            asf::Color3f&               linear_rgb) const override
+        {
+            const asf::Color4f color = evaluate_color(uv);
+            linear_rgb = asf::Color3f(color.r, color.g, color.b);
+        }
+
+        virtual void evaluate(
+            asr::TextureCache&          texture_cache,
+            const asf::Vector2f&        uv,
+            asr::Spectrum&              spectrum) const override
+        {
+            DbgAssert(spectrum.size() == 3);
+            const asf::Color4f color = evaluate_color(uv);
+            spectrum[0] = color[0];
+            spectrum[1] = color[1];
+            spectrum[2] = color[2];
+        }
+
+        virtual void evaluate(
+            asr::TextureCache&          texture_cache,
+            const asf::Vector2f&        uv,
+            asr::Alpha&                 alpha) const override
+        {
+            alpha.set(evaluate_float(uv));
+        }
+
+        virtual void evaluate(
+            asr::TextureCache&          texture_cache,
+            const asf::Vector2f&        uv,
+            asf::Color3f&               linear_rgb,
+            asr::Alpha&                 alpha) const override
+        {
+            const asf::Color4f color = evaluate_color(uv);
+            linear_rgb = asf::Color3f(color.r, color.g, color.b);
+            alpha.set(color.a);
+        }
+
+        virtual void evaluate(
+            asr::TextureCache&          texture_cache,
+            const asf::Vector2f&        uv,
+            asr::Spectrum&              spectrum,
+            asr::Alpha&                 alpha) const override
+        {
+            DbgAssert(spectrum.size() == 3);
+            const asf::Color4f color = evaluate_color(uv);
+            spectrum[0] = color[0];
+            spectrum[1] = color[1];
+            spectrum[2] = color[2];
+            alpha.set(color[3]);
+        }
+
+    private:
+
+        float evaluate_float(const asf::Vector2f& uv) const
+        {
+            MaxShadeContext maxsc;
+
+            maxsc.mode = SCMODE_NORMAL;
+            maxsc.proj_type = 0;        // 0: perspective, 1: parallel
+            maxsc.cur_time = GetCOREInterface()->GetTime();
+            maxsc.uv.x = uv.x;
+            maxsc.uv.y = uv.y;
+            maxsc.filterMaps = false;
+            maxsc.mtlNum = 1;
+
+            return m_texmap->EvalMono(maxsc);
+        }
+
+        asf::Color4f evaluate_color(const asf::Vector2f& uv) const
+        {
+            MaxShadeContext maxsc;
+
+            maxsc.mode = SCMODE_NORMAL;
+            maxsc.proj_type = 0;        // 0: perspective, 1: parallel
+            maxsc.cur_time = GetCOREInterface()->GetTime();
+            maxsc.uv.x = uv.x;
+            maxsc.uv.y = uv.y;
+            maxsc.filterMaps = false;
+            maxsc.mtlNum = 1;
+
+            AColor color = m_texmap->EvalColor(maxsc);
+
+            return asf::Color4f(color.r, color.g, color.b, color.a);
+        }
+        
+        Texmap*     m_texmap;
+    };
+
+    class MaxProceduralTexture
+        : public asr::Texture
+    {
+    public:
+        explicit MaxProceduralTexture(const char* name, Texmap* texmap)
+            : asr::Texture(name, asr::ParamArray())
+            , m_texmap(texmap)
+        {
+            m_properties = asf::CanvasProperties(512, 512, 64, 64, 3, asf::PixelFormat::PixelFormatUInt8); // Dummy values.
+        }
+
+        virtual void release() override
+        {
+            delete this;
+        }
+
+        virtual const char* get_model() const override
+        {
+            return "max_procedural_texture";
+        }
+
+        virtual asf::ColorSpace get_color_space() const override
+        {
+            return asf::ColorSpaceLinearRGB;
+        }
+
+        virtual const asf::CanvasProperties& properties() override
+        {
+            return m_properties;
+        }
+
+        virtual asr::Source* create_source(
+            const asf::UniqueID         assembly_uid,
+            const asr::TextureInstance& texture_instance) override
+        {
+            return new MaxProceduralTextureSource(m_texmap);
+        }
+
+        virtual asf::Tile* load_tile(
+            const size_t                tile_x,
+            const size_t                tile_y) override
+        {
+            return nullptr;
+        }
+
+        virtual void unload_tile(
+            const size_t                tile_x,
+            const size_t                tile_y,
+            const asf::Tile*            tile) override
+        {
+        }
+
+    private:
+        asf::CanvasProperties   m_properties;
+        Texmap*                 m_texmap;
+    };
+}
+
+namespace
+{
+    void EnumMtlTree(MtlBase* mat_base, TimeValue time)
+    {
+        if (IsTex(mat_base))
+        {
+            Texmap* tex_map = (Texmap*)mat_base;
+            tex_map->LoadMapFiles(time);
+        }
+
+        for (int i = 0, j = mat_base->NumSubTexmaps(); i < j; i++) {
+            Texmap* sub_tex = mat_base->GetSubTexmap(i);
+            if (sub_tex)
+                EnumMtlTree(sub_tex, time);
+        }
+    }
+}
 
 std::string wide_to_utf8(const std::wstring& wstr)
 {
@@ -118,6 +493,67 @@ bool is_bitmap_texture(Texmap* map)
     return true;
 }
 
+bool is_supported_texture(Texmap* map)
+{
+    if (map == nullptr)
+        return false;
+
+    auto part_a = map->ClassID().PartA();
+    auto part_b = map->ClassID().PartB();
+
+    switch (part_a)
+    {
+      case 0x64035FB9:              // Tiles.
+        if (part_b == 0x69664CDC)
+            return true;
+        break;
+      case 0x1DEC5B86:              // Gradient Ramp.
+        if (part_b == 0x43383A51)
+            return true;
+        break;
+      case 0x72C8577F:              // Swirl.
+        if (part_b == 0x39A00A1B)
+            return true;
+        break;
+      case 0x23AD0AE9:              // Perlin Marble.
+        if (part_b == 0x158D7A88)
+            return true;
+        break;
+      case 0x243E22C6:              // Normal Bump.
+        if (part_b == 0x63F6A014)
+            return true;
+        break;
+      case 0x93A92749:              // Vector Map.
+        if (part_b == 0x6B8D470A)
+            return true;
+        break;
+      case CHECKER_CLASS_ID:
+      case MARBLE_CLASS_ID:
+      case MASK_CLASS_ID:
+      case MIX_CLASS_ID:
+      case NOISE_CLASS_ID:
+      case GRADIENT_CLASS_ID:
+      case TINT_CLASS_ID:
+      case BMTEX_CLASS_ID:
+      case COMPOSITE_CLASS_ID:
+      case RGBMULT_CLASS_ID:
+      case OUTPUT_CLASS_ID:
+      case COLORCORRECTION_CLASS_ID:
+      case 0x0000214:               // WOOD_CLASS_ID
+      case 0x0000218:               // DENT_CLASS_ID
+      case 0x46396cf1:              // PLANET_CLASS_ID
+      case 0x7712634e:              // WATER_CLASS_ID
+      case 0xa845e7c:               // SMOKE_CLASS_ID
+      case 0x62c32b8a:              // SPECKLE_CLASS_ID
+      case 0x90b04f9:               // SPLAT_CLASS_ID
+        return true;
+      default:
+        return false;
+    }
+
+    return false;
+}
+
 std::string get_root_path()
 {
     wchar_t path[MAX_PATH];
@@ -141,12 +577,13 @@ void insert_color(asr::BaseGroup& base_group, const Color& color, const char* na
                 .insert("color", to_color3f(color))));
 }
 
-std::string insert_texture_and_instance(
+std::string insert_bitmap_texture_and_instance(
     asr::BaseGroup& base_group,
     Texmap*         texmap,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
+    const std::string texture_name = wide_to_utf8(texmap->GetName());
     BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
 
     const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
@@ -159,7 +596,6 @@ std::string insert_texture_and_instance(
         else texture_params.insert("color_space", "srgb");
     }
 
-    const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
     if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
     {
         base_group.textures().insert(
@@ -167,6 +603,45 @@ std::string insert_texture_and_instance(
                 texture_name.c_str(),
                 texture_params,
                 asf::SearchPaths()));
+    }
+
+    const std::string texture_instance_name = texture_name + "_inst";
+    if (base_group.texture_instances().get_by_name(texture_instance_name.c_str()) == nullptr)
+    {
+        base_group.texture_instances().insert(
+            asr::TextureInstanceFactory::create(
+                texture_instance_name.c_str(),
+                texture_instance_params,
+                texture_name.c_str()));
+    }
+
+    return texture_instance_name;
+}
+
+std::string insert_max_texture_and_instance(
+    asr::BaseGroup& base_group,
+    Texmap*         texmap,
+    asr::ParamArray texture_params,
+    asr::ParamArray texture_instance_params)
+{
+    const std::string texture_name = wide_to_utf8(texmap->GetName());
+    TimeValue curr_time = GetCOREInterface()->GetTime();
+
+    texmap->Update(curr_time, FOREVER);
+    EnumMtlTree(texmap, curr_time);
+
+    if (!texture_params.strings().exist("color_space"))
+    {
+        // todo: should probably check max's gamma settings here.
+        texture_params.insert("color_space", "linear_rgb");
+    }
+
+    if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
+    {
+        base_group.textures().insert(
+            asf::auto_release_ptr<asr::Texture>(
+                new MaxProceduralTexture(
+                    texture_name.c_str(), texmap)));
     }
 
     const std::string texture_instance_name = texture_name + "_inst";

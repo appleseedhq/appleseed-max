@@ -482,7 +482,20 @@ bool AppleseedLightMtl::can_emit_light() const
     return true;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Assembly& assembly, const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
+    asr::Assembly&  assembly,
+    const char*     name, 
+    bool            use_max_source)
+{
+    if (use_max_source)
+        return create_max_material(assembly, name);
+    else
+        return create_universal_material(assembly, name);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_universal_material(
+    asr::Assembly&  assembly,
+    const char*     name)
 {
     asr::ParamArray material_params;
 
@@ -490,27 +503,65 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Ass
     // EDF.
     //
 
+    asr::ParamArray edf_params;
+
+    // Radiance.
+    if (is_bitmap_texture(m_light_color_texmap))
     {
-        asr::ParamArray edf_params;
-
-        // Radiance.
-        if (is_bitmap_texture(m_light_color_texmap))
-            edf_params.insert("radiance", insert_texture_and_instance(assembly, m_light_color_texmap));
-        else
-        {
-            const auto color_name = std::string(name) + "_edf_radiance";
-            insert_color(assembly, m_light_color, color_name.c_str());
-            edf_params.insert("radiance", color_name);
-        }
-
-        // Radiance multiplier.
-        edf_params.insert("radiance_multiplier", m_light_power);
-
-        const auto edf_name = std::string(name) + "_edf";
-        assembly.edfs().insert(
-            asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));
-        material_params.insert("edf", edf_name);
+        edf_params.insert("radiance", insert_bitmap_texture_and_instance(assembly, m_light_color_texmap));
     }
+    else
+    {
+        const auto color_name = std::string(name) + "_edf_radiance";
+        insert_color(assembly, m_light_color, color_name.c_str());
+        edf_params.insert("radiance", color_name);
+    }
+
+    // Radiance multiplier.
+    edf_params.insert("radiance_multiplier", m_light_power);
+
+    const auto edf_name = std::string(name) + "_edf";
+    assembly.edfs().insert(
+        asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));
+    material_params.insert("edf", edf_name);
+
+    //
+    // Material.
+    //
+
+    return asr::GenericMaterialFactory::static_create(name, material_params);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_max_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+    asr::ParamArray material_params;
+
+    //
+    // EDF.
+    //
+    asr::ParamArray edf_params;
+
+    // Radiance.
+    if (is_supported_texture(m_light_color_texmap))
+    {
+        edf_params.insert("radiance", insert_max_texture_and_instance(assembly, m_light_color_texmap));
+    }
+    else
+    {
+        const auto color_name = std::string(name) + "_edf_radiance";
+        insert_color(assembly, m_light_color, color_name.c_str());
+        edf_params.insert("radiance", color_name);
+    }
+
+    // Radiance multiplier.
+    edf_params.insert("radiance_multiplier", m_light_power);
+
+    const auto edf_name = std::string(name) + "_edf";
+    assembly.edfs().insert(
+        asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));
+    material_params.insert("edf", edf_name);
 
     //
     // Material.

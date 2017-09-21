@@ -389,7 +389,8 @@ namespace
         asr::Assembly&          assembly,
         const std::string&      instance_name,
         Mtl*                    mtl,
-        MaterialMap&            material_map)
+        MaterialMap&            material_map,
+        const bool              use_max_proc_maps)
     {
         MaterialInfo material_info;
 
@@ -405,7 +406,7 @@ namespace
                 material_info.m_name =
                     make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
                 assembly.materials().insert(
-                    appleseed_mtl->create_material(assembly, material_info.m_name.c_str()));
+                    appleseed_mtl->create_material(assembly, material_info.m_name.c_str(), use_max_proc_maps));
                 material_map.insert(std::make_pair(mtl, material_info.m_name));
             }
             else
@@ -455,6 +456,7 @@ namespace
         INode*                  instance_node,
         const ObjectInfo&       object_info,
         const RenderType        type,
+        const bool              use_max_proc_maps,
         const TimeValue         time,
         MaterialMap&            material_map)
     {
@@ -490,7 +492,8 @@ namespace
                                 assembly,
                                 instance_name,
                                 submtl,
-                                material_map);
+                                material_map,
+                                use_max_proc_maps);
 
                         const auto entry = object_info.m_mtlid_to_slot.find(i);
                         if (entry != object_info.m_mtlid_to_slot.end())
@@ -516,7 +519,8 @@ namespace
                         assembly,
                         instance_name,
                         mtl,
-                        material_map);
+                        material_map,
+                        use_max_proc_maps);
 
                 // Assign it to all material slots.
                 for (const auto& entry : object_info.m_mtlid_to_slot)
@@ -582,6 +586,7 @@ namespace
         asr::Assembly&          assembly,
         INode*                  node,
         const RenderType        type,
+        const bool              use_max_proc_maps,
         const TimeValue         time,
         ObjectMap&              object_map,
         MaterialMap&            material_map)
@@ -604,6 +609,7 @@ namespace
                     node,
                     object_info,
                     type,
+                    use_max_proc_maps,
                     time,
                     material_map);
             }
@@ -618,6 +624,7 @@ namespace
                     node,
                     object_info,
                     type,
+                    use_max_proc_maps,
                     time,
                     material_map);
             }
@@ -628,6 +635,7 @@ namespace
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
         const RenderType        type,
+        const bool              use_max_proc_maps,
         const TimeValue         time,
         ObjectMap&              object_map,
         MaterialMap&            material_map)
@@ -638,6 +646,7 @@ namespace
                 assembly,
                 object,
                 type,
+                use_max_proc_maps,
                 time,
                 object_map,
                 material_map);
@@ -940,13 +949,14 @@ namespace
         const MaxSceneEntities&             entities,
         const std::vector<DefaultLight>&    default_lights,
         const RenderType                    type,
+        const bool                          use_max_proc_maps,
         const TimeValue                     time)
     {
         ObjectMap object_map;
         MaterialMap material_map;
 
         // Add objects, and consequently object instances and materials, to the assembly.
-        add_objects(assembly, entities, type, time, object_map, material_map);
+        add_objects(assembly, entities, type, use_max_proc_maps, time, object_map, material_map);
 
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
         add_lights(assembly, rend_params, entities, time);
@@ -980,7 +990,7 @@ namespace
             {
                 auto bitmap_envmap = static_cast<BitmapTex*>(rend_params.envMap);
                 if (bitmap_envmap)
-                    env_tex_instance_name = insert_texture_and_instance(scene, bitmap_envmap);
+                    env_tex_instance_name = insert_bitmap_texture_and_instance(scene, bitmap_envmap);
             }
             else if (!rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
             {
@@ -1365,6 +1375,7 @@ asf::auto_release_ptr<asr::Project> build_project(
         entities,
         default_lights,
         type,
+        settings.m_use_max_procedural_maps,
         time);
 
     // Create an instance of the assembly and insert it into the scene.

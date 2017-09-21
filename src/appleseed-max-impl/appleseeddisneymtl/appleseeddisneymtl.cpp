@@ -713,7 +713,20 @@ bool AppleseedDisneyMtl::can_emit_light() const
     return false;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::Assembly& assembly, const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(
+    asr::Assembly&  assembly,
+    const char*     name,
+    bool            use_max_source)
+{
+    if (use_max_source)
+        return create_max_material(assembly, name);
+    else
+        return create_universal_material(assembly, name);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_universal_material(
+    asr::Assembly&  assembly,
+    const char*     name)
 {
     //
     // Shader group.
@@ -763,18 +776,135 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(asr::As
     {
         material_params.insert(
             "alpha_map",
-            insert_texture_and_instance(
+            insert_bitmap_texture_and_instance(
                 assembly,
                 m_alpha_texmap,
                 asr::ParamArray(),
                 asr::ParamArray()
-                    .insert("alpha_mode", "detect")));
+                .insert("alpha_mode", "detect")));
     }
     else material_params.insert("alpha_map", m_alpha / 100.0f);
 
     return asr::OSLMaterialFactory::static_create(name, material_params);
 }
 
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_max_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+     asr::ParamArray material_params;
+
+    //
+    // BRDF.
+    //
+
+    {
+        asr::ParamArray bsdf_params;
+
+        // Base color.
+        if (is_supported_texture(m_base_color_texmap))
+            bsdf_params.insert("base_color", insert_max_texture_and_instance(assembly, m_base_color_texmap));
+        else
+        {
+            const auto color_name = std::string(name) + "_bsdf_base_color";
+            insert_color(assembly, m_base_color, color_name.c_str());
+            bsdf_params.insert("base_color", color_name);
+        }
+
+        // Specular Tint.
+        if (is_supported_texture(m_specular_tint_texmap))
+            bsdf_params.insert("specular_tint", insert_max_texture_and_instance(assembly, m_specular_tint_texmap));
+        else bsdf_params.insert("specular_tint", m_specular_tint / 100.0f);
+
+        // Sheen.
+        if (is_supported_texture(m_sheen_texmap))
+            bsdf_params.insert("sheen", insert_max_texture_and_instance(assembly, m_sheen_texmap));
+        else bsdf_params.insert("sheen", m_sheen / 1000.0f);
+
+        // Sheen Tint.
+        if (is_supported_texture(m_sheen_tint_texmap))
+            bsdf_params.insert("sheen_tint", insert_max_texture_and_instance(assembly, m_sheen_tint_texmap));
+        else bsdf_params.insert("sheen_tint", m_sheen_tint / 100.0f);
+
+        // Clearcoat.
+        if (is_supported_texture(m_clearcoat_texmap))
+            bsdf_params.insert("clearcoat", insert_max_texture_and_instance(assembly, m_clearcoat_texmap));
+        else bsdf_params.insert("clearcoat", m_clearcoat / 1000.0f);
+
+        // Clearcoat Gloss.
+        if (is_supported_texture(m_clearcoat_gloss_texmap))
+            bsdf_params.insert("clearcoat", insert_max_texture_and_instance(assembly, m_clearcoat_gloss_texmap));
+        else bsdf_params.insert("clearcoat", m_clearcoat_gloss / 100.0f);
+
+        // Specular.
+        if (is_supported_texture(m_specular_texmap))
+            bsdf_params.insert("specular", insert_max_texture_and_instance(assembly, m_specular_texmap));
+        else bsdf_params.insert("specular", m_specular / 100.0f);
+
+        // Metallic.
+        if (is_supported_texture(m_metallic_texmap))
+            bsdf_params.insert("metallic", insert_max_texture_and_instance(assembly, m_metallic_texmap));
+        else bsdf_params.insert("metallic", m_metallic / 100.0f);
+
+        // Roughness.
+        if (is_supported_texture(m_roughness_texmap))
+            bsdf_params.insert("roughness", insert_max_texture_and_instance(assembly, m_roughness_texmap));
+        else bsdf_params.insert("roughness", m_roughness / 100.0f);
+
+        // Anisotropic.
+        if (is_supported_texture(m_anisotropy_texmap))
+            bsdf_params.insert("anisotropic", insert_max_texture_and_instance(assembly, m_anisotropy_texmap));
+        else bsdf_params.insert("anisotropic", m_anisotropy);
+
+        const auto bsdf_name = std::string(name) + "_bsdf";
+        assembly.bsdfs().insert(
+            asr::DisneyBRDFFactory::static_create(bsdf_name.c_str(), bsdf_params));
+        material_params.insert("bsdf", bsdf_name);
+    }
+
+    //
+    // Material.
+    //
+
+    if (is_supported_texture(m_alpha_texmap))
+    {
+        material_params.insert(
+            "alpha_map",
+            insert_max_texture_and_instance(
+                assembly,
+                m_alpha_texmap,
+                asr::ParamArray(),
+                asr::ParamArray()
+                .insert("alpha_mode", "detect")));
+    }
+    else material_params.insert("alpha_map", m_alpha / 100.0f);
+
+    if (is_supported_texture(m_bump_texmap))
+    {
+        material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
+        material_params.insert(
+            "displacement_map",
+            insert_max_texture_and_instance(
+                assembly,
+                m_bump_texmap,
+                asr::ParamArray()
+                .insert("color_space", "linear_rgb")));
+
+        switch (m_bump_method)
+        {
+          case 0:
+              material_params.insert("bump_amplitude", m_bump_amount);
+              material_params.insert("bump_offset", 0.0009765625f);     // 0.5/512 - value that should work for non-image sources
+            break;
+
+          case 1:
+            material_params.insert("normal_map_up", m_bump_up_vector == 0 ? "y" : "z");
+            break;
+        }
+    }
+
+    return asr::GenericMaterialFactory::static_create(name, material_params);
+}
 
 //
 // AppleseedDisneyMtlBrowserEntryInfo class implementation.

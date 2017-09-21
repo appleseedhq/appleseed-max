@@ -132,9 +132,17 @@ class AppleseedDisneyMtl
     virtual bool can_emit_light() const override;
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
-        const char*         name) override;
+        const char*         name,
+        bool                use_max_source) override;
 
   private:
+    foundation::auto_release_ptr<renderer::Material> create_universal_material(
+        renderer::Assembly& assembly,
+        const char*         name);
+    foundation::auto_release_ptr<renderer::Material> create_max_material(
+        renderer::Assembly& assembly,
+        const char*         name);
+
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
     Color           m_base_color;
