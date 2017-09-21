@@ -68,6 +68,7 @@ namespace asr = renderer;
 namespace
 {
     const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
+    const Class_ID AppleseedRendererTabClassId(0x6155c0c, 0xed6475b);
     const wchar_t* AppleseedRendererClassName = L"appleseed Renderer";
 }
 
@@ -120,6 +121,17 @@ void* AppleseedRenderer::GetInterface(ULONG id)
     }
     else
 #endif
+    {
+        return Renderer::GetInterface(id);
+    }
+}
+
+BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
+{
+    if (id == TAB_DIALOG_OBJECT_INTERFACE_ID) {
+        return static_cast<ITabDialogObject*>(this);
+    }
+    else
     {
         return Renderer::GetInterface(id);
     }
@@ -587,6 +599,37 @@ void AppleseedRenderer::clear()
     m_default_lights.clear();
     m_time = 0;
     m_entities.clear();
+}
+
+void AppleseedRenderer::AddTabToDialog(
+    ITabbedDialog*          dialog,
+    ITabDialogPluginTab*    tab) 
+{
+    const int rend_rollup_width = 222;  // The width of the render rollout in dialog units.
+    dialog->AddRollout(
+        L"Renderer",
+        NULL,
+        AppleseedRendererTabClassId,
+        tab,
+        -1,
+        rend_rollup_width,
+        0,
+        0,
+        ITabbedDialog::kSystemPage);
+}
+
+int AppleseedRenderer::AcceptTab(
+    ITabDialogPluginTab*    tab)
+{
+    const Class_ID raytrace_tab_classid(0x4fa95e9b, 0x9a26e66);
+
+    if (tab->GetSuperClassID() == RADIOSITY_CLASS_ID)
+        return 0;
+    
+    if (tab->GetClassID() == raytrace_tab_classid)
+        return 0;
+
+    return TAB_DIALOG_ADD_TAB;
 }
 
 

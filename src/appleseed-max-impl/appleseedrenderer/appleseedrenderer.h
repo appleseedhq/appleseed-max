@@ -37,6 +37,7 @@
 
 // 3ds Max headers.
 #include <iparamb2.h>
+#include <ITabDialog.h>
 #include <max.h>
 #include <render.h>
 #undef base_type
@@ -52,6 +53,7 @@ class AppleseedInteractiveRender;
 
 class AppleseedRenderer
   : public Renderer
+  , ITabDialogObject
 {
   public:
     static Class_ID get_class_id();
@@ -66,6 +68,8 @@ class AppleseedRenderer
 
     // Animatable.
     virtual void* GetInterface(ULONG id) override;
+
+    virtual BaseInterface* GetInterface(Interface_ID id) override;
 
 #if MAX_RELEASE == MAX_RELEASE_R19
 
@@ -127,6 +131,14 @@ class AppleseedRenderer
 
     virtual IOResult Save(ISave* isave) override;
     virtual IOResult Load(ILoad* iload) override;
+
+    // ITabDialog.
+    virtual void AddTabToDialog(
+        ITabbedDialog*          dialog,
+        ITabDialogPluginTab*    tab) override;
+
+    virtual int AcceptTab(
+        ITabDialogPluginTab*    tab) override;
 
   private:
     AppleseedInteractiveRender* m_interactive_renderer;
