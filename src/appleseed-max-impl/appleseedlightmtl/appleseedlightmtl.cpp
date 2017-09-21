@@ -482,7 +482,10 @@ bool AppleseedLightMtl::can_emit_light() const
     return true;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Assembly& assembly, const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
+    asr::Assembly&  assembly,
+    const char*     name, 
+    bool            use_max_procedural_maps)
 {
     asr::ParamArray material_params;
 
@@ -490,27 +493,28 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(asr::Ass
     // EDF.
     //
 
+    asr::ParamArray edf_params;
+
+    // Radiance.
+    std::string texture_name = insert_texture_and_instance(assembly, m_light_color_texmap, use_max_procedural_maps);
+    if (!texture_name.empty())
     {
-        asr::ParamArray edf_params;
-
-        // Radiance.
-        if (is_bitmap_texture(m_light_color_texmap))
-            edf_params.insert("radiance", insert_texture_and_instance(assembly, m_light_color_texmap));
-        else
-        {
-            const auto color_name = std::string(name) + "_edf_radiance";
-            insert_color(assembly, m_light_color, color_name.c_str());
-            edf_params.insert("radiance", color_name);
-        }
-
-        // Radiance multiplier.
-        edf_params.insert("radiance_multiplier", m_light_power);
-
-        const auto edf_name = std::string(name) + "_edf";
-        assembly.edfs().insert(
-            asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));
-        material_params.insert("edf", edf_name);
+        edf_params.insert("radiance", texture_name);
     }
+    else
+    {
+        const auto color_name = std::string(name) + "_edf_radiance";
+        insert_color(assembly, m_light_color, color_name.c_str());
+        edf_params.insert("radiance", color_name);
+    }
+
+    // Radiance multiplier.
+    edf_params.insert("radiance_multiplier", m_light_power);
+
+    const auto edf_name = std::string(name) + "_edf";
+    assembly.edfs().insert(
+        asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));
+    material_params.insert("edf", edf_name);
 
     //
     // Material.

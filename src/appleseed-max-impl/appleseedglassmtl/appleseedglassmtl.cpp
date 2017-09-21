@@ -626,10 +626,14 @@ bool AppleseedGlassMtl::can_emit_light() const
     return false;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Assembly& assembly, const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
+    asr::Assembly&  assembly,
+    const char*     name,
+    bool            use_max_procedural_maps)
 {
     asr::ParamArray material_params;
-
+    std::string texture_name;
+    
     //
     // BRDF.
     //
@@ -639,8 +643,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Ass
         bsdf_params.insert("mdf", "ggx");
 
         // Surface transmittance.
-        if (is_bitmap_texture(m_surface_color_texmap))
-            bsdf_params.insert("surface_transmittance", insert_texture_and_instance(assembly, m_surface_color_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_surface_color_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bsdf_params.insert("surface_transmittance", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_bsdf_surface_transmittance";
@@ -649,8 +654,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Ass
         }
 
         // Reflection tint.
-        if (is_bitmap_texture(m_reflection_tint_texmap))
-            bsdf_params.insert("reflection_tint", insert_texture_and_instance(assembly, m_reflection_tint_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_reflection_tint_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bsdf_params.insert("reflection_tint", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_bsdf_reflection_tint";
@@ -659,8 +665,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Ass
         }
 
         // Refraction tint.
-        if (is_bitmap_texture(m_refraction_tint_texmap))
-            bsdf_params.insert("refraction_tint", insert_texture_and_instance(assembly, m_refraction_tint_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_refraction_tint_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bsdf_params.insert("refraction_tint", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_bsdf_refraction_tint";
@@ -672,18 +679,21 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Ass
         bsdf_params.insert("ior", m_ior);
 
         // Roughness.
-        if (is_bitmap_texture(m_roughness_texmap))
-            bsdf_params.insert("roughness", insert_texture_and_instance(assembly, m_roughness_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bsdf_params.insert("roughness", texture_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
         // Anisotropy.
-        if (is_bitmap_texture(m_anisotropy_texmap))
-            bsdf_params.insert("anisotropic", insert_texture_and_instance(assembly, m_anisotropy_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bsdf_params.insert("anisotropic", texture_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
 
         // Volume transmittance.
-        if (is_bitmap_texture(m_volume_color_texmap))
-            bsdf_params.insert("volume_transmittance", insert_texture_and_instance(assembly, m_volume_color_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_volume_color_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bsdf_params.insert("volume_transmittance", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_bsdf_volume_transmittance";
@@ -704,21 +714,22 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(asr::Ass
     // Material.
     //
 
-    if (is_bitmap_texture(m_bump_texmap))
+    texture_name = insert_texture_and_instance(
+        assembly,
+        m_bump_texmap,
+        use_max_procedural_maps,
+        asr::ParamArray()
+            .insert("color_space", "linear_rgb"));
+    if (!texture_name.empty())
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert(
-            "displacement_map",
-            insert_texture_and_instance(
-                assembly,
-                m_bump_texmap,
-                asr::ParamArray()
-                    .insert("color_space", "linear_rgb")));
+        material_params.insert("displacement_map", texture_name);
 
         switch (m_bump_method)
         {
           case 0:
             material_params.insert("bump_amplitude", m_bump_amount);
+            material_params.insert("bump_offset", 0.0009765625f);     // 0.5/512 - value that should work for non-image sources
             break;
 
           case 1:

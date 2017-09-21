@@ -53,14 +53,14 @@ class AppleseedInteractiveRender;
 
 class AppleseedRenderer
   : public Renderer
-  , ITabDialogObject
+  , public ITabDialogObject
 {
   public:
     static Class_ID get_class_id();
 
     AppleseedRenderer();
 
-    RendererSettings get_renderer_settings();
+    const RendererSettings& get_renderer_settings();
 
     virtual Class_ID ClassID() override;
 
