@@ -713,6 +713,7 @@ namespace
             m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
 
             CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS, m_settings.m_use_max_procedural_maps ? BST_CHECKED : BST_UNCHECKED);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -728,6 +729,10 @@ namespace
                 {
                   case IDC_CHECK_LOW_PRIORITY_MODE:
                     m_settings.m_low_priority_mode = IsDlgButtonChecked(hwnd, IDC_CHECK_LOW_PRIORITY_MODE) == BST_CHECKED;
+                    return TRUE;
+
+                  case IDC_CHECK_USE_MAX_PROCEDURAL_MAPS:
+                    m_settings.m_use_max_procedural_maps = IsDlgButtonChecked(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS) == BST_CHECKED;
                     return TRUE;
 
                   default:
