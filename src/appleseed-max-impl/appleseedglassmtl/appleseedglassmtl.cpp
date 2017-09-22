@@ -629,9 +629,9 @@ bool AppleseedGlassMtl::can_emit_light() const
 asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
     asr::Assembly&  assembly,
     const char*     name,
-    bool            use_max_source)
+    bool            use_max_procedural_maps)
 {
-    if (use_max_source)
+    if (use_max_procedural_maps)
         return create_max_material(assembly, name);
     else
         return create_universal_material(assembly, name);

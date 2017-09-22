@@ -134,12 +134,6 @@ class AppleseedLightMtl
         renderer::Assembly& assembly,
         const char*         name,
         bool                use_max_source) override;
-    foundation::auto_release_ptr<renderer::Material> create_universal_material(
-        renderer::Assembly& assembly,
-        const char*         name);
-    foundation::auto_release_ptr<renderer::Material> create_max_material(
-        renderer::Assembly& assembly,
-        const char*         name);
 
 
   private:

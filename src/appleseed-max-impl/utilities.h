@@ -153,6 +153,13 @@ void insert_color(
     const Color&            color,
     const char*             name);
 
+std::string insert_texture_and_instance(
+    renderer::BaseGroup&    base_group,
+    Texmap*                 texmap,
+    bool                    use_max_source,
+    renderer::ParamArray    texture_params = renderer::ParamArray(),
+    renderer::ParamArray    texture_instance_params = renderer::ParamArray());
+
 std::string insert_bitmap_texture_and_instance(
     renderer::BaseGroup&    base_group,
     Texmap*                 texmap,

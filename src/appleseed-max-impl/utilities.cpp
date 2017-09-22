@@ -39,6 +39,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/searchpaths.h"
+#include "foundation/utility/siphash.h"
 #include "foundation/utility/string.h"
 
 // 3ds Max Headers.
@@ -46,9 +47,9 @@
 #include <assert1.h>
 #include <bitmap.h>
 #include <imtl.h>
+#include <maxapi.h>
 #include <plugapi.h>
 #include <stdmat.h>
-#include <maxapi.h>
 
 // Windows headers.
 #include <Shlwapi.h>
@@ -72,6 +73,19 @@ namespace
           , dp(Point3(0.0f, 0.0f, 0.0f))
         {
             doMaps = TRUE;
+        }
+
+        MaxShadeContext(const asf::Vector2f& tex_uv)
+        {
+            uv.x = tex_uv.x;
+            uv.y = tex_uv.y;
+            curve = 0.0f;
+            dp = Point3(0.0f, 0.0f, 0.0f);
+            mode = SCMODE_NORMAL;
+            proj_type = 0;        // 0: perspective, 1: parallel
+            cur_time = GetCOREInterface()->GetTime();
+            filterMaps = false;
+            mtlNum = 1;
         }
 
         BOOL InMtlEditor() override
@@ -240,9 +254,9 @@ namespace
 namespace
 {
     class MaxProceduralTextureSource
-        : public asr::Source
+      : public asr::Source
     {
-    public:
+      public:
         MaxProceduralTextureSource(Texmap* texmap)
             : asr::Source(false)
             , m_texmap(texmap)
@@ -251,7 +265,7 @@ namespace
 
         virtual asf::uint64 compute_signature() const override
         {
-            return 0;
+            return asf::siphash24(m_texmap);
         }
 
         virtual void evaluate(
@@ -267,8 +281,7 @@ namespace
             const asf::Vector2f&        uv,
             asf::Color3f&               linear_rgb) const override
         {
-            const asf::Color4f color = evaluate_color(uv);
-            linear_rgb = asf::Color3f(color.r, color.g, color.b);
+            evaluate_color(uv, linear_rgb.r, linear_rgb.g, linear_rgb.b);
         }
 
         virtual void evaluate(
@@ -277,10 +290,8 @@ namespace
             asr::Spectrum&              spectrum) const override
         {
             DbgAssert(spectrum.size() == 3);
-            const asf::Color4f color = evaluate_color(uv);
-            spectrum[0] = color[0];
-            spectrum[1] = color[1];
-            spectrum[2] = color[2];
+            asf::Color3f color;
+            evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2]);
         }
 
         virtual void evaluate(
@@ -297,9 +308,7 @@ namespace
             asf::Color3f&               linear_rgb,
             asr::Alpha&                 alpha) const override
         {
-            const asf::Color4f color = evaluate_color(uv);
-            linear_rgb = asf::Color3f(color.r, color.g, color.b);
-            alpha.set(color.a);
+            evaluate_color(uv, linear_rgb.r, linear_rgb.g, linear_rgb.b, &alpha);
         }
 
         virtual void evaluate(
@@ -309,55 +318,40 @@ namespace
             asr::Alpha&                 alpha) const override
         {
             DbgAssert(spectrum.size() == 3);
-            const asf::Color4f color = evaluate_color(uv);
-            spectrum[0] = color[0];
-            spectrum[1] = color[1];
-            spectrum[2] = color[2];
-            alpha.set(color[3]);
+            asf::Color3f color;
+            evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2], &alpha);
         }
 
-    private:
-
+      private:
         float evaluate_float(const asf::Vector2f& uv) const
         {
-            MaxShadeContext maxsc;
-
-            maxsc.mode = SCMODE_NORMAL;
-            maxsc.proj_type = 0;        // 0: perspective, 1: parallel
-            maxsc.cur_time = GetCOREInterface()->GetTime();
-            maxsc.uv.x = uv.x;
-            maxsc.uv.y = uv.y;
-            maxsc.filterMaps = false;
-            maxsc.mtlNum = 1;
+            MaxShadeContext maxsc(uv);
 
             return m_texmap->EvalMono(maxsc);
         }
 
-        asf::Color4f evaluate_color(const asf::Vector2f& uv) const
+        void evaluate_color(const asf::Vector2f& uv, float& r, float& g, float& b, asr::Alpha* alpha = nullptr) const
         {
-            MaxShadeContext maxsc;
+            MaxShadeContext maxsc(uv);
+            
+            AColor tex_color = m_texmap->EvalColor(maxsc);
 
-            maxsc.mode = SCMODE_NORMAL;
-            maxsc.proj_type = 0;        // 0: perspective, 1: parallel
-            maxsc.cur_time = GetCOREInterface()->GetTime();
-            maxsc.uv.x = uv.x;
-            maxsc.uv.y = uv.y;
-            maxsc.filterMaps = false;
-            maxsc.mtlNum = 1;
+            r = tex_color.r;
+            g = tex_color.g;
+            b = tex_color.b;
 
-            AColor color = m_texmap->EvalColor(maxsc);
-
-            return asf::Color4f(color.r, color.g, color.b, color.a);
+            if (alpha)
+                alpha->set(tex_color.a);
         }
         
         Texmap*     m_texmap;
     };
 
     class MaxProceduralTexture
-        : public asr::Texture
+      : public asr::Texture
     {
-    public:
-        explicit MaxProceduralTexture(const char* name, Texmap* texmap)
+      public:
+        MaxProceduralTexture(const char* name, Texmap* texmap)
             : asr::Texture(name, asr::ParamArray())
             , m_texmap(texmap)
         {
@@ -405,7 +399,7 @@ namespace
         {
         }
 
-    private:
+      private:
         asf::CanvasProperties   m_properties;
         Texmap*                 m_texmap;
     };
@@ -413,18 +407,19 @@ namespace
 
 namespace
 {
-    void EnumMtlTree(MtlBase* mat_base, TimeValue time)
+    void load_map_files_recursively(MtlBase* mat_base, TimeValue time)
     {
         if (IsTex(mat_base))
         {
-            Texmap* tex_map = (Texmap*)mat_base;
+            Texmap* tex_map = static_cast<Texmap*>(mat_base);
             tex_map->LoadMapFiles(time);
         }
 
-        for (int i = 0, j = mat_base->NumSubTexmaps(); i < j; i++) {
+        for (int i = 0, e = mat_base->NumSubTexmaps(); i < e; i++)
+        {
             Texmap* sub_tex = mat_base->GetSubTexmap(i);
             if (sub_tex)
-                EnumMtlTree(sub_tex, time);
+                load_map_files_recursively(sub_tex, time);
         }
     }
 }
@@ -504,29 +499,17 @@ bool is_supported_texture(Texmap* map)
     switch (part_a)
     {
       case 0x64035FB9:              // Tiles.
-        if (part_b == 0x69664CDC)
-            return true;
-        break;
+        return part_b == 0x69664CDC;
       case 0x1DEC5B86:              // Gradient Ramp.
-        if (part_b == 0x43383A51)
-            return true;
-        break;
+        return part_b == 0x43383A51;
       case 0x72C8577F:              // Swirl.
-        if (part_b == 0x39A00A1B)
-            return true;
-        break;
+        return part_b == 0x39A00A1B;
       case 0x23AD0AE9:              // Perlin Marble.
-        if (part_b == 0x158D7A88)
-            return true;
-        break;
+        return part_b == 0x158D7A88;
       case 0x243E22C6:              // Normal Bump.
-        if (part_b == 0x63F6A014)
-            return true;
-        break;
+        return part_b == 0x63F6A014;
       case 0x93A92749:              // Vector Map.
-        if (part_b == 0x6B8D470A)
-            return true;
-        break;
+        return part_b == 0x6B8D470A;
       case CHECKER_CLASS_ID:
       case MARBLE_CLASS_ID:
       case MASK_CLASS_ID:
@@ -547,8 +530,6 @@ bool is_supported_texture(Texmap* map)
       case 0x62c32b8a:              // SPECKLE_CLASS_ID
       case 0x90b04f9:               // SPLAT_CLASS_ID
         return true;
-      default:
-        return false;
     }
 
     return false;
@@ -577,13 +558,90 @@ void insert_color(asr::BaseGroup& base_group, const Color& color, const char* na
                 .insert("color", to_color3f(color))));
 }
 
+std::string insert_texture_and_instance(
+    asr::BaseGroup& base_group,
+    Texmap*         texmap,
+    bool            use_max_source,
+    asr::ParamArray texture_params,
+    asr::ParamArray texture_instance_params)
+{
+    std::string texture_instance_name;
+    std::string texture_name;
+    if (use_max_source)
+    {
+        if (is_supported_texture(texmap))
+        {
+            TimeValue curr_time = GetCOREInterface()->GetTime();
+
+            texmap->Update(curr_time, FOREVER);
+            load_map_files_recursively(texmap, curr_time);
+
+            if (!texture_params.strings().exist("color_space"))
+            {
+                // todo: should probably check max's gamma settings here.
+                texture_params.insert("color_space", "linear_rgb");
+            }
+
+            texture_name = wide_to_utf8(texmap->GetName());
+            if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
+            {
+                base_group.textures().insert(
+                    asf::auto_release_ptr<asr::Texture>(
+                        new MaxProceduralTexture(
+                            texture_name.c_str(), texmap)));
+            }
+        }
+    }
+    else
+    {
+        if (is_bitmap_texture(texmap))
+        {
+            BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
+
+            const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
+            texture_params.insert("filename", filepath);
+
+            if (!texture_params.strings().exist("color_space"))
+            {
+                if (asf::ends_with(filepath, ".exr"))
+                    texture_params.insert("color_space", "linear_rgb");
+                else texture_params.insert("color_space", "srgb");
+            }
+
+            texture_name = wide_to_utf8(texmap->GetName());
+            if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
+            {
+                base_group.textures().insert(
+                    asr::DiskTexture2dFactory::static_create(
+                        texture_name.c_str(),
+                        texture_params,
+                        asf::SearchPaths()));
+            }
+        }
+    }
+
+    if (!texture_name.empty())
+    {
+        texture_instance_name = texture_name + "_inst";
+        if (base_group.texture_instances().get_by_name(texture_instance_name.c_str()) == nullptr)
+        {
+            base_group.texture_instances().insert(
+                asr::TextureInstanceFactory::create(
+                    texture_instance_name.c_str(),
+                    texture_instance_params,
+                    texture_name.c_str()));
+        }
+    }
+
+    return texture_instance_name;
+}
+
 std::string insert_bitmap_texture_and_instance(
     asr::BaseGroup& base_group,
     Texmap*         texmap,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    const std::string texture_name = wide_to_utf8(texmap->GetName());
     BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
 
     const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
@@ -596,6 +654,7 @@ std::string insert_bitmap_texture_and_instance(
         else texture_params.insert("color_space", "srgb");
     }
 
+    const std::string texture_name = wide_to_utf8(texmap->GetName());
     if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
     {
         base_group.textures().insert(
@@ -628,7 +687,7 @@ std::string insert_max_texture_and_instance(
     TimeValue curr_time = GetCOREInterface()->GetTime();
 
     texmap->Update(curr_time, FOREVER);
-    EnumMtlTree(texmap, curr_time);
+    load_map_files_recursively(texmap, curr_time);
 
     if (!texture_params.strings().exist("color_space"))
     {

@@ -390,7 +390,7 @@ namespace
         const std::string&      instance_name,
         Mtl*                    mtl,
         MaterialMap&            material_map,
-        const bool              use_max_proc_maps)
+        const bool              use_max_procedural_maps)
     {
         MaterialInfo material_info;
 
@@ -406,7 +406,7 @@ namespace
                 material_info.m_name =
                     make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
                 assembly.materials().insert(
-                    appleseed_mtl->create_material(assembly, material_info.m_name.c_str(), use_max_proc_maps));
+                    appleseed_mtl->create_material(assembly, material_info.m_name.c_str(), use_max_procedural_maps));
                 material_map.insert(std::make_pair(mtl, material_info.m_name));
             }
             else

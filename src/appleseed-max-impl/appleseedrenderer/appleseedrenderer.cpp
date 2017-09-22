@@ -91,7 +91,7 @@ AppleseedRenderer::AppleseedRenderer()
     clear();
 }
 
-RendererSettings AppleseedRenderer::get_renderer_settings()
+const RendererSettings& AppleseedRenderer::get_renderer_settings()
 {
     return m_settings;
 }
@@ -613,14 +613,14 @@ void AppleseedRenderer::AddTabToDialog(
     ITabbedDialog*          dialog,
     ITabDialogPluginTab*    tab) 
 {
-    const int rend_rollup_width = 222;  // The width of the render rollout in dialog units.
+    const int RenderRollupWidth = 222;  // The width of the render rollout in dialog units.
     dialog->AddRollout(
         L"Renderer",
         NULL,
         AppleseedRendererTabClassId,
         tab,
         -1,
-        rend_rollup_width,
+        RenderRollupWidth,
         0,
         0,
         ITabbedDialog::kSystemPage);
@@ -629,12 +629,12 @@ void AppleseedRenderer::AddTabToDialog(
 int AppleseedRenderer::AcceptTab(
     ITabDialogPluginTab*    tab)
 {
-    const Class_ID raytrace_tab_classid(0x4fa95e9b, 0x9a26e66);
+    const Class_ID RayTraceTabClassId(0x4fa95e9b, 0x9a26e66);
 
     if (tab->GetSuperClassID() == RADIOSITY_CLASS_ID)
         return 0;
     
-    if (tab->GetClassID() == raytrace_tab_classid)
+    if (tab->GetClassID() == RayTraceTabClassId)
         return 0;
 
     return TAB_DIALOG_ADD_TAB;
