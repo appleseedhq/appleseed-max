@@ -136,13 +136,6 @@ class AppleseedGlassMtl
         bool                use_max_source) override;
 
   private:
-      foundation::auto_release_ptr<renderer::Material> create_universal_material(
-          renderer::Assembly& assembly,
-          const char*         name);
-      foundation::auto_release_ptr<renderer::Material> create_max_material(
-          renderer::Assembly& assembly,
-          const char*         name);
-
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
     Color           m_surface_color;

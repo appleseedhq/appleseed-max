@@ -166,12 +166,6 @@ std::string insert_bitmap_texture_and_instance(
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 
-std::string insert_max_texture_and_instance(
-    renderer::BaseGroup&    base_group,
-    Texmap*                 texmap,
-    renderer::ParamArray    texture_params = renderer::ParamArray(),
-    renderer::ParamArray    texture_instance_params = renderer::ParamArray());
-
 //
 // Implementation.
 //

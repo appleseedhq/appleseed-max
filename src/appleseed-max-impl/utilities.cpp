@@ -567,6 +567,7 @@ std::string insert_texture_and_instance(
 {
     std::string texture_instance_name;
     std::string texture_name;
+
     if (use_max_source)
     {
         if (is_supported_texture(texmap))
@@ -662,45 +663,6 @@ std::string insert_bitmap_texture_and_instance(
                 texture_name.c_str(),
                 texture_params,
                 asf::SearchPaths()));
-    }
-
-    const std::string texture_instance_name = texture_name + "_inst";
-    if (base_group.texture_instances().get_by_name(texture_instance_name.c_str()) == nullptr)
-    {
-        base_group.texture_instances().insert(
-            asr::TextureInstanceFactory::create(
-                texture_instance_name.c_str(),
-                texture_instance_params,
-                texture_name.c_str()));
-    }
-
-    return texture_instance_name;
-}
-
-std::string insert_max_texture_and_instance(
-    asr::BaseGroup& base_group,
-    Texmap*         texmap,
-    asr::ParamArray texture_params,
-    asr::ParamArray texture_instance_params)
-{
-    const std::string texture_name = wide_to_utf8(texmap->GetName());
-    TimeValue curr_time = GetCOREInterface()->GetTime();
-
-    texmap->Update(curr_time, FOREVER);
-    load_map_files_recursively(texmap, curr_time);
-
-    if (!texture_params.strings().exist("color_space"))
-    {
-        // todo: should probably check max's gamma settings here.
-        texture_params.insert("color_space", "linear_rgb");
-    }
-
-    if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
-    {
-        base_group.textures().insert(
-            asf::auto_release_ptr<asr::Texture>(
-                new MaxProceduralTexture(
-                    texture_name.c_str(), texmap)));
     }
 
     const std::string texture_instance_name = texture_name + "_inst";
