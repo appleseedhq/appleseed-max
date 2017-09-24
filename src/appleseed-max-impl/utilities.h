@@ -95,14 +95,6 @@ std::wstring utf8_to_wide(const char* str);
 
 
 //
-// Bitmap functions.
-//
-
-// Return true if a given map is a valid bitmap texture.
-bool is_bitmap_texture(Texmap* map);
-bool is_supported_texture(Texmap* map);
-
-//
 // I/O and paths functions.
 //
 
@@ -130,7 +122,7 @@ IOResult read(ILoad* iload, T* object);
 //
 
 template <typename T>
-BOOL GetParamBlockValueByName(
+BOOL get_paramblock_value_by_name(
     IParamBlock2*           param_block,
     const MCHAR* const      param_name,
     const TimeValue         t,
@@ -142,6 +134,10 @@ BOOL GetParamBlockValueByName(
 //
 // Project construction functions.
 //
+
+bool is_bitmap_texture(Texmap* map);
+
+bool is_supported_procedural_texture(Texmap* map);
 
 template <typename EntityContainer>
 std::string make_unique_name(
@@ -156,7 +152,7 @@ void insert_color(
 std::string insert_texture_and_instance(
     renderer::BaseGroup&    base_group,
     Texmap*                 texmap,
-    bool                    use_max_procedural_maps,
+    const bool              use_max_procedural_maps,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 
@@ -165,6 +161,13 @@ std::string insert_bitmap_texture_and_instance(
     Texmap*                 texmap,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
+
+std::string insert_procedural_texture_and_instance(
+    renderer::BaseGroup&    base_group,
+    Texmap*                 texmap,
+    renderer::ParamArray    texture_params = renderer::ParamArray(),
+    renderer::ParamArray    texture_instance_params = renderer::ParamArray());
+
 
 //
 // Implementation.
@@ -275,7 +278,7 @@ inline IOResult read(ILoad* iload, MSTR* s)
 }
 
 template <typename T>
-BOOL GetParamBlockValueByName(
+BOOL get_paramblock_value_by_name(
     IParamBlock2*           param_block,
     const MCHAR* const      param_name,
     const TimeValue         t,

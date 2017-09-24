@@ -133,7 +133,7 @@ class AppleseedGlassMtl
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,
-        bool                use_max_procedural_maps) override;
+        const bool          use_max_procedural_maps) override;
 
   private:
     IParamBlock2*   m_pblock;

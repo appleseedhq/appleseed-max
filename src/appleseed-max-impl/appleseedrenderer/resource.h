@@ -7,6 +7,7 @@
 #define IDC_TEXT_APPLESEED_VERSION                  102
 #define IDC_STATIC_NEW_VERSION                      103
 #define IDC_BUTTON_DOWNLOAD                         104
+
 #define IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING   200
 #define IDC_TEXT_PIXELSAMPLES                       201
 #define IDC_SPINNER_PIXELSAMPLES                    202
@@ -14,6 +15,7 @@
 #define IDC_SPINNER_PASSES                          204
 #define IDC_TEXT_TILESIZE                           205
 #define IDC_SPINNER_TILESIZE                        206
+
 #define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        300
 #define IDC_CHECK_GI                                301
 #define IDC_CHECK_CAUSTICS                          302
@@ -27,6 +29,7 @@
 #define IDC_STATIC_BACKGROUND_ALPHA                 310
 #define IDC_TEXT_BACKGROUND_ALPHA                   311
 #define IDC_SPINNER_BACKGROUND_ALPHA                312
+
 #define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          400
 #define IDC_RADIO_RENDER                            401
 #define IDC_RADIO_SAVEPROJECT                       402
@@ -37,6 +40,7 @@
 #define IDC_STATIC_SCALE_MULTIPLIER                 407
 #define IDC_TEXT_SCALE_MULTIPLIER                   408
 #define IDC_SPINNER_SCALE_MULTIPLIER                409
+
 #define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM          500
 #define IDC_TEXT_RENDERINGTHREADS                   501
 #define IDC_SPINNER_RENDERINGTHREADS                502
