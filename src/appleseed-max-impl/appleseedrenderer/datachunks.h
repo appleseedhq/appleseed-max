@@ -62,3 +62,4 @@ const USHORT ChunkSettingsOutputScaleMultiplier         = 0x1330;
 const USHORT ChunkSettingsSystem                        = 0x1400;
 const USHORT ChunkSettingsSystemRenderingThreads        = 0x1410;
 const USHORT ChunkSettingsSystemLowPriorityMode         = 0x1420;
+const USHORT ChunkSettingsSystemUseMaxProceduralMaps    = 0x1430;

@@ -643,9 +643,13 @@ bool AppleseedSSSMtl::can_emit_light() const
     return false;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assembly& assembly, const char* name)
+asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
+    asr::Assembly&  assembly,
+    const char*     name,
+    bool            use_max_procedural_maps)
 {
     asr::ParamArray material_params;
+    std::string texture_name;
 
     //
     // BSSRDF.
@@ -658,8 +662,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         bssrdf_params.insert("ior", m_sss_ior);
 
         // Diffuse mean free path.
-        if (is_bitmap_texture(m_sss_scattering_color_texmap))
-            bssrdf_params.insert("mfp", insert_texture_and_instance(assembly, m_sss_scattering_color_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_sss_scattering_color_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bssrdf_params.insert("mfp", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_bssrdf_mfp";
@@ -668,8 +673,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         }
 
         // Reflectance.
-        if (is_bitmap_texture(m_sss_color_texmap))
-            bssrdf_params.insert("reflectance", insert_texture_and_instance(assembly, m_sss_color_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_sss_color_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            bssrdf_params.insert("reflectance", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_bssrdf_reflectance";
@@ -694,8 +700,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         brdf_params.insert("ior", m_sss_ior);
 
         // Reflectance.
-        if (is_bitmap_texture(m_specular_color_texmap))
-            brdf_params.insert("reflectance", insert_texture_and_instance(assembly, m_specular_color_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_specular_color_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            brdf_params.insert("reflectance", texture_name);
         else
         {
             const auto color_name = std::string(name) + "_brdf_reflectance";
@@ -704,18 +711,21 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
         }
 
         // Reflectance multiplier.
-        if (is_bitmap_texture(m_specular_amount_texmap))
-            brdf_params.insert("reflectance_multiplier", insert_texture_and_instance(assembly, m_specular_amount_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_specular_amount_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            brdf_params.insert("reflectance_multiplier", texture_name);
         else brdf_params.insert("reflectance_multiplier", m_specular_amount / 100.0f);
 
         // Roughness.
-        if (is_bitmap_texture(m_specular_roughness_texmap))
-            brdf_params.insert("roughness", insert_texture_and_instance(assembly, m_specular_roughness_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_specular_roughness_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            brdf_params.insert("roughness", texture_name);
         else brdf_params.insert("roughness", m_specular_roughness / 100.0f);
 
         // Anisotropy.
-        if (is_bitmap_texture(m_specular_anisotropy_texmap))
-            brdf_params.insert("anisotropic", insert_texture_and_instance(assembly, m_specular_anisotropy_texmap));
+        texture_name = insert_texture_and_instance(assembly, m_specular_anisotropy_texmap, use_max_procedural_maps);
+        if (!texture_name.empty())
+            brdf_params.insert("anisotropic", texture_name);
         else brdf_params.insert("anisotropic", m_specular_anisotropy);
 
         const auto brdf_name = std::string(name) + "_brdf";
@@ -729,24 +739,25 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(asr::Assem
     // Material.
     //
 
-    if (is_bitmap_texture(m_bump_texmap))
+    texture_name = insert_texture_and_instance(
+        assembly,
+        m_bump_texmap,
+        use_max_procedural_maps,
+        asr::ParamArray()
+            .insert("color_space", "linear_rgb"));
+    if (!texture_name.empty())
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert(
-            "displacement_map",
-            insert_texture_and_instance(
-                assembly,
-                m_bump_texmap,
-                asr::ParamArray()
-                    .insert("color_space", "linear_rgb")));
+        material_params.insert("displacement_map", texture_name);
 
         switch (m_bump_method)
         {
-          case 0:
+        case 0:
             material_params.insert("bump_amplitude", m_bump_amount);
+            material_params.insert("bump_offset", 0.0009765625f);     // 0.5/512 - value that should work for non-image sources
             break;
 
-          case 1:
+        case 1:
             material_params.insert("normal_map_up", m_bump_up_vector == 0 ? "y" : "z");
             break;
         }

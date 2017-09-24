@@ -89,6 +89,7 @@ class RendererSettings
 
     int         m_rendering_threads;
     bool        m_low_priority_mode;
+    bool        m_use_max_procedural_maps;
 
     // Apply these settings to a given project.
     void apply(renderer::Project& project) const;

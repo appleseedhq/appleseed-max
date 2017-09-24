@@ -68,6 +68,7 @@ namespace asr = renderer;
 namespace
 {
     const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
+    const Class_ID AppleseedRendererTabClassId(0x6155c0c, 0xed6475b);
     const wchar_t* AppleseedRendererClassName = L"appleseed Renderer";
 }
 
@@ -88,6 +89,11 @@ AppleseedRenderer::AppleseedRenderer()
   , m_interactive_renderer(nullptr)
 {
     clear();
+}
+
+const RendererSettings& AppleseedRenderer::get_renderer_settings()
+{
+    return m_settings;
 }
 
 Class_ID AppleseedRenderer::ClassID()
@@ -120,6 +126,17 @@ void* AppleseedRenderer::GetInterface(ULONG id)
     }
     else
 #endif
+    {
+        return Renderer::GetInterface(id);
+    }
+}
+
+BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
+{
+    if (id == TAB_DIALOG_OBJECT_INTERFACE_ID) {
+        return static_cast<ITabDialogObject*>(this);
+    }
+    else
     {
         return Renderer::GetInterface(id);
     }
@@ -463,14 +480,17 @@ int AppleseedRenderer::Render(
     else
     {
         // Write the project to disk.
-        if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
-            m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
+        if (!m_settings.m_use_max_procedural_maps)
         {
-            if (progress_cb)
-                progress_cb->SetTitle(L"Writing Project To Disk...");
-            asr::ProjectFileWriter::write(
-                project.ref(),
-                wide_to_utf8(m_settings.m_project_file_path).c_str());
+            if (m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
+                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
+            {
+                if (progress_cb)
+                    progress_cb->SetTitle(L"Writing Project To Disk...");
+                asr::ProjectFileWriter::write(
+                    project.ref(),
+                    wide_to_utf8(m_settings.m_project_file_path).c_str());
+            }
         }
 
         // Render the project.
@@ -587,6 +607,37 @@ void AppleseedRenderer::clear()
     m_default_lights.clear();
     m_time = 0;
     m_entities.clear();
+}
+
+void AppleseedRenderer::AddTabToDialog(
+    ITabbedDialog*          dialog,
+    ITabDialogPluginTab*    tab) 
+{
+    const int RenderRollupWidth = 222;  // The width of the render rollout in dialog units.
+    dialog->AddRollout(
+        L"Renderer",
+        NULL,
+        AppleseedRendererTabClassId,
+        tab,
+        -1,
+        RenderRollupWidth,
+        0,
+        0,
+        ITabbedDialog::kSystemPage);
+}
+
+int AppleseedRenderer::AcceptTab(
+    ITabDialogPluginTab*    tab)
+{
+    const Class_ID RayTraceTabClassId(0x4fa95e9b, 0x9a26e66);
+
+    if (tab->GetSuperClassID() == RADIOSITY_CLASS_ID)
+        return 0;
+    
+    if (tab->GetClassID() == RayTraceTabClassId)
+        return 0;
+
+    return TAB_DIALOG_ADD_TAB;
 }
 
 

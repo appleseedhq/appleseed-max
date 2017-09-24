@@ -132,7 +132,8 @@ class AppleseedGlassMtl
     virtual bool can_emit_light() const override;
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
-        const char*         name) override;
+        const char*         name,
+        bool                use_max_procedural_maps) override;
 
   private:
     IParamBlock2*   m_pblock;
