@@ -633,6 +633,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
 {
     asr::ParamArray material_params;
     std::string texture_name;
+    
     //
     // BRDF.
     //

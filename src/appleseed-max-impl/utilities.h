@@ -156,7 +156,7 @@ void insert_color(
 std::string insert_texture_and_instance(
     renderer::BaseGroup&    base_group,
     Texmap*                 texmap,
-    bool                    use_max_source,
+    bool                    use_max_procedural_maps,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 

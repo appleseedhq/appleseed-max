@@ -744,7 +744,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         m_bump_texmap,
         use_max_procedural_maps,
         asr::ParamArray()
-        .insert("color_space", "linear_rgb"));
+            .insert("color_space", "linear_rgb"));
     if (!texture_name.empty())
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");

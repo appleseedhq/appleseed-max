@@ -561,14 +561,14 @@ void insert_color(asr::BaseGroup& base_group, const Color& color, const char* na
 std::string insert_texture_and_instance(
     asr::BaseGroup& base_group,
     Texmap*         texmap,
-    bool            use_max_source,
+    bool            use_max_procedural_maps,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
     std::string texture_instance_name;
     std::string texture_name;
 
-    if (use_max_source)
+    if (use_max_procedural_maps)
     {
         if (is_supported_texture(texmap))
         {
