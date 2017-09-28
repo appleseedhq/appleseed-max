@@ -646,10 +646,10 @@ bool AppleseedSSSMtl::can_emit_light() const
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
     asr::Assembly&  assembly,
     const char*     name,
-    bool            use_max_procedural_maps)
+    const bool      use_max_procedural_maps)
 {
     asr::ParamArray material_params;
-    std::string texture_name;
+    std::string instance_name;
 
     //
     // BSSRDF.
@@ -662,9 +662,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         bssrdf_params.insert("ior", m_sss_ior);
 
         // Diffuse mean free path.
-        texture_name = insert_texture_and_instance(assembly, m_sss_scattering_color_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bssrdf_params.insert("mfp", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_sss_scattering_color_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bssrdf_params.insert("mfp", instance_name);
         else
         {
             const auto color_name = std::string(name) + "_bssrdf_mfp";
@@ -673,9 +673,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         }
 
         // Reflectance.
-        texture_name = insert_texture_and_instance(assembly, m_sss_color_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bssrdf_params.insert("reflectance", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_sss_color_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bssrdf_params.insert("reflectance", instance_name);
         else
         {
             const auto color_name = std::string(name) + "_bssrdf_reflectance";
@@ -700,9 +700,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         brdf_params.insert("ior", m_sss_ior);
 
         // Reflectance.
-        texture_name = insert_texture_and_instance(assembly, m_specular_color_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            brdf_params.insert("reflectance", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_specular_color_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            brdf_params.insert("reflectance", instance_name);
         else
         {
             const auto color_name = std::string(name) + "_brdf_reflectance";
@@ -711,27 +711,27 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         }
 
         // Reflectance multiplier.
-        texture_name = insert_texture_and_instance(assembly, m_specular_amount_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            brdf_params.insert("reflectance_multiplier", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_specular_amount_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            brdf_params.insert("reflectance_multiplier", instance_name);
         else brdf_params.insert("reflectance_multiplier", m_specular_amount / 100.0f);
 
         // Roughness.
-        texture_name = insert_texture_and_instance(assembly, m_specular_roughness_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            brdf_params.insert("roughness", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_specular_roughness_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            brdf_params.insert("roughness", instance_name);
         else brdf_params.insert("roughness", m_specular_roughness / 100.0f);
 
         // Anisotropy.
-        texture_name = insert_texture_and_instance(assembly, m_specular_anisotropy_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            brdf_params.insert("anisotropic", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_specular_anisotropy_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            brdf_params.insert("anisotropic", instance_name);
         else brdf_params.insert("anisotropic", m_specular_anisotropy);
 
+        // BRDF.
         const auto brdf_name = std::string(name) + "_brdf";
         assembly.bsdfs().insert(
             asr::GlossyBRDFFactory::static_create(brdf_name.c_str(), brdf_params));
-
         material_params.insert("bsdf", brdf_name);
     }
 
@@ -739,16 +739,17 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
     // Material.
     //
 
-    texture_name = insert_texture_and_instance(
+    // Displacement.
+    instance_name = insert_texture_and_instance(
         assembly,
         m_bump_texmap,
         use_max_procedural_maps,
         asr::ParamArray()
             .insert("color_space", "linear_rgb"));
-    if (!texture_name.empty())
+    if (!instance_name.empty())
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert("displacement_map", texture_name);
+        material_params.insert("displacement_map", instance_name);
 
         switch (m_bump_method)
         {

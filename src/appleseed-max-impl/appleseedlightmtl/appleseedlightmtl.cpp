@@ -485,7 +485,7 @@ bool AppleseedLightMtl::can_emit_light() const
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
     asr::Assembly&  assembly,
     const char*     name, 
-    bool            use_max_procedural_maps)
+    const bool      use_max_procedural_maps)
 {
     asr::ParamArray material_params;
 
@@ -496,11 +496,9 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
     asr::ParamArray edf_params;
 
     // Radiance.
-    std::string texture_name = insert_texture_and_instance(assembly, m_light_color_texmap, use_max_procedural_maps);
-    if (!texture_name.empty())
-    {
-        edf_params.insert("radiance", texture_name);
-    }
+    std::string instance_name = insert_texture_and_instance(assembly, m_light_color_texmap, use_max_procedural_maps);
+    if (!instance_name.empty())
+        edf_params.insert("radiance", instance_name);
     else
     {
         const auto color_name = std::string(name) + "_edf_radiance";
@@ -511,6 +509,7 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
     // Radiance multiplier.
     edf_params.insert("radiance_multiplier", m_light_power);
 
+    // EDF.
     const auto edf_name = std::string(name) + "_edf";
     assembly.edfs().insert(
         asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));

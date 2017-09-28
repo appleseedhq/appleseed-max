@@ -716,15 +716,15 @@ bool AppleseedDisneyMtl::can_emit_light() const
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(
     asr::Assembly&  assembly,
     const char*     name,
-    bool            use_max_procedural_maps)
+    const bool      use_max_procedural_maps)
 {
-    if (use_max_procedural_maps)
-        return create_max_material(assembly, name);
-    else
-        return create_universal_material(assembly, name);
+    return
+        use_max_procedural_maps
+            ? create_builtin_material(assembly, name)
+            : create_osl_material(assembly, name);
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_universal_material(
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
     asr::Assembly&  assembly,
     const char*     name)
 {
@@ -772,29 +772,28 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_universal_materi
     asr::ParamArray material_params;
     material_params.insert("osl_surface", shader_group_name);
 
-    std::string texture_name = insert_texture_and_instance(
-        assembly,
-        m_alpha_texmap,
-        false,
-        asr::ParamArray(),
-        asr::ParamArray()
-        .insert("alpha_mode", "detect"));
-    if (!texture_name.empty())
-    {
-        material_params.insert("alpha_map", texture_name);
-    }
+    const std::string instance_name =
+        insert_texture_and_instance(
+            assembly,
+            m_alpha_texmap,
+            false,
+            asr::ParamArray(),
+            asr::ParamArray()
+                .insert("alpha_mode", "detect"));
+    if (!instance_name.empty())
+        material_params.insert("alpha_map", instance_name);
     else material_params.insert("alpha_map", m_alpha / 100.0f);
 
     return asr::OSLMaterialFactory::static_create(name, material_params);
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_max_material(
+asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material(
     asr::Assembly&  assembly,
     const char*     name)
 {
     asr::ParamArray material_params;
-    std::string texture_name;
-    bool use_max_procedural_maps = true;
+    std::string instance_name;
+    const bool use_max_procedural_maps = true;
 
     //
     // BRDF.
@@ -804,9 +803,9 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_max_material(
         asr::ParamArray bsdf_params;
 
         // Base color.
-        texture_name = insert_texture_and_instance(assembly, m_base_color_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("base_color", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_base_color_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("base_color", instance_name);
         else
         {
             const auto color_name = std::string(name) + "_bsdf_base_color";
@@ -815,59 +814,60 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_max_material(
         }
 
         // Specular Tint.
-        texture_name = insert_texture_and_instance(assembly, m_specular_tint_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("specular_tint", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_specular_tint_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("specular_tint", instance_name);
         else bsdf_params.insert("specular_tint", m_specular_tint / 100.0f);
 
         // Sheen.
-        texture_name = insert_texture_and_instance(assembly, m_sheen_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("sheen", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_sheen_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("sheen", instance_name);
         else bsdf_params.insert("sheen", m_sheen / 1000.0f);
 
         // Sheen Tint.
-        texture_name = insert_texture_and_instance(assembly, m_sheen_tint_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("sheen_tint", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_sheen_tint_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("sheen_tint", instance_name);
         else bsdf_params.insert("sheen_tint", m_sheen_tint / 100.0f);
 
         // Clearcoat.
-        texture_name = insert_texture_and_instance(assembly, m_clearcoat_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("clearcoat", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_clearcoat_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("clearcoat", instance_name);
         else bsdf_params.insert("clearcoat", m_clearcoat / 1000.0f);
 
         // Clearcoat Gloss.
-        texture_name = insert_texture_and_instance(assembly, m_clearcoat_gloss_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("clearcoat", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_clearcoat_gloss_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("clearcoat", instance_name);
         else bsdf_params.insert("clearcoat", m_clearcoat_gloss / 100.0f);
 
         // Specular.
-        texture_name = insert_texture_and_instance(assembly, m_specular_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("specular", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_specular_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("specular", instance_name);
         else bsdf_params.insert("specular", m_specular / 100.0f);
 
         // Metallic.
-        texture_name = insert_texture_and_instance(assembly, m_metallic_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("metallic", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_metallic_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("metallic", instance_name);
         else bsdf_params.insert("metallic", m_metallic / 100.0f);
 
         // Roughness.
-        texture_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("roughness", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("roughness", instance_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
         // Anisotropic.
-        texture_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
-        if (!texture_name.empty())
-            bsdf_params.insert("anisotropic", texture_name);
+        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
+        if (!instance_name.empty())
+            bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
 
+        // BRDF.
         const auto bsdf_name = std::string(name) + "_bsdf";
         assembly.bsdfs().insert(
             asr::DisneyBRDFFactory::static_create(bsdf_name.c_str(), bsdf_params));
@@ -878,35 +878,35 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_max_material(
     // Material.
     //
 
-    texture_name = insert_texture_and_instance(
+    // Alpha map.
+    instance_name = insert_texture_and_instance(
         assembly,
         m_alpha_texmap,
         use_max_procedural_maps,
         asr::ParamArray(),
         asr::ParamArray()
-        .insert("alpha_mode", "detect"));
-    if (!texture_name.empty())
-    {
-        material_params.insert("alpha_map", texture_name);
-    }
+            .insert("alpha_mode", "detect"));
+    if (!instance_name.empty())
+        material_params.insert("alpha_map", instance_name);
     else material_params.insert("alpha_map", m_alpha / 100.0f);
 
-    texture_name = insert_texture_and_instance(
+    // Displacement.
+    instance_name = insert_texture_and_instance(
         assembly,
         m_bump_texmap,
         use_max_procedural_maps,
         asr::ParamArray()
-        .insert("color_space", "linear_rgb"));
-    if (!texture_name.empty())
+            .insert("color_space", "linear_rgb"));
+    if (!instance_name.empty())
     {
         material_params.insert("displacement_method", m_bump_method == 0 ? "bump" : "normal");
-        material_params.insert("displacement_map", texture_name);
+        material_params.insert("displacement_map", instance_name);
 
         switch (m_bump_method)
         {
           case 0:
-              material_params.insert("bump_amplitude", m_bump_amount);
-              material_params.insert("bump_offset", 0.0009765625f);     // 0.5/512 - value that should work for non-image sources
+            material_params.insert("bump_amplitude", m_bump_amount);
+            material_params.insert("bump_offset", 0.5f / 512);
             break;
 
           case 1:
@@ -917,6 +917,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_max_material(
 
     return asr::GenericMaterialFactory::static_create(name, material_params);
 }
+
 
 //
 // AppleseedDisneyMtlBrowserEntryInfo class implementation.

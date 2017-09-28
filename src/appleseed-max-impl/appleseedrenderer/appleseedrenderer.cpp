@@ -133,7 +133,8 @@ void* AppleseedRenderer::GetInterface(ULONG id)
 
 BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
 {
-    if (id == TAB_DIALOG_OBJECT_INTERFACE_ID) {
+    if (id == TAB_DIALOG_OBJECT_INTERFACE_ID)
+    {
         return static_cast<ITabDialogObject*>(this);
     }
     else
@@ -613,7 +614,7 @@ void AppleseedRenderer::AddTabToDialog(
     ITabbedDialog*          dialog,
     ITabDialogPluginTab*    tab) 
 {
-    const int RenderRollupWidth = 222;  // The width of the render rollout in dialog units.
+    const int RenderRollupWidth = 222;  // the width of the render rollout in dialog units
     dialog->AddRollout(
         L"Renderer",
         NULL,

@@ -138,7 +138,6 @@ class AppleseedRenderer
     virtual void AddTabToDialog(
         ITabbedDialog*          dialog,
         ITabDialogPluginTab*    tab) override;
-
     virtual int AcceptTab(
         ITabDialogPluginTab*    tab) override;
 
