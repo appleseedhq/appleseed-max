@@ -784,7 +784,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
         material_params.insert("alpha_map", instance_name);
     else material_params.insert("alpha_map", m_alpha / 100.0f);
 
-    return asr::OSLMaterialFactory::static_create(name, material_params);
+    return asr::OSLMaterialFactory().create(name, material_params);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material(
@@ -870,7 +870,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         // BRDF.
         const auto bsdf_name = std::string(name) + "_bsdf";
         assembly.bsdfs().insert(
-            asr::DisneyBRDFFactory::static_create(bsdf_name.c_str(), bsdf_params));
+            asr::DisneyBRDFFactory().create(bsdf_name.c_str(), bsdf_params));
         material_params.insert("bsdf", bsdf_name);
     }
 
@@ -915,7 +915,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         }
     }
 
-    return asr::GenericMaterialFactory::static_create(name, material_params);
+    return asr::GenericMaterialFactory().create(name, material_params);
 }
 
 

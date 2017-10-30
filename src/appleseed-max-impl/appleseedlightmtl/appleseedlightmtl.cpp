@@ -512,14 +512,14 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
     // EDF.
     const auto edf_name = std::string(name) + "_edf";
     assembly.edfs().insert(
-        asr::DiffuseEDFFactory::static_create(edf_name.c_str(), edf_params));
+        asr::DiffuseEDFFactory().create(edf_name.c_str(), edf_params));
     material_params.insert("edf", edf_name);
 
     //
     // Material.
     //
 
-    return asr::GenericMaterialFactory::static_create(name, material_params);
+    return asr::GenericMaterialFactory().create(name, material_params);
 }
 
 

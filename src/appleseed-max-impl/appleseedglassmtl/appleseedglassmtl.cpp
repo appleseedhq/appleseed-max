@@ -707,7 +707,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
         // BSDF.
         const auto bsdf_name = std::string(name) + "_bsdf";
         assembly.bsdfs().insert(
-            asr::GlassBSDFFactory::static_create(bsdf_name.c_str(), bsdf_params));
+            asr::GlassBSDFFactory().create(bsdf_name.c_str(), bsdf_params));
         material_params.insert("bsdf", bsdf_name);
     }
 
@@ -740,7 +740,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
         }
     }
 
-    return asr::GenericMaterialFactory::static_create(name, material_params);
+    return asr::GenericMaterialFactory().create(name, material_params);
 }
 
 
