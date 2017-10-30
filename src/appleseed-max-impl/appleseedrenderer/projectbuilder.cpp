@@ -118,7 +118,7 @@ namespace
         name = make_unique_name(assembly.materials(), name);
 
         assembly.materials().insert(
-            asr::GenericMaterialFactory::static_create(
+            asr::GenericMaterialFactory().create(
                 name.c_str(),
                 asr::ParamArray()));
 
@@ -133,7 +133,7 @@ namespace
         name = make_unique_name(assembly.materials(), name);
 
         asf::auto_release_ptr<asr::Material> material(
-            asr::DisneyMaterialFactory::static_create(
+            asr::DisneyMaterialFactory().create(
                 name.c_str(),
                 asr::ParamArray()));
 
@@ -178,7 +178,7 @@ namespace
         ObjectInfo&             object_info)
     {
         asf::auto_release_ptr<asr::MeshObject> object(
-            asr::MeshObjectFactory::create(object_info.m_name.c_str(), asr::ParamArray()));
+            asr::MeshObjectFactory().create(object_info.m_name.c_str(), asr::ParamArray()));
 
         // Make sure the input mesh has vertex normals.
         mesh.checkNormals(TRUE);
@@ -663,7 +663,7 @@ namespace
         const int               decay_exponent)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::MaxOmniLightFactory::static_create(
+            asr::MaxOmniLightFactory().create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("intensity", color_name)
@@ -686,7 +686,7 @@ namespace
         const int               decay_exponent)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::MaxSpotLightFactory::static_create(
+            asr::MaxSpotLightFactory().create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("intensity", color_name)
@@ -707,7 +707,7 @@ namespace
         const float             intensity)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::DirectionalLightFactory::static_create(
+            asr::DirectionalLightFactory().create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("irradiance", color_name)
@@ -726,7 +726,7 @@ namespace
         const char*             sky_name)
     {
         asf::auto_release_ptr<asr::Light> light(
-            asr::SunLightFactory::static_create(
+            asr::SunLightFactory().create(
                 light_name.c_str(),
                 asr::ParamArray()
                   .insert("radiance_multiplier", intensity * asf::Pi<float>())
@@ -1035,7 +1035,7 @@ namespace
 
                 scene.textures().insert(
                     asf::auto_release_ptr<asr::Texture>(
-                        asr::MemoryTexture2dFactory::static_create(
+                        asr::MemoryTexture2dFactory().create(
                             env_tex_name.c_str(),
                             asr::ParamArray()
                                 .insert("color_space", "linear_rgb"),
@@ -1111,7 +1111,7 @@ namespace
 
                 scene.environment_edfs().insert(
                     asf::auto_release_ptr<asr::EnvironmentEDF>(
-                        asr::LatLongMapEnvironmentEDFFactory::static_create(
+                        asr::LatLongMapEnvironmentEDFFactory().create(
                             env_edf_name.c_str(),
                             env_edf_params)));
             }
@@ -1121,7 +1121,7 @@ namespace
                 rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
             {
                 scene.environment_shaders().insert(
-                asr::EDFEnvironmentShaderFactory::static_create(
+                asr::EDFEnvironmentShaderFactory().create(
                     env_shader_name.c_str(),
                     asr::ParamArray()
                         .insert("environment_edf", env_edf_name.c_str())
@@ -1130,7 +1130,7 @@ namespace
             else
             {
                 scene.environment_shaders().insert(
-                    asr::BackgroundEnvironmentShaderFactory::static_create(
+                    asr::BackgroundEnvironmentShaderFactory().create(
                         env_shader_name.c_str(),
                         asr::ParamArray()
                             .insert("color", env_tex_instance_name.c_str())
@@ -1175,13 +1175,13 @@ namespace
                     insert_color(scene, "environment_edf_color", background_color);
 
                 scene.environment_edfs().insert(
-                    asr::ConstantEnvironmentEDFFactory::static_create(
+                    asr::ConstantEnvironmentEDFFactory().create(
                         "environment_edf",
                         asr::ParamArray()
                             .insert("radiance", background_color_name)));
 
                 scene.environment_shaders().insert(
-                    asr::EDFEnvironmentShaderFactory::static_create(
+                    asr::EDFEnvironmentShaderFactory().create(
                         "environment_shader",
                         asr::ParamArray()
                             .insert("environment_edf", "environment_edf")
@@ -1283,7 +1283,7 @@ asf::auto_release_ptr<asr::Camera> build_camera(
     asf::auto_release_ptr<renderer::Camera> camera;
     if (view_params.projType == PROJ_PARALLEL)
     {
-        camera = asr::OrthographicCameraFactory::static_create("camera", params);
+        camera = asr::OrthographicCameraFactory().create("camera", params);
     }
     else
     {
@@ -1308,11 +1308,11 @@ asf::auto_release_ptr<asr::Camera> build_camera(
                 break;
             }
 
-            camera = asr::ThinLensCameraFactory::static_create("camera", params);
+            camera = asr::ThinLensCameraFactory().create("camera", params);
         }
         else
         {
-            camera = asr::PinholeCameraFactory::static_create("camera", params);
+            camera = asr::PinholeCameraFactory().create("camera", params);
         }
 #else
         camera = asr::PinholeCameraFactory::static_create("camera", params);
@@ -1363,7 +1363,7 @@ asf::auto_release_ptr<asr::Project> build_project(
 
     // Create an assembly.
     asf::auto_release_ptr<asr::Assembly> assembly(
-        asr::AssemblyFactory::static_create("assembly"));
+        asr::AssemblyFactory().create("assembly"));
 
     // Populate the assembly with entities from the 3ds Max scene.
     const RenderType type =

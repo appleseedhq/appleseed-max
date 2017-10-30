@@ -685,7 +685,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
 
         const auto bssrdf_name = std::string(name) + "_bssrdf";
         assembly.bssrdfs().insert(
-            asr::NormalizedDiffusionBSSRDFFactory::static_create(bssrdf_name.c_str(), bssrdf_params));
+            asr::NormalizedDiffusionBSSRDFFactory().create(bssrdf_name.c_str(), bssrdf_params));
 
         material_params.insert("bssrdf", bssrdf_name);
     }
@@ -731,7 +731,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         // BRDF.
         const auto brdf_name = std::string(name) + "_brdf";
         assembly.bsdfs().insert(
-            asr::GlossyBRDFFactory::static_create(brdf_name.c_str(), brdf_params));
+            asr::GlossyBRDFFactory().create(brdf_name.c_str(), brdf_params));
         material_params.insert("bsdf", brdf_name);
     }
 
@@ -764,7 +764,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
         }
     }
 
-    return asr::GenericMaterialFactory::static_create(name, material_params);
+    return asr::GenericMaterialFactory().create(name, material_params);
 }
 
 

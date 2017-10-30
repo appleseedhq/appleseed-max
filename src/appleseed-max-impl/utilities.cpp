@@ -250,7 +250,7 @@ std::string insert_bitmap_texture_and_instance(
     if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
     {
         base_group.textures().insert(
-            asr::DiskTexture2dFactory::static_create(
+            asr::DiskTexture2dFactory().create(
                 texture_name.c_str(),
                 texture_params,
                 asf::SearchPaths()));

@@ -561,7 +561,7 @@ asf::auto_release_ptr<asr::EnvironmentEDF> AppleseedEnvMap::create_envmap(const 
     map_params.insert("saturation_multiplier", m_sat_multiplier);
     map_params.insert("horizon_shift", m_horizon_shift);
 
-    return asr::HosekEnvironmentEDFFactory::static_create(name, map_params);
+    return asr::HosekEnvironmentEDFFactory().create(name, map_params);
 }
 
 
