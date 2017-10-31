@@ -1315,7 +1315,7 @@ asf::auto_release_ptr<asr::Camera> build_camera(
             camera = asr::PinholeCameraFactory().create("camera", params);
         }
 #else
-        camera = asr::PinholeCameraFactory::static_create("camera", params);
+        camera = asr::PinholeCameraFactory().create("camera", params);
 #endif
     }
 
