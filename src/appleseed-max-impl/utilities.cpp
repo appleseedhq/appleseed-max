@@ -236,6 +236,7 @@ std::string insert_bitmap_texture_and_instance(
 {
     BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
 
+    // todo: it can happen that `filepath` is empty here; report an error.
     const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
     texture_params.insert("filename", filepath);
 
