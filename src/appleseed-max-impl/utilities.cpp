@@ -276,17 +276,19 @@ namespace
       : public ShadeContext
     {
       public:
-        explicit MaxShadeContext(const asf::Vector2f& tex_uv)
+        explicit MaxShadeContext(const asf::Vector2f& uv)
         {
-            m_uv.x = tex_uv.x;
-            m_uv.y = tex_uv.y;
-            m_curve = 0.0f;
-            m_dp = Point3(0.0f, 0.0f, 0.0f);
-            mode = SCMODE_NORMAL;
-            m_proj_type = 0;        // 0: perspective, 1: parallel
-            m_cur_time = GetCOREInterface()->GetTime();
-            filterMaps = false;
+            doMaps = TRUE;
+            filterMaps = FALSE;
+            backFace = FALSE;
             mtlNum = 1;
+            ambientLight.Black();
+            xshadeID = 0;
+            // todo: initialize `out`?
+
+            m_cur_time = GetCOREInterface()->GetTime();
+            m_uv.x = uv.x;
+            m_uv.y = uv.y;
         }
 
         BOOL InMtlEditor() override
@@ -316,7 +318,7 @@ namespace
 
         int ProjType() override
         {
-            return m_proj_type;
+            return 0;   // 0: perspective, 1: parallel
         }
 
         Point3 Normal() override
@@ -356,17 +358,17 @@ namespace
 
         Point3 P() override
         {
-            return m_light_pos;
+            return Point3(0.0f, 0.0f, 0.0f);
         }
 
         Point3 DP() override
         {
-            return m_dp;
+            return Point3(0.0f, 0.0f, 0.0f);
         }
 
         Point3 PObj() override
         {
-            return m_light_pos;
+            return Point3(0.0f, 0.0f, 0.0f);
         }
 
         Point3 DPObj() override
@@ -397,7 +399,7 @@ namespace
 
         IPoint2 ScreenCoord() override
         {
-            return m_scr_pos;
+            return IPoint2(0, 0);
         }
 
         Point3 UVW(int chan) override
@@ -420,7 +422,7 @@ namespace
 
         float Curve() override
         {
-            return m_curve;
+            return 0.0f;
         }
 
         Point3 PointTo(const Point3& p, RefFrame ito) override
@@ -444,15 +446,10 @@ namespace
         }
 
       private:
-        Point3      m_light_pos;   // position of point in light space
-        Point3      m_view;        // unit vector from light to point, in light space
-        IPoint2     m_scr_pos;
-        Point3      m_dp;
-        float       m_curve;
         TimeValue   m_cur_time;
-        Point2      m_duv;
         Point2      m_uv;
-        int         m_proj_type;
+        Point2      m_duv;
+        Point3      m_view;             // unit vector from light to point, in light space
     };
 
     class MaxProceduralTextureSource
@@ -492,7 +489,6 @@ namespace
             asr::Spectrum&              spectrum) const override
         {
             DbgAssert(spectrum.size() == 3);
-            asf::Color3f color;
             evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2]);
         }
 
@@ -520,7 +516,6 @@ namespace
             asr::Alpha&                 alpha) const override
         {
             DbgAssert(spectrum.size() == 3);
-            asf::Color3f color;
             evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2], alpha);
         }
 
