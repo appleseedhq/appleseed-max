@@ -1239,43 +1239,54 @@ asf::auto_release_ptr<asr::Camera> build_camera(
     const RendererSettings& settings,
     const TimeValue         time)
 {
-    asr::ParamArray params;
+    asf::auto_release_ptr<renderer::Camera> camera;
 
-    if (view_params.projType == PROJ_PERSPECTIVE)
+    if (view_params.projType == PROJ_PARALLEL)
     {
-        params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
-        params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
-    }
-    else
-    {
-        DbgAssert(view_params.projType == PROJ_PARALLEL);
+        //
+        // Orthographic camera.
+        //
 
+        asr::ParamArray params;
+
+        // Film dimensions.
         const float ViewDefaultWidth = 400.0f;
         const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
         const float film_width = ViewDefaultWidth * view_params.zoom;
         const float film_height = film_width * aspect;
         params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
-    }
 
-    params.insert("near_z", -view_params.hither);
-
-    asf::auto_release_ptr<renderer::Camera> camera;
-    if (view_params.projType == PROJ_PARALLEL)
-    {
+        // Create camera.
         camera = asr::OrthographicCameraFactory().create("camera", params);
     }
     else
     {
+        //
+        // Perspective camera.
+        //
+
+        DbgAssert(view_params.projType == PROJ_PERSPECTIVE);
+
+        asr::ParamArray params;
+        params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
+
 #if MAX_RELEASE >= 18000
-        MaxSDK::IPhysicalCamera* phys_camera(nullptr);
+        // Look for a physical camera in th scene.
+        MaxSDK::IPhysicalCamera* phys_camera = nullptr;
         if (view_node)
             phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
 
         if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
         {
+            // Film dimensions.
+            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
+            const float film_width = phys_camera->GetFilmWidth(time, FOREVER);
+            const float film_height = film_width * aspect;
+            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
+
+            // DOF settings.
             params.insert("f_stop", phys_camera->GetLensApertureFNumber(time, FOREVER));
             params.insert("focal_distance", phys_camera->GetFocusDistance(time, FOREVER));
-
             switch (phys_camera->GetBokehShape(time, FOREVER))
             {
               case MaxSDK::IPhysicalCamera::BokehShape::Circular:
@@ -1287,17 +1298,22 @@ asf::auto_release_ptr<asr::Camera> build_camera(
                 break;
             }
 
+            // Create camera.
             camera = asr::ThinLensCameraFactory().create("camera", params);
         }
         else
+#endif
         {
+            // Film dimensions.
+            // todo: using dummy values for now, can we and should we do better?
+            params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
+
+            // Create camera.
             camera = asr::PinholeCameraFactory().create("camera", params);
         }
-#else
-        camera = asr::PinholeCameraFactory().create("camera", params);
-#endif
     }
 
+    // Set camera transform.
     camera->transform_sequence().set_transform(
         0.0,
         asf::Transformd::from_local_to_parent(
