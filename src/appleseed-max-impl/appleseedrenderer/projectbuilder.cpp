@@ -737,12 +737,6 @@ namespace
         assembly.lights().insert(light);
     }
 
-    static bool has_appleseed_sky_environment(const RendParams& rend_params)
-    {
-        return rend_params.envMap != nullptr &&
-            rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id());
-    }
-
     void add_light(
         asr::Assembly&          assembly,
         const RendParams&       rend_params,
@@ -776,7 +770,8 @@ namespace
         INode* sun_node(nullptr);
         BOOL sun_node_on(FALSE);
         float sun_size_mult;
-        if (has_appleseed_sky_environment(rend_params))
+        if (rend_params.envMap != nullptr &&
+            rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
             AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
             get_paramblock_value_by_name(env_map->GetParamBlock(0), L"sun_node", time, sun_node, FOREVER);
@@ -971,28 +966,114 @@ namespace
             add_default_lights(assembly, default_lights);
     }
 
-    void setup_environment(
+    void setup_solid_environment(
+        asr::Scene&             scene,
+        const FrameRendParams&  frame_rend_params,
+        const RendererSettings& settings)
+    {
+        const asf::Color3f background_color =
+            asf::clamp_low(
+                to_color3f(frame_rend_params.background),
+                0.0f);
+
+        if (asf::is_zero(background_color))
+        {
+            scene.set_environment(
+                asr::EnvironmentFactory::create(
+                    "environment",
+                    asr::ParamArray()));
+        }
+        else
+        {
+            const std::string background_color_name =
+                insert_color(scene, "environment_edf_color", background_color);
+
+            scene.environment_edfs().insert(
+                asr::ConstantEnvironmentEDFFactory().create(
+                    "environment_edf",
+                    asr::ParamArray()
+                        .insert("radiance", background_color_name)));
+
+            scene.environment_shaders().insert(
+                asr::EDFEnvironmentShaderFactory().create(
+                    "environment_shader",
+                    asr::ParamArray()
+                        .insert("environment_edf", "environment_edf")
+                        .insert("alpha_value", settings.m_background_alpha)));
+
+            if (settings.m_background_emits_light)
+            {
+                scene.set_environment(
+                    asr::EnvironmentFactory::create(
+                        "environment",
+                        asr::ParamArray()
+                            .insert("environment_edf", "environment_edf")
+                            .insert("environment_shader", "environment_shader")));
+            }
+            else
+            {
+                scene.set_environment(
+                    asr::EnvironmentFactory::create(
+                        "environment",
+                        asr::ParamArray()
+                            .insert("environment_shader", "environment_shader")));
+            }
+        }
+    }
+
+    void setup_environment_map(
         asr::Scene&             scene,
         const RendParams&       rend_params,
-        const FrameRendParams&  frame_rend_params,
         const RendererSettings& settings,
         const TimeValue         time)
     {
-        if (rend_params.envMap != nullptr)
+        // Create environment EDF.
+        if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
-            std::string env_edf_name("environment_edf");
-            std::string env_shader_name("environment_shader");
-            std::string env_tex_name("environment_map");
-            std::string env_tex_instance_name("environment_map_inst");
+            auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
+            IParamBlock2* param_block = appleseed_envmap->GetParamBlock(0);
 
-            // Insert textures.
-            if (rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
+            INode* sun_node(nullptr);
+            BOOL sun_node_on(FALSE);
+            get_paramblock_value_by_name(param_block, L"sun_node", time, sun_node, FOREVER);
+            get_paramblock_value_by_name(param_block, L"sun_node_on", time, sun_node_on, FOREVER);
+
+            float sun_theta, sun_phi;
+            if (sun_node != nullptr && sun_node_on)
             {
-                auto bitmap_envmap = static_cast<BitmapTex*>(rend_params.envMap);
-                if (bitmap_envmap)
-                    env_tex_instance_name = insert_bitmap_texture_and_instance(scene, bitmap_envmap);
+                Matrix3 sun_transform = sun_node->GetObjTMAfterWSM(time);
+                sun_transform.NoTrans();
+
+                const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
+                sun_theta = std::acosf(sun_dir.z);
+
+                float cos_sun_phi = sun_dir.x / sqrt(1.0f - sun_dir.z * sun_dir.z);
+                cos_sun_phi = asf::clamp(cos_sun_phi, -1.0f, 1.0f);
+                sun_phi = std::acosf(cos_sun_phi);
+
+                if (sun_dir.y > 0.0f)
+                    sun_phi = asf::TwoPi<float>() - sun_phi;
+
+                sun_theta = asf::rad_to_deg(sun_theta);
+                sun_phi = asf::rad_to_deg(sun_phi);
             }
-            else if (!rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
+            else
+            {
+                get_paramblock_value_by_name(param_block, L"sun_theta", time, sun_theta, FOREVER);
+                get_paramblock_value_by_name(param_block, L"sun_phi", time, sun_phi, FOREVER);
+            }
+
+            auto env_map = appleseed_envmap->create_envmap("environment_edf");
+            env_map->get_parameters().set("sun_theta", sun_theta);
+            env_map->get_parameters().set("sun_phi", sun_phi);
+            scene.environment_edfs().insert(env_map);
+        }
+        else
+        {
+            std::string env_tex_instance_name;
+            if (is_bitmap_texture(rend_params.envMap))
+                env_tex_instance_name = insert_bitmap_texture_and_instance(scene, rend_params.envMap);
+            else
             {
                 // Proceed with rendering env map and applying it to background shader.
                 const size_t TextureWidth = 512;
@@ -1030,9 +1111,7 @@ namespace
                 // Destroy the Max bitmap.
                 envmap_bitmap->DeleteThis();
 
-                env_tex_name = make_unique_name(scene.textures(), "environment_map");
-                env_tex_instance_name = make_unique_name(scene.texture_instances(), "environment_map_inst");
-
+                const std::string env_tex_name = make_unique_name(scene.textures(), "environment_map");
                 scene.textures().insert(
                     asf::auto_release_ptr<asr::Texture>(
                         asr::MemoryTexture2dFactory().create(
@@ -1041,6 +1120,7 @@ namespace
                                 .insert("color_space", "linear_rgb"),
                             envmap_image)));
 
+                env_tex_instance_name = make_unique_name(scene.texture_instances(), "environment_map_inst");
                 scene.texture_instances().insert(
                     asf::auto_release_ptr<asr::TextureInstance>(
                         asr::TextureInstanceFactory::create(
@@ -1049,163 +1129,62 @@ namespace
                             env_tex_name.c_str())));
             }
 
-            // Insert environment EDF.
-            if (has_appleseed_sky_environment(rend_params))
+            asr::ParamArray env_edf_params;
+            env_edf_params.insert("radiance", env_tex_instance_name.c_str());
+
+            UVGen* uvgen = rend_params.envMap->GetTheUVGen();
+            if (uvgen && uvgen->IsStdUVGen())
             {
-                auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-                if (appleseed_envmap != nullptr)
-                {
-                    INode* sun_node(nullptr);
-                    BOOL sun_node_on(FALSE);
-                    get_paramblock_value_by_name(appleseed_envmap->GetParamBlock(0), L"sun_node", time, sun_node, FOREVER);
-                    get_paramblock_value_by_name(appleseed_envmap->GetParamBlock(0), L"sun_node_on", time, sun_node_on, FOREVER);
-
-                    float sun_theta, sun_phi;
-                    if (sun_node != nullptr && sun_node_on)
-                    {
-                        Matrix3 sun_transform = sun_node->GetObjTMAfterWSM(time);
-                        sun_transform.NoTrans();
-
-                        const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
-                        sun_theta = std::acosf(sun_dir.z);
-
-                        float cos_phi = sun_dir.x / sqrtf(1.0f - (sun_dir.z * sun_dir.z));
-                        cos_phi = asf::clamp(cos_phi, -1.0f, 1.0f);
-                        sun_phi = std::acosf(cos_phi);
-
-                        if (sun_dir.y > 0.0f)
-                            sun_phi = asf::TwoPi<float>() - sun_phi;
-                        
-                        sun_theta = asf::rad_to_deg(sun_theta);
-                        sun_phi = asf::rad_to_deg(sun_phi);
-                    }
-                    else
-                    {
-                        get_paramblock_value_by_name(appleseed_envmap->GetParamBlock(0), L"sun_theta", time, sun_theta, FOREVER);
-                        get_paramblock_value_by_name(appleseed_envmap->GetParamBlock(0), L"sun_phi", time, sun_phi, FOREVER);
-                    }
-
-                    auto env_map = appleseed_envmap->create_envmap(env_edf_name.c_str());
-                    env_map->get_parameters().set("sun_theta", sun_theta);
-                    env_map->get_parameters().set("sun_phi", sun_phi);
-                    scene.environment_edfs().insert(env_map);
-                }
-            }
-            else
-            {
-                asr::ParamArray env_edf_params;
-                auto env_map = static_cast<Texmap*>(rend_params.envMap);
-
-                if (env_map != nullptr)
-                {
-                    UVGen* uvg = env_map->GetTheUVGen();
-                    if (uvg && uvg->IsStdUVGen())
-                    {
-                        StdUVGen *suvg = static_cast<StdUVGen*>(uvg);
-                        env_edf_params.insert("horizontal_shift", suvg->GetUOffs(time) * 180.0f);
-                        env_edf_params.insert("vertical_shift", suvg->GetVOffs(time) * 180.0f);
-                    }
-                }
-                
-                env_edf_params.insert("radiance", env_tex_instance_name.c_str());
-
-                scene.environment_edfs().insert(
-                    asf::auto_release_ptr<asr::EnvironmentEDF>(
-                        asr::LatLongMapEnvironmentEDFFactory().create(
-                            env_edf_name.c_str(),
-                            env_edf_params)));
+                StdUVGen* std_uvgen = static_cast<StdUVGen*>(uvgen);
+                env_edf_params.insert("horizontal_shift", std_uvgen->GetUOffs(time) * 180.0f);
+                env_edf_params.insert("vertical_shift", std_uvgen->GetVOffs(time) * 180.0f);
             }
 
-            // Insert environment shader.
-            if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()) ||
-                rend_params.envMap->IsSubClassOf(Class_ID(BMTEX_CLASS_ID, 0)))
-            {
-                scene.environment_shaders().insert(
-                asr::EDFEnvironmentShaderFactory().create(
-                    env_shader_name.c_str(),
+            scene.environment_edfs().insert(
+                asf::auto_release_ptr<asr::EnvironmentEDF>(
+                    asr::LatLongMapEnvironmentEDFFactory().create(
+                        "environment_edf",
+                        env_edf_params)));
+        }
+
+        // Create environment shader.
+        scene.environment_shaders().insert(
+        asr::EDFEnvironmentShaderFactory().create(
+            "environment_shader",
+            asr::ParamArray()
+                .insert("environment_edf", "environment_edf")
+                .insert("alpha_value", settings.m_background_alpha)));
+
+        // Create environment.
+        if (settings.m_background_emits_light)
+        {
+            scene.set_environment(
+                asr::EnvironmentFactory::create(
+                    "environment",
                     asr::ParamArray()
-                        .insert("environment_edf", env_edf_name.c_str())
-                        .insert("alpha_value", settings.m_background_alpha)));
-            }
-            else
-            {
-                scene.environment_shaders().insert(
-                    asr::BackgroundEnvironmentShaderFactory().create(
-                        env_shader_name.c_str(),
-                        asr::ParamArray()
-                            .insert("color", env_tex_instance_name.c_str())
-                            .insert("alpha", settings.m_background_alpha)));
-            }
-
-            if (settings.m_background_emits_light)
-            {
-                scene.set_environment(
-                    asr::EnvironmentFactory::create(
-                        "environment",
-                        asr::ParamArray()
-                            .insert("environment_edf", env_edf_name.c_str())
-                            .insert("environment_shader", env_shader_name.c_str())));
-            }
-            else
-            {
-                scene.set_environment(
-                    asr::EnvironmentFactory::create(
-                        "environment",
-                        asr::ParamArray()
-                            .insert("environment_shader", env_shader_name.c_str())));
-            }
+                        .insert("environment_edf", "environment_edf")
+                        .insert("environment_shader", "environment_shader")));
         }
         else
         {
-            const asf::Color3f background_color =
-                asf::clamp_low(
-                    to_color3f(frame_rend_params.background),
-                    0.0f);
-
-            if (asf::is_zero(background_color))
-            {
-                scene.set_environment(
-                    asr::EnvironmentFactory::create(
-                        "environment",
-                        asr::ParamArray()));
-            }
-            else
-            {
-                const std::string background_color_name =
-                    insert_color(scene, "environment_edf_color", background_color);
-
-                scene.environment_edfs().insert(
-                    asr::ConstantEnvironmentEDFFactory().create(
-                        "environment_edf",
-                        asr::ParamArray()
-                            .insert("radiance", background_color_name)));
-
-                scene.environment_shaders().insert(
-                    asr::EDFEnvironmentShaderFactory().create(
-                        "environment_shader",
-                        asr::ParamArray()
-                            .insert("environment_edf", "environment_edf")
-                            .insert("alpha_value", settings.m_background_alpha)));
-
-                if (settings.m_background_emits_light)
-                {
-                    scene.set_environment(
-                        asr::EnvironmentFactory::create(
-                            "environment",
-                            asr::ParamArray()
-                                .insert("environment_edf", "environment_edf")
-                                .insert("environment_shader", "environment_shader")));
-                }
-                else
-                {
-                    scene.set_environment(
-                        asr::EnvironmentFactory::create(
-                            "environment",
-                            asr::ParamArray()
-                                .insert("environment_shader", "environment_shader")));
-                }
-            }
+            scene.set_environment(
+                asr::EnvironmentFactory::create(
+                    "environment",
+                    asr::ParamArray()
+                        .insert("environment_shader", "environment_shader")));
         }
+    }
+
+    void setup_environment(
+        asr::Scene&             scene,
+        const RendParams&       rend_params,
+        const FrameRendParams&  frame_rend_params,
+        const RendererSettings& settings,
+        const TimeValue         time)
+    {
+        if (rend_params.envMap != nullptr)
+            setup_environment_map(scene, rend_params, settings, time);
+        else setup_solid_environment(scene, frame_rend_params, settings);
     }
 
     asf::auto_release_ptr<asr::Frame> build_frame(
@@ -1260,65 +1239,81 @@ asf::auto_release_ptr<asr::Camera> build_camera(
     const RendererSettings& settings,
     const TimeValue         time)
 {
-    asr::ParamArray params;
+    asf::auto_release_ptr<renderer::Camera> camera;
 
-    if (view_params.projType == PROJ_PERSPECTIVE)
+    if (view_params.projType == PROJ_PARALLEL)
     {
-        params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
-        params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
-    }
-    else
-    {
-        DbgAssert(view_params.projType == PROJ_PARALLEL);
+        //
+        // Orthographic camera.
+        //
 
+        asr::ParamArray params;
+
+        // Film dimensions.
         const float ViewDefaultWidth = 400.0f;
         const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
         const float film_width = ViewDefaultWidth * view_params.zoom;
         const float film_height = film_width * aspect;
         params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
-    }
 
-    params.insert("near_z", -view_params.hither);
-
-    asf::auto_release_ptr<renderer::Camera> camera;
-    if (view_params.projType == PROJ_PARALLEL)
-    {
+        // Create camera.
         camera = asr::OrthographicCameraFactory().create("camera", params);
     }
     else
     {
+        //
+        // Perspective camera.
+        //
+
+        DbgAssert(view_params.projType == PROJ_PERSPECTIVE);
+
+        asr::ParamArray params;
+        params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
+
 #if MAX_RELEASE >= 18000
-        MaxSDK::IPhysicalCamera* phys_camera(nullptr);
+        // Look for a physical camera in th scene.
+        MaxSDK::IPhysicalCamera* phys_camera = nullptr;
         if (view_node)
             phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
 
         if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
         {
+            // Film dimensions.
+            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
+            const float film_width = phys_camera->GetFilmWidth(time, FOREVER);
+            const float film_height = film_width * aspect;
+            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
+
+            // DOF settings.
             params.insert("f_stop", phys_camera->GetLensApertureFNumber(time, FOREVER));
             params.insert("focal_distance", phys_camera->GetFocusDistance(time, FOREVER));
-
             switch (phys_camera->GetBokehShape(time, FOREVER))
             {
-            case MaxSDK::IPhysicalCamera::BokehShape::Circular:
+              case MaxSDK::IPhysicalCamera::BokehShape::Circular:
                 params.insert("diaphragm_blades", 0);
                 break;
-            case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
+              case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
                 params.insert("diaphragm_blades", phys_camera->GetBokehNumberOfBlades(time, FOREVER));
                 params.insert("diaphragm_tilt_angle", phys_camera->GetBokehBladesRotationDegrees(time, FOREVER));
                 break;
             }
 
+            // Create camera.
             camera = asr::ThinLensCameraFactory().create("camera", params);
         }
         else
+#endif
         {
+            // Film dimensions.
+            // todo: using dummy values for now, can we and should we do better?
+            params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
+
+            // Create camera.
             camera = asr::PinholeCameraFactory().create("camera", params);
         }
-#else
-        camera = asr::PinholeCameraFactory::static_create("camera", params);
-#endif
     }
 
+    // Set camera transform.
     camera->transform_sequence().set_transform(
         0.0,
         asf::Transformd::from_local_to_parent(
