@@ -152,6 +152,10 @@ bool is_supported_procedural_texture(Texmap* map)
 
     switch (part_a)
     {
+      case 0x6769144B:                  // VrayHDRI
+        return part_b == 0x2C1017D;
+      case 0x58F82B74:                  // VrayColor
+        return part_b == 0x73B75D7F;
       case 0x64035FB9:                  // tiles
         return part_b == 0x69664CDC;
       case 0x1DEC5B86:                  // gradient ramp
@@ -242,7 +246,8 @@ std::string insert_bitmap_texture_and_instance(
 
     if (!texture_params.strings().exist("color_space"))
     {
-        if (asf::ends_with(filepath, ".exr"))
+        if (asf::ends_with(filepath, ".exr") ||
+            asf::ends_with(filepath, ".hdr"))
             texture_params.insert("color_space", "linear_rgb");
         else texture_params.insert("color_space", "srgb");
     }

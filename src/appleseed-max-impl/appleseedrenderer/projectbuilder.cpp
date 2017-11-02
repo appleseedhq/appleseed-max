@@ -1071,7 +1071,9 @@ namespace
         else
         {
             std::string env_tex_instance_name;
-            if (is_bitmap_texture(rend_params.envMap))
+            if (settings.m_use_max_procedural_maps)
+                env_tex_instance_name = insert_procedural_texture_and_instance(scene, rend_params.envMap);
+            else if (is_bitmap_texture(rend_params.envMap))
                 env_tex_instance_name = insert_bitmap_texture_and_instance(scene, rend_params.envMap);
             else
             {
