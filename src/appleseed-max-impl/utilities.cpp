@@ -152,9 +152,9 @@ bool is_supported_procedural_texture(Texmap* map)
 
     switch (part_a)
     {
-      case 0x6769144B:                  // VrayHDRI
-        return part_b == 0x2C1017D;
-      case 0x58F82B74:                  // VrayColor
+      case 0x6769144B:                  // VRayHDRI
+        return part_b == 0x02C1017D;
+      case 0x58F82B74:                  // VRayColor
         return part_b == 0x73B75D7F;
       case 0x64035FB9:                  // tiles
         return part_b == 0x69664CDC;
@@ -180,13 +180,13 @@ bool is_supported_procedural_texture(Texmap* map)
       case RGBMULT_CLASS_ID:
       case OUTPUT_CLASS_ID:
       case COLORCORRECTION_CLASS_ID:
-      case 0x0000214:                   // WOOD_CLASS_ID
-      case 0x0000218:                   // DENT_CLASS_ID
-      case 0x46396cf1:                  // PLANET_CLASS_ID
-      case 0x7712634e:                  // WATER_CLASS_ID
-      case 0xa845e7c:                   // SMOKE_CLASS_ID
-      case 0x62c32b8a:                  // SPECKLE_CLASS_ID
-      case 0x90b04f9:                   // SPLAT_CLASS_ID
+      case 0x00000214:                  // WOOD_CLASS_ID
+      case 0x00000218:                  // DENT_CLASS_ID
+      case 0x46396CF1:                  // PLANET_CLASS_ID
+      case 0x7712634E:                  // WATER_CLASS_ID
+      case 0x0A845E7C:                  // SMOKE_CLASS_ID
+      case 0x62C32B8A:                  // SPECKLE_CLASS_ID
+      case 0x090B04F9:                  // SPLAT_CLASS_ID
         return true;
     }
 
@@ -232,7 +232,7 @@ std::string insert_texture_and_instance(
         return
             insert_bitmap_texture_and_instance(
                 base_group,
-                texmap,
+                static_cast<BitmapTex*>(texmap),
                 texture_params,
                 texture_instance_params);
     }
@@ -242,12 +242,10 @@ std::string insert_texture_and_instance(
 
 std::string insert_bitmap_texture_and_instance(
     asr::BaseGroup& base_group,
-    Texmap*         texmap,
+    BitmapTex*      bitmap_tex,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
-
     // todo: it can happen that `filepath` is empty here; report an error.
     const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
     texture_params.insert("filename", filepath);
@@ -259,7 +257,7 @@ std::string insert_bitmap_texture_and_instance(
         else texture_params.insert("color_space", "srgb");
     }
 
-    const std::string texture_name = wide_to_utf8(texmap->GetName());
+    const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
     if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
     {
         base_group.textures().insert(

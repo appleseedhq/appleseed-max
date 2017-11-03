@@ -623,35 +623,35 @@ void SunNodePBAccessor::Set(
     int               tabIndex,
     TimeValue         t)
 {
-    AppleseedEnvMap* envmap = (AppleseedEnvMap*)owner;
-    IParamBlock2* pblock = envmap->GetParamBlock(0);
-    INode* sun_node;
-    if (pblock)
+    IParamBlock2* pblock = static_cast<AppleseedEnvMap*>(owner)->GetParamBlock(0);
+    if (pblock == nullptr)
+        return;
+
+    IParamMap2* map = pblock->GetMap();
+    if (map == nullptr)
+        return;
+
+    switch (id)
     {
-        IParamMap2* map = pblock->GetMap();
-        pblock->GetValue(ParamIdSunNode, 0, sun_node, FOREVER);
-        if (map)
+      case ParamIdSunNodeOn:
         {
-            switch (id)
+            INode* sun_node;
+            pblock->GetValue(ParamIdSunNode, 0, sun_node, FOREVER);
+            map->Enable(ParamIdSunTheta, (v.i && sun_node) ? FALSE : TRUE);
+            map->Enable(ParamIdSunPhi, (v.i && sun_node) ? FALSE : TRUE);
+        }
+        break;
+
+      case ParamIdSunNode:
+        {
+            if (v.r != nullptr)
             {
-              case ParamIdSunNodeOn:
-              {
-                  map->Enable(ParamIdSunTheta, (v.i && sun_node) ? FALSE : TRUE);
-                  map->Enable(ParamIdSunPhi, (v.i && sun_node) ? FALSE : TRUE);
-              }
-              break;
-              case ParamIdSunNode:
-              {
-                  if (v.r)
-                  {
-                      pblock->SetValue(ParamIdSunNodeOn, t, TRUE);
-                      map->Enable(ParamIdSunTheta, FALSE);
-                      map->Enable(ParamIdSunPhi, FALSE);
-                  }
-              }
-              break;
+                pblock->SetValue(ParamIdSunNodeOn, t, TRUE);
+                map->Enable(ParamIdSunTheta, FALSE);
+                map->Enable(ParamIdSunPhi, FALSE);
             }
         }
+        break;
     }
 }
 

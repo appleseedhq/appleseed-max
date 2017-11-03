@@ -70,7 +70,6 @@ class AppleseedRenderer
 
     // Animatable.
     virtual void* GetInterface(ULONG id) override;
-
     virtual BaseInterface* GetInterface(Interface_ID id) override;
 
 #if MAX_RELEASE == MAX_RELEASE_R19

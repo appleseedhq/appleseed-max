@@ -1072,9 +1072,19 @@ namespace
         {
             std::string env_tex_instance_name;
             if (settings.m_use_max_procedural_maps)
-                env_tex_instance_name = insert_procedural_texture_and_instance(scene, rend_params.envMap);
+            {
+                env_tex_instance_name =
+                    insert_procedural_texture_and_instance(
+                        scene,
+                        rend_params.envMap);
+            }
             else if (is_bitmap_texture(rend_params.envMap))
-                env_tex_instance_name = insert_bitmap_texture_and_instance(scene, rend_params.envMap);
+            {
+                env_tex_instance_name =
+                    insert_bitmap_texture_and_instance(
+                        scene,
+                        static_cast<BitmapTex*>(rend_params.envMap));
+            }
             else
             {
                 // Proceed with rendering env map and applying it to background shader.
@@ -1151,11 +1161,11 @@ namespace
 
         // Create environment shader.
         scene.environment_shaders().insert(
-        asr::EDFEnvironmentShaderFactory().create(
-            "environment_shader",
-            asr::ParamArray()
-                .insert("environment_edf", "environment_edf")
-                .insert("alpha_value", settings.m_background_alpha)));
+            asr::EDFEnvironmentShaderFactory().create(
+                "environment_shader",
+                asr::ParamArray()
+                    .insert("environment_edf", "environment_edf")
+                    .insert("alpha_value", settings.m_background_alpha)));
 
         // Create environment.
         if (settings.m_background_emits_light)
