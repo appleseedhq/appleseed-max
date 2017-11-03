@@ -54,6 +54,7 @@
 
 // Forward declarations.
 namespace renderer  { class BaseGroup; }
+class BitmapTex;
 class Interval;
 class Texmap;
 
@@ -138,6 +139,8 @@ BOOL get_paramblock_value_by_name(
 bool is_bitmap_texture(Texmap* map);
 
 bool is_supported_procedural_texture(Texmap* map);
+
+bool is_linear_texture(BitmapTex* bitmap_tex);
 
 template <typename EntityContainer>
 std::string make_unique_name(

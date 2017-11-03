@@ -193,6 +193,14 @@ bool is_supported_procedural_texture(Texmap* map)
     return false;
 }
 
+bool is_linear_texture(BitmapTex* bitmap_tex)
+{
+    const auto filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
+    return
+        asf::ends_with(filepath, ".exr") ||
+        asf::ends_with(filepath, ".hdr");
+}
+
 void insert_color(asr::BaseGroup& base_group, const Color& color, const char* name)
 {
     base_group.colors().insert(
@@ -246,8 +254,7 @@ std::string insert_bitmap_texture_and_instance(
 
     if (!texture_params.strings().exist("color_space"))
     {
-        if (asf::ends_with(filepath, ".exr") ||
-            asf::ends_with(filepath, ".hdr"))
+        if (is_linear_texture(bitmap_tex))
             texture_params.insert("color_space", "linear_rgb");
         else texture_params.insert("color_space", "srgb");
     }
