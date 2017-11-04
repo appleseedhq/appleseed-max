@@ -477,6 +477,26 @@ namespace
             return asf::siphash24(m_texmap);
         }
 
+        virtual Hints get_hints() const override
+        {
+            Hints hints;
+
+            if (is_bitmap_texture(m_texmap))
+            {
+                auto bitmap = static_cast<BitmapTex*>(m_texmap)->GetBitmap(0);
+                hints.m_width = static_cast<size_t>(bitmap->Width());
+                hints.m_height = static_cast<size_t>(bitmap->Height());
+            }
+            else
+            {
+                // Take a random guess.
+                hints.m_width = 2048;
+                hints.m_height = 1080;
+            }
+
+            return hints;
+        }
+
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
             const asf::Vector2f&        uv,
