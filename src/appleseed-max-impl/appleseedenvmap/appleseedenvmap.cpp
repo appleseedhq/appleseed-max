@@ -730,5 +730,6 @@ HINSTANCE AppleseedEnvMapClassDesc::HInstance()
 
 bool AppleseedEnvMapClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
 {
+    // Before 3ds Max 2017, Class_ID::operator==() returned an int.
     return renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id() ? true : false;
 }
