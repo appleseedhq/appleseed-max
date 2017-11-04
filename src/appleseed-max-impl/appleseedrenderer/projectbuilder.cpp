@@ -1088,8 +1088,8 @@ namespace
             else
             {
                 // Proceed with rendering env map and applying it to background shader.
-                const size_t TextureWidth = 512;
-                const size_t TextureHeight = 512;
+                const size_t TextureWidth = 2048;
+                const size_t TextureHeight = 1024;
 
                 // Render the environment map into a Max bitmap.
                 BitmapInfo bi;
