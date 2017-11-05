@@ -690,6 +690,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
             bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
 
+        // Volume parameterization.
+        bsdf_params.insert("volume_parameterization", "transmittance");
+
         // Volume transmittance.
         instance_name = insert_texture_and_instance(assembly, m_volume_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
