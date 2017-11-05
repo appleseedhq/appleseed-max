@@ -55,6 +55,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
+#include "foundation/image/genericimagefilewriter.h"
 #include "foundation/image/image.h"
 #include "foundation/math/aabb.h"
 #include "foundation/math/scalar.h"
@@ -944,25 +945,34 @@ namespace
         const MaxSceneEntities&             entities,
         const std::vector<DefaultLight>&    default_lights,
         const RenderType                    type,
-        const bool                          use_max_proc_maps,
+        const RendererSettings&             settings,
         const TimeValue                     time)
     {
+        // Add objects, object instances and materials to the assembly.
         ObjectMap object_map;
         MaterialMap material_map;
-
-        // Add objects, and consequently object instances and materials, to the assembly.
-        add_objects(assembly, entities, type, use_max_proc_maps, time, object_map, material_map);
+        add_objects(
+            assembly,
+            entities,
+            type,
+            settings.m_use_max_procedural_maps,
+            time,
+            object_map,
+            material_map);
 
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
         add_lights(assembly, rend_params, entities, time);
 
         // Add Max's default lights if
-        // - the scene does not contain non-physical lights (point lights, spot lights, etc.)
-        // - the scene does not contain light-emitting materials
-        // - the scene does not contain a light-emitting environment.
-        if (entities.m_lights.empty() &&
-            !has_light_emitting_materials(material_map) &&
-            scene.get_environment()->get_parameters().get_optional<std::string>("environment_edf").empty())
+        //       the scene does not contain non-physical lights (point lights, spot lights, etc.)
+        //   and the scene does not contain light-emitting materials
+        //   and the scene does not contain a light-emitting environment.
+        const bool has_lights = !entities.m_lights.empty();
+        const bool has_emitting_mats = has_light_emitting_materials(material_map);
+        const bool has_emitting_env = !scene.get_environment()->get_parameters().get_optional<std::string>("environment_edf").empty();
+        if (!has_lights &&
+            !has_emitting_mats &&
+            !(has_emitting_env && settings.m_background_emits_light))
             add_default_lights(assembly, default_lights);
     }
 
@@ -1001,23 +1011,12 @@ namespace
                         .insert("environment_edf", "environment_edf")
                         .insert("alpha_value", settings.m_background_alpha)));
 
-            if (settings.m_background_emits_light)
-            {
-                scene.set_environment(
-                    asr::EnvironmentFactory::create(
-                        "environment",
-                        asr::ParamArray()
-                            .insert("environment_edf", "environment_edf")
-                            .insert("environment_shader", "environment_shader")));
-            }
-            else
-            {
-                scene.set_environment(
-                    asr::EnvironmentFactory::create(
-                        "environment",
-                        asr::ParamArray()
-                            .insert("environment_shader", "environment_shader")));
-            }
+            scene.set_environment(
+                asr::EnvironmentFactory::create(
+                    "environment",
+                    asr::ParamArray()
+                        .insert("environment_edf", "environment_edf")
+                        .insert("environment_shader", "environment_shader")));
         }
     }
 
@@ -1028,6 +1027,7 @@ namespace
         const TimeValue         time)
     {
         // Create environment EDF.
+        std::string env_tex_instance_name;
         if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
             auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
@@ -1070,7 +1070,6 @@ namespace
         }
         else
         {
-            std::string env_tex_instance_name;
             if (settings.m_use_max_procedural_maps)
             {
                 env_tex_instance_name =
@@ -1087,41 +1086,28 @@ namespace
             }
             else
             {
-                // Proceed with rendering env map and applying it to background shader.
-                const size_t TextureWidth = 2048;
-                const size_t TextureHeight = 1024;
+                // Dimensions of the environment map texture.
+                const size_t EnvMapWidth = 2048;
+                const size_t EnvMapHeight = 1024;
 
                 // Render the environment map into a Max bitmap.
                 BitmapInfo bi;
-                bi.SetWidth(TextureWidth);
-                bi.SetHeight(TextureHeight);
+                bi.SetWidth(static_cast<WORD>(EnvMapWidth));
+                bi.SetHeight(static_cast<WORD>(EnvMapHeight));
                 bi.SetType(BMM_FLOAT_RGBA_32);
                 Bitmap* envmap_bitmap = TheManager->Create(&bi);
                 rend_params.envMap->RenderBitmap(time, envmap_bitmap, 1.0f, TRUE);
 
-                // Build an appleseed image from the Max bitmap.
-                asf::auto_release_ptr<asf::Image> envmap_image(
-                    new asf::Image(
-                        TextureWidth, TextureHeight,    // image dimensions
-                        TextureWidth, TextureHeight,    // tile dimensions
-                        4,
-                        asf::PixelFormatFloat));
-                for (size_t y = 0; y < TextureHeight; ++y)
-                {
-                    for (size_t x = 0; x < TextureWidth; ++x)
-                    {
-                        BMM_Color_fl c;
-                        envmap_bitmap->GetLinearPixels(
-                            static_cast<int>(x),
-                            static_cast<int>(y),
-                            1,
-                            &c);
-                        envmap_image->set_pixel(x, y, c);
-                    }
-                }
+                // Render the Max bitmap to an appleseed image.
+                asf::auto_release_ptr<asf::Image> envmap_image =
+                    render_bitmap_to_image(envmap_bitmap, EnvMapWidth, EnvMapHeight, 32, 32);
 
                 // Destroy the Max bitmap.
                 envmap_bitmap->DeleteThis();
+
+                // Write the environment map to disk, useful for debugging.
+                // asf::GenericImageFileWriter writer;
+                // writer.write("appleseed-max-environment-map.exr", envmap_image.ref());
 
                 const std::string env_tex_name = make_unique_name(scene.textures(), "environment_map");
                 scene.textures().insert(
@@ -1168,23 +1154,85 @@ namespace
                     .insert("alpha_value", settings.m_background_alpha)));
 
         // Create environment.
-        if (settings.m_background_emits_light)
-        {
-            scene.set_environment(
-                asr::EnvironmentFactory::create(
-                    "environment",
+        scene.set_environment(
+            asr::EnvironmentFactory::create(
+                "environment",
+                asr::ParamArray()
+                    .insert("environment_edf", "environment_edf")
+                    .insert("environment_shader", "environment_shader")));
+    }
+
+    void setup_material_editor_environment_map(
+        asr::Scene&             scene,
+        const RendParams&       rend_params,
+        const TimeValue         time)
+    {
+        // Dimensions of the environment map texture.
+        const size_t EnvMapWidth = 512;
+        const size_t EnvMapHeight = 512;
+
+        // Render the environment map into a Max bitmap.
+        BitmapInfo bi;
+        bi.SetWidth(static_cast<WORD>(EnvMapWidth));
+        bi.SetHeight(static_cast<WORD>(EnvMapHeight));
+        bi.SetType(BMM_FLOAT_RGBA_32);
+        Bitmap* envmap_bitmap = TheManager->Create(&bi);
+        rend_params.envMap->RenderBitmap(time, envmap_bitmap, 1.0f, TRUE);
+
+        // Render the Max bitmap to an appleseed image.
+        asf::auto_release_ptr<asf::Image> envmap_image =
+            render_bitmap_to_image(envmap_bitmap, EnvMapWidth, EnvMapHeight, 32, 32);
+
+        // Destroy the Max bitmap.
+        envmap_bitmap->DeleteThis();
+
+        // Write the environment map to disk, useful for debugging.
+        // asf::GenericImageFileWriter writer;
+        // writer.write("appleseed-max-material-editor-environment-map.exr", envmap_image.ref());
+
+        // Create texture entity from image.
+        const std::string env_tex_name = make_unique_name(scene.textures(), "environment_map");
+        scene.textures().insert(
+            asf::auto_release_ptr<asr::Texture>(
+                asr::MemoryTexture2dFactory().create(
+                    env_tex_name.c_str(),
                     asr::ParamArray()
-                        .insert("environment_edf", "environment_edf")
-                        .insert("environment_shader", "environment_shader")));
-        }
-        else
-        {
-            scene.set_environment(
-                asr::EnvironmentFactory::create(
-                    "environment",
-                    asr::ParamArray()
-                        .insert("environment_shader", "environment_shader")));
-        }
+                        .insert("color_space", "linear_rgb"),
+                    envmap_image)));
+
+        // Create texture entity instance.
+        const std::string env_tex_instance_name = make_unique_name(scene.texture_instances(), "environment_map_inst");
+        scene.texture_instances().insert(
+            asf::auto_release_ptr<asr::TextureInstance>(
+                asr::TextureInstanceFactory::create(
+                    env_tex_instance_name.c_str(),
+                    asr::ParamArray(),
+                    env_tex_name.c_str())));
+
+        // Create environment EDF.
+        asr::ParamArray env_edf_params;
+        env_edf_params.insert("radiance", env_tex_instance_name.c_str());
+        scene.environment_edfs().insert(
+            asf::auto_release_ptr<asr::EnvironmentEDF>(
+                asr::LatLongMapEnvironmentEDFFactory().create(
+                    "environment_edf",
+                    env_edf_params)));
+
+        // Create environment shader.
+        scene.environment_shaders().insert(
+            asr::BackgroundEnvironmentShaderFactory().create(
+                "environment_shader",
+                asr::ParamArray()
+                    .insert("color", env_tex_instance_name)
+                    .insert("alpha", 1.0f)));
+
+        // Create environment.
+        scene.set_environment(
+            asr::EnvironmentFactory::create(
+                "environment",
+                asr::ParamArray()
+                    .insert("environment_edf", "environment_edf")
+                    .insert("environment_shader", "environment_shader")));
     }
 
     void setup_environment(
@@ -1195,7 +1243,11 @@ namespace
         const TimeValue         time)
     {
         if (rend_params.envMap != nullptr)
-            setup_environment_map(scene, rend_params, settings, time);
+        {
+            if (rend_params.inMtlEdit)
+                setup_material_editor_environment_map(scene, rend_params, time);
+            else setup_environment_map(scene, rend_params, settings, time);
+        }
         else setup_solid_environment(scene, frame_rend_params, settings);
     }
 
@@ -1382,7 +1434,7 @@ asf::auto_release_ptr<asr::Project> build_project(
         entities,
         default_lights,
         type,
-        settings.m_use_max_procedural_maps,
+        settings,
         time);
 
     // Create an instance of the assembly and insert it into the scene.

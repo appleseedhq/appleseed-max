@@ -38,6 +38,8 @@
 #include "renderer/api/texture.h"
 
 // appleseed.foundation headers.
+#include "foundation/image/canvasproperties.h"
+#include "foundation/image/tile.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/siphash.h"
 #include "foundation/utility/string.h"
@@ -199,6 +201,49 @@ bool is_linear_texture(BitmapTex* bitmap_tex)
     return
         asf::ends_with(filepath, ".exr") ||
         asf::ends_with(filepath, ".hdr");
+}
+
+asf::auto_release_ptr<asf::Image> render_bitmap_to_image(
+    Bitmap*         bitmap,
+    const size_t    image_width,
+    const size_t    image_height,
+    const size_t    tile_width,
+    const size_t    tile_height)
+{
+    asf::auto_release_ptr<asf::Image> image(
+        new asf::Image(
+            image_width,
+            image_height,
+            tile_width,
+            tile_height,
+            4,
+            asf::PixelFormatFloat));
+
+    const asf::CanvasProperties& props = image->properties();
+
+    for (size_t ty = 0; ty < props.m_tile_count_y; ++ty)
+    {
+        for (size_t tx = 0; tx < props.m_tile_count_x; ++tx)
+        {
+            asf::Tile& tile = image->tile(tx, ty);
+
+            for (size_t y = 0, ye = tile.get_height(); y < ye; ++y)
+            {
+                for (size_t x = 0, xe = tile.get_width(); x < xe; ++x)
+                {
+                    const int ix = static_cast<int>(tx * props.m_tile_width + x);
+                    const int iy = static_cast<int>(ty * props.m_tile_height + y);
+
+                    BMM_Color_fl c;
+                    bitmap->GetLinearPixels(ix, iy, 1, &c);
+
+                    tile.set_pixel(x, y, c);
+                }
+            }
+        }
+    }
+
+    return image;
 }
 
 void insert_color(asr::BaseGroup& base_group, const Color& color, const char* name)
