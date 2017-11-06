@@ -34,9 +34,11 @@
 
 // appleseed.foundation headers.
 #include "foundation/image/color.h"
+#include "foundation/image/image.h"
 #include "foundation/math/matrix.h"
 #include "foundation/math/vector.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
+#include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
 #include <assert1.h>
@@ -54,6 +56,8 @@
 
 // Forward declarations.
 namespace renderer  { class BaseGroup; }
+class Bitmap;
+class BitmapTex;
 class Interval;
 class Texmap;
 
@@ -132,12 +136,27 @@ BOOL get_paramblock_value_by_name(
 
 
 //
-// Project construction functions.
+// Bitmap functions.
 //
 
 bool is_bitmap_texture(Texmap* map);
 
 bool is_supported_procedural_texture(Texmap* map);
+
+bool is_linear_texture(BitmapTex* bitmap_tex);
+
+// Render a Max bitmap to a tiled 32-bit floating point RGBA appleseed image.
+foundation::auto_release_ptr<foundation::Image> render_bitmap_to_image(
+    Bitmap*                 bitmap,
+    const size_t            image_width,
+    const size_t            image_height,
+    const size_t            tile_width,
+    const size_t            tile_height);
+
+
+//
+// Project construction functions.
+//
 
 template <typename EntityContainer>
 std::string make_unique_name(
@@ -158,7 +177,7 @@ std::string insert_texture_and_instance(
 
 std::string insert_bitmap_texture_and_instance(
     renderer::BaseGroup&    base_group,
-    Texmap*                 texmap,
+    BitmapTex*              bitmap_tex,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 

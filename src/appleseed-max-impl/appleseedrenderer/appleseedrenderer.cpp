@@ -114,13 +114,13 @@ void AppleseedRenderer::DeleteThis()
 
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
-#if MAX_RELEASE == MAX_RELEASE_R18  // No interactive render for max 2015.
+#if MAX_RELEASE == MAX_RELEASE_R18
+    // This code is specific to 3ds Max 2016: We don't support interactive
+    // rendering in 3ds Max 2015, and 3ds Max 2017 has a new API for that.
     if (id == I_RENDER_ID)
     {
         if (m_interactive_renderer == nullptr)
-        {
             m_interactive_renderer = new AppleseedInteractiveRender();
-        }
 
         return static_cast<IInteractiveRender*>(m_interactive_renderer);
     }
@@ -134,13 +134,8 @@ void* AppleseedRenderer::GetInterface(ULONG id)
 BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
 {
     if (id == TAB_DIALOG_OBJECT_INTERFACE_ID)
-    {
         return static_cast<ITabDialogObject*>(this);
-    }
-    else
-    {
-        return Renderer::GetInterface(id);
-    }
+    else return Renderer::GetInterface(id);
 }
 
 #if MAX_RELEASE == MAX_RELEASE_R19
@@ -471,7 +466,7 @@ int AppleseedRenderer::Render(
     if (m_rend_params.inMtlEdit)
     {
         // Write the project to disk, useful to debug material previews.
-        // asr::ProjectFileWriter::write(project.ref(), "MaterialEditor.appleseed");
+        // asr::ProjectFileWriter::write(project.ref(), "appleseed-max-material-editor.appleseed");
 
         // Render the project.
         if (progress_cb)
@@ -601,15 +596,6 @@ IOResult AppleseedRenderer::Load(ILoad* iload)
     return result;
 }
 
-void AppleseedRenderer::clear()
-{
-    m_scene = nullptr;
-    m_view_node = nullptr;
-    m_default_lights.clear();
-    m_time = 0;
-    m_entities.clear();
-}
-
 void AppleseedRenderer::AddTabToDialog(
     ITabbedDialog*          dialog,
     ITabDialogPluginTab*    tab) 
@@ -617,7 +603,7 @@ void AppleseedRenderer::AddTabToDialog(
     const int RenderRollupWidth = 222;  // the width of the render rollout in dialog units
     dialog->AddRollout(
         L"Renderer",
-        NULL,
+        nullptr,
         AppleseedRendererTabClassId,
         tab,
         -1,
@@ -634,11 +620,20 @@ int AppleseedRenderer::AcceptTab(
 
     if (tab->GetSuperClassID() == RADIOSITY_CLASS_ID)
         return 0;
-    
+
     if (tab->GetClassID() == RayTraceTabClassId)
         return 0;
 
     return TAB_DIALOG_ADD_TAB;
+}
+
+void AppleseedRenderer::clear()
+{
+    m_scene = nullptr;
+    m_view_node = nullptr;
+    m_default_lights.clear();
+    m_time = 0;
+    m_entities.clear();
 }
 
 

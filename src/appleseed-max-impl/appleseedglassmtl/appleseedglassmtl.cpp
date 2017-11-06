@@ -690,6 +690,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
             bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
 
+        // Volume parameterization.
+        bsdf_params.insert("volume_parameterization", "transmittance");
+
         // Volume transmittance.
         instance_name = insert_texture_and_instance(assembly, m_volume_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
@@ -825,5 +828,6 @@ HINSTANCE AppleseedGlassMtlClassDesc::HInstance()
 
 bool AppleseedGlassMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
 {
+    // Before 3ds Max 2017, Class_ID::operator==() returned an int.
     return renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id() ? true : false;
 }

@@ -97,6 +97,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("pt.max_bounces", m_bounces);
 
+    params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
 
     if (m_max_ray_intensity_set)

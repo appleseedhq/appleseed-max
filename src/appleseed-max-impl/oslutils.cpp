@@ -97,16 +97,38 @@ void connect_color_texture(
     Texmap*             texmap,
     const Color         multiplier)
 {
-    auto layer_name = asf::format("{0}_{1}", material_node_name, material_input_name);
+    if (is_bitmap_texture(texmap) && !is_linear_texture(static_cast<BitmapTex*>(texmap)))
+    {
+        auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
+            asr::ParamArray()
+                .insert("Filename", fmt_osl_expr(texmap))
+                .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
 
-    shader_group.add_shader("shader", "as_max_color_texture", layer_name.c_str(),
-        asr::ParamArray()
-            .insert("Filename", fmt_osl_expr(texmap))
-            .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
+        auto srgb_to_linear_layer_name = asf::format("{0}_{1}_srgb_to_linear", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_srgb_to_linear_rgb", srgb_to_linear_layer_name.c_str(),
+            asr::ParamArray());
 
-    shader_group.add_connection(
-        layer_name.c_str(), "ColorOut",
-        material_node_name, material_input_name);
+        shader_group.add_connection(
+            texture_layer_name.c_str(), "ColorOut",
+            srgb_to_linear_layer_name.c_str(), "ColorIn");
+
+        shader_group.add_connection(
+            srgb_to_linear_layer_name.c_str(), "ColorOut",
+            material_node_name, material_input_name);
+    }
+    else
+    {
+        auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
+            asr::ParamArray()
+                .insert("Filename", fmt_osl_expr(texmap))
+                .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
+
+        shader_group.add_connection(
+            texture_layer_name.c_str(), "ColorOut",
+            material_node_name, material_input_name);
+    }
 }
 
 void connect_bump_map(

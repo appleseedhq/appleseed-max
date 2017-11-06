@@ -38,6 +38,8 @@
 #include "renderer/api/texture.h"
 
 // appleseed.foundation headers.
+#include "foundation/image/canvasproperties.h"
+#include "foundation/image/tile.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/siphash.h"
 #include "foundation/utility/string.h"
@@ -152,9 +154,9 @@ bool is_supported_procedural_texture(Texmap* map)
 
     switch (part_a)
     {
-      case 0x6769144B:                  // VrayHDRI
-        return part_b == 0x2C1017D;
-      case 0x58F82B74:                  // VrayColor
+      case 0x6769144B:                  // VRayHDRI
+        return part_b == 0x02C1017D;
+      case 0x58F82B74:                  // VRayColor
         return part_b == 0x73B75D7F;
       case 0x64035FB9:                  // tiles
         return part_b == 0x69664CDC;
@@ -180,17 +182,68 @@ bool is_supported_procedural_texture(Texmap* map)
       case RGBMULT_CLASS_ID:
       case OUTPUT_CLASS_ID:
       case COLORCORRECTION_CLASS_ID:
-      case 0x0000214:                   // WOOD_CLASS_ID
-      case 0x0000218:                   // DENT_CLASS_ID
-      case 0x46396cf1:                  // PLANET_CLASS_ID
-      case 0x7712634e:                  // WATER_CLASS_ID
-      case 0xa845e7c:                   // SMOKE_CLASS_ID
-      case 0x62c32b8a:                  // SPECKLE_CLASS_ID
-      case 0x90b04f9:                   // SPLAT_CLASS_ID
+      case 0x00000214:                  // WOOD_CLASS_ID
+      case 0x00000218:                  // DENT_CLASS_ID
+      case 0x46396CF1:                  // PLANET_CLASS_ID
+      case 0x7712634E:                  // WATER_CLASS_ID
+      case 0x0A845E7C:                  // SMOKE_CLASS_ID
+      case 0x62C32B8A:                  // SPECKLE_CLASS_ID
+      case 0x090B04F9:                  // SPLAT_CLASS_ID
         return true;
     }
 
     return false;
+}
+
+bool is_linear_texture(BitmapTex* bitmap_tex)
+{
+    const auto filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
+    return
+        asf::ends_with(filepath, ".exr") ||
+        asf::ends_with(filepath, ".hdr");
+}
+
+asf::auto_release_ptr<asf::Image> render_bitmap_to_image(
+    Bitmap*         bitmap,
+    const size_t    image_width,
+    const size_t    image_height,
+    const size_t    tile_width,
+    const size_t    tile_height)
+{
+    asf::auto_release_ptr<asf::Image> image(
+        new asf::Image(
+            image_width,
+            image_height,
+            tile_width,
+            tile_height,
+            4,
+            asf::PixelFormatFloat));
+
+    const asf::CanvasProperties& props = image->properties();
+
+    for (size_t ty = 0; ty < props.m_tile_count_y; ++ty)
+    {
+        for (size_t tx = 0; tx < props.m_tile_count_x; ++tx)
+        {
+            asf::Tile& tile = image->tile(tx, ty);
+
+            for (size_t y = 0, ye = tile.get_height(); y < ye; ++y)
+            {
+                for (size_t x = 0, xe = tile.get_width(); x < xe; ++x)
+                {
+                    const int ix = static_cast<int>(tx * props.m_tile_width + x);
+                    const int iy = static_cast<int>(ty * props.m_tile_height + y);
+
+                    BMM_Color_fl c;
+                    bitmap->GetLinearPixels(ix, iy, 1, &c);
+
+                    tile.set_pixel(x, y, c);
+                }
+            }
+        }
+    }
+
+    return image;
 }
 
 void insert_color(asr::BaseGroup& base_group, const Color& color, const char* name)
@@ -224,7 +277,7 @@ std::string insert_texture_and_instance(
         return
             insert_bitmap_texture_and_instance(
                 base_group,
-                texmap,
+                static_cast<BitmapTex*>(texmap),
                 texture_params,
                 texture_instance_params);
     }
@@ -234,25 +287,22 @@ std::string insert_texture_and_instance(
 
 std::string insert_bitmap_texture_and_instance(
     asr::BaseGroup& base_group,
-    Texmap*         texmap,
+    BitmapTex*      bitmap_tex,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
-
     // todo: it can happen that `filepath` is empty here; report an error.
     const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
     texture_params.insert("filename", filepath);
 
     if (!texture_params.strings().exist("color_space"))
     {
-        if (asf::ends_with(filepath, ".exr") ||
-            asf::ends_with(filepath, ".hdr"))
+        if (is_linear_texture(bitmap_tex))
             texture_params.insert("color_space", "linear_rgb");
         else texture_params.insert("color_space", "srgb");
     }
 
-    const std::string texture_name = wide_to_utf8(texmap->GetName());
+    const std::string texture_name = wide_to_utf8(bitmap_tex->GetName());
     if (base_group.textures().get_by_name(texture_name.c_str()) == nullptr)
     {
         base_group.textures().insert(
@@ -470,6 +520,26 @@ namespace
         virtual asf::uint64 compute_signature() const override
         {
             return asf::siphash24(m_texmap);
+        }
+
+        virtual Hints get_hints() const override
+        {
+            Hints hints;
+
+            if (is_bitmap_texture(m_texmap))
+            {
+                auto bitmap = static_cast<BitmapTex*>(m_texmap)->GetBitmap(0);
+                hints.m_width = static_cast<size_t>(bitmap->Width());
+                hints.m_height = static_cast<size_t>(bitmap->Height());
+            }
+            else
+            {
+                // Take a random guess.
+                hints.m_width = 2048;
+                hints.m_height = 1080;
+            }
+
+            return hints;
         }
 
         virtual void evaluate(
