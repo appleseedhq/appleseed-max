@@ -1027,10 +1027,12 @@ namespace
         const TimeValue         time)
     {
         // Create environment EDF.
-        std::string env_tex_instance_name;
         if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
             auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
+            appleseed_envmap->Update(time, FOREVER);
+            auto env_map = appleseed_envmap->create_envmap("environment_edf");
+
             IParamBlock2* param_block = appleseed_envmap->GetParamBlock(0);
 
             INode* sun_node(nullptr);
@@ -1038,38 +1040,30 @@ namespace
             get_paramblock_value_by_name(param_block, L"sun_node", time, sun_node, FOREVER);
             get_paramblock_value_by_name(param_block, L"sun_node_on", time, sun_node_on, FOREVER);
 
-            float sun_theta, sun_phi;
             if (sun_node != nullptr && sun_node_on)
             {
                 Matrix3 sun_transform = sun_node->GetObjTMAfterWSM(time);
                 sun_transform.NoTrans();
 
                 const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
-                sun_theta = std::acosf(sun_dir.z);
+                float sun_theta = std::acosf(sun_dir.z);
 
                 float cos_sun_phi = sun_dir.x / sqrt(1.0f - sun_dir.z * sun_dir.z);
                 cos_sun_phi = asf::clamp(cos_sun_phi, -1.0f, 1.0f);
-                sun_phi = std::acosf(cos_sun_phi);
+                float sun_phi = std::acosf(cos_sun_phi);
 
                 if (sun_dir.y > 0.0f)
                     sun_phi = asf::TwoPi<float>() - sun_phi;
 
-                sun_theta = asf::rad_to_deg(sun_theta);
-                sun_phi = asf::rad_to_deg(sun_phi);
-            }
-            else
-            {
-                get_paramblock_value_by_name(param_block, L"sun_theta", time, sun_theta, FOREVER);
-                get_paramblock_value_by_name(param_block, L"sun_phi", time, sun_phi, FOREVER);
+                env_map->get_parameters().set("sun_theta", asf::rad_to_deg(sun_theta));
+                env_map->get_parameters().set("sun_phi", asf::rad_to_deg(sun_phi));
             }
 
-            auto env_map = appleseed_envmap->create_envmap("environment_edf");
-            env_map->get_parameters().set("sun_theta", sun_theta);
-            env_map->get_parameters().set("sun_phi", sun_phi);
             scene.environment_edfs().insert(env_map);
         }
         else
         {
+            std::string env_tex_instance_name;
             if (settings.m_use_max_procedural_maps)
             {
                 env_tex_instance_name =
