@@ -549,10 +549,32 @@ Point3 AppleseedEnvMap::EvalNormalPerturb(ShadeContext& /*sc*/)
 
 asf::auto_release_ptr<asr::EnvironmentEDF> AppleseedEnvMap::create_envmap(const char* name)
 {
+    float sun_theta_deg = m_sun_theta;
+    float sun_phi_deg = m_sun_phi;
+
+    if (m_sun_node != nullptr && m_sun_node_on)
+    {
+        Matrix3 sun_transform = m_sun_node->GetObjTMAfterWSM(GetCOREInterface()->GetTime());
+        sun_transform.NoTrans();
+
+        const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();
+        float sun_theta = std::acosf(sun_dir.z);
+
+        float cos_sun_phi = sun_dir.x / sqrt(1.0f - sun_dir.z * sun_dir.z);
+        cos_sun_phi = asf::clamp(cos_sun_phi, -1.0f, 1.0f);
+        float sun_phi = std::acosf(cos_sun_phi);
+
+        if (sun_dir.y > 0.0f)
+            sun_phi = asf::TwoPi<float>() - sun_phi;
+
+        sun_theta_deg = asf::rad_to_deg(sun_theta);
+        sun_phi_deg = asf::rad_to_deg(sun_phi);
+    }
+
     asr::ParamArray map_params;
 
-    map_params.insert("sun_theta", m_sun_theta);
-    map_params.insert("sun_phi", m_sun_phi);
+    map_params.insert("sun_theta", sun_theta_deg);
+    map_params.insert("sun_phi", sun_phi_deg);
     map_params.insert("turbidity", m_turbidity);
     map_params.insert("turbidity_multiplier", m_turb_multiplier);
     map_params.insert("ground_albedo", m_ground_albedo);
