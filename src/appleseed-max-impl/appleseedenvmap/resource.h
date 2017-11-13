@@ -2,11 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by appleseedenvmap.rc
 //
-#define IDS_LIBDESCRIPTION              8001
 #define IDS_SUN_NODE                    8002
-#define IDS_CLASS_NAME                  8003
 #define IDS_ENVMAP_PARAMS               8004
-#define IDS_CLASS_NAME_CDESC            8005
 #define IDS_THETA                       8006
 #define IDS_COORDS                      8007
 #define IDS_PICK_SUN_PROMPT             8007
@@ -14,7 +11,6 @@
 #define IDS_TURBIDITY                   8009
 #define IDS_TURB_MULTIPLIER             8010
 #define IDS_TURB_MAP                    8011
-#define IDS_CATEGORY                    8012
 #define IDS_TURB_MAP_ON                 8013
 #define IDS_LUMINANCE_MULTIPLIER        8014
 #define IDS_LUMINANCE_GAMMA             8015
