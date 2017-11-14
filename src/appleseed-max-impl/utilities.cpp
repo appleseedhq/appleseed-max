@@ -544,69 +544,69 @@ namespace
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    shading_point,
             float&                      scalar) const override
         {
-            scalar = evaluate_float(uv);
+            scalar = evaluate_float(shading_point);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    shading_point,
             asf::Color3f&               linear_rgb) const override
         {
-            evaluate_color(uv, linear_rgb.r, linear_rgb.g, linear_rgb.b);
+            evaluate_color(shading_point, linear_rgb.r, linear_rgb.g, linear_rgb.b);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    shading_point,
             asr::Spectrum&              spectrum) const override
         {
             DbgAssert(spectrum.size() == 3);
-            evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2]);
+            evaluate_color(shading_point, spectrum[0], spectrum[1], spectrum[2]);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    shading_point,
             asr::Alpha&                 alpha) const override
         {
-            alpha.set(evaluate_float(uv));
+            alpha.set(evaluate_float(shading_point));
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    shading_point,
             asf::Color3f&               linear_rgb,
             asr::Alpha&                 alpha) const override
         {
-            evaluate_color(uv, linear_rgb.r, linear_rgb.g, linear_rgb.b, alpha);
+            evaluate_color(shading_point, linear_rgb.r, linear_rgb.g, linear_rgb.b, alpha);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    shading_point,
             asr::Spectrum&              spectrum,
             asr::Alpha&                 alpha) const override
         {
             DbgAssert(spectrum.size() == 3);
-            evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2], alpha);
+            evaluate_color(shading_point, spectrum[0], spectrum[1], spectrum[2], alpha);
         }
 
       private:
         Texmap* m_texmap;
 
-        float evaluate_float(const asf::Vector2f& uv) const
+        float evaluate_float(const asr::SourceInputs& shading_point) const
         {
-            MaxShadeContext maxsc(uv);
+            MaxShadeContext maxsc(asf::Vector2f(shading_point.m_uv_x, shading_point.m_uv_y));
 
             return m_texmap->EvalMono(maxsc);
         }
 
-        void evaluate_color(const asf::Vector2f& uv, float& r, float& g, float& b) const
+        void evaluate_color(const asr::SourceInputs& shading_point, float& r, float& g, float& b) const
         {
-            MaxShadeContext maxsc(uv);
+            MaxShadeContext maxsc(asf::Vector2f(shading_point.m_uv_x, shading_point.m_uv_y));
             
             const AColor tex_color = m_texmap->EvalColor(maxsc);
 
@@ -615,9 +615,9 @@ namespace
             b = tex_color.b;
         }
 
-        void evaluate_color(const asf::Vector2f& uv, float& r, float& g, float& b, asr::Alpha& alpha) const
+        void evaluate_color(const asr::SourceInputs& shading_point, float& r, float& g, float& b, asr::Alpha& alpha) const
         {
-            MaxShadeContext maxsc(uv);
+            MaxShadeContext maxsc(asf::Vector2f(shading_point.m_uv_x, shading_point.m_uv_y));
             
             const AColor tex_color = m_texmap->EvalColor(maxsc);
 
