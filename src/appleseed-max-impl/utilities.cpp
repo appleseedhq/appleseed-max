@@ -331,7 +331,7 @@ namespace
       : public ShadeContext
     {
       public:
-        explicit MaxShadeContext(const asf::Vector2f& uv)
+        explicit MaxShadeContext(const asr::SourceInputs& source_inputs)
         {
             doMaps = TRUE;
             filterMaps = FALSE;
@@ -342,8 +342,8 @@ namespace
             // todo: initialize `out`?
 
             m_cur_time = GetCOREInterface()->GetTime();
-            m_uv.x = uv.x;
-            m_uv.y = uv.y;
+            m_uv.x = source_inputs.m_uv_x;
+            m_uv.y = source_inputs.m_uv_y;
         }
 
         BOOL InMtlEditor() override
@@ -544,69 +544,69 @@ namespace
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    source_inputs,
             float&                      scalar) const override
         {
-            scalar = evaluate_float(uv);
+            scalar = evaluate_float(source_inputs);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    source_inputs,
             asf::Color3f&               linear_rgb) const override
         {
-            evaluate_color(uv, linear_rgb.r, linear_rgb.g, linear_rgb.b);
+            evaluate_color(source_inputs, linear_rgb.r, linear_rgb.g, linear_rgb.b);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    source_inputs,
             asr::Spectrum&              spectrum) const override
         {
             DbgAssert(spectrum.size() == 3);
-            evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2]);
+            evaluate_color(source_inputs, spectrum[0], spectrum[1], spectrum[2]);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    source_inputs,
             asr::Alpha&                 alpha) const override
         {
-            alpha.set(evaluate_float(uv));
+            alpha.set(evaluate_float(source_inputs));
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    source_inputs,
             asf::Color3f&               linear_rgb,
             asr::Alpha&                 alpha) const override
         {
-            evaluate_color(uv, linear_rgb.r, linear_rgb.g, linear_rgb.b, alpha);
+            evaluate_color(source_inputs, linear_rgb.r, linear_rgb.g, linear_rgb.b, alpha);
         }
 
         virtual void evaluate(
             asr::TextureCache&          texture_cache,
-            const asf::Vector2f&        uv,
+            const asr::SourceInputs&    source_inputs,
             asr::Spectrum&              spectrum,
             asr::Alpha&                 alpha) const override
         {
             DbgAssert(spectrum.size() == 3);
-            evaluate_color(uv, spectrum[0], spectrum[1], spectrum[2], alpha);
+            evaluate_color(source_inputs, spectrum[0], spectrum[1], spectrum[2], alpha);
         }
 
       private:
         Texmap* m_texmap;
 
-        float evaluate_float(const asf::Vector2f& uv) const
+        float evaluate_float(const asr::SourceInputs& source_inputs) const
         {
-            MaxShadeContext maxsc(uv);
+            MaxShadeContext maxsc(source_inputs);
 
             return m_texmap->EvalMono(maxsc);
         }
 
-        void evaluate_color(const asf::Vector2f& uv, float& r, float& g, float& b) const
+        void evaluate_color(const asr::SourceInputs& source_inputs, float& r, float& g, float& b) const
         {
-            MaxShadeContext maxsc(uv);
+            MaxShadeContext maxsc(source_inputs);
             
             const AColor tex_color = m_texmap->EvalColor(maxsc);
 
@@ -615,9 +615,9 @@ namespace
             b = tex_color.b;
         }
 
-        void evaluate_color(const asf::Vector2f& uv, float& r, float& g, float& b, asr::Alpha& alpha) const
+        void evaluate_color(const asr::SourceInputs& source_inputs, float& r, float& g, float& b, asr::Alpha& alpha) const
         {
-            MaxShadeContext maxsc(uv);
+            MaxShadeContext maxsc(source_inputs);
             
             const AColor tex_color = m_texmap->EvalColor(maxsc);
 
