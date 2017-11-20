@@ -480,7 +480,7 @@ namespace
                 mtl->Update(time, FOREVER);
 
             const int submtlcount = mtl->NumSubMtls();
-            if (submtlcount > 0)
+            if (mtl->IsMultiMtl() && submtlcount > 0)
             {
                 // It's a multi/sub-object material.
                 for (int i = 0; i < submtlcount; ++i)

@@ -63,6 +63,9 @@
     <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp">
       <Filter>appleseedinteractive</Filter>
     </ClCompile>
+    <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp">
+      <Filter>appleseedblendmtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -171,6 +174,15 @@
     <ClInclude Include="appleseedinteractive\interactivesession.h">
       <Filter>appleseedinteractive</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedblendmtl\appleseedblendmtl.h">
+      <Filter>appleseedblendmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedblendmtl\datachunks.h">
+      <Filter>appleseedblendmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedblendmtl\resource.h">
+      <Filter>appleseedblendmtl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -196,6 +208,9 @@
     </ResourceCompile>
     <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc">
       <Filter>appleseedenvmap</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc">
+      <Filter>appleseedblendmtl</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +240,9 @@
     </Filter>
     <Filter Include="appleseedinteractive">
       <UniqueIdentifier>{ee864abd-823b-4815-bd20-52108be5b332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedblendmtl">
+      <UniqueIdentifier>{d115203b-d27f-49e3-9aee-6676110ffc63}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

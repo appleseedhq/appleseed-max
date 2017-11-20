@@ -1,0 +1,198 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""windows.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 159
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Base Material:",IDC_LABEL_BASE_MTL,7,7,48,8
+    CONTROL         "Base Material",IDC_MTLBTN_BASE,"CustButton",WS_TABSTOP,55,6,157,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_1,"CustButton",WS_TABSTOP,112,29,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_1,"CustButton",WS_TABSTOP,18,29,79,10
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_1,"CustEdit",WS_TABSTOP,179,29,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_1,
+                    "SpinnerControl",0x0,205,29,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_1,"ColorSwatch",WS_TABSTOP,100,29,10,10
+    LTEXT           "1:",IDC_LABEL_COAT_1,9,30,8,8
+    LTEXT           "Layers:",IDC_LABEL_BASE_MTL2,18,20,24,8
+    LTEXT           "Blend Amount:",IDC_LABEL_BASE_MTL3,100,20,52,8
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_2,"CustButton",WS_TABSTOP,112,42,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_2,"CustButton",WS_TABSTOP,18,42,79,10
+    LTEXT           "2:",IDC_LABEL_COAT_2,9,43,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_2,"CustEdit",WS_TABSTOP,179,42,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_2,
+                    "SpinnerControl",0x0,205,42,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_2,"ColorSwatch",WS_TABSTOP,100,42,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_3,"CustButton",WS_TABSTOP,112,54,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_3,"CustButton",WS_TABSTOP,18,54,79,10
+    LTEXT           "3:",IDC_LABEL_COAT_3,9,55,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_3,"CustEdit",WS_TABSTOP,179,54,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_3,
+                    "SpinnerControl",0x0,205,54,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_3,"ColorSwatch",WS_TABSTOP,100,54,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_4,"CustButton",WS_TABSTOP,112,66,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_4,"CustButton",WS_TABSTOP,18,66,79,10
+    LTEXT           " 4:",IDC_LABEL_COAT_4,7,67,9,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_4,"CustEdit",WS_TABSTOP,179,66,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_4,
+                    "SpinnerControl",0x0,205,66,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_4,"ColorSwatch",WS_TABSTOP,100,66,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_5,"CustButton",WS_TABSTOP,112,78,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_5,"CustButton",WS_TABSTOP,18,78,79,10
+    LTEXT           "5:",IDC_LABEL_COAT_5,9,79,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_5,"CustEdit",WS_TABSTOP,179,78,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_5,
+                    "SpinnerControl",0x0,205,78,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_5,"ColorSwatch",WS_TABSTOP,100,78,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_6,"CustButton",WS_TABSTOP,112,90,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_6,"CustButton",WS_TABSTOP,18,90,79,10
+    LTEXT           "6:",IDC_LABEL_COAT_6,9,90,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_6,"CustEdit",WS_TABSTOP,179,90,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_6,
+                    "SpinnerControl",0x0,205,90,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_6,"ColorSwatch",WS_TABSTOP,100,90,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_7,"CustButton",WS_TABSTOP,112,102,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_7,"CustButton",WS_TABSTOP,18,102,79,10
+    LTEXT           "7:",IDC_LABEL_COAT_7,9,103,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_7,"CustEdit",WS_TABSTOP,179,102,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_7,
+                    "SpinnerControl",0x0,205,102,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_7,"ColorSwatch",WS_TABSTOP,100,102,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_8,"CustButton",WS_TABSTOP,112,114,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_8,"CustButton",WS_TABSTOP,18,114,79,10
+    LTEXT           "8:",IDC_LABEL_COAT_8,9,114,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_8,"CustEdit",WS_TABSTOP,179,114,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_8,
+                    "SpinnerControl",0x0,205,114,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_8,"ColorSwatch",WS_TABSTOP,100,114,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_9,"CustButton",WS_TABSTOP,112,126,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_9,"CustButton",WS_TABSTOP,18,126,79,10
+    LTEXT           "9:",IDC_LABEL_COAT_9,9,127,8,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_9,"CustEdit",WS_TABSTOP,179,126,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_9,
+                    "SpinnerControl",0x0,205,126,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_9,"ColorSwatch",WS_TABSTOP,100,126,10,10
+    CONTROL         "Mask Map 1",IDC_TEXBTN_MASK_10,"CustButton",WS_TABSTOP,112,138,65,10
+    CONTROL         "Coat Material 1",IDC_MTLBTN_COAT_10,"CustButton",WS_TABSTOP,18,138,79,10
+    LTEXT           "10:",IDC_LABEL_COAT_10,5,139,12,8
+    CONTROL         "Coat Amount",IDC_EDIT_AMOUNT_10,"CustEdit",WS_TABSTOP,179,138,25,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_AMOUNT_10,
+                    "SpinnerControl",0x0,205,138,7,10
+    CONTROL         "Mix Amount Color Swatch",IDC_COLOR_AMOUNT_10,
+                    "ColorSwatch",WS_TABSTOP,100,138,10,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_PARAMS, DIALOG
+    BEGIN
+        VERTGUIDE, 7
+        VERTGUIDE, 212
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 148
+        HORZGUIDE, 39
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_PARAMS_TITLE "Blend Parameters"
+    IDS_MASK_AMOUNT         "Mask Amount"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_MIX_AMOUNT          "Mix Amount"
+    IDS_MATERIAL            "Material"
+    IDS_MASK_TEXTURE        "Mask Texture"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

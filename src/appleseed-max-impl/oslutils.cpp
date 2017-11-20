@@ -30,11 +30,17 @@
 #include "oslutils.h"
 
 // appleseed-max headers.
+#include "appleseeddisneymtl/appleseeddisneymtl.h"
+#include "appleseedblendmtl/appleseedblendmtl.h"
+#include "iappleseedmtl.h"
 #include "utilities.h"
+
 
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
+#include "renderer/modeling/shadergroup/shader.h"
+#include "renderer/modeling/shadergroup/shaderconnection.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
@@ -184,4 +190,34 @@ void connect_normal_map(
     shader_group.add_connection(
         normal_map_layer_name.c_str(), "TangentOut",
         material_node_name, material_tn_input_name);
+}
+
+void connect_sub_mtl(
+    asr::Assembly&          assembly,
+    asr::ShaderGroup&       shader_group,
+    const char*             shader_name,
+    const char*             shader_input,
+    Mtl*                    mat)
+{
+    auto compatible_mtl =   mat->ClassID() == AppleseedDisneyMtl::get_class_id() || 
+                            mat->ClassID() == AppleseedBlendMtl::get_class_id();
+
+    auto appleseed_mtl = static_cast<IAppleseedMtl*>(mat->GetInterface(IAppleseedMtl::interface_id()));
+    if (!appleseed_mtl || !compatible_mtl)
+        return;
+
+    std::string layer_name =
+        make_unique_name(assembly.materials(), wide_to_utf8(mat->GetName()) + "_mat");
+    appleseed_mtl->create_material(assembly, layer_name.c_str(), false);
+
+    // assume shader group with provided name always exist 
+    asr::ShaderGroup* mtl_group = assembly.shader_groups().get_by_name(asf::format("{0}_{1}", layer_name, "shader_group").c_str());
+
+    for (const auto& shader : mtl_group->shaders())
+        shader_group.add_shader(shader.get_type(), shader.get_shader(), shader.get_layer(), shader.get_parameters());
+
+    for (const auto& conn : mtl_group->shader_connections())
+        shader_group.add_connection(conn.get_src_layer(), conn.get_src_param(), conn.get_dst_layer(), conn.get_dst_param());
+
+    shader_group.add_connection(layer_name.c_str(), "ClosureOut", shader_name, shader_input);
 }

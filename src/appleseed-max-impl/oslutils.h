@@ -35,8 +35,11 @@
 #include <string>
 
 // Forward declarations.
+namespace renderer { class Assembly; }
 namespace renderer { class ShaderGroup; }
+
 class Color;
+class Mtl;
 class Texmap;
 
 std::string fmt_osl_expr(const std::string& s);
@@ -76,3 +79,10 @@ void connect_normal_map(
     const char*             material_tn_input_name,
     Texmap*                 texmap,
     const int               up_vector);
+
+void connect_sub_mtl(
+    renderer::Assembly&     assembly,
+    renderer::ShaderGroup&  shader_group,
+    const char*             shader_name,
+    const char*             shader_input,
+    Mtl*                    mat);
