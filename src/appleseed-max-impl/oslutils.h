@@ -37,7 +37,6 @@
 // Forward declarations.
 namespace renderer { class Assembly; }
 namespace renderer { class ShaderGroup; }
-
 class Color;
 class Mtl;
 class Texmap;

@@ -128,14 +128,10 @@ class AppleseedBlendMtl
     virtual void Shade(ShadeContext& sc) override;
 
     // Sub-material part of Mtl methods
-    virtual int NumSubMtls() override;// { return 0; }
-    virtual Mtl* GetSubMtl(int i) override;// { return NULL; }
-    virtual void SetSubMtl(int i, Mtl *m) override;// { }
-    //virtual int VPDisplaySubMtl() override;// { return -1; }
-
+    virtual int NumSubMtls() override;
+    virtual Mtl* GetSubMtl(int i) override;
+    virtual void SetSubMtl(int i, Mtl *m) override;
     virtual MSTR GetSubMtlSlotName(int i) override;
-    //CoreExport MSTR GetSubMtlTVName(int i);
-    //CoreExport void CopySubMtl(HWND hwnd, int ifrom, int ito);
 
     // IAppleseedMtl methods.
     virtual int get_sides() const override;
@@ -160,7 +156,7 @@ class AppleseedBlendMtl
 
 
 //
-// AppleseedDisneyMtl material browser info.
+// AppleseedBlendMtl material browser info.
 //
 
 class AppleseedBlendMtlBrowserEntryInfo
@@ -174,7 +170,7 @@ class AppleseedBlendMtlBrowserEntryInfo
 
 
 //
-// AppleseedDisneyMtl class descriptor.
+// AppleseedBlendMtl class descriptor.
 //
 
 class AppleseedBlendMtlClassDesc

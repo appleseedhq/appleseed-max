@@ -27,8 +27,8 @@
 //
 
 // appleseed-max headers.
-#include "appleseedenvmap/appleseedenvmap.h"
 #include "appleseedblendmtl/appleseedblendmtl.h"
+#include "appleseedenvmap/appleseedenvmap.h"
 #include "appleseeddisneymtl/appleseeddisneymtl.h"
 #include "appleseedglassmtl/appleseedglassmtl.h"
 #include "appleseedlightmtl/appleseedlightmtl.h"

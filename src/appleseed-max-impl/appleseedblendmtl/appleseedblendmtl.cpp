@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedblendmtl/datachunks.h"
 #include "appleseedblendmtl/resource.h"
+#include "appleseeddisneymtl/appleseeddisneymtl.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
@@ -86,44 +87,42 @@ namespace
     enum ParamId
     {
         // Changing these value WILL break compatibility.
-        ParamIdBaseMtl          = 0,
-        ParamIdLayerMtl         = 1,
-        ParamIdMaskTex          = 2,
-        ParamIdMaskAmount       = 3,
-        ParamIdMixColor         = 4,
+        ParamIdBaseMtl      = 0,
+        ParamIdLayerMtl     = 1,
+        ParamIdMaskTex      = 2,
+        ParamIdMaskAmount   = 3,
+        ParamIdMixColor     = 4,
     };
 
     enum MtlId
     {
         // Changing these value WILL break compatibility.
-        MaterialBase                = 0,
-        MaterialCoat1               = 1,
-        MaterialCoat2               = 2,
-        MaterialCoat3               = 3,
-        MaterialCoat4               = 4,
-        MaterialCoat5               = 5,
-        MaterialCoat6               = 6,
-        MaterialCoat7               = 7,
-        MaterialCoat8               = 8,
-        MaterialCoat9               = 9,
-        MaterialCoat10              = 10,
-        MtlCount                 // keep last
+        MaterialBase        = 0,
+        MaterialLayer1      = 1,
+        MaterialLayer2      = 2,
+        MaterialLayer3      = 3,
+        MaterialLayer4      = 4,
+        MaterialLayer5      = 5,
+        MaterialLayer6      = 6,
+        MaterialLayer7      = 7,
+        MaterialLayer8      = 8,
+        MaterialLayer9      = 9,
+        MtlCount            // keep last
     };
 
     enum TexmapId
     {
         // Changing these value WILL break compatibility.
-        TexmapMask1     = 0,
-        TexmapMask2     = 1,
-        TexmapMask3     = 2,
-        TexmapMask4     = 3,
-        TexmapMask5     = 4,
-        TexmapMask6     = 5,
-        TexmapMask7     = 6,
-        TexmapMask8     = 7,
-        TexmapMask9     = 8,
-        TexmapMask10    = 9,
-        TexmapCount                 // keep last
+        TexmapMask1         = 0,
+        TexmapMask2         = 1,
+        TexmapMask3         = 2,
+        TexmapMask4         = 3,
+        TexmapMask5         = 4,
+        TexmapMask6         = 5,
+        TexmapMask7         = 6,
+        TexmapMask8         = 7,
+        TexmapMask9         = 8,
+        TexmapCount         // keep last
     };
 
     const MSTR g_texmap_slot_names[10] =
@@ -137,7 +136,6 @@ namespace
         L"Mask 7",
         L"Mask 8",
         L"Mask 9",
-        L"Mask 10",
     };
 
     const MSTR g_material_slot_names[11] =
@@ -152,7 +150,6 @@ namespace
         L"Layer Material 7",
         L"Layer Material 8",
         L"Layer Material 9",
-        L"Layer Material 10",
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -175,25 +172,23 @@ namespace
         
         // --- Parameters specifications for Blend rollup ---
 
-        ParamIdBaseMtl, L"base_material", TYPE_MTL, P_SUBANIM | P_SHORT_LABELS, IDS_MATERIAL,
+        ParamIdBaseMtl, L"base_material", TYPE_MTL, P_SUBANIM | P_SHORT_LABELS, IDS_MATERIAL_BASE,
             p_submtlno, 0,
             p_ui, TYPE_MTLBUTTON,       IDC_MTLBTN_BASE,
         p_end,
 
-        ParamIdLayerMtl, L"layer_material_list", TYPE_MTL_TAB, TexmapCount, P_SUBANIM | P_SHORT_LABELS, IDS_MATERIAL,
+        ParamIdLayerMtl, L"layer_material_list", TYPE_MTL_TAB, TexmapCount, P_SUBANIM | P_SHORT_LABELS, IDS_MATERIAL_LAYER,
             p_submtlno, 1,
-            p_ui, TYPE_MTLBUTTON,       IDC_MTLBTN_COAT_1, IDC_MTLBTN_COAT_2, IDC_MTLBTN_COAT_3,
-                                        IDC_MTLBTN_COAT_4, IDC_MTLBTN_COAT_5, IDC_MTLBTN_COAT_6,
-                                        IDC_MTLBTN_COAT_7, IDC_MTLBTN_COAT_8, IDC_MTLBTN_COAT_9,
-                                        IDC_MTLBTN_COAT_10,
+            p_ui, TYPE_MTLBUTTON,       IDC_MTLBTN_LAYER_1, IDC_MTLBTN_LAYER_2, IDC_MTLBTN_LAYER_3,
+                                        IDC_MTLBTN_LAYER_4, IDC_MTLBTN_LAYER_5, IDC_MTLBTN_LAYER_6,
+                                        IDC_MTLBTN_LAYER_7, IDC_MTLBTN_LAYER_8, IDC_MTLBTN_LAYER_9,
         p_end,
 
         ParamIdMixColor, L"amount_list", TYPE_RGBA_TAB, TexmapCount, P_ANIMATABLE, IDS_MIX_AMOUNT,
             p_default, Color(0.5f, 0.5f, 0.5f),
-            p_ui, TYPE_COLORSWATCH,     IDC_COLOR_AMOUNT_1, IDC_COLOR_AMOUNT_2, IDC_COLOR_AMOUNT_3,
-                                        IDC_COLOR_AMOUNT_4, IDC_COLOR_AMOUNT_5, IDC_COLOR_AMOUNT_6, 
-                                        IDC_COLOR_AMOUNT_7, IDC_COLOR_AMOUNT_8, IDC_COLOR_AMOUNT_9,
-                                        IDC_COLOR_AMOUNT_10,
+            p_ui, TYPE_COLORSWATCH,     IDC_MIX_AMOUNT_1, IDC_MIX_AMOUNT_2, IDC_MIX_AMOUNT_3,
+                                        IDC_MIX_AMOUNT_4, IDC_MIX_AMOUNT_5, IDC_MIX_AMOUNT_6, 
+                                        IDC_MIX_AMOUNT_7, IDC_MIX_AMOUNT_8, IDC_MIX_AMOUNT_9,
         p_end,
 
         ParamIdMaskTex, L"mask_list", TYPE_TEXMAP_TAB, TexmapCount, P_SUBANIM | P_SHORT_LABELS, IDS_MASK_TEXTURE,
@@ -201,7 +196,6 @@ namespace
             p_ui, TYPE_TEXMAPBUTTON,    IDC_TEXBTN_MASK_1, IDC_TEXBTN_MASK_2, IDC_TEXBTN_MASK_3,
                                         IDC_TEXBTN_MASK_4, IDC_TEXBTN_MASK_5, IDC_TEXBTN_MASK_6,
                                         IDC_TEXBTN_MASK_7, IDC_TEXBTN_MASK_8, IDC_TEXBTN_MASK_9,
-                                        IDC_TEXBTN_MASK_10,
         p_end,
 
         
@@ -218,7 +212,6 @@ namespace
                                         IDC_EDIT_AMOUNT_7, IDC_SPIN_AMOUNT_7,
                                         IDC_EDIT_AMOUNT_8, IDC_SPIN_AMOUNT_8,
                                         IDC_EDIT_AMOUNT_9, IDC_SPIN_AMOUNT_9,
-                                        IDC_EDIT_AMOUNT_10, IDC_SPIN_AMOUNT_10,
             0.1f,
         p_end,
 
@@ -392,26 +385,22 @@ void AppleseedBlendMtl::Update(TimeValue t, Interval& valid)
             mat->Update(t, valid);
 
         int mat_count = m_pblock->Count(ParamIdLayerMtl);
-        if (mat_count > 0)
+        for (int i = 0; i < mat_count; ++i)
         {
-            for (int i = 0; i < mat_count; ++i)
-            {
-                m_pblock->GetValue(ParamIdLayerMtl, t, mat, valid, i);
-                if (mat)
-                    mat->Update(t, valid);
-            }
+            m_pblock->GetValue(ParamIdLayerMtl, t, mat, valid, i);
+            if (mat)
+                mat->Update(t, valid);
         }
+
         int tex_count = m_pblock->Count(ParamIdMaskTex);
-        if (tex_count > 0)
+        for (int i = 0; i < tex_count; ++i)
         {
             Texmap* tex = nullptr;
-            for (int i = 0; i < tex_count; ++i)
-            {
-                m_pblock->GetValue(ParamIdMaskTex, t, tex, valid, i);
-                if (tex)
-                    tex->Update(t, valid);
-            }
+            m_pblock->GetValue(ParamIdMaskTex, t, tex, valid, i);
+            if (tex)
+                tex->Update(t, valid);
         }
+
         NotifyDependents(FOREVER, PART_ALL, REFMSG_DISPLAY_MATERIAL_CHANGE);
     }
 
@@ -548,10 +537,10 @@ int AppleseedBlendMtl::NumSubMtls()
 Mtl* AppleseedBlendMtl::GetSubMtl(int i)
 {
     Mtl* mtl = nullptr;
-    if (i==0)
+    if (i == 0)
         m_pblock->GetValue(ParamIdBaseMtl, 0, mtl, FOREVER);
     else
-        m_pblock->GetValue(ParamIdLayerMtl, 0, mtl, FOREVER, i-1);
+        m_pblock->GetValue(ParamIdLayerMtl, 0, mtl, FOREVER, i - 1);
     return mtl;
 }
 
@@ -560,7 +549,7 @@ void AppleseedBlendMtl::SetSubMtl(int i, Mtl* m)
     if (i == 0)
         m_pblock->SetValue(ParamIdBaseMtl, 0, m);
     else
-        m_pblock->SetValue(ParamIdLayerMtl, 0, m, i-1);
+        m_pblock->SetValue(ParamIdLayerMtl, 0, m, i - 1);
 }
 
 MSTR AppleseedBlendMtl::GetSubMtlSlotName(int i)
@@ -594,11 +583,20 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     asr::Assembly&  assembly,
     const char*     name)
 {
+    auto blend_material = asr::OSLMaterialFactory().create(name, asr::ParamArray());
+
     Mtl* mat = nullptr;
     m_pblock->GetValue(ParamIdBaseMtl, 0, mat, FOREVER);
 
     if (!mat)
-        return asr::OSLMaterialFactory().create(name, asr::ParamArray());
+        return blend_material;
+
+    bool compatible_mtl =
+        mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
+        mat->ClassID() == AppleseedBlendMtl::get_class_id();
+
+    if (!compatible_mtl)
+        return blend_material;
 
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
@@ -610,7 +608,7 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     int mat_count = m_pblock->Count(ParamIdLayerMtl);
 
     asr::ParamArray shader_params;
-    int j = 0;
+    int layer_index = 1;
     for (int i = 0; i < mat_count; ++i)
     {
         Mtl* mat = nullptr;
@@ -619,20 +617,28 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         if (!mat)
             continue;
 
-        connect_sub_mtl(assembly, shader_group.ref(), name, asf::format("LayerMtl_{0}", j).c_str(), mat);
+        bool compatible_mtl =
+            mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
+            mat->ClassID() == AppleseedBlendMtl::get_class_id();
+
+        if (!compatible_mtl)
+            continue;
+
+        connect_sub_mtl(assembly, shader_group.ref(), name, asf::format("LayerMtl_{0}", layer_index).c_str(), mat);
 
         Texmap* tex = nullptr;
         m_pblock->GetValue(ParamIdMaskTex, time, tex, FOREVER, i);
         if (tex)
         {
-            float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, FOREVER, i) / 100.0f;
-            connect_float_texture(shader_group.ref(), name, asf::format("MaskColor_{0}", j).c_str(), tex, mask_amount);
+            const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, FOREVER, i) / 100.0f;
+            connect_float_texture(shader_group.ref(), name, asf::format("MaskColor_{0}", layer_index).c_str(), tex, mask_amount);
         }
 
+        const Color mix_color = m_pblock->GetColor(ParamIdMixColor, time, FOREVER, i);
         shader_params.insert(
-            asf::format("MixColor_{0}", j).c_str(), fmt_osl_expr(to_color3f(m_pblock->GetColor(ParamIdMixColor, time, FOREVER, i))));
+            asf::format("MixColor_{0}", layer_index).c_str(), fmt_osl_expr(to_color3f(mix_color)));
 
-        ++j;
+        ++layer_index;
     }
     
     // Must come last.
@@ -644,10 +650,9 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     // Material.
     //
 
-    asr::ParamArray material_params;
-    material_params.insert("osl_surface", shader_group_name);
+    blend_material->get_parameters().insert("osl_surface", shader_group_name);
 
-    return asr::OSLMaterialFactory().create(name, material_params);
+    return blend_material;
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_builtin_material(
