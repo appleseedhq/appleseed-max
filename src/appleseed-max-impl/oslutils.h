@@ -41,6 +41,8 @@ class Texmap;
 
 std::string fmt_osl_expr(const std::string& s);
 
+std::string fmt_osl_expr(const int value);
+
 std::string fmt_osl_expr(const float value);
 
 std::string fmt_osl_expr(const foundation::Color3f& linear_rgb);
