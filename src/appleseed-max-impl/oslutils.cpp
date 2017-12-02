@@ -202,7 +202,7 @@ void connect_sub_mtl(
         make_unique_name(assembly.materials(), wide_to_utf8(mat->GetName()) + "_mat");
     appleseed_mtl->create_material(assembly, layer_name.c_str(), false);
 
-    // Assume shader group with provided name always exist.
+    // Assume shader group with provided name always exists.
     asr::ShaderGroup* mtl_group = assembly.shader_groups().get_by_name(asf::format("{0}_{1}", layer_name, "shader_group").c_str());
 
     for (const auto& shader : mtl_group->shaders())

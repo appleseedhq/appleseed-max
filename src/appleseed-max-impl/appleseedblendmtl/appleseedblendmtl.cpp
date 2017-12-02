@@ -46,8 +46,6 @@
 #include "renderer/api/scene.h"
 #include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
-#include "renderer/modeling/shadergroup/shader.h"
-#include "renderer/modeling/shadergroup/shaderconnection.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
@@ -344,7 +342,7 @@ RefTargetHandle AppleseedBlendMtl::Clone(RemapDir& remap)
 
 int AppleseedBlendMtl::NumSubTexmaps()
 {
-    return TexmapCount; // TexmapCount;
+    return TexmapCount;
 }
 
 Texmap* AppleseedBlendMtl::GetSubTexmap(int i)
@@ -384,7 +382,7 @@ void AppleseedBlendMtl::Update(TimeValue t, Interval& valid)
         if (mat)
             mat->Update(t, valid);
 
-        int mat_count = m_pblock->Count(ParamIdLayerMtl);
+        const int mat_count = m_pblock->Count(ParamIdLayerMtl);
         for (int i = 0; i < mat_count; ++i)
         {
             m_pblock->GetValue(ParamIdLayerMtl, t, mat, valid, i);
@@ -392,7 +390,7 @@ void AppleseedBlendMtl::Update(TimeValue t, Interval& valid)
                 mat->Update(t, valid);
         }
 
-        int tex_count = m_pblock->Count(ParamIdMaskTex);
+        const int tex_count = m_pblock->Count(ParamIdMaskTex);
         for (int i = 0; i < tex_count; ++i)
         {
             Texmap* tex = nullptr;
@@ -531,7 +529,7 @@ void AppleseedBlendMtl::Shade(ShadeContext& sc)
 
 int AppleseedBlendMtl::NumSubMtls()
 {
-    return MtlCount; // MtlCount;
+    return MtlCount;
 }
 
 Mtl* AppleseedBlendMtl::GetSubMtl(int i)
@@ -591,7 +589,7 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     if (!mat)
         return blend_material;
 
-    bool compatible_mtl =
+    const bool compatible_mtl =
         mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
         mat->ClassID() == AppleseedBlendMtl::get_class_id();
 
@@ -617,7 +615,7 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         if (!mat)
             continue;
 
-        bool compatible_mtl =
+        const bool compatible_mtl =
             mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
             mat->ClassID() == AppleseedBlendMtl::get_class_id();
 
