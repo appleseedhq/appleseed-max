@@ -64,8 +64,9 @@ namespace
         StdUVGen* std_uv = static_cast<StdUVGen*>(uv_gen);
         auto time = GetCOREInterface()->GetTime();
 
-        // Assume that all the textures are in texture mode texmap->MapSlotType() == MAPSLOT_TEXTURE.
-        // Assume that static_cast<StdUVGen*>(uv_gen)->GetCoordMapping() == UVMAP_EXPLICIT.
+        DbgAssert(texmap->MapSlotType(texmap->GetMapChannel()) == MAPSLOT_TEXTURE);
+        DbgAssert(static_cast<StdUVGen*>(uv_gen)->GetUVWSource() == UVWSRC_EXPLICIT);
+
         float u_tiling = std_uv->GetUScl(time);
         float v_tiling = std_uv->GetVScl(time);
         float u_offset = std_uv->GetUOffs(time);
@@ -89,9 +90,9 @@ namespace
         uv_params.insert("in_tilingU", fmt_osl_expr(u_tiling));
         uv_params.insert("in_tilingV", fmt_osl_expr(v_tiling));
 
-        uv_params.insert("in_rotateW", fmt_osl_expr(w_rotation));
+        uv_params.insert("in_rotateW", fmt_osl_expr(asf::rad_to_deg(w_rotation)));
 
-        // Access BMTex paramaters which are only accessible in a weird way.
+        // Access BMTex parameters through parameter block.
         enum
         {
             bmtex_params,
@@ -113,16 +114,16 @@ namespace
         auto pblock = texmap->GetParamBlock(bmtex_params);
         if (pblock)
         {
-            int use_clip = pblock->GetInt(bmtex_apply, time);
+            const int use_clip = pblock->GetInt(bmtex_apply, time);
             if (use_clip)
             {
-                float clip_u = pblock->GetFloat(bmtex_clipu, time);
-                float clip_v = pblock->GetFloat(bmtex_clipv, time);
+                const float clip_u = pblock->GetFloat(bmtex_clipu, time);
+                const float clip_v = pblock->GetFloat(bmtex_clipv, time);
 
-                float clip_w = pblock->GetFloat(bmtex_clipw, time);
-                float clip_h = pblock->GetFloat(bmtex_cliph, time);
+                const float clip_w = pblock->GetFloat(bmtex_clipw, time);
+                const float clip_h = pblock->GetFloat(bmtex_cliph, time);
 
-                int crop_place = pblock->GetInt(bmtex_crop_place, time);
+                const int crop_place = pblock->GetInt(bmtex_crop_place, time);
 
                 uv_params.insert("in_cropU", fmt_osl_expr(clip_u));
                 uv_params.insert("in_cropV", fmt_osl_expr(clip_v));
