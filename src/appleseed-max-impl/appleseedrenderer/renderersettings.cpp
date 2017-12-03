@@ -57,7 +57,7 @@ namespace
             m_caustics = false;
             m_bounces = 8;
             m_max_ray_intensity_set = false;
-            m_max_ray_intensity = 0.0f;
+            m_max_ray_intensity = 1.0f;
             m_background_emits_light = true;
             m_background_alpha = 0.0f;
 
