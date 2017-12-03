@@ -223,6 +223,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp" />
     <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp" />
     <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp" />
     <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp" />
@@ -251,6 +252,9 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClCompile Include="version.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="appleseedblendmtl\appleseedblendmtl.h" />
+    <ClInclude Include="appleseedblendmtl\datachunks.h" />
+    <ClInclude Include="appleseedblendmtl\resource.h" />
     <ClInclude Include="appleseedenvmap\appleseedenvmap.h" />
     <ClInclude Include="appleseedenvmap\datachunks.h" />
     <ClInclude Include="appleseedenvmap\resource.h" />
@@ -293,6 +297,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc" />
     <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc" />
     <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc" />
     <ResourceCompile Include="bump\bump.rc" />
