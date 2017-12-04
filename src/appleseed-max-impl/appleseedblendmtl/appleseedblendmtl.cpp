@@ -183,9 +183,9 @@ namespace
         p_end,
 
         ParamIdMixColor, L"amount_list", TYPE_RGBA_TAB, TexmapCount, P_ANIMATABLE, IDS_MIX_AMOUNT,
-            p_default, Color(0.5f, 0.5f, 0.5f),
+            p_default, Color(1.0f, 1.0f, 1.0f),
             p_ui, TYPE_COLORSWATCH,     IDC_MIX_AMOUNT_1, IDC_MIX_AMOUNT_2, IDC_MIX_AMOUNT_3,
-                                        IDC_MIX_AMOUNT_4, IDC_MIX_AMOUNT_5, IDC_MIX_AMOUNT_6, 
+                                        IDC_MIX_AMOUNT_4, IDC_MIX_AMOUNT_5, IDC_MIX_AMOUNT_6,
                                         IDC_MIX_AMOUNT_7, IDC_MIX_AMOUNT_8, IDC_MIX_AMOUNT_9,
         p_end,
 
@@ -198,7 +198,7 @@ namespace
 
         
         ParamIdMaskAmount, L"texture_amount_list", TYPE_FLOAT_TAB, TexmapCount, P_ANIMATABLE, IDS_MASK_AMOUNT,
-            p_default, 50.0f,
+            p_default, 100.0f,
             p_range, 0.0f, 100.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,   
                                         IDC_EDIT_AMOUNT_1, IDC_SPIN_AMOUNT_1,
@@ -601,24 +601,21 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 
     connect_sub_mtl(assembly, shader_group.ref(), name, "BaseMtl", mat);
 
-    TimeValue time = GetCOREInterface()->GetTime();
+    const TimeValue time = GetCOREInterface()->GetTime();
     
-    int mat_count = m_pblock->Count(ParamIdLayerMtl);
-
     asr::ParamArray shader_params;
     int layer_index = 1;
-    for (int i = 0; i < mat_count; ++i)
+
+    for (int i = 0, e = m_pblock->Count(ParamIdLayerMtl); i < e; ++i)
     {
         Mtl* mat = nullptr;
         m_pblock->GetValue(ParamIdLayerMtl, time, mat, FOREVER, i);
-
-        if (!mat)
+        if (mat == nullptr)
             continue;
 
         const bool compatible_mtl =
             mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
             mat->ClassID() == AppleseedBlendMtl::get_class_id();
-
         if (!compatible_mtl)
             continue;
 
@@ -626,7 +623,7 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 
         Texmap* tex = nullptr;
         m_pblock->GetValue(ParamIdMaskTex, time, tex, FOREVER, i);
-        if (tex)
+        if (tex != nullptr)
         {
             const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
             connect_float_texture(shader_group.ref(), name, asf::format("MaskColor_{0}", layer_index).c_str(), tex, mask_amount);
