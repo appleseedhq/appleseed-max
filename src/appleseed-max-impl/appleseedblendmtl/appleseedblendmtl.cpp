@@ -628,11 +628,11 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         m_pblock->GetValue(ParamIdMaskTex, time, tex, FOREVER, i);
         if (tex)
         {
-            const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, FOREVER, i) / 100.0f;
+            const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
             connect_float_texture(shader_group.ref(), name, asf::format("MaskColor_{0}", layer_index).c_str(), tex, mask_amount);
         }
 
-        const Color mix_color = m_pblock->GetColor(ParamIdMixColor, time, FOREVER, i);
+        const Color mix_color = m_pblock->GetColor(ParamIdMixColor, time, i);
         shader_params.insert(
             asf::format("MixColor_{0}", layer_index).c_str(), fmt_osl_expr(to_color3f(mix_color)));
 
