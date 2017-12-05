@@ -353,11 +353,13 @@ void connect_sub_mtl(
         return;
 
     std::string layer_name =
-        make_unique_name(assembly.materials(), wide_to_utf8(mat->GetName()) + "_mat");
-    appleseed_mtl->create_material(assembly, layer_name.c_str(), false);
+        make_unique_name(assembly.materials(), wide_to_utf8(mat->GetName()) + "_sub_mat");
+    assembly.materials().insert(appleseed_mtl->create_material(assembly, layer_name.c_str(), false));
 
+    auto shader_group_name = assembly.materials().get_by_name(layer_name.c_str())->get_parameters().get("osl_surface");
+    
     // Assume shader group with provided name always exists.
-    asr::ShaderGroup* mtl_group = assembly.shader_groups().get_by_name(asf::format("{0}_{1}", layer_name, "shader_group").c_str());
+    asr::ShaderGroup* mtl_group = assembly.shader_groups().get_by_name(shader_group_name);
 
     for (const auto& shader : mtl_group->shaders())
         shader_group.add_shader(shader.get_type(), shader.get_shader(), shader.get_layer(), shader.get_parameters());
