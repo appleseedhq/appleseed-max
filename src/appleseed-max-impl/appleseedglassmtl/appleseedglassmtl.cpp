@@ -635,8 +635,8 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
 {
     return
         use_max_procedural_maps
-        ? create_builtin_material(assembly, name)
-        : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name)
+            : create_osl_material(assembly, name);
 }
 
 
@@ -698,8 +698,6 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
 {
     asr::ParamArray material_params;
     std::string instance_name;
-    asr::ParamArray bsdf_params;
-    bsdf_params.insert("mdf", "ggx");
     const bool use_max_procedural_maps = true;
 
     //
@@ -707,6 +705,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
     //
 
     {
+        asr::ParamArray bsdf_params;
+        bsdf_params.insert("mdf", "ggx");
+
         // Surface transmittance.
         instance_name = insert_texture_and_instance(assembly, m_surface_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())

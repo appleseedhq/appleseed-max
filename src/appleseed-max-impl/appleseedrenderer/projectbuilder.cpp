@@ -1096,6 +1096,16 @@ namespace
             asr::ParamArray env_edf_params;
             env_edf_params.insert("radiance", env_tex_instance_name.c_str());
 
+            if (is_bitmap_texture(rend_params.envMap))
+            {
+                TextureOutput* tex_out = static_cast<BitmapTex*>(rend_params.envMap)->GetTexout();
+                if (tex_out)
+                {
+                    const float output = static_cast<StdTexoutGen*>(tex_out)->GetOutAmt(time);
+                    env_edf_params.insert("exposure", output - 1.0f);
+                }
+            }
+
             UVGen* uvgen = rend_params.envMap->GetTheUVGen();
             if (uvgen && uvgen->IsStdUVGen())
             {
