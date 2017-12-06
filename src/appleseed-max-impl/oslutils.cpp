@@ -353,7 +353,7 @@ void connect_sub_mtl(
         return;
 
     std::string layer_name =
-        make_unique_name(assembly.materials(), wide_to_utf8(mat->GetName()) + "_sub_mat");
+        make_unique_name(assembly.materials(), asf::format("{0}_{1}_{2}", shader_name, mat->GetName(), "sub_mat"));
     assembly.materials().insert(appleseed_mtl->create_material(assembly, layer_name.c_str(), false));
 
     auto shader_group_name = assembly.materials().get_by_name(layer_name.c_str())->get_parameters().get("osl_surface");

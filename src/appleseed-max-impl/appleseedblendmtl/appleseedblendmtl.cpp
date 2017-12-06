@@ -182,20 +182,12 @@ namespace
                                         IDC_MTLBTN_LAYER_7, IDC_MTLBTN_LAYER_8, IDC_MTLBTN_LAYER_9,
         p_end,
 
-        ParamIdMixColor, L"amount_list", TYPE_RGBA_TAB, TexmapCount, P_ANIMATABLE, IDS_MIX_AMOUNT,
-            p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, TYPE_COLORSWATCH,     IDC_MIX_AMOUNT_1, IDC_MIX_AMOUNT_2, IDC_MIX_AMOUNT_3,
-                                        IDC_MIX_AMOUNT_4, IDC_MIX_AMOUNT_5, IDC_MIX_AMOUNT_6,
-                                        IDC_MIX_AMOUNT_7, IDC_MIX_AMOUNT_8, IDC_MIX_AMOUNT_9,
-        p_end,
-
         ParamIdMaskTex, L"mask_list", TYPE_TEXMAP_TAB, TexmapCount, P_SUBANIM | P_SHORT_LABELS, IDS_MASK_TEXTURE,
             p_subtexno, 0,
             p_ui, TYPE_TEXMAPBUTTON,    IDC_TEXBTN_MASK_1, IDC_TEXBTN_MASK_2, IDC_TEXBTN_MASK_3,
                                         IDC_TEXBTN_MASK_4, IDC_TEXBTN_MASK_5, IDC_TEXBTN_MASK_6,
                                         IDC_TEXBTN_MASK_7, IDC_TEXBTN_MASK_8, IDC_TEXBTN_MASK_9,
         p_end,
-
         
         ParamIdMaskAmount, L"texture_amount_list", TYPE_FLOAT_TAB, TexmapCount, P_ANIMATABLE, IDS_MASK_AMOUNT,
             p_default, 100.0f,
@@ -627,11 +619,16 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         {
             const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
             connect_float_texture(shader_group.ref(), name, asf::format("MaskColor_{0}", layer_index).c_str(), tex, mask_amount);
+            shader_params.insert(
+                asf::format("MixAmount_{0}", layer_index).c_str(), 
+                fmt_osl_expr(1.0f));
         }
-
-        const Color mix_color = m_pblock->GetColor(ParamIdMixColor, time, i);
-        shader_params.insert(
-            asf::format("MixColor_{0}", layer_index).c_str(), fmt_osl_expr(to_color3f(mix_color)));
+        else
+        {
+            const float mix_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
+            shader_params.insert(
+                asf::format("MixAmount_{0}", layer_index).c_str(), fmt_osl_expr(mix_amount));
+        }
 
         ++layer_index;
     }
