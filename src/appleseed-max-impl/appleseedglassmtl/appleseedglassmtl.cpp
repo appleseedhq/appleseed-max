@@ -36,6 +36,7 @@
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
 #include "main.h"
+#include "oslutils.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -43,6 +44,7 @@
 #include "renderer/api/bsdf.h"
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
+#include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -631,17 +633,80 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
     const char*     name,
     const bool      use_max_procedural_maps)
 {
+    return
+        use_max_procedural_maps
+        ? create_builtin_material(assembly, name)
+        : create_osl_material(assembly, name);
+}
+
+
+asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+    //
+    // Shader group.
+    //
+    asr::ParamArray shader_params;
+
+    auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
+    auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
+
+    connect_color_texture(shader_group.ref(), name, "SurfaceTransmittance", m_surface_color_texmap, m_surface_color);
+    connect_color_texture(shader_group.ref(), name, "ReflectionTint", m_reflection_tint_texmap, m_reflection_tint);
+    connect_color_texture(shader_group.ref(), name, "RefractionTint", m_refraction_tint_texmap, m_refraction_tint);
+    connect_color_texture(shader_group.ref(), name, "VolumeTransmittance", m_volume_color_texmap, m_volume_color);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy / 100.0f);
+
+    shader_params.insert("Ior", fmt_osl_expr(m_ior));
+    shader_params.insert("VolumeTransmittanceDistance", fmt_osl_expr(m_scale));
+    shader_params.insert("Distribution", fmt_osl_expr("ggx"));
+
+    if (is_bitmap_texture(m_bump_texmap))
+    {
+        if (m_bump_method == 0)
+        {
+            // Bump mapping.
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+        }
+        else
+        {
+            // Normal mapping.
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector);
+        }
+    }
+
+    // Must come last.
+    shader_group->add_shader("surface", "as_max_glass_material", name, shader_params);
+
+    assembly.shader_groups().insert(shader_group);
+
+    //
+    // Material.
+    //
+
+    asr::ParamArray material_params;
+    material_params.insert("osl_surface", shader_group_name);
+
+    return asr::OSLMaterialFactory().create(name, material_params);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
     asr::ParamArray material_params;
     std::string instance_name;
-    
+    asr::ParamArray bsdf_params;
+    bsdf_params.insert("mdf", "ggx");
+    const bool use_max_procedural_maps = true;
+
     //
     // BSDF.
     //
 
     {
-        asr::ParamArray bsdf_params;
-        bsdf_params.insert("mdf", "ggx");
-
         // Surface transmittance.
         instance_name = insert_texture_and_instance(assembly, m_surface_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
