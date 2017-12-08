@@ -479,6 +479,10 @@ Color AppleseedBlendMtl::GetAmbient(int mtlNum, BOOL backFace)
 
 Color AppleseedBlendMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
+    Mtl* mat = nullptr;
+    m_pblock->GetValue(ParamIdBaseMtl, 0, mat, FOREVER);
+    if (mat != nullptr)
+        return mat->GetDiffuse(mtlNum, backFace);
     return Color(0.0f, 0.0f, 0.0f);
 }
 
@@ -499,6 +503,10 @@ float AppleseedBlendMtl::GetShinStr(int mtlNum, BOOL backFace)
 
 float AppleseedBlendMtl::GetXParency(int mtlNum, BOOL backFace)
 {
+    Mtl* mat = nullptr;
+    m_pblock->GetValue(ParamIdBaseMtl, 0, mat, FOREVER);
+    if (mat != nullptr)
+        return mat->GetXParency(mtlNum, backFace);
     return 0.0f;
 }
 
@@ -584,16 +592,6 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     if (!mat)
         return blend_material;
 
-    const bool compatible_mtl =
-        mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
-        mat->ClassID() == AppleseedGlassMtl::get_class_id() ||
-        mat->ClassID() == AppleseedLightMtl::get_class_id() ||
-        mat->ClassID() == AppleseedSSSMtl::get_class_id() ||
-        mat->ClassID() == AppleseedBlendMtl::get_class_id();
-    
-    if (!compatible_mtl)
-        return blend_material;
-
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
@@ -609,15 +607,6 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         Mtl* mat = nullptr;
         m_pblock->GetValue(ParamIdLayerMtl, time, mat, FOREVER, i);
         if (mat == nullptr)
-            continue;
-
-        const bool compatible_mtl =
-            mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
-            mat->ClassID() == AppleseedGlassMtl::get_class_id() ||
-            mat->ClassID() == AppleseedLightMtl::get_class_id() ||
-            mat->ClassID() == AppleseedSSSMtl::get_class_id() ||
-            mat->ClassID() == AppleseedBlendMtl::get_class_id();
-        if (!compatible_mtl)
             continue;
 
         connect_sub_mtl(assembly, shader_group.ref(), name, asf::format("LayerMtl_{0}", layer_index).c_str(), mat);

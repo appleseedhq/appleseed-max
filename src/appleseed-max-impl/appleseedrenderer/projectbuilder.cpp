@@ -924,33 +924,35 @@ namespace
         }
     }
 
+    bool is_light_emitting_material(Mtl* mtl)
+    {
+        IAppleseedMtl* appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl != nullptr && appleseed_mtl->can_emit_light())
+            return true;
+        else
+        {
+            const int submtl_count = mtl->NumSubMtls();
+            for (int i = 0; i < submtl_count; ++i)
+            {
+                Mtl* sub_mtl = mtl->GetSubMtl(i);
+                if (sub_mtl != nullptr)
+                {
+                    if (is_light_emitting_material(sub_mtl))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
     bool has_light_emitting_materials(const MaterialMap& material_map)
     {
         for (const auto& entry : material_map)
         {
             Mtl* mtl = entry.first;
-            IAppleseedMtl* appleseed_mtl =
-                static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-            if (appleseed_mtl->can_emit_light())
+            if (is_light_emitting_material(mtl))
                 return true;
-            else
-            {
-                const int submtlcount = mtl->NumSubMtls();
-                if (!mtl->IsMultiMtl() && submtlcount > 0)
-                {
-                    for (int i = 0; i < submtlcount; ++i)
-                    {
-                        Mtl* sub_mtl = mtl->GetSubMtl(i);
-                        if (sub_mtl != nullptr)
-                        {
-                            IAppleseedMtl* appleseed_sub_mtl =
-                                static_cast<IAppleseedMtl*>(sub_mtl->GetInterface(IAppleseedMtl::interface_id()));
-                            if (appleseed_sub_mtl->can_emit_light())
-                                return true;
-                        }
-                    }
-                }
-            }
         }
 
         return false;

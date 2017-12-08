@@ -491,8 +491,8 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
 {
     return
         use_max_procedural_maps
-        ? create_builtin_material(assembly, name)
-        : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name)
+            : create_osl_material(assembly, name);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_osl_material(
