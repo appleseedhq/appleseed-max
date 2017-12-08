@@ -34,6 +34,7 @@
 #include "appleseedlightmtl/resource.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "main.h"
+#include "oslutils.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -41,6 +42,7 @@
 #include "renderer/api/edf.h"
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
+#include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -484,10 +486,51 @@ bool AppleseedLightMtl::can_emit_light() const
 
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
     asr::Assembly&  assembly,
-    const char*     name, 
+    const char*     name,
     const bool      use_max_procedural_maps)
 {
+    return
+        use_max_procedural_maps
+        ? create_builtin_material(assembly, name)
+        : create_osl_material(assembly, name);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_osl_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+    //
+    // Shader group.
+    //
+    asr::ParamArray shader_params;
+
+    auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
+    auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
+
+    connect_color_texture(shader_group.ref(), name, "Color", m_light_color_texmap, m_light_color);
+    shader_params.insert("Emission", fmt_osl_expr(m_light_power));
+    
+    // Must come last.
+    shader_group->add_shader("surface", "as_max_light_material", name, shader_params);
+
+    assembly.shader_groups().insert(shader_group);
+
+    //
+    // Material.
+    //
+
     asr::ParamArray material_params;
+    material_params.insert("osl_surface", shader_group_name);
+
+    return asr::OSLMaterialFactory().create(name, material_params);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_builtin_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+    asr::ParamArray material_params;
+    const bool use_max_procedural_maps = true;
 
     //
     // EDF.

@@ -34,6 +34,8 @@
 #include "appleseedblendmtl/resource.h"
 #include "appleseeddisneymtl/appleseeddisneymtl.h"
 #include "appleseedglassmtl/appleseedglassmtl.h"
+#include "appleseedlightmtl/appleseedlightmtl.h"
+#include "appleseedsssmtl/appleseedsssmtl.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
@@ -585,8 +587,10 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     const bool compatible_mtl =
         mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
         mat->ClassID() == AppleseedGlassMtl::get_class_id() ||
+        mat->ClassID() == AppleseedLightMtl::get_class_id() ||
+        mat->ClassID() == AppleseedSSSMtl::get_class_id() ||
         mat->ClassID() == AppleseedBlendMtl::get_class_id();
-
+    
     if (!compatible_mtl)
         return blend_material;
 
@@ -609,6 +613,9 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 
         const bool compatible_mtl =
             mat->ClassID() == AppleseedDisneyMtl::get_class_id() ||
+            mat->ClassID() == AppleseedGlassMtl::get_class_id() ||
+            mat->ClassID() == AppleseedLightMtl::get_class_id() ||
+            mat->ClassID() == AppleseedSSSMtl::get_class_id() ||
             mat->ClassID() == AppleseedBlendMtl::get_class_id();
         if (!compatible_mtl)
             continue;

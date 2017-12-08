@@ -933,6 +933,24 @@ namespace
                 static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
             if (appleseed_mtl->can_emit_light())
                 return true;
+            else
+            {
+                const int submtlcount = mtl->NumSubMtls();
+                if (!mtl->IsMultiMtl() && submtlcount > 0)
+                {
+                    for (int i = 0; i < submtlcount; ++i)
+                    {
+                        Mtl* sub_mtl = mtl->GetSubMtl(i);
+                        if (sub_mtl != nullptr)
+                        {
+                            IAppleseedMtl* appleseed_sub_mtl =
+                                static_cast<IAppleseedMtl*>(sub_mtl->GetInterface(IAppleseedMtl::interface_id()));
+                            if (appleseed_sub_mtl->can_emit_light())
+                                return true;
+                        }
+                    }
+                }
+            }
         }
 
         return false;
