@@ -238,7 +238,7 @@ namespace
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_AMOUNT, IDC_SLIDER_SPECULAR_AMOUNT, 10.0f,
         p_end,
-        ParamIdSpecularAmountTexmap, L"specular_amount_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_AMOUNT,
+        ParamIdSpecularAmountTexmap, L"specular_amount_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SPECULAR_AMOUNT,
             p_subtexno, TexmapIdSpecularAmount,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_AMOUNT,
         p_end,
@@ -248,7 +248,7 @@ namespace
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_ROUGHNESS, IDC_SLIDER_SPECULAR_ROUGHNESS, 10.0f,
         p_end,
-        ParamIdSpecularRoughnessTexmap, L"specular_roughness_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ROUGHNESS,
+        ParamIdSpecularRoughnessTexmap, L"specular_roughness_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SPECULAR_ROUGHNESS,
             p_subtexno, TexmapIdSpecularRoughness,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_ROUGHNESS,
         p_end,
@@ -258,7 +258,7 @@ namespace
             p_range, -1.0f, 1.0f,
             p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_ANISOTROPY, IDC_SLIDER_SPECULAR_ANISOTROPY, 0.1f,
         p_end,
-        ParamIdSpecularAnisotropyTexmap, L"specular_anisotropy_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR_ANISOTROPY,
+        ParamIdSpecularAnisotropyTexmap, L"specular_anisotropy_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SPECULAR_ANISOTROPY,
             p_subtexno, TexmapIdSpecularAnisotropy,
             p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_ANISOTROPY,
         p_end,
@@ -458,6 +458,12 @@ void AppleseedSSSMtl::SetSubTexmap(int i, Texmap* texmap)
     const auto texmap_id = static_cast<TexmapId>(i);
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
+
+    IParamMap2* map = m_pblock->GetMap(ParamMapIdSpecular);
+    if (map != nullptr)
+    {
+        map->SetText(param_id, texmap == nullptr ? L"" : L"M");
+    }
 }
 
 int AppleseedSSSMtl::MapSlotType(int i)
@@ -527,6 +533,8 @@ Interval AppleseedSSSMtl::Validity(TimeValue t)
 ParamDlg* AppleseedSSSMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
     ParamDlg* param_dialog = g_appleseed_sssmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    DbgAssert(m_pblock != nullptr);
+    update_map_buttons(m_pblock->GetMap(ParamMapIdSpecular));
     g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
     return param_dialog;
 }
