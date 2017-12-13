@@ -49,6 +49,7 @@
 #include <assert1.h>
 #include <bitmap.h>
 #include <imtl.h>
+#include <iparamm2.h>
 #include <maxapi.h>
 #include <plugapi.h>
 #include <stdmat.h>
@@ -126,6 +127,29 @@ WStr replace_extension(const WStr& file_path, const WStr& new_ext)
     WStr new_file_path = i == -1 ? file_path : file_path.Substr(0, i);
     new_file_path.Append(new_ext);
     return new_file_path;
+}
+
+void update_map_buttons(IParamMap2* param_map)
+{
+    if (param_map == nullptr)
+        return;
+
+    IParamBlock2* param_block = param_map->GetParamBlock();
+
+    const int count = param_block->NumParams();
+    for (int i = 0; i < count; ++i)
+    {
+        const int param_id = param_block->IndextoID(i);
+        const ParamDef& param_def = param_block->GetParamDef(param_id);
+        if (param_def.type == TYPE_TEXMAP && (param_def.flags & P_NO_AUTO_LABELS))
+        {
+            const auto texmap = param_block->GetTexmap(param_id, GetCOREInterface()->GetTime(), FOREVER);
+            if (texmap == nullptr)
+                param_map->SetText(param_id, L"");
+            else
+                param_map->SetText(param_id, L"M");
+        }
+    }
 }
 
 bool is_bitmap_texture(Texmap* map)

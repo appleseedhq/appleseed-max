@@ -134,6 +134,7 @@ BOOL get_paramblock_value_by_name(
     Interval&               validity,
     const int               tab_index = 0);
 
+void update_map_buttons(IParamMap2* param_map);
 
 //
 // Bitmap functions.
