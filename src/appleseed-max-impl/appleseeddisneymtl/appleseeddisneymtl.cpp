@@ -70,7 +70,6 @@ namespace
 }
 
 AppleseedDisneyMtlClassDesc g_appleseed_disneymtl_classdesc;
-TexturePBAccessor g_texture_accessor;
 
 
 //
@@ -169,33 +168,6 @@ namespace
         ParamIdBumpTexmap
     };
 
-    void update_map_buttons(IParamBlock2* pblock)
-    {
-        if (pblock == nullptr)
-            return;
-
-        IParamMap2* map = pblock->GetMap(ParamMapIdDisney);
-        if (map == nullptr)
-            return;
-
-        const int count = pblock->NumParams();
-        for (int i=0; i < count; ++i)
-        {
-            const int param_id = pblock->IndextoID(i);
-            if (param_id == ParamIdBaseColorTexmap)
-                continue;
-
-            if (pblock->GetParameterType(param_id) == TYPE_TEXMAP)
-            {
-                const auto texmap = pblock->GetTexmap(param_id, GetCOREInterface()->GetTime(), FOREVER);
-                if (texmap == nullptr)
-                    map->SetText(param_id, L"");
-                else
-                    map->SetText(param_id, L"M");
-            }
-        }
-    }
-
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdDisneyMtl,                      // parameter block's ID
@@ -244,7 +216,6 @@ namespace
         p_end,
         ParamIdMetallicTexmap, L"metallic_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_METALLIC,
             p_subtexno, TexmapIdMetallic,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_METALLIC,
         p_end,
 
@@ -255,7 +226,6 @@ namespace
         p_end,
         ParamIdSpecularTexmap, L"specular_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SPECULAR,
             p_subtexno, TexmapIdSpecular,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR,
         p_end,
 
@@ -266,7 +236,6 @@ namespace
         p_end,
         ParamIdSpecularTintTexmap, L"specular_tint_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SPECULAR_TINT,
             p_subtexno, TexmapIdSpecularTint,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_TINT,
         p_end,
 
@@ -277,7 +246,6 @@ namespace
         p_end,
         ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
 
@@ -288,7 +256,6 @@ namespace
         p_end,
         ParamIdSheenTexmap, L"sheen_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SHEEN,
             p_subtexno, TexmapIdSheen,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SHEEN,
         p_end,
 
@@ -299,7 +266,6 @@ namespace
         p_end,
         ParamIdSheenTintTexmap, L"sheen_tint_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SHEEN_TINT,
             p_subtexno, TexmapIdSheenTint,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SHEEN_TINT,
         p_end,
 
@@ -310,7 +276,6 @@ namespace
         p_end,
         ParamIdAnisotropyTexmap, L"anisotropy_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ANISOTROPY,
             p_subtexno, TexmapIdAnisotropy,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
 
@@ -321,7 +286,6 @@ namespace
         p_end,
         ParamIdClearcoatTexmap, L"clearcoat_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_CLEARCOAT,
             p_subtexno, TexmapIdClearcoat,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_CLEARCOAT,
         p_end,
 
@@ -332,7 +296,6 @@ namespace
         p_end,
         ParamIdClearcoatGlossTexmap, L"clearcoat_gloss_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_CLEARCOAT_GLOSS,
             p_subtexno, TexmapIdClearcoatGloss,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_CLEARCOAT_GLOSS,
         p_end,
 
@@ -343,7 +306,6 @@ namespace
         p_end,
         ParamIdAlphaTexmap, L"alpha_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ALPHA,
             p_subtexno, TexmapIdAlpha,
-            p_accessor, &g_texture_accessor,
             p_ui, ParamMapIdDisney, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
         p_end,
 
@@ -549,6 +511,15 @@ void AppleseedDisneyMtl::SetSubTexmap(int i, Texmap* texmap)
     const auto texmap_id = static_cast<TexmapId>(i);
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
+
+    IParamMap2* map = m_pblock->GetMap(ParamMapIdDisney);
+    if (map != nullptr)
+    {
+        if (texmap != nullptr)
+            map->SetText(param_id, L"M", 0);
+        else
+            map->SetText(param_id, L"", 0);
+    }
 }
 
 int AppleseedDisneyMtl::MapSlotType(int i)
@@ -629,7 +600,8 @@ Interval AppleseedDisneyMtl::Validity(TimeValue t)
 ParamDlg* AppleseedDisneyMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
     ParamDlg* param_dialog = g_appleseed_disneymtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
-    update_map_buttons(m_pblock);
+    if (m_pblock != nullptr)
+        update_map_buttons(m_pblock->GetMap(ParamMapIdDisney));
     g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
     return param_dialog;
 }
@@ -955,35 +927,6 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
     }
 
     return asr::GenericMaterialFactory().create(name, material_params);
-}
-
-
-//
-// TexturePBAccessor class implementation
-//
-
-void TexturePBAccessor::Set(
-    PB2Value&         v,
-    ReferenceMaker*   owner,
-    ParamID           id,
-    int               tabIndex,
-    TimeValue         t)
-{
-    if (id == ParamIdBaseColorTexmap)
-        return;
-
-    IParamBlock2* pblock = static_cast<AppleseedDisneyMtl*>(owner)->GetParamBlock(0);
-    if (pblock == nullptr)
-        return;
-
-    IParamMap2* map = pblock->GetMap(ParamMapIdDisney);
-    if (map == nullptr)
-        return;
-
-    if (v.r == nullptr)
-        map->SetText(id, L"", 0);
-    else
-        map->SetText(id, L"M", 0);
 }
 
 

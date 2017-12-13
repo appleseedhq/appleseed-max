@@ -174,16 +174,6 @@ class AppleseedDisneyMtl
         const char*         name);
 };
 
-//
-// Texture parameter accessor class declaration
-//
-
-class TexturePBAccessor
-    : public PBAccessor
-{
-public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override;
-};
 
 //
 // AppleseedDisneyMtl material browser info.
