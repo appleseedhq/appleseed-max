@@ -136,6 +136,7 @@ BOOL get_paramblock_value_by_name(
 
 void update_map_buttons(IParamMap2* param_map);
 
+
 //
 // Bitmap functions.
 //
