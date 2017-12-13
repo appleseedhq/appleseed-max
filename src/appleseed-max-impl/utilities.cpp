@@ -136,18 +136,14 @@ void update_map_buttons(IParamMap2* param_map)
 
     IParamBlock2* param_block = param_map->GetParamBlock();
 
-    const int count = param_block->NumParams();
-    for (int i = 0; i < count; ++i)
+    for (int i = 0, e = param_block->NumParams(); i < e; ++i)
     {
         const int param_id = param_block->IndextoID(i);
         const ParamDef& param_def = param_block->GetParamDef(param_id);
         if (param_def.type == TYPE_TEXMAP && (param_def.flags & P_NO_AUTO_LABELS))
         {
             const auto texmap = param_block->GetTexmap(param_id, GetCOREInterface()->GetTime(), FOREVER);
-            if (texmap == nullptr)
-                param_map->SetText(param_id, L"");
-            else
-                param_map->SetText(param_id, L"M");
+            param_map->SetText(param_id, texmap == nullptr ? L"" : L"M");
         }
     }
 }

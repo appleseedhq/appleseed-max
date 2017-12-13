@@ -515,10 +515,7 @@ void AppleseedDisneyMtl::SetSubTexmap(int i, Texmap* texmap)
     IParamMap2* map = m_pblock->GetMap(ParamMapIdDisney);
     if (map != nullptr)
     {
-        if (texmap != nullptr)
-            map->SetText(param_id, L"M", 0);
-        else
-            map->SetText(param_id, L"", 0);
+        map->SetText(param_id, texmap == nullptr ? L"" : L"M");
     }
 }
 
@@ -600,8 +597,8 @@ Interval AppleseedDisneyMtl::Validity(TimeValue t)
 ParamDlg* AppleseedDisneyMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
     ParamDlg* param_dialog = g_appleseed_disneymtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
-    if (m_pblock != nullptr)
-        update_map_buttons(m_pblock->GetMap(ParamMapIdDisney));
+    DbgAssert(m_pblock != nullptr);
+    update_map_buttons(m_pblock->GetMap(ParamMapIdDisney));
     g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
     return param_dialog;
 }
