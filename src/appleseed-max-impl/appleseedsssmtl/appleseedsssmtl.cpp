@@ -36,6 +36,7 @@
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
 #include "main.h"
+#include "oslutils.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -44,6 +45,7 @@
 #include "renderer/api/bssrdf.h"
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
+#include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -648,8 +650,77 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
     const char*     name,
     const bool      use_max_procedural_maps)
 {
+    return
+        use_max_procedural_maps
+            ? create_builtin_material(assembly, name)
+            : create_osl_material(assembly, name);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+    //
+    // Shader group.
+    //
+    asr::ParamArray shader_params;
+
+    auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
+    auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
+
+    // BSSRDF.
+    connect_color_texture(shader_group.ref(), name, "Radius", m_sss_scattering_color_texmap, m_sss_scattering_color);
+    connect_color_texture(shader_group.ref(), name, "SSSColor", m_sss_color_texmap, m_sss_color);
+    shader_params.insert("RadiusScale", fmt_osl_expr(m_sss_scale));
+    shader_params.insert("Profile", fmt_osl_expr("normalized_diffusion"));
+    shader_params.insert("SSSReflectance", fmt_osl_expr(m_sss_amount / 100.0f));
+    
+    // BRDF.
+    connect_color_texture(shader_group.ref(), name, "SpecularColor", m_specular_color_texmap, m_specular_color);
+    connect_float_texture(shader_group.ref(), name, "SpecularReflectance", m_specular_amount_texmap, m_specular_amount / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_specular_roughness_texmap, m_specular_roughness / 100.0f);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_specular_anisotropy_texmap, m_specular_anisotropy / 100.0f);
+    shader_params.insert("Distribution", fmt_osl_expr("ggx"));
+
+    shader_params.insert("Ior", fmt_osl_expr(m_sss_ior));
+
+    if (is_bitmap_texture(m_bump_texmap))
+    {
+        if (m_bump_method == 0)
+        {
+            // Bump mapping.
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+        }
+        else
+        {
+            // Normal mapping.
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector);
+        }
+    }
+
+    // Must come last.
+    shader_group->add_shader("surface", "as_max_sss_material", name, shader_params);
+
+    assembly.shader_groups().insert(shader_group);
+
+    //
+    // Material.
+    //
+
+    asr::ParamArray material_params;
+    material_params.insert("osl_surface", shader_group_name);
+
+    return asr::OSLMaterialFactory().create(name, material_params);
+}
+
+asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
+    asr::Assembly&  assembly,
+    const char*     name)
+{
+
     asr::ParamArray material_params;
     std::string instance_name;
+    const bool use_max_procedural_maps = true;
 
     //
     // BSSRDF.

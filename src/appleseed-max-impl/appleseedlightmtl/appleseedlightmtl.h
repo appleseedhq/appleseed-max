@@ -134,7 +134,12 @@ class AppleseedLightMtl
         renderer::Assembly& assembly,
         const char*         name,
         const bool          use_max_procedural_maps) override;
-
+    foundation::auto_release_ptr<renderer::Material> create_builtin_material(
+        renderer::Assembly& assembly,
+        const char*         name);
+    foundation::auto_release_ptr<renderer::Material> create_osl_material(
+        renderer::Assembly& assembly,
+        const char*         name);
 
   private:
     IParamBlock2*   m_pblock;
