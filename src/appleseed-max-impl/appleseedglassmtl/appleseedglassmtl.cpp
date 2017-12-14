@@ -219,7 +219,7 @@ namespace
             p_range, 0.0f, 100.0f,
             p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
-        ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ROUGHNESS,
+        ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
@@ -229,7 +229,7 @@ namespace
             p_range, -1.0f, 1.0f,
             p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
         p_end,
-        ParamIdAnisotropyTexmap, L"anisotropy_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ANISOTROPY,
+        ParamIdAnisotropyTexmap, L"anisotropy_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ANISOTROPY,
             p_subtexno, TexmapIdAnisotropy,
             p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
@@ -443,6 +443,12 @@ void AppleseedGlassMtl::SetSubTexmap(int i, Texmap* texmap)
     const auto texmap_id = static_cast<TexmapId>(i);
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
+
+    IParamMap2* map = m_pblock->GetMap(ParamMapIdGlass);
+    if (map != nullptr)
+    {
+        map->SetText(param_id, texmap == nullptr ? L"" : L"M");
+    }
 }
 
 int AppleseedGlassMtl::MapSlotType(int i)
@@ -512,6 +518,8 @@ Interval AppleseedGlassMtl::Validity(TimeValue t)
 ParamDlg* AppleseedGlassMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
     ParamDlg* param_dialog = g_appleseed_glassmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    DbgAssert(m_pblock != nullptr);
+    update_map_buttons(m_pblock->GetMap(ParamMapIdGlass));
     g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
     return param_dialog;
 }
