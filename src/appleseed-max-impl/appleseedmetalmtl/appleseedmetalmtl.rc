@@ -1,0 +1,168 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""windows.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 113
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Normal Reflectance:",IDC_LABEL_NORMAL_REFLECTANCE,7,6,65,8
+    CONTROL         "Base Color Swatch",IDC_SWATCH_NORMAL_REFLECTANCE,
+                    "ColorSwatch",WS_TABSTOP,73,5,30,10
+    CONTROL         "Base Color Map",IDC_TEXMAP_NORMAL_REFLECTANCE,
+                    "CustButton",WS_TABSTOP,106,5,97,10
+    LTEXT           "Edge Tint:",IDC_LABEL_EDGE_TINT,7,22,48,8
+    LTEXT           "Reflectance:",IDC_LABEL_REFLECTANCE,7,38,48,8
+    CONTROL         "Specular Edit",IDC_EDIT_REFLECTANCE,"CustEdit",WS_TABSTOP,73,37,30,10
+    CONTROL         "Specular Slider",IDC_SLIDER_REFLECTANCE,"SliderControl",WS_TABSTOP,106,37,85,13
+    CONTROL         "Specular Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,194,37,9,10
+    LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,55,48,8
+    CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,73,54,30,10
+    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,54,85,13
+    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,194,54,9,10
+    LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,73,48,8
+    CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,73,72,30,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,106,72,85,13
+    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,194,72,9,10
+    LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,91,48,8
+    CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,90,30,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,90,85,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,194,90,9,10
+    CONTROL         "Base Color Swatch",IDC_SWATCH_EDGE_TINT,"ColorSwatch",WS_TABSTOP,73,20,30,10
+    CONTROL         "Base Color Map",IDC_TEXMAP_EDGE_TINT,"CustButton",WS_TABSTOP,106,20,97,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_PARAMS, DIALOG
+    BEGIN
+        VERTGUIDE, 106
+        BOTTOMMARGIN, 103
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_PARAMS_TITLE "Metal Parameters"
+    IDS_NORMAL_REFLECTANCE  "Normal Reflectance"
+    IDS_TEXMAP_NORMAL_REFLECTANCE "Normal Reflectance Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_EDGE_TINT           "Edge Tint"
+    IDS_TEXMAP_EDGE_TINT    "Edge Tint Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_REFLECTANCE         "Reflectance"
+    IDS_TEXMAP_REFLECTANCE  "Reflectance Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ROUGHNESS           "Roughness"
+    IDS_TEXMAP_ROUGHNESS    "Roughness Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ANISOTROPY          "Anisotropy"
+    IDS_TEXMAP_ANISOTROPY   "Anisotropy Texture Map"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ALPHA               "Alpha"
+    IDS_TEXMAP_ALPHA        "Alpha Texture Map"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -66,6 +66,12 @@
     <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp">
       <Filter>appleseedblendmtl</Filter>
     </ClCompile>
+    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -183,6 +189,24 @@
     <ClInclude Include="appleseedblendmtl\resource.h">
       <Filter>appleseedblendmtl</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\datachunks.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\resource.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\datachunks.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\resource.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -211,6 +235,12 @@
     </ResourceCompile>
     <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc">
       <Filter>appleseedblendmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc">
+      <Filter>appleseedmetalmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc">
+      <Filter>appleseedplasticmtl</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +273,15 @@
     </Filter>
     <Filter Include="appleseedblendmtl">
       <UniqueIdentifier>{d115203b-d27f-49e3-9aee-6676110ffc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedplasticmtl">
+      <UniqueIdentifier>{0d3c728a-6e39-4c62-810d-6f7a4cac6daf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedmetalmtl">
+      <UniqueIdentifier>{de6d5671-8f96-4a3c-af18-048b097a964c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedstandardmtl">
+      <UniqueIdentifier>{9f37fbe7-9b9e-4139-b4b0-3be7941f4475}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
