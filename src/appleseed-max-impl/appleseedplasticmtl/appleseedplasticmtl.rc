@@ -50,19 +50,17 @@ END
 // Dialog
 //
 
-IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 166
+IDD_FORMVIEW_SPECULAR_PARAMS DIALOGEX 0, 0, 217, 90
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "Specular:",IDC_LABEL_SPECULAR,7,6,65,8
+    LTEXT           "Specular Color:",IDC_LABEL_SPECULAR,7,6,65,8
     CONTROL         "Base Color Swatch",IDC_SWATCH_SPECULAR,"ColorSwatch",WS_TABSTOP,73,5,30,10
     CONTROL         "Base Color Map",IDC_TEXMAP_SPECULAR,"CustButton",WS_TABSTOP,106,5,97,10
-    LTEXT           "Diffuse:",IDC_LABEL_DIFFUSE,7,93,48,8
     LTEXT           "Specular Weight:",IDC_LABEL_SPECULAR_WEIGHT,7,20,65,8
     CONTROL         "Specular Edit",IDC_EDIT_SPECULAR_WEIGHT,"CustEdit",WS_TABSTOP,73,19,30,10
     CONTROL         "Specular Slider",IDC_SLIDER_SPECULAR_WEIGHT,
                     "SliderControl",WS_TABSTOP,106,19,85,13
-    CONTROL         "Specular Map",IDC_TEXMAP_SPECULAR_WEIGHT,"CustButton",WS_TABSTOP,194,19,9,10
     LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,37,48,8
     CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,73,36,30,10
     CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,36,85,13
@@ -71,23 +69,29 @@ BEGIN
     CONTROL         "Anisotropy Edit",IDC_EDIT_HIGHLIGHT_FALLOFF,"CustEdit",WS_TABSTOP,73,53,30,10
     CONTROL         "Anisotropy Slider",IDC_SLIDER_HIGHLIGHT_FALLOFF,
                     "SliderControl",WS_TABSTOP,106,53,85,13
-    LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,143,48,8
-    CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,142,30,10
-    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,142,85,13
-    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,194,142,9,10
-    CONTROL         "Base Color Swatch",IDC_SWATCH_DIFFUSE,"ColorSwatch",WS_TABSTOP,73,92,30,10
-    CONTROL         "Base Color Map",IDC_TEXMAP_DIFFUSE,"CustButton",WS_TABSTOP,106,92,97,10
     LTEXT           "IOR:",IDC_LABEL_IOR,8,71,65,8
     CONTROL         "Anisotropy Edit",IDC_EDIT_IOR,"CustEdit",WS_TABSTOP,74,70,30,10
     CONTROL         "Anisotropy Slider",IDC_SLIDER_IOR,"SliderControl",WS_TABSTOP,106,70,85,13
-    LTEXT           "Diffuse Weight:",IDC_LABEL_DIFFUSE_WEIGHT,8,107,65,8
-    CONTROL         "Specular Edit",IDC_EDIT_DIFFUSE_WEIGHT,"CustEdit",WS_TABSTOP,74,106,30,10
+END
+
+IDD_FORMVIEW_DIFFUSE_PARAMS DIALOGEX 0, 0, 217, 71
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Diffuse Color:",IDC_LABEL_DIFFUSE,7,6,48,8
+    LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,51,48,8
+    CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,50,30,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,50,85,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,194,50,9,10
+    CONTROL         "Base Color Swatch",IDC_SWATCH_DIFFUSE,"ColorSwatch",WS_TABSTOP,73,5,30,10
+    CONTROL         "Base Color Map",IDC_TEXMAP_DIFFUSE,"CustButton",WS_TABSTOP,106,5,97,10
+    LTEXT           "Diffuse Weight:",IDC_LABEL_DIFFUSE_WEIGHT,8,19,65,8
+    CONTROL         "Specular Edit",IDC_EDIT_DIFFUSE_WEIGHT,"CustEdit",WS_TABSTOP,73,18,30,10
     CONTROL         "Specular Slider",IDC_SLIDER_DIFFUSE_WEIGHT,
-                    "SliderControl",WS_TABSTOP,106,106,85,13
-    CONTROL         "Specular Map",IDC_TEXMAP_DIFFUSE_WEIGHT,"CustButton",WS_TABSTOP,194,106,9,10
-    LTEXT           "Scattering:",IDC_LABEL_SCATTERING,8,123,65,8
-    CONTROL         "Anisotropy Edit",IDC_EDIT_SCATTERING,"CustEdit",WS_TABSTOP,74,122,30,10
-    CONTROL         "Anisotropy Slider",IDC_SLIDER_SCATTERING,"SliderControl",WS_TABSTOP,106,122,85,13
+                    "SliderControl",WS_TABSTOP,106,18,85,13
+    LTEXT           "Scattering:",IDC_LABEL_SCATTERING,8,35,65,8
+    CONTROL         "Anisotropy Edit",IDC_EDIT_SCATTERING,"CustEdit",WS_TABSTOP,73,34,30,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_SCATTERING,"SliderControl",WS_TABSTOP,106,34,85,13
 END
 
 
@@ -99,10 +103,19 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO
 BEGIN
-    IDD_FORMVIEW_PARAMS, DIALOG
+    IDD_FORMVIEW_SPECULAR_PARAMS, DIALOG
     BEGIN
         VERTGUIDE, 106
-        BOTTOMMARGIN, 156
+        BOTTOMMARGIN, 83
+        HORZGUIDE, 5
+    END
+
+    IDD_FORMVIEW_DIFFUSE_PARAMS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        VERTGUIDE, 106
+        BOTTOMMARGIN, 63
+        HORZGUIDE, 5
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -113,7 +126,12 @@ END
 // AFX_DIALOG_LAYOUT
 //
 
-IDD_FORMVIEW_PARAMS AFX_DIALOG_LAYOUT
+IDD_FORMVIEW_SPECULAR_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FORMVIEW_DIFFUSE_PARAMS AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -126,7 +144,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_FORMVIEW_PARAMS_TITLE "Plastic Parameters"
+    IDS_FORMVIEW_SPECULAR_TITLE "Plastic Parameters"
 END
 
 STRINGTABLE
@@ -138,14 +156,12 @@ END
 STRINGTABLE
 BEGIN
     IDS_SPECULAR_WEIGHT     "Specular Weight"
-    IDS_TEXMAP_SPECULAR_WEIGHT "Specular Weight Texture Map"
     IDS_DIFFUSE             "Diffuse"
     IDS_TEXMAP_DIFFUSE      "Diffuse Texture Map"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_TEXMAP_DIFFUSE_WEIGHT "Diffuse Weight Texture"
     IDS_DIFFUSE_WEIGHT      "Diffuse WeIght"
     IDS_ROUGHNESS           "Roughness"
     IDS_TEXMAP_ROUGHNESS    "Roughness Texture Map"

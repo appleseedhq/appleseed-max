@@ -138,8 +138,8 @@ class AppleseedMetalMtl
   private:
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
-    Color           m_normal_reflectance_color;
-    Texmap*         m_normal_reflectance_color_texmap;
+    Color           m_facing_tint_color;
+    Texmap*         m_facing_tint_color_texmap;
     Color           m_edge_tint_color;
     Texmap*         m_edge_tint_color_texmap;
     float           m_reflectance;

@@ -91,8 +91,8 @@ namespace
     enum ParamId
     {
         // Changing these value WILL break compatibility.
-        ParamIdNormalReflectance        = 0,
-        ParamIdNormalReflectanceTexmap  = 1,
+        ParamIdFacingTint               = 0,
+        ParamIdFacingTintTexmap         = 1,
         ParamIdEdgeTint                 = 2,
         ParamIdEdgeTintTexmap           = 3,
         ParamIdReflectance              = 4,
@@ -112,7 +112,7 @@ namespace
     enum TexmapId
     {
         // Changing these value WILL break compatibility.
-        TexmapIdNormalReflectance   = 0,
+        TexmapIdFacingTint          = 0,
         TexmapIdEdgeTint            = 1,
         TexmapIdReflectance         = 2,
         TexmapIdRoughness           = 3,
@@ -124,7 +124,7 @@ namespace
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        L"Normal Reflectance",
+        L"Facing Tint",
         L"Edge Tint",
         L"Reflectance",
         L"Roughness",
@@ -135,7 +135,7 @@ namespace
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
-        ParamIdNormalReflectanceTexmap,
+        ParamIdFacingTintTexmap,
         ParamIdEdgeTintTexmap,
         ParamIdReflectanceTexmap,
         ParamIdRoughnessTexmap,
@@ -176,13 +176,13 @@ namespace
 
         // --- Parameters specifications for Metal rollup ---
 
-        ParamIdNormalReflectance, L"normal_reflectance", TYPE_RGBA, P_ANIMATABLE, IDS_NORMAL_REFLECTANCE,
+        ParamIdFacingTint, L"facing_tint", TYPE_RGBA, P_ANIMATABLE, IDS_FACING_TINT,
             p_default, Color(0.92f, 0.92f, 0.92f),
-            p_ui, ParamMapIdMetal, TYPE_COLORSWATCH, IDC_SWATCH_NORMAL_REFLECTANCE,
+            p_ui, ParamMapIdMetal, TYPE_COLORSWATCH, IDC_SWATCH_FACING_TINT,
         p_end,
-        ParamIdNormalReflectanceTexmap, L"normal_reflectance_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_NORMAL_REFLECTANCE,
-            p_subtexno, TexmapIdNormalReflectance,
-            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_NORMAL_REFLECTANCE,
+        ParamIdFacingTintTexmap, L"facing_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_FACING_TINT,
+            p_subtexno, TexmapIdFacingTint,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_FACING_TINT,
         p_end,
 
         ParamIdEdgeTint, L"edge_tint", TYPE_RGBA, P_ANIMATABLE, IDS_EDGE_TINT,
@@ -272,8 +272,8 @@ Class_ID AppleseedMetalMtl::get_class_id()
 
 AppleseedMetalMtl::AppleseedMetalMtl()
   : m_pblock(nullptr)
-  , m_normal_reflectance_color(0.92f, 0.92f, 0.92f)
-  , m_normal_reflectance_color_texmap(nullptr)
+  , m_facing_tint_color(0.92f, 0.92f, 0.92f)
+  , m_facing_tint_color_texmap(nullptr)
   , m_edge_tint_color(0.98f, 0.98f, 0.98f)
   , m_edge_tint_color_texmap(nullptr)
   , m_reflectance(80.0f)
@@ -451,8 +451,8 @@ void AppleseedMetalMtl::Update(TimeValue t, Interval& valid)
     {
         m_params_validity.SetInfinite();
 
-        m_pblock->GetValue(ParamIdNormalReflectance, t, m_normal_reflectance_color, m_params_validity);
-        m_pblock->GetValue(ParamIdNormalReflectanceTexmap, t, m_normal_reflectance_color_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdFacingTint, t, m_facing_tint_color, m_params_validity);
+        m_pblock->GetValue(ParamIdFacingTintTexmap, t, m_facing_tint_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdEdgeTint, t, m_edge_tint_color, m_params_validity);
         m_pblock->GetValue(ParamIdEdgeTintTexmap, t, m_edge_tint_color_texmap, m_params_validity);
@@ -562,7 +562,7 @@ Color AppleseedMetalMtl::GetAmbient(int mtlNum, BOOL backFace)
 
 Color AppleseedMetalMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    return m_normal_reflectance_color;
+    return m_facing_tint_color;
 }
 
 Color AppleseedMetalMtl::GetSpecular(int mtlNum, BOOL backFace)
@@ -593,10 +593,10 @@ void AppleseedMetalMtl::SetDiffuse(Color c, TimeValue t)
 {
     Color nc;
     Interval iv;
-    m_pblock->SetValue(ParamIdNormalReflectance, t, c);
+    m_pblock->SetValue(ParamIdFacingTint, t, c);
 
-    m_pblock->GetValue(ParamIdNormalReflectance, t, nc, iv);
-    m_normal_reflectance_color = nc;
+    m_pblock->GetValue(ParamIdFacingTint, t, nc, iv);
+    m_facing_tint_color = nc;
 }
 
 void AppleseedMetalMtl::SetSpecular(Color c, TimeValue t)
@@ -643,7 +643,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_color_texture(shader_group.ref(), name, "NormalReflectance", m_normal_reflectance_color_texmap, m_normal_reflectance_color);
+    connect_color_texture(shader_group.ref(), name, "NormalReflectance", m_facing_tint_color_texmap, m_facing_tint_color);
     connect_color_texture(shader_group.ref(), name, "EdgeTint", m_edge_tint_color_texmap, m_edge_tint_color);
     connect_float_texture(shader_group.ref(), name, "Reflectance", m_reflectance_texmap, m_reflectance / 100.0f);
     connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
@@ -707,13 +707,13 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         bsdf_params.insert("mdf", "ggx");
 
         // Normal Reflectance.
-        instance_name = insert_texture_and_instance(assembly, m_normal_reflectance_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_facing_tint_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
             bsdf_params.insert("normal_reflectance", instance_name);
         else
         {
             const auto color_name = std::string(name) + "_bsdf_normal_reflectance_color";
-            insert_color(assembly, m_normal_reflectance_color, color_name.c_str());
+            insert_color(assembly, m_facing_tint_color, color_name.c_str());
             bsdf_params.insert("normal_reflectance", color_name);
         }
 

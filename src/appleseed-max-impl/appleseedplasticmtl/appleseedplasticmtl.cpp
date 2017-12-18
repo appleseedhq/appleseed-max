@@ -84,7 +84,8 @@ namespace
 
     enum ParamMapId
     {
-        ParamMapIdPlastic,
+        ParamMapIdSpecular,
+        ParamMapIdDiffuse,
         ParamMapIdBump
     };
 
@@ -94,44 +95,38 @@ namespace
         ParamIdSpecular                 = 0,
         ParamIdSpecularTexmap           = 1,
         ParamIdSpecularWeight           = 2,
-        ParamIdSpecularWeightTexmap     = 3,
-        ParamIdRoughness                = 4,
-        ParamIdRoughnessTexmap          = 5,
-        ParamIdHighlightFalloff         = 6,
-        ParamIdIOR                      = 7,
-        ParamIdDiffuse                  = 8,
-        ParamIdDiffuseTexmap            = 9,
-        ParamIdDiffuseWeight            = 10,
-        ParamIdDiffuseWeightTexmap      = 11,
-        ParamIdScattering               = 12,
-        ParamIdAlpha                    = 13,
-        ParamIdAlphaTexmap              = 14,
-        ParamIdBumpMethod               = 15,
-        ParamIdBumpTexmap               = 16,
-        ParamIdBumpAmount               = 17,
-        ParamIdBumpUpVector             = 18,
+        ParamIdRoughness                = 3,
+        ParamIdRoughnessTexmap          = 4,
+        ParamIdHighlightFalloff         = 5,
+        ParamIdIOR                      = 6,
+        ParamIdDiffuse                  = 7,
+        ParamIdDiffuseTexmap            = 8,
+        ParamIdDiffuseWeight            = 9,
+        ParamIdScattering               = 10,
+        ParamIdAlpha                    = 11,
+        ParamIdAlphaTexmap              = 12,
+        ParamIdBumpMethod               = 13,
+        ParamIdBumpTexmap               = 14,
+        ParamIdBumpAmount               = 15,
+        ParamIdBumpUpVector             = 16,
     };
 
     enum TexmapId
     {
         // Changing these value WILL break compatibility.
         TexmapIdSpecular                = 0,
-        TexmapIdSpecularWeight          = 1,
-        TexmapIdRoughness               = 2,
-        TexmapIdDiffuse                 = 3,
-        TexmapIdDiffuseWeight           = 4,
-        TexmapIdAlpha                   = 5,
-        TexmapIdBumpMap                 = 6,
+        TexmapIdRoughness               = 1,
+        TexmapIdDiffuse                 = 2,
+        TexmapIdAlpha                   = 3,
+        TexmapIdBumpMap                 = 4,
         TexmapCount                 // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        L"Specular",
-        L"Specular Weight",
+        L"Specular Color",
         L"Roughness",
-        L"Diffuse",
-        L"Diffuse Weight",
+        L"Diffuse Color",
         L"Alpha",
         L"Bump Map"
     };
@@ -139,10 +134,8 @@ namespace
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
         ParamIdSpecularTexmap,
-        ParamIdSpecularWeightTexmap,
         ParamIdRoughnessTexmap,
         ParamIdDiffuseTexmap,
-        ParamIdDiffuseWeightTexmap,
         ParamIdAlphaTexmap,
         ParamIdBumpTexmap
     };
@@ -159,12 +152,20 @@ namespace
         ParamBlockRefPlasticMtl,                      // parameter block's reference number
 
         // --- P_MULTIMAP arguments ---
-        2,                                          // number of rollups
+        3,                                          // number of rollups
+        
+        // --- P_AUTO_UI arguments for Specular rollup ---
+        ParamMapIdSpecular,
+        IDD_FORMVIEW_SPECULAR_PARAMS,               // ID of the dialog template
+        IDS_FORMVIEW_SPECULAR_TITLE,                // ID of the dialog's title string
+        0,                                          // IParamMap2 creation/deletion flag mask
+        0,                                          // rollup creation flag
+        nullptr,                                    // user dialog procedure
 
-        // --- P_AUTO_UI arguments for Plastic rollup ---
-        ParamMapIdPlastic,
-        IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
-        IDS_FORMVIEW_PARAMS_TITLE,                  // ID of the dialog's title string
+        // --- P_AUTO_UI arguments for Diffuse rollup ---
+        ParamMapIdDiffuse,
+        IDD_FORMVIEW_DIFFUSE_PARAMS,                // ID of the dialog template
+        IDS_FORMVIEW_DIFFUSE_TITLE,                 // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
         nullptr,                                    // user dialog procedure
@@ -181,78 +182,70 @@ namespace
 
         ParamIdSpecular, L"specular", TYPE_RGBA, P_ANIMATABLE, IDS_SPECULAR,
             p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, ParamMapIdPlastic, TYPE_COLORSWATCH, IDC_SWATCH_SPECULAR,
+            p_ui, ParamMapIdSpecular, TYPE_COLORSWATCH, IDC_SWATCH_SPECULAR,
         p_end,
         ParamIdSpecularTexmap, L"specular_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SPECULAR,
             p_subtexno, TexmapIdSpecular,
-            p_ui, ParamMapIdPlastic, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR,
+            p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR,
         p_end,
 
         ParamIdSpecularWeight, L"specular_weight", TYPE_FLOAT, P_ANIMATABLE, IDS_SPECULAR_WEIGHT,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_WEIGHT, IDC_SLIDER_SPECULAR_WEIGHT, 10.0f,
-        p_end,
-        ParamIdSpecularWeightTexmap, L"specular_weight_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_SPECULAR_WEIGHT,
-            p_subtexno, TexmapIdSpecularWeight,
-            p_ui, ParamMapIdPlastic, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SPECULAR_WEIGHT,
+            p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SPECULAR_WEIGHT, IDC_SLIDER_SPECULAR_WEIGHT, 10.0f,
         p_end,
 
         ParamIdRoughness, L"roughness", TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
             p_default, 10.0f,
             p_range, 0.0f, 100.0f,
-        p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
+            p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
             ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
-            p_ui, ParamMapIdPlastic, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
+            p_ui, ParamMapIdSpecular, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
 
         ParamIdHighlightFalloff, L"highlight_falloff", TYPE_FLOAT, P_ANIMATABLE, IDS_HIGHLIGHT_FALLOFF,
             p_default, 40.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_HIGHLIGHT_FALLOFF, IDC_SLIDER_HIGHLIGHT_FALLOFF, 10.0f,
+            p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_HIGHLIGHT_FALLOFF, IDC_SLIDER_HIGHLIGHT_FALLOFF, 10.0f,
         p_end,
 
         ParamIdIOR, L"ior", TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
             p_default, 1.5f,
             p_range, 1.0f, 2.5f,
-            p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
+            p_ui, ParamMapIdSpecular, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
         p_end,
 
         ParamIdDiffuse, L"diffuse", TYPE_RGBA, P_ANIMATABLE, IDS_DIFFUSE,
             p_default, Color(0.5f, 0.5f, 0.5f),
-            p_ui, ParamMapIdPlastic, TYPE_COLORSWATCH, IDC_SWATCH_DIFFUSE,
-            p_end,
+            p_ui, ParamMapIdDiffuse, TYPE_COLORSWATCH, IDC_SWATCH_DIFFUSE,
+        p_end,
         ParamIdDiffuseTexmap, L"diffuse_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_DIFFUSE,
             p_subtexno, TexmapIdDiffuse,
-            p_ui, ParamMapIdPlastic, TYPE_TEXMAPBUTTON, IDC_TEXMAP_DIFFUSE,
+            p_ui, ParamMapIdDiffuse, TYPE_TEXMAPBUTTON, IDC_TEXMAP_DIFFUSE,
         p_end,
 
         ParamIdDiffuseWeight, L"diffuse_weight", TYPE_FLOAT, P_ANIMATABLE, IDS_DIFFUSE_WEIGHT,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_DIFFUSE_WEIGHT, IDC_SLIDER_DIFFUSE_WEIGHT, 10.0f,
-            p_end,
-        ParamIdDiffuseWeightTexmap, L"diffuse_weight_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_DIFFUSE_WEIGHT,
-            p_subtexno, TexmapIdDiffuseWeight,
-            p_ui, ParamMapIdPlastic, TYPE_TEXMAPBUTTON, IDC_TEXMAP_DIFFUSE_WEIGHT,
+            p_ui, ParamMapIdDiffuse, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_DIFFUSE_WEIGHT, IDC_SLIDER_DIFFUSE_WEIGHT, 10.0f,
         p_end,
 
         ParamIdScattering, L"scattering", TYPE_FLOAT, P_ANIMATABLE, IDS_SCATTERING,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SCATTERING, IDC_SLIDER_SCATTERING, 10.0f,
+            p_ui, ParamMapIdDiffuse, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SCATTERING, IDC_SLIDER_SCATTERING, 10.0f,
         p_end,
 
         ParamIdAlpha, L"alpha", TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
             p_default, 100.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdPlastic, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
+            p_ui, ParamMapIdDiffuse, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
         p_end,
         ParamIdAlphaTexmap, L"alpha_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ALPHA,
             p_subtexno, TexmapIdAlpha,
-            p_ui, ParamMapIdPlastic, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
+            p_ui, ParamMapIdDiffuse, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
         p_end,
 
         // --- Parameters specifications for Bump rollup ---
@@ -296,11 +289,9 @@ AppleseedPlasticMtl::AppleseedPlasticMtl()
   , m_specular(1.0f, 1.0f, 1.0f)
   , m_specular_texmap(nullptr)
   , m_specular_weight(100.0f)
-  , m_specular_weight_texmap(nullptr)
   , m_diffuse(0.5f, 0.5f, 0.5f)
   , m_diffuse_texmap(nullptr)
   , m_diffuse_weight(100.0f)
-  , m_diffuse_weight_texmap(nullptr)
   , m_roughness(10.0f)
   , m_roughness_texmap(nullptr)
   , m_highlight_falloff(40.0f)
@@ -451,7 +442,13 @@ void AppleseedPlasticMtl::SetSubTexmap(int i, Texmap* texmap)
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
 
-    IParamMap2* map = m_pblock->GetMap(ParamMapIdPlastic);
+    IParamMap2* map = m_pblock->GetMap(ParamMapIdSpecular);
+    if (map != nullptr)
+    {
+        map->SetText(param_id, texmap == nullptr ? L"" : L"M");
+    }
+
+    map = m_pblock->GetMap(ParamMapIdDiffuse);
     if (map != nullptr)
     {
         map->SetText(param_id, texmap == nullptr ? L"" : L"M");
@@ -477,18 +474,14 @@ void AppleseedPlasticMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdSpecular, t, m_specular, m_params_validity);
         m_pblock->GetValue(ParamIdSpecularTexmap, t, m_specular_texmap, m_params_validity);
-
         m_pblock->GetValue(ParamIdSpecularWeight, t, m_specular_weight, m_params_validity);
-        m_pblock->GetValue(ParamIdSpecularWeightTexmap, t, m_specular_weight_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdDiffuse, t, m_diffuse, m_params_validity);
         m_pblock->GetValue(ParamIdDiffuseTexmap, t, m_diffuse_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdDiffuseWeight, t, m_diffuse_weight, m_params_validity);
 
         m_pblock->GetValue(ParamIdRoughness, t, m_roughness, m_params_validity);
         m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, m_params_validity);
-
-        m_pblock->GetValue(ParamIdDiffuseWeight, t, m_diffuse_weight, m_params_validity);
-        m_pblock->GetValue(ParamIdDiffuseWeightTexmap, t, m_diffuse_weight_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdHighlightFalloff, t, m_highlight_falloff, m_params_validity);
 
@@ -528,7 +521,8 @@ ParamDlg* AppleseedPlasticMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
     ParamDlg* param_dialog = g_appleseed_plasticmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
     DbgAssert(m_pblock != nullptr);
-    update_map_buttons(m_pblock->GetMap(ParamMapIdPlastic));
+    update_map_buttons(m_pblock->GetMap(ParamMapIdSpecular));
+    update_map_buttons(m_pblock->GetMap(ParamMapIdDiffuse));
     g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
     return param_dialog;
 }
@@ -675,8 +669,6 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
 
     connect_color_texture(shader_group.ref(), name, "SpecularColor", m_specular_texmap, m_specular);
     connect_color_texture(shader_group.ref(), name, "DiffuseColor", m_diffuse_texmap, m_diffuse);
-    connect_float_texture(shader_group.ref(), name, "SpecularWeight", m_specular_weight_texmap, m_specular_weight / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "DiffuseWeight", m_diffuse_weight_texmap, m_diffuse_weight / 100.0f);
     connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
 
     if (is_bitmap_texture(m_bump_texmap))
@@ -696,6 +688,8 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
     // Must come last.
     shader_group->add_shader("surface", "as_max_plastic_material", name, 
         asr::ParamArray()
+        .insert("SpecularWeight", fmt_osl_expr(m_specular_weight / 100.0f))
+        .insert("DiffuseWeight", fmt_osl_expr(m_diffuse_weight / 100.0f))
         .insert("Spread", fmt_osl_expr(m_highlight_falloff / 100.0f))
         .insert("Scattering", fmt_osl_expr(m_scattering / 100.0f))
         .insert("IOR", fmt_osl_expr(m_ior)));
@@ -741,6 +735,8 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_builtin_materia
         bsdf_params.insert("highlight_falloff", m_highlight_falloff / 100.0f);
         bsdf_params.insert("ior", m_ior);
         bsdf_params.insert("internal_scattering", m_scattering / 100.0f);
+        bsdf_params.insert("specular_reflectance_multiplier", m_specular_weight / 100.0f);
+        bsdf_params.insert("diffuse_reflectance_multiplier", m_diffuse_weight / 100.0f);
 
         // Specular.
         instance_name = insert_texture_and_instance(assembly, m_specular_texmap, use_max_procedural_maps);
@@ -763,18 +759,6 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_builtin_materia
             insert_color(assembly, m_diffuse, color_name.c_str());
             bsdf_params.insert("diffuse_reflectance", color_name);
         }
-
-        // Specular weight.
-        instance_name = insert_texture_and_instance(assembly, m_specular_weight_texmap, use_max_procedural_maps);
-        if (!instance_name.empty())
-            bsdf_params.insert("specular_reflectance_multiplier", instance_name);
-        else bsdf_params.insert("specular_reflectance_multiplier", m_specular_weight / 100.0f);
-
-        // Diffuse weight.
-        instance_name = insert_texture_and_instance(assembly, m_diffuse_weight_texmap, use_max_procedural_maps);
-        if (!instance_name.empty())
-            bsdf_params.insert("diffuse_reflectance_multiplier", instance_name);
-        else bsdf_params.insert("diffuse_reflectance_multiplier", m_diffuse_weight / 100.0f);
 
         // Roughness.
         instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);

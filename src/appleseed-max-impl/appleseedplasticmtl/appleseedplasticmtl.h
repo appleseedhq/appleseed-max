@@ -141,11 +141,9 @@ class AppleseedPlasticMtl
     Color           m_specular;
     Texmap*         m_specular_texmap;
     float           m_specular_weight;
-    Texmap*         m_specular_weight_texmap;
     Color           m_diffuse;
     Texmap*         m_diffuse_texmap;
     float           m_diffuse_weight;
-    Texmap*         m_diffuse_weight_texmap;
     float           m_roughness;
     Texmap*         m_roughness_texmap;
     float           m_highlight_falloff;
