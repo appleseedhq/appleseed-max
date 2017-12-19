@@ -129,7 +129,7 @@ namespace
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SIZE_MULTIPLIER, IDC_SPIN_SIZE_MULTIPLIER, 0.1f,
         p_end,
 
-        ParamIdSunNode, L"sun_node", TYPE_INODE, 0, IDS_SUN_NODE,
+        ParamIdSunNode, L"sun_node", TYPE_INODE, P_NO_AUTO_LABELS, IDS_SUN_NODE,
             p_ui, TYPE_PICKNODEBUTTON, IDC_PICK_SUN_NODE,
             p_prompt, IDS_PICK_SUN_PROMPT,
             p_validator, &g_sun_node_validator,
@@ -632,6 +632,7 @@ void SunNodePBAccessor::TabChanged(
                 {
                     map->Enable(ParamIdSunTheta, TRUE);
                     map->Enable(ParamIdSunPhi, TRUE);
+                    map->SetText(ParamIdSunNode, L"Pick Directional Light");
                 }
             }
         }
@@ -666,11 +667,13 @@ void SunNodePBAccessor::Set(
 
       case ParamIdSunNode:
         {
-            if (v.r != nullptr)
+            INode* node = static_cast<INode*>(v.r);
+            if (node != nullptr)
             {
                 pblock->SetValue(ParamIdSunNodeOn, t, TRUE);
                 map->Enable(ParamIdSunTheta, FALSE);
                 map->Enable(ParamIdSunPhi, FALSE);
+                map->SetText(ParamIdSunNode, node->GetName());
             }
         }
         break;
