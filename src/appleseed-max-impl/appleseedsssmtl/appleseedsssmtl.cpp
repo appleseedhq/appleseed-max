@@ -834,12 +834,12 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
 
         switch (m_bump_method)
         {
-        case 0:
+          case 0:
             material_params.insert("bump_amplitude", m_bump_amount);
-            material_params.insert("bump_offset", 0.0009765625f);     // 0.5/512 - value that should work for non-image sources
+            material_params.insert("bump_offset", 0.5f);
             break;
 
-        case 1:
+          case 1:
             material_params.insert("normal_map_up", m_bump_up_vector == 0 ? "y" : "z");
             break;
         }

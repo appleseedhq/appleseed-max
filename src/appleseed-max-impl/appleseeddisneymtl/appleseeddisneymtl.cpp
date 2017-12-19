@@ -910,7 +910,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         {
           case 0:
             material_params.insert("bump_amplitude", m_bump_amount);
-            material_params.insert("bump_offset", 0.5f / 512);
+            material_params.insert("bump_offset", 0.5f);
             break;
 
           case 1:
