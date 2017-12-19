@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -149,7 +149,7 @@ namespace
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
-        ParamBlockRefPlasticMtl,                      // parameter block's reference number
+        ParamBlockRefPlasticMtl,                    // parameter block's reference number
 
         // --- P_MULTIMAP arguments ---
         3,                                          // number of rollups
@@ -615,12 +615,8 @@ void AppleseedPlasticMtl::SetAmbient(Color c, TimeValue t)
 
 void AppleseedPlasticMtl::SetDiffuse(Color c, TimeValue t)
 {
-    Color nc;
-    Interval iv;
     m_pblock->SetValue(ParamIdDiffuse, t, c);
-
-    m_pblock->GetValue(ParamIdDiffuse, t, nc, iv);
-    m_diffuse = nc;
+    m_diffuse = c;
 }
 
 void AppleseedPlasticMtl::SetSpecular(Color c, TimeValue t)
@@ -744,7 +740,7 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_builtin_materia
             bsdf_params.insert("specular_reflectance", instance_name);
         else
         {
-            const auto color_name = std::string(name) + "_bsdf_normal_reflectance_color";
+            const auto color_name = std::string(name) + "_brdf_specular_reflectance_color";
             insert_color(assembly, m_specular, color_name.c_str());
             bsdf_params.insert("specular_reflectance", color_name);
         }
@@ -755,7 +751,7 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_builtin_materia
             bsdf_params.insert("diffuse_reflectance", instance_name);
         else
         {
-            const auto color_name = std::string(name) + "_bsdf_edge_tint";
+            const auto color_name = std::string(name) + "_brdf_diffuse_reflectance_color";
             insert_color(assembly, m_diffuse, color_name.c_str());
             bsdf_params.insert("diffuse_reflectance", color_name);
         }
@@ -767,7 +763,7 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_builtin_materia
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
         // BRDF.
-        const auto bsdf_name = std::string(name) + "_bsdf";
+        const auto bsdf_name = std::string(name) + "_brdf";
         assembly.bsdfs().insert(
             asr::PlasticBRDFFactory().create(bsdf_name.c_str(), bsdf_params));
         material_params.insert("bsdf", bsdf_name);

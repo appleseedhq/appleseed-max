@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@
 
 // 3ds Max headers.
 #include <color.h>
+#include <interval.h>
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
@@ -91,22 +92,22 @@ namespace
     enum ParamId
     {
         // Changing these value WILL break compatibility.
-        ParamIdFacingTint               = 0,
-        ParamIdFacingTintTexmap         = 1,
-        ParamIdEdgeTint                 = 2,
-        ParamIdEdgeTintTexmap           = 3,
-        ParamIdReflectance              = 4,
-        ParamIdReflectanceTexmap        = 5,
-        ParamIdRoughness                = 6,
-        ParamIdRoughnessTexmap          = 7,
-        ParamIdAnisotropy               = 8,
-        ParamIdAnisotropyTexmap         = 9,
-        ParamIdAlpha                    = 10,
-        ParamIdAlphaTexmap              = 11,
-        ParamIdBumpMethod               = 12,
-        ParamIdBumpTexmap               = 13,
-        ParamIdBumpAmount               = 14,
-        ParamIdBumpUpVector             = 15,
+        ParamIdFacingTint           = 0,
+        ParamIdFacingTintTexmap     = 1,
+        ParamIdEdgeTint             = 2,
+        ParamIdEdgeTintTexmap       = 3,
+        ParamIdReflectance          = 4,
+        ParamIdReflectanceTexmap    = 5,
+        ParamIdRoughness            = 6,
+        ParamIdRoughnessTexmap      = 7,
+        ParamIdAnisotropy           = 8,
+        ParamIdAnisotropyTexmap     = 9,
+        ParamIdAlpha                = 10,
+        ParamIdAlphaTexmap          = 11,
+        ParamIdBumpMethod           = 12,
+        ParamIdBumpTexmap           = 13,
+        ParamIdBumpAmount           = 14,
+        ParamIdBumpUpVector         = 15,
     };
 
     enum TexmapId
@@ -147,7 +148,7 @@ namespace
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdMetalMtl,                       // parameter block's ID
-        L"appleseedMetalMtlParams",                // internal parameter block's name
+        L"appleseedMetalMtlParams",                 // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_metalmtl_classdesc,            // class descriptor
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
@@ -591,12 +592,8 @@ void AppleseedMetalMtl::SetAmbient(Color c, TimeValue t)
 
 void AppleseedMetalMtl::SetDiffuse(Color c, TimeValue t)
 {
-    Color nc;
-    Interval iv;
     m_pblock->SetValue(ParamIdFacingTint, t, c);
-
-    m_pblock->GetValue(ParamIdFacingTint, t, nc, iv);
-    m_facing_tint_color = nc;
+    m_facing_tint_color = c;
 }
 
 void AppleseedMetalMtl::SetSpecular(Color c, TimeValue t)
@@ -712,7 +709,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
             bsdf_params.insert("normal_reflectance", instance_name);
         else
         {
-            const auto color_name = std::string(name) + "_bsdf_normal_reflectance_color";
+            const auto color_name = std::string(name) + "_brdf_normal_reflectance_color";
             insert_color(assembly, m_facing_tint_color, color_name.c_str());
             bsdf_params.insert("normal_reflectance", color_name);
         }
@@ -723,7 +720,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
             bsdf_params.insert("edge_tint", instance_name);
         else
         {
-            const auto color_name = std::string(name) + "_bsdf_edge_tint";
+            const auto color_name = std::string(name) + "_brdf_edge_tint";
             insert_color(assembly, m_edge_tint_color, color_name.c_str());
             bsdf_params.insert("edge_tint", color_name);
         }
@@ -747,7 +744,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         else bsdf_params.insert("anisotropic", m_anisotropy);
 
         // BRDF.
-        const auto bsdf_name = std::string(name) + "_bsdf";
+        const auto bsdf_name = std::string(name) + "_brdf";
         assembly.bsdfs().insert(
             asr::MetalBRDFFactory().create(bsdf_name.c_str(), bsdf_params));
         material_params.insert("bsdf", bsdf_name);

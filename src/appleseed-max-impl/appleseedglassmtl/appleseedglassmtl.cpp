@@ -612,6 +612,8 @@ void AppleseedGlassMtl::SetAmbient(Color c, TimeValue t)
 
 void AppleseedGlassMtl::SetDiffuse(Color c, TimeValue t)
 {
+    m_pblock->SetValue(ParamIdSurfaceColor, t, c);
+    m_surface_color = c;
 }
 
 void AppleseedGlassMtl::SetSpecular(Color c, TimeValue t)

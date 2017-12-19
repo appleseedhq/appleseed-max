@@ -55,15 +55,15 @@ STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Facing Tint:",IDC_LABEL_FACING_TINT,7,6,65,8
-    CONTROL         "Base Color Swatch",IDC_SWATCH_FACING_TINT,
+    CONTROL         "Facing Tint Color Swatch",IDC_SWATCH_FACING_TINT,
                     "ColorSwatch",WS_TABSTOP,73,5,30,10
-    CONTROL         "Base Color Map",IDC_TEXMAP_FACING_TINT,
+    CONTROL         "Facing Tint Color Map",IDC_TEXMAP_FACING_TINT,
                     "CustButton",WS_TABSTOP,106,5,97,10
     LTEXT           "Edge Tint:",IDC_LABEL_EDGE_TINT,7,22,48,8
     LTEXT           "Reflectance:",IDC_LABEL_REFLECTANCE,7,38,48,8
-    CONTROL         "Specular Edit",IDC_EDIT_REFLECTANCE,"CustEdit",WS_TABSTOP,73,37,30,10
-    CONTROL         "Specular Slider",IDC_SLIDER_REFLECTANCE,"SliderControl",WS_TABSTOP,106,37,85,13
-    CONTROL         "Specular Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,194,37,9,10
+    CONTROL         "Reflectance Edit",IDC_EDIT_REFLECTANCE,"CustEdit",WS_TABSTOP,73,37,30,10
+    CONTROL         "Reflectance Slider",IDC_SLIDER_REFLECTANCE,"SliderControl",WS_TABSTOP,106,37,85,13
+    CONTROL         "Reflectance Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,194,37,9,10
     LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,55,48,8
     CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,73,54,30,10
     CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,54,85,13
@@ -76,8 +76,8 @@ BEGIN
     CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,90,30,10
     CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,90,85,13
     CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,194,90,9,10
-    CONTROL         "Base Color Swatch",IDC_SWATCH_EDGE_TINT,"ColorSwatch",WS_TABSTOP,73,20,30,10
-    CONTROL         "Base Color Map",IDC_TEXMAP_EDGE_TINT,"CustButton",WS_TABSTOP,106,20,97,10
+    CONTROL         "Edge Tint Color Swatch",IDC_SWATCH_EDGE_TINT,"ColorSwatch",WS_TABSTOP,73,20,30,10
+    CONTROL         "Edge Tint Color Map",IDC_TEXMAP_EDGE_TINT,"CustButton",WS_TABSTOP,106,20,97,10
 END
 
 

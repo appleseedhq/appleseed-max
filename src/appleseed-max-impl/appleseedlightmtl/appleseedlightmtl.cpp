@@ -452,6 +452,8 @@ void AppleseedLightMtl::SetAmbient(Color c, TimeValue t)
 
 void AppleseedLightMtl::SetDiffuse(Color c, TimeValue t)
 {
+    m_pblock->SetValue(ParamIdLightColor, t, c);
+    m_light_color = c;
 }
 
 void AppleseedLightMtl::SetSpecular(Color c, TimeValue t)
