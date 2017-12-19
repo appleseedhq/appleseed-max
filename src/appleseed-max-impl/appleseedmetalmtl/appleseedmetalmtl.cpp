@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,11 @@
 //
 
 // Interface header.
-#include "appleseedglassmtl.h"
+#include "appleseedmetalmtl.h"
 
 // appleseed-max headers.
-#include "appleseedglassmtl/datachunks.h"
-#include "appleseedglassmtl/resource.h"
+#include "appleseedmetalmtl/datachunks.h"
+#include "appleseedmetalmtl/resource.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
@@ -49,122 +49,118 @@
 
 // appleseed.foundation headers.
 #include "foundation/image/colorspace.h"
-#include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
-#include <AssetManagement/AssetUser.h>
 #include <color.h>
-#include <hsv.h>
+#include <interval.h>
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
 
+// Standard headers.
+#include <string>
+
 // Windows headers.
 #include <tchar.h>
-
-// Standard headers.
-#include <algorithm>
 
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-    const wchar_t* AppleseedGlassMtlFriendlyClassName = L"appleseed Glass Material";
+    const wchar_t* AppleseedMetalMtlFriendlyClassName = L"appleseed Metal Material";
 }
 
-AppleseedGlassMtlClassDesc g_appleseed_glassmtl_classdesc;
+AppleseedMetalMtlClassDesc g_appleseed_metalmtl_classdesc;
 
 
 //
-// AppleseedGlassMtl class implementation.
+// AppleseedMetalMtl class implementation.
 //
 
 namespace
 {
-    enum { ParamBlockIdGlassMtl };
-    enum { ParamBlockRefGlassMtl };
+    enum { ParamBlockIdMetalMtl };
+    enum { ParamBlockRefMetalMtl };
 
     enum ParamMapId
     {
-        ParamMapIdGlass,
+        ParamMapIdMetal,
         ParamMapIdBump
     };
 
     enum ParamId
     {
         // Changing these value WILL break compatibility.
-        ParamIdSurfaceColor         = 0,
-        ParamIdSurfaceColorTexmap   = 1,
-        ParamIdReflectionTint       = 2,
-        ParamIdReflectionTintTexmap = 3,
-        ParamIdRefractionTint       = 4,
-        ParamIdRefractionTintTexmap = 5,
-        ParamIdIOR                  = 6,
-        ParamIdRoughness            = 7,
-        ParamIdRoughnessTexmap      = 8,
-        ParamIdAnisotropy           = 9,
-        ParamIdAnisotropyTexmap     = 10,
-        ParamIdVolumeColor          = 11,
-        ParamIdVolumeColorTexmap    = 12,
-        ParamIdScale                = 13,
-        ParamIdBumpMethod           = 14,
-        ParamIdBumpTexmap           = 15,
-        ParamIdBumpAmount           = 16,
-        ParamIdBumpUpVector         = 17
+        ParamIdFacingTint           = 0,
+        ParamIdFacingTintTexmap     = 1,
+        ParamIdEdgeTint             = 2,
+        ParamIdEdgeTintTexmap       = 3,
+        ParamIdReflectance          = 4,
+        ParamIdReflectanceTexmap    = 5,
+        ParamIdRoughness            = 6,
+        ParamIdRoughnessTexmap      = 7,
+        ParamIdAnisotropy           = 8,
+        ParamIdAnisotropyTexmap     = 9,
+        ParamIdAlpha                = 10,
+        ParamIdAlphaTexmap          = 11,
+        ParamIdBumpMethod           = 12,
+        ParamIdBumpTexmap           = 13,
+        ParamIdBumpAmount           = 14,
+        ParamIdBumpUpVector         = 15,
     };
 
     enum TexmapId
     {
         // Changing these value WILL break compatibility.
-        TexmapIdSurfaceColor        = 0,
-        TexmapIdReflectionTint      = 1,
-        TexmapIdRefractionTint      = 2,
+        TexmapIdFacingTint          = 0,
+        TexmapIdEdgeTint            = 1,
+        TexmapIdReflectance         = 2,
         TexmapIdRoughness           = 3,
         TexmapIdAnisotropy          = 4,
-        TexmapIdVolumeColor         = 5,
+        TexmapIdAlpha               = 5,
         TexmapIdBumpMap             = 6,
         TexmapCount                 // keep last
     };
 
     const MSTR g_texmap_slot_names[TexmapCount] =
     {
-        L"Surface Color",
-        L"Reflection Tint",
-        L"Refraction Tint",
+        L"Facing Tint",
+        L"Edge Tint",
+        L"Reflectance",
         L"Roughness",
         L"Anisotropy",
-        L"Volume Color",
+        L"Alpha",
         L"Bump Map"
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
     {
-        ParamIdSurfaceColorTexmap,
-        ParamIdReflectionTintTexmap,
-        ParamIdRefractionTintTexmap,
+        ParamIdFacingTintTexmap,
+        ParamIdEdgeTintTexmap,
+        ParamIdReflectanceTexmap,
         ParamIdRoughnessTexmap,
         ParamIdAnisotropyTexmap,
-        ParamIdVolumeColorTexmap,
+        ParamIdAlphaTexmap,
         ParamIdBumpTexmap
     };
 
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
-        ParamBlockIdGlassMtl,                       // parameter block's ID
-        L"appleseedGlassMtlParams",                 // internal parameter block's name
+        ParamBlockIdMetalMtl,                       // parameter block's ID
+        L"appleseedMetalMtlParams",                 // internal parameter block's name
         0,                                          // ID of the localized name string
-        &g_appleseed_glassmtl_classdesc,            // class descriptor
+        &g_appleseed_metalmtl_classdesc,            // class descriptor
         P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
-        ParamBlockRefGlassMtl,                      // parameter block's reference number
+        ParamBlockRefMetalMtl,                      // parameter block's reference number
 
         // --- P_MULTIMAP arguments ---
         2,                                          // number of rollups
 
-        // --- P_AUTO_UI arguments for Glass rollup ---
-        ParamMapIdGlass,
+        // --- P_AUTO_UI arguments for Metal rollup ---
+        ParamMapIdMetal,
         IDD_FORMVIEW_PARAMS,                        // ID of the dialog template
         IDS_FORMVIEW_PARAMS_TITLE,                  // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
@@ -179,74 +175,64 @@ namespace
         0,                                          // rollup creation flag
         nullptr,                                    // user dialog procedure
 
-        // --- Parameters specifications for Glass rollup ---
+        // --- Parameters specifications for Metal rollup ---
 
-        ParamIdSurfaceColor, L"surface_color", TYPE_RGBA, P_ANIMATABLE, IDS_SURFACE_COLOR,
-            p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_SURFACE_COLOR,
+        ParamIdFacingTint, L"facing_tint", TYPE_RGBA, P_ANIMATABLE, IDS_FACING_TINT,
+            p_default, Color(0.92f, 0.92f, 0.92f),
+            p_ui, ParamMapIdMetal, TYPE_COLORSWATCH, IDC_SWATCH_FACING_TINT,
         p_end,
-        ParamIdSurfaceColorTexmap, L"surface_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_SURFACE_COLOR,
-            p_subtexno, TexmapIdSurfaceColor,
-            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_SURFACE_COLOR,
-        p_end,
-
-        ParamIdReflectionTint, L"reflection_tint", TYPE_RGBA, P_ANIMATABLE, IDS_REFLECTION_TINT,
-            p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_REFLECTION_TINT,
-        p_end,
-        ParamIdReflectionTintTexmap, L"reflection_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_REFLECTION_TINT,
-            p_subtexno, TexmapIdReflectionTint,
-            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFLECTION_TINT,
+        ParamIdFacingTintTexmap, L"facing_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_FACING_TINT,
+            p_subtexno, TexmapIdFacingTint,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_FACING_TINT,
         p_end,
 
-        ParamIdRefractionTint, L"refraction_tint", TYPE_RGBA, P_ANIMATABLE, IDS_REFRACTION_TINT,
-            p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_REFRACTION_TINT,
-        p_end,
-        ParamIdRefractionTintTexmap, L"refraction_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_REFRACTION_TINT,
-            p_subtexno, TexmapIdRefractionTint,
-            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFRACTION_TINT,
+        ParamIdEdgeTint, L"edge_tint", TYPE_RGBA, P_ANIMATABLE, IDS_EDGE_TINT,
+            p_default, Color(0.98f, 0.98f, 0.98f),
+            p_ui, ParamMapIdMetal, TYPE_COLORSWATCH, IDC_SWATCH_EDGE_TINT,
+            p_end,
+        ParamIdEdgeTintTexmap, L"edge_tint_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_EDGE_TINT,
+            p_subtexno, TexmapIdEdgeTint,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_EDGE_TINT,
         p_end,
 
-        ParamIdIOR, L"ior", TYPE_FLOAT, P_ANIMATABLE, IDS_IOR,
-            p_default, 1.5f,
-            p_range, 1.0f, 4.0f,
-            p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_IOR, IDC_SLIDER_IOR, 0.1f,
+        ParamIdReflectance, L"reflectance", TYPE_FLOAT, P_ANIMATABLE, IDS_REFLECTANCE,
+            p_default, 80.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, ParamMapIdMetal, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_REFLECTANCE, IDC_SLIDER_REFLECTANCE, 10.0f,
+        p_end,
+        ParamIdReflectanceTexmap, L"reflectance_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_REFLECTANCE,
+            p_subtexno, TexmapIdReflectance,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_REFLECTANCE,
         p_end,
 
         ParamIdRoughness, L"roughness", TYPE_FLOAT, P_ANIMATABLE, IDS_ROUGHNESS,
-            p_default, 0.0f,
+            p_default, 10.0f,
             p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
+            p_ui, ParamMapIdMetal, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ROUGHNESS, IDC_SLIDER_ROUGHNESS, 10.0f,
         p_end,
         ParamIdRoughnessTexmap, L"roughness_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ROUGHNESS,
             p_subtexno, TexmapIdRoughness,
-            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ROUGHNESS,
         p_end,
 
         ParamIdAnisotropy, L"anisotropy", TYPE_FLOAT, P_ANIMATABLE, IDS_ANISOTROPY,
             p_default, 0.0f,
             p_range, -1.0f, 1.0f,
-            p_ui, ParamMapIdGlass, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
+            p_ui, ParamMapIdMetal, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ANISOTROPY, IDC_SLIDER_ANISOTROPY, 0.1f,
         p_end,
         ParamIdAnisotropyTexmap, L"anisotropy_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ANISOTROPY,
             p_subtexno, TexmapIdAnisotropy,
-            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ANISOTROPY,
         p_end,
-
-        ParamIdVolumeColor, L"volume_color", TYPE_RGBA, P_ANIMATABLE, IDS_VOLUME_COLOR,
-            p_default, Color(1.0f, 1.0f, 1.0f),
-            p_ui, ParamMapIdGlass, TYPE_COLORSWATCH, IDC_SWATCH_VOLUME_COLOR,
+        
+        ParamIdAlpha, L"alpha", TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
+            p_default, 100.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, ParamMapIdMetal, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
         p_end,
-        ParamIdVolumeColorTexmap, L"volume_color_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_VOLUME_COLOR,
-            p_subtexno, TexmapIdVolumeColor,
-            p_ui, ParamMapIdGlass, TYPE_TEXMAPBUTTON, IDC_TEXMAP_VOLUME_COLOR,
-        p_end,
-
-        ParamIdScale, L"scale", TYPE_FLOAT, P_ANIMATABLE, IDS_SCALE,
-            p_default, 0.0f,
-            p_range, 0.0f, 1000000.0f,
-            p_ui, ParamMapIdGlass, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SCALE, IDC_SPINNER_SCALE, SPIN_AUTOSCALE,
+        ParamIdAlphaTexmap, L"alpha_texmap", TYPE_TEXMAP, P_NO_AUTO_LABELS, IDS_TEXMAP_ALPHA,
+            p_subtexno, TexmapIdAlpha,
+            p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
         p_end,
 
         // --- Parameters specifications for Bump rollup ---
@@ -280,27 +266,25 @@ namespace
         p_end);
 }
 
-Class_ID AppleseedGlassMtl::get_class_id()
+Class_ID AppleseedMetalMtl::get_class_id()
 {
-    return Class_ID(0x6f1a3138, 0x417230b5);
+    return Class_ID(0x4f357819, 0x6a656388);
 }
 
-AppleseedGlassMtl::AppleseedGlassMtl()
+AppleseedMetalMtl::AppleseedMetalMtl()
   : m_pblock(nullptr)
-  , m_surface_color(1.0f, 1.0f, 1.0f)
-  , m_surface_color_texmap(nullptr)
-  , m_reflection_tint(1.0f, 1.0f, 1.0f)
-  , m_reflection_tint_texmap(nullptr)
-  , m_refraction_tint(1.0f, 1.0f, 1.0f)
-  , m_refraction_tint_texmap(nullptr)
-  , m_ior(1.5f)
-  , m_roughness(0.0f)
+  , m_facing_tint_color(0.92f, 0.92f, 0.92f)
+  , m_facing_tint_color_texmap(nullptr)
+  , m_edge_tint_color(0.98f, 0.98f, 0.98f)
+  , m_edge_tint_color_texmap(nullptr)
+  , m_reflectance(80.0f)
+  , m_reflectance_texmap(nullptr)
+  , m_roughness(10.0f)
   , m_roughness_texmap(nullptr)
   , m_anisotropy(0.0f)
   , m_anisotropy_texmap(nullptr)
-  , m_volume_color(1.0f, 1.0f, 1.0f)
-  , m_volume_color_texmap(nullptr)
-  , m_scale(0.0f)
+  , m_alpha(100.0f)
+  , m_alpha_texmap(nullptr)
   , m_bump_method(0)
   , m_bump_texmap(nullptr)
   , m_bump_amount(1.0f)
@@ -308,10 +292,10 @@ AppleseedGlassMtl::AppleseedGlassMtl()
 {
     m_params_validity.SetEmpty();
 
-    g_appleseed_glassmtl_classdesc.MakeAutoParamBlocks(this);
+    g_appleseed_metalmtl_classdesc.MakeAutoParamBlocks(this);
 }
 
-BaseInterface* AppleseedGlassMtl::GetInterface(Interface_ID id)
+BaseInterface* AppleseedMetalMtl::GetInterface(Interface_ID id)
 {
     return
         id == IAppleseedMtl::interface_id()
@@ -319,81 +303,81 @@ BaseInterface* AppleseedGlassMtl::GetInterface(Interface_ID id)
             : Mtl::GetInterface(id);
 }
 
-void AppleseedGlassMtl::DeleteThis()
+void AppleseedMetalMtl::DeleteThis()
 {
     delete this;
 }
 
-void AppleseedGlassMtl::GetClassName(TSTR& s)
+void AppleseedMetalMtl::GetClassName(TSTR& s)
 {
-    s = L"appleseedGlassMtl";
+    s = L"appleseedMetalMtl";
 }
 
-SClass_ID AppleseedGlassMtl::SuperClassID()
+SClass_ID AppleseedMetalMtl::SuperClassID()
 {
     return MATERIAL_CLASS_ID;
 }
 
-Class_ID AppleseedGlassMtl::ClassID()
+Class_ID AppleseedMetalMtl::ClassID()
 {
     return get_class_id();
 }
 
-int AppleseedGlassMtl::NumSubs()
+int AppleseedMetalMtl::NumSubs()
 {
     return NumRefs();
 }
 
-Animatable* AppleseedGlassMtl::SubAnim(int i)
+Animatable* AppleseedMetalMtl::SubAnim(int i)
 {
     return GetReference(i);
 }
 
-TSTR AppleseedGlassMtl::SubAnimName(int i)
+TSTR AppleseedMetalMtl::SubAnimName(int i)
 {
-    return i == ParamBlockRefGlassMtl ? L"Parameters" : L"";
+    return i == ParamBlockRefMetalMtl ? L"Parameters" : L"";
 }
 
-int AppleseedGlassMtl::SubNumToRefNum(int subNum)
+int AppleseedMetalMtl::SubNumToRefNum(int subNum)
 {
     return subNum;
 }
 
-int AppleseedGlassMtl::NumParamBlocks()
+int AppleseedMetalMtl::NumParamBlocks()
 {
     return 1;
 }
 
-IParamBlock2* AppleseedGlassMtl::GetParamBlock(int i)
+IParamBlock2* AppleseedMetalMtl::GetParamBlock(int i)
 {
-    return i == ParamBlockRefGlassMtl ? m_pblock : nullptr;
+    return i == ParamBlockRefMetalMtl ? m_pblock : nullptr;
 }
 
-IParamBlock2* AppleseedGlassMtl::GetParamBlockByID(BlockID id)
+IParamBlock2* AppleseedMetalMtl::GetParamBlockByID(BlockID id)
 {
     return id == m_pblock->ID() ? m_pblock : nullptr;
 }
 
-int AppleseedGlassMtl::NumRefs()
+int AppleseedMetalMtl::NumRefs()
 {
     return 1;
 }
 
-RefTargetHandle AppleseedGlassMtl::GetReference(int i)
+RefTargetHandle AppleseedMetalMtl::GetReference(int i)
 {
-    return i == ParamBlockRefGlassMtl ? m_pblock : nullptr;
+    return i == ParamBlockRefMetalMtl ? m_pblock : nullptr;
 }
 
-void AppleseedGlassMtl::SetReference(int i, RefTargetHandle rtarg)
+void AppleseedMetalMtl::SetReference(int i, RefTargetHandle rtarg)
 {
-    if (i == ParamBlockRefGlassMtl)
+    if (i == ParamBlockRefMetalMtl)
     {
         if (IParamBlock2* pblock = dynamic_cast<IParamBlock2*>(rtarg))
             m_pblock = pblock;
     }
 }
 
-RefResult AppleseedGlassMtl::NotifyRefChanged(
+RefResult AppleseedMetalMtl::NotifyRefChanged(
     const Interval&     changeInt,
     RefTargetHandle     hTarget,
     PartID&             partID,
@@ -412,21 +396,21 @@ RefResult AppleseedGlassMtl::NotifyRefChanged(
     return REF_SUCCEED;
 }
 
-RefTargetHandle AppleseedGlassMtl::Clone(RemapDir& remap)
+RefTargetHandle AppleseedMetalMtl::Clone(RemapDir& remap)
 {
-    AppleseedGlassMtl* clone = new AppleseedGlassMtl();
+    AppleseedMetalMtl* clone = new AppleseedMetalMtl();
     *static_cast<MtlBase*>(clone) = *static_cast<MtlBase*>(this);
-    clone->ReplaceReference(ParamBlockRefGlassMtl, remap.CloneRef(m_pblock));
+    clone->ReplaceReference(ParamBlockRefMetalMtl, remap.CloneRef(m_pblock));
     BaseClone(this, clone, remap);
     return clone;
 }
 
-int AppleseedGlassMtl::NumSubTexmaps()
+int AppleseedMetalMtl::NumSubTexmaps()
 {
     return TexmapCount;
 }
 
-Texmap* AppleseedGlassMtl::GetSubTexmap(int i)
+Texmap* AppleseedMetalMtl::GetSubTexmap(int i)
 {
     Texmap* texmap;
     Interval valid;
@@ -438,46 +422,44 @@ Texmap* AppleseedGlassMtl::GetSubTexmap(int i)
     return texmap;
 }
 
-void AppleseedGlassMtl::SetSubTexmap(int i, Texmap* texmap)
+void AppleseedMetalMtl::SetSubTexmap(int i, Texmap* texmap)
 {
     const auto texmap_id = static_cast<TexmapId>(i);
     const auto param_id = g_texmap_id_to_param_id[texmap_id];
     m_pblock->SetValue(param_id, 0, texmap);
 
-    IParamMap2* map = m_pblock->GetMap(ParamMapIdGlass);
+    IParamMap2* map = m_pblock->GetMap(ParamMapIdMetal);
     if (map != nullptr)
     {
         map->SetText(param_id, texmap == nullptr ? L"" : L"M");
     }
 }
 
-int AppleseedGlassMtl::MapSlotType(int i)
+int AppleseedMetalMtl::MapSlotType(int i)
 {
     return MAPSLOT_TEXTURE;
 }
 
-MSTR AppleseedGlassMtl::GetSubTexmapSlotName(int i)
+MSTR AppleseedMetalMtl::GetSubTexmapSlotName(int i)
 {
     const auto texmap_id = static_cast<TexmapId>(i);
     return g_texmap_slot_names[texmap_id];
 }
 
-void AppleseedGlassMtl::Update(TimeValue t, Interval& valid)
+void AppleseedMetalMtl::Update(TimeValue t, Interval& valid)
 {
     if (!m_params_validity.InInterval(t))
     {
         m_params_validity.SetInfinite();
 
-        m_pblock->GetValue(ParamIdSurfaceColor, t, m_surface_color, m_params_validity);
-        m_pblock->GetValue(ParamIdSurfaceColorTexmap, t, m_surface_color_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdFacingTint, t, m_facing_tint_color, m_params_validity);
+        m_pblock->GetValue(ParamIdFacingTintTexmap, t, m_facing_tint_color_texmap, m_params_validity);
 
-        m_pblock->GetValue(ParamIdReflectionTint, t, m_reflection_tint, m_params_validity);
-        m_pblock->GetValue(ParamIdReflectionTintTexmap, t, m_reflection_tint_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdEdgeTint, t, m_edge_tint_color, m_params_validity);
+        m_pblock->GetValue(ParamIdEdgeTintTexmap, t, m_edge_tint_color_texmap, m_params_validity);
 
-        m_pblock->GetValue(ParamIdRefractionTint, t, m_refraction_tint, m_params_validity);
-        m_pblock->GetValue(ParamIdRefractionTintTexmap, t, m_refraction_tint_texmap, m_params_validity);
-
-        m_pblock->GetValue(ParamIdIOR, t, m_ior, m_params_validity);
+        m_pblock->GetValue(ParamIdReflectance, t, m_reflectance, m_params_validity);
+        m_pblock->GetValue(ParamIdReflectanceTexmap, t, m_reflectance_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdRoughness, t, m_roughness, m_params_validity);
         m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, m_params_validity);
@@ -485,10 +467,8 @@ void AppleseedGlassMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdAnisotropy, t, m_anisotropy, m_params_validity);
         m_pblock->GetValue(ParamIdAnisotropyTexmap, t, m_anisotropy_texmap, m_params_validity);
 
-        m_pblock->GetValue(ParamIdVolumeColor, t, m_volume_color, m_params_validity);
-        m_pblock->GetValue(ParamIdVolumeColorTexmap, t, m_volume_color_texmap, m_params_validity);
-
-        m_pblock->GetValue(ParamIdScale, t, m_scale, m_params_validity);
+        m_pblock->GetValue(ParamIdAlpha, t, m_alpha, m_params_validity);
+        m_pblock->GetValue(ParamIdAlphaTexmap, t, m_alpha_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdBumpMethod, t, m_bump_method, m_params_validity);
         m_pblock->GetValue(ParamIdBumpTexmap, t, m_bump_texmap, m_params_validity);
@@ -501,30 +481,30 @@ void AppleseedGlassMtl::Update(TimeValue t, Interval& valid)
     valid &= m_params_validity;
 }
 
-void AppleseedGlassMtl::Reset()
+void AppleseedMetalMtl::Reset()
 {
-    g_appleseed_glassmtl_classdesc.Reset(this);
+    g_appleseed_metalmtl_classdesc.Reset(this);
 
     m_params_validity.SetEmpty();
 }
 
-Interval AppleseedGlassMtl::Validity(TimeValue t)
+Interval AppleseedMetalMtl::Validity(TimeValue t)
 {
     Interval valid = FOREVER;
     Update(t, valid);
     return valid;
 }
 
-ParamDlg* AppleseedGlassMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
+ParamDlg* AppleseedMetalMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
-    ParamDlg* param_dialog = g_appleseed_glassmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
+    ParamDlg* param_dialog = g_appleseed_metalmtl_classdesc.CreateParamDlgs(hwMtlEdit, imp, this);
     DbgAssert(m_pblock != nullptr);
-    update_map_buttons(m_pblock->GetMap(ParamMapIdGlass));
+    update_map_buttons(m_pblock->GetMap(ParamMapIdMetal));
     g_block_desc.SetUserDlgProc(ParamMapIdBump, new BumpParamMapDlgProc());
     return param_dialog;
 }
 
-IOResult AppleseedGlassMtl::Save(ISave* isave)
+IOResult AppleseedMetalMtl::Save(ISave* isave)
 {
     bool success = true;
 
@@ -539,7 +519,7 @@ IOResult AppleseedGlassMtl::Save(ISave* isave)
     return success ? IO_OK : IO_ERROR;
 }
 
-IOResult AppleseedGlassMtl::Load(ILoad* iload)
+IOResult AppleseedMetalMtl::Load(ILoad* iload)
 {
     IOResult result = IO_OK;
 
@@ -576,69 +556,69 @@ IOResult AppleseedGlassMtl::Load(ILoad* iload)
     return result;
 }
 
-Color AppleseedGlassMtl::GetAmbient(int mtlNum, BOOL backFace)
+Color AppleseedMetalMtl::GetAmbient(int mtlNum, BOOL backFace)
 {
     return Color(0.0f, 0.0f, 0.0f);
 }
 
-Color AppleseedGlassMtl::GetDiffuse(int mtlNum, BOOL backFace)
+Color AppleseedMetalMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    return m_surface_color;
+    return m_facing_tint_color;
 }
 
-Color AppleseedGlassMtl::GetSpecular(int mtlNum, BOOL backFace)
+Color AppleseedMetalMtl::GetSpecular(int mtlNum, BOOL backFace)
 {
     return Color(0.0f, 0.0f, 0.0f);
 }
 
-float AppleseedGlassMtl::GetShininess(int mtlNum, BOOL backFace)
+float AppleseedMetalMtl::GetShininess(int mtlNum, BOOL backFace)
 {
     return 0.0f;
 }
 
-float AppleseedGlassMtl::GetShinStr(int mtlNum, BOOL backFace)
+float AppleseedMetalMtl::GetShinStr(int mtlNum, BOOL backFace)
 {
     return 0.0f;
 }
 
-float AppleseedGlassMtl::GetXParency(int mtlNum, BOOL backFace)
+float AppleseedMetalMtl::GetXParency(int mtlNum, BOOL backFace)
 {
-    return RGBtoHSV(m_surface_color).b * RGBtoHSV(m_refraction_tint).b;
+    return 0.0f;
 }
 
-void AppleseedGlassMtl::SetAmbient(Color c, TimeValue t)
-{
-}
-
-void AppleseedGlassMtl::SetDiffuse(Color c, TimeValue t)
-{
-    m_pblock->SetValue(ParamIdSurfaceColor, t, c);
-    m_surface_color = c;
-}
-
-void AppleseedGlassMtl::SetSpecular(Color c, TimeValue t)
+void AppleseedMetalMtl::SetAmbient(Color c, TimeValue t)
 {
 }
 
-void AppleseedGlassMtl::SetShininess(float v, TimeValue t)
+void AppleseedMetalMtl::SetDiffuse(Color c, TimeValue t)
+{
+    m_pblock->SetValue(ParamIdFacingTint, t, c);
+    m_facing_tint_color = c;
+}
+
+void AppleseedMetalMtl::SetSpecular(Color c, TimeValue t)
 {
 }
 
-void AppleseedGlassMtl::Shade(ShadeContext& sc)
+void AppleseedMetalMtl::SetShininess(float v, TimeValue t)
 {
 }
 
-int AppleseedGlassMtl::get_sides() const
+void AppleseedMetalMtl::Shade(ShadeContext& sc)
+{
+}
+
+int AppleseedMetalMtl::get_sides() const
 {
     return asr::ObjectInstance::BothSides;
 }
 
-bool AppleseedGlassMtl::can_emit_light() const
+bool AppleseedMetalMtl::can_emit_light() const
 {
     return false;
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
+asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_material(
     asr::Assembly&  assembly,
     const char*     name,
     const bool      use_max_procedural_maps)
@@ -649,29 +629,22 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
             : create_osl_material(assembly, name);
 }
 
-
-asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
+asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
     asr::Assembly&  assembly,
     const char*     name)
 {
     //
     // Shader group.
     //
-    asr::ParamArray shader_params;
 
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_color_texture(shader_group.ref(), name, "SurfaceTransmittance", m_surface_color_texmap, m_surface_color);
-    connect_color_texture(shader_group.ref(), name, "ReflectionTint", m_reflection_tint_texmap, m_reflection_tint);
-    connect_color_texture(shader_group.ref(), name, "RefractionTint", m_refraction_tint_texmap, m_refraction_tint);
-    connect_color_texture(shader_group.ref(), name, "VolumeTransmittance", m_volume_color_texmap, m_volume_color);
+    connect_color_texture(shader_group.ref(), name, "NormalReflectance", m_facing_tint_color_texmap, m_facing_tint_color);
+    connect_color_texture(shader_group.ref(), name, "EdgeTint", m_edge_tint_color_texmap, m_edge_tint_color);
+    connect_float_texture(shader_group.ref(), name, "Reflectance", m_reflectance_texmap, m_reflectance / 100.0f);
     connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy / 100.0f);
-
-    shader_params.insert("Ior", fmt_osl_expr(m_ior));
-    shader_params.insert("VolumeTransmittanceDistance", fmt_osl_expr(m_scale));
-    shader_params.insert("Distribution", fmt_osl_expr("ggx"));
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy);
 
     if (is_bitmap_texture(m_bump_texmap))
     {
@@ -688,7 +661,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
     }
 
     // Must come last.
-    shader_group->add_shader("surface", "as_max_glass_material", name, shader_params);
+    shader_group->add_shader("surface", "as_max_metal_material", name, asr::ParamArray());
 
     assembly.shader_groups().insert(shader_group);
 
@@ -699,10 +672,22 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
     asr::ParamArray material_params;
     material_params.insert("osl_surface", shader_group_name);
 
+    const std::string instance_name =
+        insert_texture_and_instance(
+            assembly,
+            m_alpha_texmap,
+            false,
+            asr::ParamArray(),
+            asr::ParamArray()
+                .insert("alpha_mode", "detect"));
+    if (!instance_name.empty())
+        material_params.insert("alpha_map", instance_name);
+    else material_params.insert("alpha_map", m_alpha / 100.0f);
+
     return asr::OSLMaterialFactory().create(name, material_params);
 }
 
-asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
+asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
     asr::Assembly&  assembly,
     const char*     name)
 {
@@ -711,48 +696,40 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
     const bool use_max_procedural_maps = true;
 
     //
-    // BSDF.
+    // BRDF.
     //
 
     {
         asr::ParamArray bsdf_params;
         bsdf_params.insert("mdf", "ggx");
 
-        // Surface transmittance.
-        instance_name = insert_texture_and_instance(assembly, m_surface_color_texmap, use_max_procedural_maps);
+        // Normal Reflectance.
+        instance_name = insert_texture_and_instance(assembly, m_facing_tint_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
-            bsdf_params.insert("surface_transmittance", instance_name);
+            bsdf_params.insert("normal_reflectance", instance_name);
         else
         {
-            const auto color_name = std::string(name) + "_bsdf_surface_transmittance";
-            insert_color(assembly, m_surface_color, color_name.c_str());
-            bsdf_params.insert("surface_transmittance", color_name);
+            const auto color_name = std::string(name) + "_brdf_normal_reflectance_color";
+            insert_color(assembly, m_facing_tint_color, color_name.c_str());
+            bsdf_params.insert("normal_reflectance", color_name);
         }
 
-        // Reflection tint.
-        instance_name = insert_texture_and_instance(assembly, m_reflection_tint_texmap, use_max_procedural_maps);
+        // Edge Tint.
+        instance_name = insert_texture_and_instance(assembly, m_edge_tint_color_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
-            bsdf_params.insert("reflection_tint", instance_name);
+            bsdf_params.insert("edge_tint", instance_name);
         else
         {
-            const auto color_name = std::string(name) + "_bsdf_reflection_tint";
-            insert_color(assembly, m_reflection_tint, color_name.c_str());
-            bsdf_params.insert("reflection_tint", color_name);
+            const auto color_name = std::string(name) + "_brdf_edge_tint";
+            insert_color(assembly, m_edge_tint_color, color_name.c_str());
+            bsdf_params.insert("edge_tint", color_name);
         }
 
-        // Refraction tint.
-        instance_name = insert_texture_and_instance(assembly, m_refraction_tint_texmap, use_max_procedural_maps);
+        // Reflectance.
+        instance_name = insert_texture_and_instance(assembly, m_reflectance_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
-            bsdf_params.insert("refraction_tint", instance_name);
-        else
-        {
-            const auto color_name = std::string(name) + "_bsdf_refraction_tint";
-            insert_color(assembly, m_refraction_tint, color_name.c_str());
-            bsdf_params.insert("refraction_tint", color_name);
-        }
-
-        // IOR.
-        bsdf_params.insert("ior", m_ior);
+            bsdf_params.insert("reflectance_multiplier", instance_name);
+        else bsdf_params.insert("reflectance_multiplier", m_reflectance / 100.0f);
 
         // Roughness.
         instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
@@ -760,39 +737,34 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
             bsdf_params.insert("roughness", instance_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
-        // Anisotropy.
+        // Anisotropic.
         instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
             bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
 
-        // Volume parameterization.
-        bsdf_params.insert("volume_parameterization", "transmittance");
-
-        // Volume transmittance.
-        instance_name = insert_texture_and_instance(assembly, m_volume_color_texmap, use_max_procedural_maps);
-        if (!instance_name.empty())
-            bsdf_params.insert("volume_transmittance", instance_name);
-        else
-        {
-            const auto color_name = std::string(name) + "_bsdf_volume_transmittance";
-            insert_color(assembly, m_volume_color, color_name.c_str());
-            bsdf_params.insert("volume_transmittance", color_name);
-        }
-
-        // Volume transmittance distance.
-        bsdf_params.insert("volume_transmittance_distance", m_scale);
-
-        // BSDF.
-        const auto bsdf_name = std::string(name) + "_bsdf";
+        // BRDF.
+        const auto bsdf_name = std::string(name) + "_brdf";
         assembly.bsdfs().insert(
-            asr::GlassBSDFFactory().create(bsdf_name.c_str(), bsdf_params));
+            asr::MetalBRDFFactory().create(bsdf_name.c_str(), bsdf_params));
         material_params.insert("bsdf", bsdf_name);
     }
 
     //
     // Material.
     //
+
+    // Alpha map.
+    instance_name = insert_texture_and_instance(
+        assembly,
+        m_alpha_texmap,
+        use_max_procedural_maps,
+        asr::ParamArray(),
+        asr::ParamArray()
+            .insert("alpha_mode", "detect"));
+    if (!instance_name.empty())
+        material_params.insert("alpha_map", instance_name);
+    else material_params.insert("alpha_map", m_alpha / 100.0f);
 
     // Displacement.
     instance_name = insert_texture_and_instance(
@@ -810,7 +782,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         {
           case 0:
             material_params.insert("bump_amplitude", m_bump_amount);
-            material_params.insert("bump_offset", 0.0009765625f);     // 0.5/512 - value that should work for non-image sources
+            material_params.insert("bump_offset", 0.5f / 512);
             break;
 
           case 1:
@@ -824,20 +796,20 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
 
 
 //
-// AppleseedGlassMtlBrowserEntryInfo class implementation.
+// AppleseedMetalMtlBrowserEntryInfo class implementation.
 //
 
-const MCHAR* AppleseedGlassMtlBrowserEntryInfo::GetEntryName() const
+const MCHAR* AppleseedMetalMtlBrowserEntryInfo::GetEntryName() const
 {
-    return AppleseedGlassMtlFriendlyClassName;
+    return AppleseedMetalMtlFriendlyClassName;
 }
 
-const MCHAR* AppleseedGlassMtlBrowserEntryInfo::GetEntryCategory() const
+const MCHAR* AppleseedMetalMtlBrowserEntryInfo::GetEntryCategory() const
 {
     return L"Materials\\appleseed";
 }
 
-Bitmap* AppleseedGlassMtlBrowserEntryInfo::GetEntryThumbnail() const
+Bitmap* AppleseedMetalMtlBrowserEntryInfo::GetEntryThumbnail() const
 {
     // todo: implement.
     return nullptr;
@@ -845,51 +817,51 @@ Bitmap* AppleseedGlassMtlBrowserEntryInfo::GetEntryThumbnail() const
 
 
 //
-// AppleseedGlassMtlClassDesc class implementation.
+// AppleseedMetalMtlClassDesc class implementation.
 //
 
-AppleseedGlassMtlClassDesc::AppleseedGlassMtlClassDesc()
+AppleseedMetalMtlClassDesc::AppleseedMetalMtlClassDesc()
 {
     IMtlRender_Compatibility_MtlBase::Init(*this);
 }
 
-int AppleseedGlassMtlClassDesc::IsPublic()
+int AppleseedMetalMtlClassDesc::IsPublic()
 {
     return TRUE;
 }
 
-void* AppleseedGlassMtlClassDesc::Create(BOOL loading)
+void* AppleseedMetalMtlClassDesc::Create(BOOL loading)
 {
-    return new AppleseedGlassMtl();
+    return new AppleseedMetalMtl();
 }
 
-const MCHAR* AppleseedGlassMtlClassDesc::ClassName()
+const MCHAR* AppleseedMetalMtlClassDesc::ClassName()
 {
-    return AppleseedGlassMtlFriendlyClassName;
+    return AppleseedMetalMtlFriendlyClassName;
 }
 
-SClass_ID AppleseedGlassMtlClassDesc::SuperClassID()
+SClass_ID AppleseedMetalMtlClassDesc::SuperClassID()
 {
     return MATERIAL_CLASS_ID;
 }
 
-Class_ID AppleseedGlassMtlClassDesc::ClassID()
+Class_ID AppleseedMetalMtlClassDesc::ClassID()
 {
-    return AppleseedGlassMtl::get_class_id();
+    return AppleseedMetalMtl::get_class_id();
 }
 
-const MCHAR* AppleseedGlassMtlClassDesc::Category()
+const MCHAR* AppleseedMetalMtlClassDesc::Category()
 {
     return L"";
 }
 
-const MCHAR* AppleseedGlassMtlClassDesc::InternalName()
+const MCHAR* AppleseedMetalMtlClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
-    return L"appleseedGlassMtl";
+    return L"appleseedMetalMtl";
 }
 
-FPInterface* AppleseedGlassMtlClassDesc::GetInterface(Interface_ID id)
+FPInterface* AppleseedMetalMtlClassDesc::GetInterface(Interface_ID id)
 {
     if (id == IMATERIAL_BROWSER_ENTRY_INFO_INTERFACE)
         return &m_browser_entry_info;
@@ -897,12 +869,12 @@ FPInterface* AppleseedGlassMtlClassDesc::GetInterface(Interface_ID id)
     return ClassDesc2::GetInterface(id);
 }
 
-HINSTANCE AppleseedGlassMtlClassDesc::HInstance()
+HINSTANCE AppleseedMetalMtlClassDesc::HInstance()
 {
     return g_module;
 }
 
-bool AppleseedGlassMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
+bool AppleseedMetalMtlClassDesc::IsCompatibleWithRenderer(ClassDesc& renderer_class_desc)
 {
     // Before 3ds Max 2017, Class_ID::operator==() returned an int.
     return renderer_class_desc.ClassID() == AppleseedRenderer::get_class_id() ? true : false;

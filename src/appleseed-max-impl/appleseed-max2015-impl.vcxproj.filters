@@ -66,6 +66,12 @@
     <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp">
       <Filter>appleseedblendmtl</Filter>
     </ClCompile>
+    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -183,6 +189,24 @@
     <ClInclude Include="appleseedblendmtl\resource.h">
       <Filter>appleseedblendmtl</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\datachunks.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\resource.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\datachunks.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\resource.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -211,6 +235,12 @@
     </ResourceCompile>
     <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc">
       <Filter>appleseedblendmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc">
+      <Filter>appleseedmetalmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc">
+      <Filter>appleseedplasticmtl</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>

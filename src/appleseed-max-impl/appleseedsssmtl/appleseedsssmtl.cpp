@@ -629,6 +629,8 @@ void AppleseedSSSMtl::SetAmbient(Color c, TimeValue t)
 
 void AppleseedSSSMtl::SetDiffuse(Color c, TimeValue t)
 {
+    m_pblock->SetValue(ParamIdSSSColor, t, c);
+    m_sss_color = c;
 }
 
 void AppleseedSSSMtl::SetSpecular(Color c, TimeValue t)

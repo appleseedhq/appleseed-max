@@ -229,7 +229,9 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp" />
     <ClCompile Include="appleseedinteractive\interactivesession.cpp" />
     <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp" />
+    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp" />
     <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp" />
+    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp" />
     <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp" />
     <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp" />
     <ClCompile Include="iappleseedmtl.cpp" />
@@ -262,8 +264,14 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClInclude Include="appleseedinteractive\interactiverenderercontroller.h" />
     <ClInclude Include="appleseedinteractive\interactivesession.h" />
     <ClInclude Include="appleseedinteractive\interactivetilecallback.h" />
+    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h" />
+    <ClInclude Include="appleseedmetalmtl\datachunks.h" />
+    <ClInclude Include="appleseedmetalmtl\resource.h" />
     <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h" />
     <ClInclude Include="appleseedobjpropsmod\resource.h" />
+    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h" />
+    <ClInclude Include="appleseedplasticmtl\datachunks.h" />
+    <ClInclude Include="appleseedplasticmtl\resource.h" />
     <ClInclude Include="bump\bumpparammapdlgproc.h" />
     <ClInclude Include="bump\resource.h" />
     <ClInclude Include="appleseeddisneymtl\appleseeddisneymtl.h" />
@@ -299,7 +307,9 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
   <ItemGroup>
     <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc" />
     <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc" />
+    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc" />
     <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc" />
+    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc" />
     <ResourceCompile Include="bump\bump.rc" />
     <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="appleseedglassmtl\appleseedglassmtl.rc" />
