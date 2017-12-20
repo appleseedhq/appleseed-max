@@ -30,56 +30,52 @@ STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Sun",IDC_STATIC,7,3,203,49
-
     LTEXT           "Vertical Angle:",IDC_STATIC,13,14,67,8
-    CONTROL         "Vertical Angle Edit",IDC_EDIT_THETA,"CustEdit",WS_TABSTOP,85,12,35,10
-    CONTROL         "Vertical Angle Spinner",IDC_SPIN_THETA,"SpinnerControl",0x0,121,12,7,10
-
+    CONTROL         "Vertical Angle Edit",IDC_EDIT_THETA,"CustEdit",WS_TABSTOP,82,12,30,10
+    CONTROL         "Vertical Angle Spinner",IDC_SPIN_THETA,"SpinnerControl",0x0,113,12,7,10
     LTEXT           "Horizontal Angle:",IDC_STATIC,13,26,67,8
-    CONTROL         "Horizontal Angle Edit",IDC_EDIT_PHI,"CustEdit",WS_TABSTOP,85,24,35,10
-    CONTROL         "Horizontal Angle Spinner",IDC_SPIN_PHI,"SpinnerControl",0x0,121,24,7,10
-
+    CONTROL         "Horizontal Angle Edit",IDC_EDIT_PHI,"CustEdit",WS_TABSTOP,82,24,30,10
+    CONTROL         "Horizontal Angle Spinner",IDC_SPIN_PHI,"SpinnerControl",0x0,113,24,7,10
     LTEXT           "Size Multiplier:",IDC_STATIC,13,38,58,8
-    CONTROL         "Size Multiplier Edit",IDC_EDIT_SIZE_MULTIPLIER,"CustEdit",WS_TABSTOP,85,36,35,10
-    CONTROL         "Size Multiplier Spinner",IDC_SPIN_SIZE_MULTIPLIER,"SpinnerControl",0x0,121,36,7,10
-
-    CONTROL         "Pick Sun Light",IDC_PICK_SUN_NODE,"CustButton",WS_TABSTOP,136,12,56,14
-    CONTROL         "Sun Node On",IDC_SUN_NODE_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,196,15,8,10
-
+    CONTROL         "Size Multiplier Edit",IDC_EDIT_SIZE_MULTIPLIER,"CustEdit",WS_TABSTOP,82,36,30,10
+    CONTROL         "Size Multiplier Spinner",IDC_SPIN_SIZE_MULTIPLIER,
+                    "SpinnerControl",0x0,113,36,7,10
+    CONTROL         "Pick Directional Light",IDC_PICK_SUN_NODE,"CustButton",WS_TABSTOP,124,12,71,14
     GROUPBOX        "Sky",IDC_STATIC,7,55,203,76
-
     LTEXT           "Turbidity:",IDC_STATIC,13,66,67,8
-    CONTROL         "Turbidity Edit",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,85,64,35,10
-    CONTROL         "Turbidity Spinner",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,121,64,7,10
-
-    CONTROL         "None",IDC_PICK_TURB_TEXTURE,"CustButton",WS_TABSTOP,136,63,56,14
-    CONTROL         "Turbidity Map",IDC_TURB_TEX_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,196,66,8,10
-
+    CONTROL         "Turbidity Edit",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,82,64,30,10
+    CONTROL         "Turbidity Spinner",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,113,64,7,10
+    CONTROL         "None",IDC_PICK_TURB_TEXTURE,"CustButton",WS_TABSTOP,124,64,71,14
+    CONTROL         "Turbidity Map",IDC_TURB_TEX_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,198,65,8,10
     LTEXT           "Turbidity Multiplier:",IDC_STATIC,13,78,67,8,SS_CENTERIMAGE
-    CONTROL         "Turbidity Multiplier Edit",IDC_EDIT_TURB_MULTIPLIER,"CustEdit",WS_TABSTOP,85,77,35,10
-    CONTROL         "Turbidity Multiplier Spinner",IDC_SPIN_TURB_MULTIPLIER,"SpinnerControl",0x0,121,77,7,10
-
+    CONTROL         "Turbidity Multiplier Edit",IDC_EDIT_TURB_MULTIPLIER,
+                    "CustEdit",WS_TABSTOP,82,77,30,10
+    CONTROL         "Turbidity Multiplier Spinner",IDC_SPIN_TURB_MULTIPLIER,
+                    "SpinnerControl",0x0,113,77,7,10
     LTEXT           "Luminance Multiplier:",IDC_STATIC,13,91,67,8
-    CONTROL         "Luminance Multiplier Edit",IDC_EDIT_LUMIN_MULTIPLIER,"CustEdit",WS_TABSTOP,85,90,35,10
-    CONTROL         "Luminance Multiplier Spinner",IDC_SPIN_LUMIN_MULTIPLIER,"SpinnerControl",0x0,121,90,7,10
-
+    CONTROL         "Luminance Multiplier Edit",IDC_EDIT_LUMIN_MULTIPLIER,
+                    "CustEdit",WS_TABSTOP,82,90,30,10
+    CONTROL         "Luminance Multiplier Spinner",IDC_SPIN_LUMIN_MULTIPLIER,
+                    "SpinnerControl",0x0,113,90,7,10
     LTEXT           "Luminance Gamma:",IDC_STATIC,13,104,67,8
-    CONTROL         "Luminance Gamma Edit",IDC_EDIT_LUMIN_GAMMA,"CustEdit",WS_TABSTOP,85,103,35,10
-    CONTROL         "Luminance Gamma Spinner",IDC_SPIN_LUMIN_GAMMA,"SpinnerControl",0x0,121,103,7,10
-
+    CONTROL         "Luminance Gamma Edit",IDC_EDIT_LUMIN_GAMMA,"CustEdit",WS_TABSTOP,82,103,30,10
+    CONTROL         "Luminance Gamma Spinner",IDC_SPIN_LUMIN_GAMMA,
+                    "SpinnerControl",0x0,113,103,7,10
     LTEXT           "Saturation Multiplier:",IDC_STATIC,13,116,67,8
-    CONTROL         "Saturation Multiplier Edit",IDC_EDIT_SATUR_MULTIPLIER,"CustEdit",WS_TABSTOP,85,116,35,10
-    CONTROL         "Saturation Multiplier Spinner",IDC_SPIN_SATUR_MULTIPLIER,"SpinnerControl",0x0,121,116,7,10
-
+    CONTROL         "Saturation Multiplier Edit",IDC_EDIT_SATUR_MULTIPLIER,
+                    "CustEdit",WS_TABSTOP,82,116,30,10
+    CONTROL         "Saturation Multiplier Spinner",IDC_SPIN_SATUR_MULTIPLIER,
+                    "SpinnerControl",0x0,113,116,7,10
     GROUPBOX        "Ground",IDC_STATIC,7,132,203,36
-
     LTEXT           "Horizon Shift:",IDC_STATIC,13,143,67,8
-    CONTROL         "Horizon Shift Edit",IDC_EDIT_HORIZON_SHIFT,"CustEdit",WS_TABSTOP,85,142,35,10
-    CONTROL         "Horizon Shift Spinner",IDC_SPIN_HORIZON_SHIFT,"SpinnerControl",0x0,121,142,7,10
-
+    CONTROL         "Horizon Shift Edit",IDC_EDIT_HORIZON_SHIFT,"CustEdit",WS_TABSTOP,82,142,30,10
+    CONTROL         "Horizon Shift Spinner",IDC_SPIN_HORIZON_SHIFT,
+                    "SpinnerControl",0x0,113,142,7,10
     LTEXT           "Ground Albedo:",IDC_STATIC,13,154,67,8
-    CONTROL         "Ground Albedo Edit",IDC_EDIT_GROUND_ALBEDO,"CustEdit",WS_TABSTOP,85,154,35,10
-    CONTROL         "Ground Albedo Spinner",IDC_SPIN_GROUND_ALBEDO,"SpinnerControl",0x0,121,154,7,10
+    CONTROL         "Ground Albedo Edit",IDC_EDIT_GROUND_ALBEDO,"CustEdit",WS_TABSTOP,82,154,30,10
+    CONTROL         "Ground Albedo Spinner",IDC_SPIN_GROUND_ALBEDO,
+                    "SpinnerControl",0x0,113,154,7,10
+    CONTROL         "Sun Node On",IDC_SUN_NODE_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,198,13,8,10
 END
 
 
@@ -95,11 +91,8 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 210
-        VERTGUIDE, 13
-        VERTGUIDE, 85
-        VERTGUIDE, 128
-        VERTGUIDE, 136
-        VERTGUIDE, 192
+        VERTGUIDE, 124
+        VERTGUIDE, 195
         TOPMARGIN, 7
         BOTTOMMARGIN, 168
         HORZGUIDE, 12
