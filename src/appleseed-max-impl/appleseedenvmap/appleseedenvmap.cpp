@@ -466,6 +466,9 @@ namespace
             }
             map->Enable(ParamIdSunTheta, (sun_node_on && sun_node) ? FALSE : TRUE);
             map->Enable(ParamIdSunPhi, (sun_node_on && sun_node) ? FALSE : TRUE);
+
+            const wchar_t* button_title = (sun_node != nullptr) ? sun_node->GetName() : L"Pick Directional Light";
+            map->SetText(ParamIdSunNode, button_title);
         }
     };
 }
