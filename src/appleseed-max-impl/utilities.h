@@ -45,7 +45,9 @@
 #include <color.h>
 #include <ioapi.h>
 #include <iparamb2.h>
+#include <IPathConfigMgr.h>
 #include <matrix3.h>
+#include <maxapi.h>
 #include <maxtypes.h>
 #include <point3.h>
 #include <point4.h>
@@ -191,6 +193,23 @@ std::string insert_procedural_texture_and_instance(
 
 
 //
+// Plugcfg ini file access functions.
+//
+
+template <typename T>
+void save_ini_setting(const T& value, const wchar_t* category, const wchar_t* key_name);
+
+template <typename T>
+void save_system_setting(const T& value, const wchar_t* key_name);
+
+template <typename T>
+const T load_ini_setting(const wchar_t* category, const wchar_t* key_name, const T& default_value);
+
+template <typename T>
+const T load_system_setting(const wchar_t* key_name, const T& default_value);
+
+
+//
 // Implementation.
 //
 
@@ -328,4 +347,53 @@ std::string make_unique_name(
         entities.get_by_name(name.c_str()) == nullptr
             ? name
             : asr::make_unique_name(name + "_", entities);
+}
+
+template <typename T>
+const T load_ini_setting(const wchar_t* category, const wchar_t* key_name, const T& default_value)
+{
+    WStr filename;
+    filename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+    filename += L"\\appleseed\\appleseed.ini";
+
+    wchar_t buf[100];
+    int count = GetPrivateProfileString(
+        category,
+        key_name,
+        utf8_to_wide(foundation::to_string(default_value)).c_str(),
+        buf,
+        100,
+        filename);
+
+    std::wstring result;
+    result.assign(buf);
+    return foundation::from_string<T>(wide_to_utf8(result));
+}
+
+template <typename T>
+const T load_system_setting(const wchar_t* key_name, const T& default_value)
+{
+    return load_ini_setting(L"System", key_name, default_value);
+}
+
+template <typename T>
+void save_ini_setting(const T& value, const wchar_t* category, const wchar_t* key_name)
+{
+    MaxSDK::Util::Path filename(GetCOREInterface()->GetDir(APP_PLUGCFG_DIR));
+    filename.Append(L"\\appleseed\\");
+    if (!filename.Exists())
+        IPathConfigMgr::GetPathConfigMgr()->CreateDirectoryHierarchy(filename);
+    filename.Append(L"appleseed.ini");
+
+    WritePrivateProfileString(
+        category,
+        key_name,
+        utf8_to_wide(foundation::to_string(value)).c_str(),
+        filename.GetCStr());
+}
+
+template <typename T>
+void save_system_setting(const T& value, const wchar_t* key_name)
+{
+    save_ini_setting(value, L"System", key_name);
 }

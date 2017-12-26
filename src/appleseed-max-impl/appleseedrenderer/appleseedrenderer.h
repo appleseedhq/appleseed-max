@@ -140,6 +140,9 @@ class AppleseedRenderer
     virtual int AcceptTab(
         ITabDialogPluginTab*    tab) override;
 
+    void show_last_session_log();
+    void create_log_window();
+
   private:
     AppleseedInteractiveRender* m_interactive_renderer;
     RendererSettings            m_settings;

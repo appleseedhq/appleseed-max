@@ -67,6 +67,10 @@ namespace
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
+
+            const int log_mode = load_system_setting(L"LogOpenMode", static_cast<int>(DialogLogMode::Always));
+            m_log_open_mode = static_cast<DialogLogMode>(log_mode);
+            m_log_in_material_editor = load_system_setting(L"LogMaterialEditor", false);
         }
     };
 }
