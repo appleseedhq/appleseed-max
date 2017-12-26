@@ -132,7 +132,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_LOG,39,20,65,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Open Log:",IDC_STATIC_LOG,0,23,34,8
     CONTROL         "Open Log",IDC_BUTTON_LOG,"CustButton",WS_TABSTOP,110,20,42,12
-    CONTROL         "Log material slots rendering ",IDC_CHECK_LOG_MATERIAL_EDITOR,
+    CONTROL         "Log material slots rendering",IDC_CHECK_LOG_MATERIAL_EDITOR,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,38,197,10
 END
 

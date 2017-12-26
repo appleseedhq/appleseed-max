@@ -55,7 +55,7 @@ namespace
 {
     boost::mutex                g_message_queue_mutex;
     std::vector<MessagePair>    g_message_queue;
-    HWND                        g_log_dialog = 0;
+    HWND                        g_log_dialog = nullptr;
 
     static INT_PTR CALLBACK dialog_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
@@ -65,26 +65,26 @@ namespace
             break;
           case WM_CLOSE:
           case WM_DESTROY:
-            if (g_log_dialog != 0)
+            if (g_log_dialog != nullptr)
             {
                 GetCOREInterface14()->UnRegisterModelessRenderWindow(g_log_dialog);
-                g_log_dialog = 0;
+                g_log_dialog = nullptr;
                 DestroyWindow(hwnd);
             }
             break;
           
           case WM_SIZE:
-          {
-            HWND edit_box = GetDlgItem(hwnd, IDC_EDIT_LOG);
-            MoveWindow(
-                edit_box,
-                0,
-                0,
-                LOWORD(lparam),
-                HIWORD(lparam),
-                true);
-            return TRUE;
-          }
+            {
+                HWND edit_box = GetDlgItem(hwnd, IDC_EDIT_LOG);
+                MoveWindow(
+                    edit_box,
+                    0,
+                    0,
+                    LOWORD(lparam),
+                    HIWORD(lparam),
+                    true);
+                return TRUE;
+            }
             break;
 
           default:
@@ -104,7 +104,7 @@ namespace
         char_format.dwMask = CFM_COLOR | CFM_FACE;
         char_format.dwEffects = 0;
         char_format.crTextColor = color;
-        wcscpy(reinterpret_cast<WCHAR*>(char_format.szFaceName), L"Consolas");
+        wcscpy(char_format.szFaceName, L"Consolas");
         SendMessage(edit_box, EM_SETCHARFORMAT, SCF_SELECTION, reinterpret_cast<LPARAM>(&char_format));
 
         SendMessage(edit_box, EM_REPLACESEL, FALSE, reinterpret_cast<LPARAM>(text));
@@ -139,7 +139,7 @@ namespace
         }
     }
 
-    void push_message(MessagePair message)
+    void push_message(const MessagePair& message)
     {
         boost::mutex::scoped_lock lock(g_message_queue_mutex);
         g_message_queue.push_back(message);
@@ -160,7 +160,7 @@ namespace
             GetCOREInterface14()->RegisterModelessRenderWindow(g_log_dialog);
         }
 
-        if (g_log_dialog != NULL)
+        if (g_log_dialog != nullptr)
         {
             boost::mutex::scoped_lock lock(g_message_queue_mutex);
 
@@ -183,7 +183,7 @@ namespace
     const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
 }
 
-DialogLogTarget::DialogLogTarget(DialogLogMode open_mode)
+DialogLogTarget::DialogLogTarget(const LogDialogMode open_mode)
   : m_log_mode(open_mode)
 {
     m_session_messages.clear();
@@ -220,12 +220,12 @@ void DialogLogTarget::write(
           case asf::LogMessage::Category::Error:
           case asf::LogMessage::Category::Fatal:
           case asf::LogMessage::Category::Warning:
-            if (m_log_mode != DialogLogMode::Never)
+            if (m_log_mode != LogDialogMode::Never)
                 print_to_dialog();
             break;
           case asf::LogMessage::Category::Debug:
           case asf::LogMessage::Category::Info:
-            if (m_log_mode == DialogLogMode::Always)
+            if (m_log_mode == LogDialogMode::Always)
                 print_to_dialog();
             break;
         }
@@ -237,10 +237,12 @@ void DialogLogTarget::show_last_session_messages()
     if (g_log_dialog)
         return;
 
-    boost::mutex::scoped_lock lock(g_message_queue_mutex);
-    g_message_queue.clear();
-    for (const auto& message : m_session_messages)
-        g_message_queue.push_back(message);
+    {
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+        g_message_queue.clear();
+        for (const auto& message : m_session_messages)
+            g_message_queue.push_back(message);
+    }
 
     PostMessage(
         GetCOREInterface()->GetMAXHWnd(),

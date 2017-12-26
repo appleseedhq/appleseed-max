@@ -35,37 +35,40 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <utility>
 
 typedef std::vector<std::string> StringVec;
 typedef foundation::LogMessage::Category MessageType;
 typedef std::pair<MessageType, StringVec> MessagePair;
 
-enum class DialogLogMode
+enum class LogDialogMode
 {
-    Always,
-    Never,
-    Errors
+    // Changing these value WILL break compatibility.
+    Always  = 0,
+    Never   = 1,
+    Errors  = 2
 };
 
 class DialogLogTarget
-    : public foundation::ILogTarget
+  : public foundation::ILogTarget
 {
-public:
-    DialogLogTarget(DialogLogMode   open_mode);
+  public:
+    explicit DialogLogTarget(
+        const LogDialogMode     open_mode);
 
     virtual void release() override;
 
     virtual void write(
-        const MessageType           category,
-        const char*                 file,
-        const size_t                line,
-        const char*                 header,
-        const char*                 message) override;
+        const MessageType       category,
+        const char*             file,
+        const size_t            line,
+        const char*             header,
+        const char*             message) override;
 
     void print_to_dialog();
     void show_last_session_messages();
 
-private:
-    std::vector<MessagePair>        m_session_messages;
-    DialogLogMode                   m_log_mode;
+  private:
+    std::vector<MessagePair>    m_session_messages;
+    LogDialogMode               m_log_mode;
 };

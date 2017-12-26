@@ -38,8 +38,8 @@
 #include <render.h>
 
 // Forward declarations.
-class RendererSettings;
 class AppleseedRenderer;
+class RendererSettings;
 
 class AppleseedRendererParamDlg
   : public RendParamDlg

@@ -319,13 +319,12 @@ void AppleseedInteractiveRender::BeginSession()
         get_view_params_from_viewport(view_params, *GetViewExp(), m_time);
 
     Renderer* curr_renderer = GetCOREInterface()->GetCurrentRenderer(false);
-    // This is not production appleseed renderer, this is completetly independent renderer object.
     AppleseedRenderer* appleseed_renderer = static_cast<AppleseedRenderer*>(curr_renderer);
+    appleseed_renderer->create_log_window();
+    
     RendererSettings renderer_settings = appleseed_renderer->get_renderer_settings();
     renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
     
-    appleseed_renderer->create_log_window();
-
     m_project = prepare_project(renderer_settings, view_params, m_time);
 
     m_render_session.reset(new InteractiveSession(

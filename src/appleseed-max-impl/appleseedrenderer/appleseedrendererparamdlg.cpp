@@ -716,9 +716,9 @@ namespace
             m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
             m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
 
-            const wchar_t* log_combo_items[] = { L"Always", L"Never", L"On Error" };
-            for (int i = 0; i < 3; i++)
-                SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(log_combo_items[i]));
+            static const wchar_t* LogComboItems[] = { L"Always", L"Never", L"On Error" };
+            for (size_t i = 0; i < 3; i++)
+                SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(LogComboItems[i]));
             SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_SETCURSEL, static_cast<int>(m_settings.m_log_open_mode), 0);
 
             CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
@@ -747,7 +747,7 @@ namespace
 
                   case IDC_CHECK_LOG_MATERIAL_EDITOR:
                     m_settings.m_log_in_material_editor = IsDlgButtonChecked(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR) == BST_CHECKED;
-                    save_system_setting(m_settings.m_log_in_material_editor, L"LogMaterialEditor");
+                    save_system_setting(L"LogMaterialEditor", m_settings.m_log_in_material_editor);
                     return TRUE;
 
                   case IDC_BUTTON_LOG:
@@ -760,8 +760,8 @@ namespace
                         LRESULT sel_mode = SendDlgItemMessage(hwnd, IDC_COMBO_LOG, CB_GETCURSEL, 0, 0);
                         if (sel_mode != CB_ERR)
                         {
-                            m_settings.m_log_open_mode = static_cast<DialogLogMode>((int)sel_mode);
-                            save_system_setting(static_cast<int>(m_settings.m_log_open_mode), L"LogOpenMode");
+                            m_settings.m_log_open_mode = static_cast<LogDialogMode>(sel_mode);
+                            save_system_setting(L"LogOpenMode", static_cast<int>(m_settings.m_log_open_mode));
                         }
                     }
                     break;

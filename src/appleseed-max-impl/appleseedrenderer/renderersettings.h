@@ -94,7 +94,7 @@ class RendererSettings
     bool            m_low_priority_mode;
     bool            m_use_max_procedural_maps;
     bool            m_log_in_material_editor;
-    DialogLogMode   m_log_open_mode;
+    LogDialogMode   m_log_open_mode;
 
     // Apply these settings to a given project.
     void apply(renderer::Project& project) const;
