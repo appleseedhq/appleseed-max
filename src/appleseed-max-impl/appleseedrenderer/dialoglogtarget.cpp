@@ -54,7 +54,7 @@ namespace asr = renderer;
 namespace
 {
     boost::mutex                g_message_queue_mutex;
-    std::vector<MessagePair>    g_message_queue;
+    std::vector<MessageRecord>  g_message_queue;
     HWND                        g_log_dialog = nullptr;
 
     static INT_PTR CALLBACK dialog_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -117,15 +117,15 @@ namespace
         SendMessage(edit_box, EM_LINESCROLL, 0, 1);
     }
 
-    void print_message(const MessageType type, const StringVec& lines)
+    void print_message(const MessageRecord& message)
     {
         if (g_log_dialog == nullptr)
             return;
 
-        for (const auto& line : lines)
+        for (const auto& line : message.m_lines)
         {
             COLORREF message_color;
-            switch (type)
+            switch (message.m_type)
             {
               case MessageType::Error:
               case MessageType::Fatal:
@@ -148,15 +148,9 @@ namespace
 
             append_text(
                 GetDlgItem(g_log_dialog, IDC_EDIT_LOG),
-                utf8_to_wide(line + "\n").c_str(),
+                utf8_to_wide(message.m_header + line + "\n").c_str(),
                 message_color);
         }
-    }
-
-    void push_message(const MessagePair& message)
-    {
-        boost::mutex::scoped_lock lock(g_message_queue_mutex);
-        g_message_queue.push_back(message);
     }
 
     // Runs in UI thread.
@@ -178,7 +172,7 @@ namespace
         boost::mutex::scoped_lock lock(g_message_queue_mutex);
 
         for (const auto& message : g_message_queue)
-            print_message(message.first, message.second);
+            print_message(message);
 
         g_message_queue.clear();
     }
@@ -195,10 +189,9 @@ namespace
     const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
 }
 
-DialogLogTarget::DialogLogTarget(const LogDialogMode open_mode)
-  : m_log_mode(open_mode)
+DialogLogTarget::DialogLogTarget(const OpenMode open_mode)
+  : m_open_mode(open_mode)
 {
-    m_session_messages.clear();
     g_message_queue.clear();
     asr::global_logger().add_target(this);
 }
@@ -216,12 +209,17 @@ void DialogLogTarget::write(
     const char*             header,
     const char*             message)
 {
-    std::vector<std::string> lines;
-    asf::split(message, "\n", lines);
+    MessageRecord record;
+    record.m_type = category;
+    record.m_header = header;
+    asf::split(message, "\n", record.m_lines);
 
-    m_session_messages.push_back(MessagePair(category, lines));
+    m_session_messages.push_back(record);
 
-    push_message(MessagePair(category, lines));
+    {
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+        g_message_queue.push_back(record);
+    }
 
     if (g_log_dialog)
         print_to_dialog();
@@ -232,12 +230,12 @@ void DialogLogTarget::write(
           case asf::LogMessage::Category::Error:
           case asf::LogMessage::Category::Fatal:
           case asf::LogMessage::Category::Warning:
-            if (m_log_mode != LogDialogMode::Never)
+            if (m_open_mode != OpenMode::Never)
                 print_to_dialog();
             break;
           case asf::LogMessage::Category::Debug:
           case asf::LogMessage::Category::Info:
-            if (m_log_mode == LogDialogMode::Always)
+            if (m_open_mode == OpenMode::Always)
                 print_to_dialog();
             break;
         }
@@ -251,7 +249,9 @@ void DialogLogTarget::show_last_session_messages()
 
     {
         boost::mutex::scoped_lock lock(g_message_queue_mutex);
+
         g_message_queue.clear();
+
         for (const auto& message : m_session_messages)
             g_message_queue.push_back(message);
     }

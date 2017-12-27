@@ -39,22 +39,39 @@
 
 typedef std::vector<std::string> StringVec;
 typedef foundation::LogMessage::Category MessageType;
-typedef std::pair<MessageType, StringVec> MessagePair;
 
-enum class LogDialogMode
+struct MessageRecord
 {
-    // Changing these value WILL break compatibility.
-    Always  = 0,
-    Never   = 1,
-    Errors  = 2
+    MessageType m_type;
+    std::string m_header;
+    StringVec   m_lines;
+
+    MessageRecord() {}
+    MessageRecord(
+        const MessageType   type,
+        const std::string&  header,
+        const StringVec&    lines)
+      : m_type(type)
+      , m_header(header)
+      , m_lines(lines)
+    {
+    }
 };
 
 class DialogLogTarget
   : public foundation::ILogTarget
 {
   public:
+    enum class OpenMode
+    {
+        // Changing these value WILL break compatibility.
+        Always  = 0,
+        Never   = 1,
+        Errors  = 2
+    };
+
     explicit DialogLogTarget(
-        const LogDialogMode     open_mode);
+        const OpenMode          open_mode);
 
     virtual void release() override;
 
@@ -68,8 +85,8 @@ class DialogLogTarget
     void show_last_session_messages();
 
   private:
-    std::vector<MessagePair>    m_session_messages;
-    LogDialogMode               m_log_mode;
+    std::vector<MessageRecord>  m_session_messages;
+    OpenMode                    m_open_mode;
 
     void print_to_dialog();
 };

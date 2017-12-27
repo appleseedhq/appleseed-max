@@ -68,8 +68,8 @@ namespace
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
 
-            const int log_open_mode = load_system_setting(L"LogOpenMode", static_cast<int>(LogDialogMode::Errors));
-            m_log_open_mode = static_cast<LogDialogMode>(log_open_mode);
+            const int log_open_mode = load_system_setting(L"LogOpenMode", static_cast<int>(DialogLogTarget::OpenMode::Errors));
+            m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(log_open_mode);
             m_log_material_editor_messages = load_system_setting(L"LogMaterialEditorMessages", false);
         }
     };

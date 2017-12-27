@@ -55,21 +55,21 @@ class RendererSettings
     // Image Sampling.
     //
 
-    int             m_pixel_samples;
-    int             m_passes;
-    int             m_tile_size;
+    int         m_pixel_samples;
+    int         m_passes;
+    int         m_tile_size;
 
     //
     // Lighting.
     //
 
-    bool            m_gi;
-    bool            m_caustics;
-    int             m_bounces;
-    bool            m_max_ray_intensity_set;
-    float           m_max_ray_intensity;
-    bool            m_background_emits_light;
-    float           m_background_alpha;
+    bool        m_gi;
+    bool        m_caustics;
+    int         m_bounces;
+    bool        m_max_ray_intensity_set;
+    float       m_max_ray_intensity;
+    bool        m_background_emits_light;
+    float       m_background_alpha;
 
     //
     // Output.
@@ -82,19 +82,19 @@ class RendererSettings
         SaveProjectAndRender
     };
 
-    OutputMode      m_output_mode;
-    MSTR            m_project_file_path;
-    float           m_scale_multiplier;
+    OutputMode  m_output_mode;
+    MSTR        m_project_file_path;
+    float       m_scale_multiplier;
 
     //
     // System.
     //
 
-    int             m_rendering_threads;
-    bool            m_low_priority_mode;
-    bool            m_use_max_procedural_maps;
-    LogDialogMode   m_log_open_mode;
-    bool            m_log_material_editor_messages;
+    int                         m_rendering_threads;
+    bool                        m_low_priority_mode;
+    bool                        m_use_max_procedural_maps;
+    DialogLogTarget::OpenMode   m_log_open_mode;
+    bool                        m_log_material_editor_messages;
 
     // Apply these settings to a given project.
     void apply(renderer::Project& project) const;
