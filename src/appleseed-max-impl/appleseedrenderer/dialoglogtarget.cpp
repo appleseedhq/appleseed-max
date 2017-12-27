@@ -62,6 +62,10 @@ namespace
         switch (msg)
         {
           case WM_INITDIALOG:
+            {
+                HWND edit_box = GetDlgItem(hwnd, IDC_EDIT_LOG);
+                SendMessage(edit_box, EM_SETBKGNDCOLOR, 0, RGB(35, 35, 35));
+            }
             break;
 
           case WM_CLOSE:
@@ -125,16 +129,20 @@ namespace
             {
               case MessageType::Error:
               case MessageType::Fatal:
-                message_color = RGB(220, 10, 10);
+                message_color = RGB(239, 55, 55);
                 break;
+
               case MessageType::Warning:
-                message_color = RGB(220, 100, 10);
+                message_color = RGB(242, 59, 205);
                 break;
+
               case MessageType::Debug:
-                message_color = RGB(10, 150, 10);
+                message_color = RGB(107, 239, 55);
                 break;
+
+              case MessageType::Info:
               default:
-                message_color = RGB(10, 10, 10);
+                message_color = RGB(170, 170, 170);
                 break;
             }
 
