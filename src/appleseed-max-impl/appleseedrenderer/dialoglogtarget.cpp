@@ -63,6 +63,7 @@ namespace
         {
           case WM_INITDIALOG:
             break;
+
           case WM_CLOSE:
           case WM_DESTROY:
             if (g_log_dialog != nullptr)
@@ -90,6 +91,7 @@ namespace
           default:
             return FALSE;
         }
+
         return TRUE;
     }
 
@@ -113,29 +115,33 @@ namespace
 
     void print_message(const MessageType type, const StringVec& lines)
     {
+        if (g_log_dialog == nullptr)
+            return;
+
         for (const auto& line : lines)
         {
-            if (g_log_dialog)
+            COLORREF message_color;
+            switch (type)
             {
-                COLORREF message_color;
-                switch (type)
-                {
-                  case MessageType::Error:
-                  case MessageType::Fatal:
-                    message_color = RGB(220, 10, 10);
-                    break;
-                  case MessageType::Warning:
-                    message_color = RGB(220, 100, 10);
-                    break;
-                  case MessageType::Debug:
-                    message_color = RGB(10, 150, 10);
-                    break;
-                  default:
-                    message_color = RGB(10, 10, 10);
-                    break;
-                }
-                append_text(GetDlgItem(g_log_dialog, IDC_EDIT_LOG), utf8_to_wide(line + "\n").c_str(), message_color);
+              case MessageType::Error:
+              case MessageType::Fatal:
+                message_color = RGB(220, 10, 10);
+                break;
+              case MessageType::Warning:
+                message_color = RGB(220, 100, 10);
+                break;
+              case MessageType::Debug:
+                message_color = RGB(10, 150, 10);
+                break;
+              default:
+                message_color = RGB(10, 10, 10);
+                break;
             }
+
+            append_text(
+                GetDlgItem(g_log_dialog, IDC_EDIT_LOG),
+                utf8_to_wide(line + "\n").c_str(),
+                message_color);
         }
     }
 
@@ -148,33 +154,31 @@ namespace
     // Runs in UI thread.
     void emit_pending_messages()
     {
-        if (!g_log_dialog)
+        if (g_log_dialog == nullptr)
         {
-            g_log_dialog = CreateDialogParam(
-                g_module,
-                MAKEINTRESOURCE(IDD_DIALOG_LOG),
-                GetCOREInterface()->GetMAXHWnd(),
-                dialog_proc,
-                NULL);
+            g_log_dialog =
+                CreateDialogParam(
+                    g_module,
+                    MAKEINTRESOURCE(IDD_DIALOG_LOG),
+                    GetCOREInterface()->GetMAXHWnd(),
+                    dialog_proc,
+                    NULL);
 
             GetCOREInterface14()->RegisterModelessRenderWindow(g_log_dialog);
         }
 
-        if (g_log_dialog != nullptr)
-        {
-            boost::mutex::scoped_lock lock(g_message_queue_mutex);
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
 
-            for (const auto& message : g_message_queue)
-                print_message(message.first, message.second);
+        for (const auto& message : g_message_queue)
+            print_message(message.first, message.second);
 
-            g_message_queue.clear();
-        }
+        g_message_queue.clear();
     }
 
     // Runs in UI thread.
     void emit_saved_messages()
     {
-        if (g_log_dialog)
+        if (g_log_dialog != nullptr)
             SetDlgItemText(g_log_dialog, IDC_EDIT_LOG, L"");
 
         emit_pending_messages();

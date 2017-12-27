@@ -65,10 +65,11 @@ class DialogLogTarget
         const char*             header,
         const char*             message) override;
 
-    void print_to_dialog();
     void show_last_session_messages();
 
   private:
     std::vector<MessagePair>    m_session_messages;
     LogDialogMode               m_log_mode;
+
+    void print_to_dialog();
 };
