@@ -72,6 +72,9 @@
     <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp">
       <Filter>appleseedplasticmtl</Filter>
     </ClCompile>    
+    <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -206,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="appleseedplasticmtl\resource.h">
       <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\dialoglogtarget.h">
+      <Filter>appleseedrenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

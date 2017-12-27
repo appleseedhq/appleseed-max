@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2017 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2017 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,36 +28,47 @@
 
 #pragma once
 
-// Windows headers.
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <Windows.h>    // include before 3ds Max headers
+// appleseed.foundation headers.
+#include "foundation/utility/log.h"
 
-// 3ds Max headers.
-#include <render.h>
+// Standard headers.
+#include <cstddef>
+#include <string>
+#include <vector>
+#include <utility>
 
-// Forward declarations.
-class AppleseedRenderer;
-class RendererSettings;
+typedef std::vector<std::string> StringVec;
+typedef foundation::LogMessage::Category MessageType;
+typedef std::pair<MessageType, StringVec> MessagePair;
 
-class AppleseedRendererParamDlg
-  : public RendParamDlg
+enum class LogDialogMode
+{
+    // Changing these value WILL break compatibility.
+    Always  = 0,
+    Never   = 1,
+    Errors  = 2
+};
+
+class DialogLogTarget
+  : public foundation::ILogTarget
 {
   public:
-    AppleseedRendererParamDlg(
-        IRendParams*        rend_params,
-        BOOL                in_progress,
-        RendererSettings&   settings,
-        AppleseedRenderer*  renderer);
+    explicit DialogLogTarget(
+        const LogDialogMode     open_mode);
 
-    ~AppleseedRendererParamDlg();
+    virtual void release() override;
 
-    virtual void DeleteThis() override;
+    virtual void write(
+        const MessageType       category,
+        const char*             file,
+        const size_t            line,
+        const char*             header,
+        const char*             message) override;
 
-    virtual void AcceptParams() override;
+    void print_to_dialog();
+    void show_last_session_messages();
 
   private:
-    struct Impl;
-    Impl* impl;
+    std::vector<MessagePair>    m_session_messages;
+    LogDialogMode               m_log_mode;
 };

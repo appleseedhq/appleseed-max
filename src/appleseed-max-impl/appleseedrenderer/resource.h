@@ -46,6 +46,13 @@
 #define IDC_SPINNER_RENDERINGTHREADS                502
 #define IDC_CHECK_LOW_PRIORITY_MODE                 503
 #define IDC_CHECK_USE_MAX_PROCEDURAL_MAPS           504
+#define IDC_CHECK_LOG_MATERIAL_EDITOR               505
+
+#define IDD_DIALOG_LOG                              600
+#define IDC_COMBO_LOG                               601
+#define IDC_STATIC_LOG                              602
+#define IDC_BUTTON_LOG                              603
+#define IDC_EDIT_LOG                                604
 
 // Next default values for new objects
 // 
@@ -53,7 +60,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        110
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1025
+#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

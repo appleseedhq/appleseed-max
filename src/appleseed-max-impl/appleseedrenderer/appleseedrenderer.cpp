@@ -33,6 +33,7 @@
 #include "appleseedinteractive/appleseedinteractive.h"
 #include "appleseedrenderer/appleseedrendererparamdlg.h"
 #include "appleseedrenderer/datachunks.h"
+#include "appleseedrenderer/dialoglogtarget.h"
 #include "appleseedrenderer/projectbuilder.h"
 #include "appleseedrenderer/renderercontroller.h"
 #include "appleseedrenderer/tilecallback.h"
@@ -73,6 +74,7 @@ namespace
 }
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
+asf::auto_release_ptr<DialogLogTarget> g_dialog_log_target;
 
 
 //
@@ -438,6 +440,9 @@ int AppleseedRenderer::Render(
         renderer_settings.m_background_emits_light = false;
     }
 
+    if (!m_rend_params.inMtlEdit || m_settings.m_log_in_material_editor)
+        create_log_window();
+
     // Collect the entities we're interested in.
     if (progress_cb)
         progress_cb->SetTitle(L"Collecting Entities...");
@@ -536,7 +541,8 @@ RendParamDlg* AppleseedRenderer::CreateParamDialog(
         new AppleseedRendererParamDlg(
             rend_params,
             in_progress,
-            m_settings);
+            m_settings,
+            this);
 }
 
 void AppleseedRenderer::ResetParams()
@@ -625,6 +631,19 @@ int AppleseedRenderer::AcceptTab(
         return 0;
 
     return TAB_DIALOG_ADD_TAB;
+}
+
+void AppleseedRenderer::show_last_session_log()
+{
+    if (g_dialog_log_target.get() == nullptr)
+        create_log_window();
+
+    g_dialog_log_target->show_last_session_messages();
+}
+
+void AppleseedRenderer::create_log_window()
+{
+    g_dialog_log_target.reset(new DialogLogTarget(m_settings.m_log_open_mode));
 }
 
 void AppleseedRenderer::clear()

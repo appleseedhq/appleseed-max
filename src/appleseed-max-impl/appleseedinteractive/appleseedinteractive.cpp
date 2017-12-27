@@ -320,6 +320,8 @@ void AppleseedInteractiveRender::BeginSession()
 
     Renderer* curr_renderer = GetCOREInterface()->GetCurrentRenderer(false);
     AppleseedRenderer* appleseed_renderer = static_cast<AppleseedRenderer*>(curr_renderer);
+    appleseed_renderer->create_log_window();
+    
     RendererSettings renderer_settings = appleseed_renderer->get_renderer_settings();
     renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
     

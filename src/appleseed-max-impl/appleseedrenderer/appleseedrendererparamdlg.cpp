@@ -30,6 +30,7 @@
 #include "appleseedrendererparamdlg.h"
 
 // appleseed-max headers.
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedrenderer/renderersettings.h"
 #include "appleseedrenderer/resource.h"
 #include "appleseedrenderer/updatechecker.h"
@@ -680,12 +681,15 @@ namespace
         HWND                    m_rollup;
         ICustEdit*              m_text_renderingthreads;
         ISpinnerControl*        m_spinner_renderingthreads;
+        AppleseedRenderer*      m_renderer;
 
         SystemPanel(
             IRendParams*        rend_params,
-            RendererSettings&   settings)
+            RendererSettings&   settings,
+            AppleseedRenderer*  renderer)
           : m_rend_params(rend_params)
           , m_settings(settings)
+          , m_renderer(renderer)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -712,8 +716,14 @@ namespace
             m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
             m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
 
+            static const wchar_t* LogComboItems[] = { L"Always", L"Never", L"On Error" };
+            for (size_t i = 0; i < 3; i++)
+                SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(LogComboItems[i]));
+            SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_SETCURSEL, static_cast<int>(m_settings.m_log_open_mode), 0);
+
             CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS, m_settings.m_use_max_procedural_maps ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR, m_settings.m_log_in_material_editor ? BST_CHECKED : BST_UNCHECKED);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -735,6 +745,27 @@ namespace
                     m_settings.m_use_max_procedural_maps = IsDlgButtonChecked(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS) == BST_CHECKED;
                     return TRUE;
 
+                  case IDC_CHECK_LOG_MATERIAL_EDITOR:
+                    m_settings.m_log_in_material_editor = IsDlgButtonChecked(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR) == BST_CHECKED;
+                    save_system_setting(L"LogMaterialEditor", m_settings.m_log_in_material_editor);
+                    return TRUE;
+
+                  case IDC_BUTTON_LOG:
+                    m_renderer->show_last_session_log();
+                    return TRUE;
+                  
+                  case IDC_COMBO_LOG:
+                    if (HIWORD(wparam) == CBN_SELCHANGE)
+                    {
+                        LRESULT sel_mode = SendDlgItemMessage(hwnd, IDC_COMBO_LOG, CB_GETCURSEL, 0, 0);
+                        if (sel_mode != CB_ERR)
+                        {
+                            m_settings.m_log_open_mode = static_cast<LogDialogMode>(sel_mode);
+                            save_system_setting(L"LogOpenMode", static_cast<int>(m_settings.m_log_open_mode));
+                        }
+                    }
+                    break;
+                  
                   default:
                     return FALSE;
                 }
@@ -771,7 +802,8 @@ struct AppleseedRendererParamDlg::Impl
     Impl(
         IRendParams*        rend_params,
         BOOL                in_progress,
-        RendererSettings&   settings)
+        RendererSettings&   settings,
+        AppleseedRenderer*  renderer)
       : m_temp_settings(settings)
       , m_settings(settings)
     {
@@ -781,7 +813,7 @@ struct AppleseedRendererParamDlg::Impl
             m_image_sampling_panel.reset(new ImageSamplingPanel(rend_params, m_temp_settings));
             m_lighting_panel.reset(new LightingPanel(rend_params, m_temp_settings));
             m_output_panel.reset(new OutputPanel(rend_params, m_temp_settings));
-            m_system_panel.reset(new SystemPanel(rend_params, m_temp_settings));
+            m_system_panel.reset(new SystemPanel(rend_params, m_temp_settings, renderer));
         }
     }
 };
@@ -789,8 +821,9 @@ struct AppleseedRendererParamDlg::Impl
 AppleseedRendererParamDlg::AppleseedRendererParamDlg(
     IRendParams*            rend_params,
     BOOL                    in_progress,
-    RendererSettings&       settings)
-  : impl(new Impl(rend_params, in_progress, settings))
+    RendererSettings&       settings,
+    AppleseedRenderer*      renderer)
+  : impl(new Impl(rend_params, in_progress, settings, renderer))
 {
 }
 
