@@ -44,6 +44,7 @@
 
 // Forward declarations.
 namespace renderer { class Camera; }
+namespace renderer { class ParamArray; }
 namespace renderer { class Project; }
 class Bitmap;
 class FrameRendParams;
@@ -61,6 +62,12 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const RendParams&                   rend_params,
     const FrameRendParams&              frame_rend_params,
     const RendererSettings&             settings,
+    Bitmap*                             bitmap,
+    const TimeValue                     time);
+
+void set_camera_dof_params(
+    renderer::ParamArray&               params,
+    MaxSDK::IPhysicalCamera*            camera_node,
     Bitmap*                             bitmap,
     const TimeValue                     time);
 

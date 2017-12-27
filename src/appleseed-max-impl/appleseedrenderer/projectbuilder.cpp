@@ -1292,6 +1292,33 @@ namespace
     }
 }
 
+void set_camera_dof_params(
+    asr::ParamArray&            params,
+    MaxSDK::IPhysicalCamera*    camera_node,
+    Bitmap*                     bitmap,
+    const TimeValue             time)
+{
+    // Film dimensions.
+    const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
+    const float film_width = camera_node->GetFilmWidth(time, FOREVER);
+    const float film_height = film_width * aspect;
+    params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
+
+    // DOF settings.
+    params.insert("f_stop", camera_node->GetLensApertureFNumber(time, FOREVER));
+    params.insert("focal_distance", camera_node->GetFocusDistance(time, FOREVER));
+    switch (camera_node->GetBokehShape(time, FOREVER))
+    {
+      case MaxSDK::IPhysicalCamera::BokehShape::Circular:
+        params.insert("diaphragm_blades", 0);
+        break;
+      case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
+        params.insert("diaphragm_blades", camera_node->GetBokehNumberOfBlades(time, FOREVER));
+        params.insert("diaphragm_tilt_angle", camera_node->GetBokehBladesRotationDegrees(time, FOREVER));
+        break;
+    }
+}
+
 asf::auto_release_ptr<asr::Camera> build_camera(
     INode*                  view_node,
     const ViewParams&       view_params,
@@ -1338,26 +1365,8 @@ asf::auto_release_ptr<asr::Camera> build_camera(
 
         if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
         {
-            // Film dimensions.
-            const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
-            const float film_width = phys_camera->GetFilmWidth(time, FOREVER);
-            const float film_height = film_width * aspect;
-            params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
-
-            // DOF settings.
-            params.insert("f_stop", phys_camera->GetLensApertureFNumber(time, FOREVER));
-            params.insert("focal_distance", phys_camera->GetFocusDistance(time, FOREVER));
-            switch (phys_camera->GetBokehShape(time, FOREVER))
-            {
-              case MaxSDK::IPhysicalCamera::BokehShape::Circular:
-                params.insert("diaphragm_blades", 0);
-                break;
-              case MaxSDK::IPhysicalCamera::BokehShape::Bladed:
-                params.insert("diaphragm_blades", phys_camera->GetBokehNumberOfBlades(time, FOREVER));
-                params.insert("diaphragm_tilt_angle", phys_camera->GetBokehBladesRotationDegrees(time, FOREVER));
-                break;
-            }
-
+            set_camera_dof_params(params, phys_camera, bitmap, time);
+            
             // Create camera.
             camera = asr::ThinLensCameraFactory().create("camera", params);
         }
