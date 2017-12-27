@@ -723,7 +723,7 @@ namespace
 
             CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS, m_settings.m_use_max_procedural_maps ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR, m_settings.m_log_in_material_editor ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR, m_settings.m_log_material_editor_messages ? BST_CHECKED : BST_UNCHECKED);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -746,8 +746,8 @@ namespace
                     return TRUE;
 
                   case IDC_CHECK_LOG_MATERIAL_EDITOR:
-                    m_settings.m_log_in_material_editor = IsDlgButtonChecked(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR) == BST_CHECKED;
-                    save_system_setting(L"LogMaterialEditor", m_settings.m_log_in_material_editor);
+                    m_settings.m_log_material_editor_messages = IsDlgButtonChecked(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR) == BST_CHECKED;
+                    save_system_setting(L"LogMaterialEditorMessages", m_settings.m_log_material_editor_messages);
                     return TRUE;
 
                   case IDC_BUTTON_LOG:

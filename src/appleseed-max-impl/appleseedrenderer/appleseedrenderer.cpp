@@ -440,7 +440,7 @@ int AppleseedRenderer::Render(
         renderer_settings.m_background_emits_light = false;
     }
 
-    if (!m_rend_params.inMtlEdit || m_settings.m_log_in_material_editor)
+    if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
         create_log_window();
 
     // Collect the entities we're interested in.
