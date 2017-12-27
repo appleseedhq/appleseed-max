@@ -97,7 +97,8 @@ class AppleseedInteractiveRender
     virtual void AbortRender() override;
 #endif
 
-    void update_camera(INode* camera);
+    void update_camera_parameters(INode* camera);
+    void update_camera_transform(INode* camera);
     InteractiveSession* get_render_session();
 
   private:
@@ -121,5 +122,6 @@ class AppleseedInteractiveRender
     foundation::auto_release_ptr<renderer::Project> prepare_project(
         const RendererSettings&     renderer_settings,
         const ViewParams&           view_params,
+        INode*                      camera_node,
         const TimeValue             time);
 };

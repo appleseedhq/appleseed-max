@@ -201,7 +201,23 @@ namespace
             {
                 if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
                 {
-                    m_renderer->update_camera(m_active_camera);
+                    m_renderer->update_camera_transform(m_active_camera);
+                    m_renderer->get_render_session()->reininitialize_render();
+                    break;
+                }
+            }
+        }
+
+        virtual void ModelOtherEvent(NodeKeyTab& nodes) override
+        {
+            if (m_active_camera == nullptr || m_renderer == nullptr)
+                return;
+
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
+                {
+                    m_renderer->update_camera_parameters(m_active_camera);
                     m_renderer->get_render_session()->reininitialize_render();
                     break;
                 }
@@ -241,6 +257,7 @@ AppleseedInteractiveRender::~AppleseedInteractiveRender()
 asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     const RendererSettings&     renderer_settings,
     const ViewParams&           view_params,
+    INode*                      camera_node,
     const TimeValue             time)
 {
     std::string previous_locale(std::setlocale(LC_ALL, "C"));
@@ -275,7 +292,7 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
         build_project(
             m_entities,
             m_default_lights,
-            m_view_inode,
+            camera_node,
             view_params,
             rend_params,
             frame_rend_params,
@@ -288,7 +305,25 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     return project;
 }
 
-void AppleseedInteractiveRender::update_camera(INode* camera)
+void AppleseedInteractiveRender::update_camera_parameters(INode* camera)
+{
+    ViewParams view_params;
+    get_view_params_from_view_node(view_params, camera, m_time);
+
+    asr::ParamArray& params = m_project->get_scene()->get_active_camera()->get_parameters();
+    params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
+
+#if MAX_RELEASE >= 18000
+    MaxSDK::IPhysicalCamera* phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(camera->EvalWorldState(m_time).obj);
+
+    if (phys_camera && phys_camera->GetDOFEnabled(m_time, FOREVER))
+    {
+        set_camera_dof_params(params, phys_camera, m_bitmap, m_time);
+    }
+#endif
+}
+
+void AppleseedInteractiveRender::update_camera_transform(INode* camera)
 {
     ViewParams view_params;
     get_view_params_from_view_node(view_params, camera, m_time);
@@ -323,7 +358,7 @@ void AppleseedInteractiveRender::BeginSession()
     RendererSettings renderer_settings = appleseed_renderer->get_renderer_settings();
     renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
     
-    m_project = prepare_project(renderer_settings, view_params, m_time);
+    m_project = prepare_project(renderer_settings, view_params, active_cam, m_time);
 
     m_render_session.reset(new InteractiveSession(
         m_iirender_mgr,
