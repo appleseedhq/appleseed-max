@@ -1292,6 +1292,8 @@ namespace
     }
 }
 
+#if MAX_RELEASE >= 18000
+
 void set_camera_dof_params(
     asr::ParamArray&            params,
     MaxSDK::IPhysicalCamera*    camera_node,
@@ -1318,6 +1320,8 @@ void set_camera_dof_params(
         break;
     }
 }
+
+#endif
 
 asf::auto_release_ptr<asr::Camera> build_camera(
     INode*                  view_node,

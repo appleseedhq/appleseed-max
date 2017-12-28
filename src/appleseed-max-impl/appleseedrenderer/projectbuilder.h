@@ -65,11 +65,15 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     Bitmap*                             bitmap,
     const TimeValue                     time);
 
+#if MAX_RELEASE >= 18000
+
 void set_camera_dof_params(
     renderer::ParamArray&               params,
     MaxSDK::IPhysicalCamera*            camera_node,
     Bitmap*                             bitmap,
     const TimeValue                     time);
+
+#endif
 
 foundation::auto_release_ptr<renderer::Camera> build_camera(
     INode*                              view_node,
