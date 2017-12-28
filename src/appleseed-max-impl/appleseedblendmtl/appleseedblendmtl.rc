@@ -50,68 +50,68 @@ END
 // Dialog
 //
 
-IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 147
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 140
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Base Material:",IDC_LABEL_BASE_MTL,7,7,48,8
-    CONTROL         "Base Material",IDC_MTLBTN_BASE,"CustButton",WS_TABSTOP,55,6,157,10
+    CONTROL         "Base Material",IDC_MTLBTN_BASE,"CustButton",WS_TABSTOP,55,6,155,10
     LTEXT           "Layers:",IDC_LABEL_BASE_MTL2,18,20,24,8
     LTEXT           "Blend Amount:",IDC_LABEL_BASE_MTL3,100,20,52,8
-
     LTEXT           "1:",IDC_LABEL_COAT_1,9,30,8,8
     CONTROL         "Layer Material 1",IDC_MTLBTN_LAYER_1,"CustButton",WS_TABSTOP,18,29,79,10
-    CONTROL         "Mask Texture 1",IDC_TEXBTN_MASK_1,"CustButton",WS_TABSTOP,100,29,76,10
-    CONTROL         "Texture Amount Edit 1",IDC_EDIT_AMOUNT_1,"CustEdit",WS_TABSTOP,179,29,25,10
-    CONTROL         "Texture Amount Spinner 1",IDC_SPIN_AMOUNT_1,"SpinnerControl",0x0,205,29,7,10
-
+    CONTROL         "Mask Texture 1",IDC_TEXBTN_MASK_1,"CustButton",WS_TABSTOP,99,29,76,10
+    CONTROL         "Texture Amount Edit 1",IDC_EDIT_AMOUNT_1,"CustEdit",WS_TABSTOP,177,29,25,10
+    CONTROL         "Texture Amount Spinner 1",IDC_SPIN_AMOUNT_1,
+                    "SpinnerControl",0x0,203,29,7,10
     LTEXT           "2:",IDC_LABEL_COAT_2,9,43,8,8
     CONTROL         "Layer Material 2",IDC_MTLBTN_LAYER_2,"CustButton",WS_TABSTOP,18,42,79,10
-    CONTROL         "Mask Texture 2",IDC_TEXBTN_MASK_2,"CustButton",WS_TABSTOP,100,42,76,10
-    CONTROL         "Texture Amount Edit 2",IDC_EDIT_AMOUNT_2,"CustEdit",WS_TABSTOP,179,42,25,10
-    CONTROL         "Texture Amount Spinner 2",IDC_SPIN_AMOUNT_2,"SpinnerControl",0x0,205,42,7,10
-
+    CONTROL         "Mask Texture 2",IDC_TEXBTN_MASK_2,"CustButton",WS_TABSTOP,99,42,76,10
+    CONTROL         "Texture Amount Edit 2",IDC_EDIT_AMOUNT_2,"CustEdit",WS_TABSTOP,177,42,25,10
+    CONTROL         "Texture Amount Spinner 2",IDC_SPIN_AMOUNT_2,
+                    "SpinnerControl",0x0,203,42,7,10
     LTEXT           "3:",IDC_LABEL_COAT_3,9,55,8,8
     CONTROL         "Layer Material 3",IDC_MTLBTN_LAYER_3,"CustButton",WS_TABSTOP,18,54,79,10
-    CONTROL         "Mask Texture 3",IDC_TEXBTN_MASK_3,"CustButton",WS_TABSTOP,100,54,76,10
-    CONTROL         "Texture Amount Edit 3",IDC_EDIT_AMOUNT_3,"CustEdit",WS_TABSTOP,179,54,25,10
-    CONTROL         "Texture Amount Spinner 3",IDC_SPIN_AMOUNT_3,"SpinnerControl",0x0,205,54,7,10
-
-    LTEXT           "4:",IDC_LABEL_COAT_4,7,67,9,8
+    CONTROL         "Mask Texture 3",IDC_TEXBTN_MASK_3,"CustButton",WS_TABSTOP,99,54,76,10
+    CONTROL         "Texture Amount Edit 3",IDC_EDIT_AMOUNT_3,"CustEdit",WS_TABSTOP,177,54,25,10
+    CONTROL         "Texture Amount Spinner 3",IDC_SPIN_AMOUNT_3,
+                    "SpinnerControl",0x0,203,54,7,10
+    LTEXT           "4:",IDC_LABEL_COAT_4,9,67,8,8
     CONTROL         "Layer Material 4",IDC_MTLBTN_LAYER_4,"CustButton",WS_TABSTOP,18,66,79,10
-    CONTROL         "Mask Texture 4",IDC_TEXBTN_MASK_4,"CustButton",WS_TABSTOP,100,66,76,10
-    CONTROL         "Texture Amount Edit 4",IDC_EDIT_AMOUNT_4,"CustEdit",WS_TABSTOP,179,66,25,10
-    CONTROL         "Texture Amount Spinner 4",IDC_SPIN_AMOUNT_4,"SpinnerControl",0x0,205,66,7,10
-
+    CONTROL         "Mask Texture 4",IDC_TEXBTN_MASK_4,"CustButton",WS_TABSTOP,99,66,76,10
+    CONTROL         "Texture Amount Edit 4",IDC_EDIT_AMOUNT_4,"CustEdit",WS_TABSTOP,177,66,25,10
+    CONTROL         "Texture Amount Spinner 4",IDC_SPIN_AMOUNT_4,
+                    "SpinnerControl",0x0,203,66,7,10
     LTEXT           "5:",IDC_LABEL_COAT_5,9,79,8,8
     CONTROL         "Layer Material 5",IDC_MTLBTN_LAYER_5,"CustButton",WS_TABSTOP,18,78,79,10
-    CONTROL         "Mask Texture 5",IDC_TEXBTN_MASK_5,"CustButton",WS_TABSTOP,100,78,76,10
-    CONTROL         "Texture Amount Edit 5",IDC_EDIT_AMOUNT_5,"CustEdit",WS_TABSTOP,179,78,25,10
-    CONTROL         "Texture Amount Spinner 5",IDC_SPIN_AMOUNT_5,"SpinnerControl",0x0,205,78,7,10
-
-    LTEXT           "6:",IDC_LABEL_COAT_6,9,90,8,8
+    CONTROL         "Mask Texture 5",IDC_TEXBTN_MASK_5,"CustButton",WS_TABSTOP,99,78,76,10
+    CONTROL         "Texture Amount Edit 5",IDC_EDIT_AMOUNT_5,"CustEdit",WS_TABSTOP,177,78,25,10
+    CONTROL         "Texture Amount Spinner 5",IDC_SPIN_AMOUNT_5,
+                    "SpinnerControl",0x0,203,78,7,10
+    LTEXT           "6:",IDC_LABEL_COAT_6,9,91,8,8
     CONTROL         "Layer Material 6",IDC_MTLBTN_LAYER_6,"CustButton",WS_TABSTOP,18,90,79,10
-    CONTROL         "Mask Texture 6",IDC_TEXBTN_MASK_6,"CustButton",WS_TABSTOP,100,90,76,10
-    CONTROL         "Texture Amount Edit 6",IDC_EDIT_AMOUNT_6,"CustEdit",WS_TABSTOP,179,90,25,10
-    CONTROL         "Texture Amount Spinner 6",IDC_SPIN_AMOUNT_6,"SpinnerControl",0x0,205,90,7,10
-
+    CONTROL         "Mask Texture 6",IDC_TEXBTN_MASK_6,"CustButton",WS_TABSTOP,99,90,76,10
+    CONTROL         "Texture Amount Edit 6",IDC_EDIT_AMOUNT_6,"CustEdit",WS_TABSTOP,177,90,25,10
+    CONTROL         "Texture Amount Spinner 6",IDC_SPIN_AMOUNT_6,
+                    "SpinnerControl",0x0,203,90,7,10
     LTEXT           "7:",IDC_LABEL_COAT_7,9,103,8,8
     CONTROL         "Layer Material 7",IDC_MTLBTN_LAYER_7,"CustButton",WS_TABSTOP,18,102,79,10
-    CONTROL         "Mask Texture 7",IDC_TEXBTN_MASK_7,"CustButton",WS_TABSTOP,100,102,76,10
-    CONTROL         "Texture Amount Edit 7",IDC_EDIT_AMOUNT_7,"CustEdit",WS_TABSTOP,179,102,25,10
-    CONTROL         "Texture Amount Spinner 7",IDC_SPIN_AMOUNT_7,"SpinnerControl",0x0,205,102,7,10
-
+    CONTROL         "Mask Texture 7",IDC_TEXBTN_MASK_7,"CustButton",WS_TABSTOP,99,102,76,10
+    CONTROL         "Texture Amount Edit 7",IDC_EDIT_AMOUNT_7,"CustEdit",WS_TABSTOP,177,102,25,10
+    CONTROL         "Texture Amount Spinner 7",IDC_SPIN_AMOUNT_7,
+                    "SpinnerControl",0x0,203,102,7,10
     LTEXT           "8:",IDC_LABEL_COAT_8,9,114,8,8
     CONTROL         "Layer Material 8",IDC_MTLBTN_LAYER_8,"CustButton",WS_TABSTOP,18,114,79,10
-    CONTROL         "Mask Texture 8",IDC_TEXBTN_MASK_8,"CustButton",WS_TABSTOP,100,114,76,10
-    CONTROL         "Texture Amount Edit 8",IDC_EDIT_AMOUNT_8,"CustEdit",WS_TABSTOP,179,114,25,10
-    CONTROL         "Texture Amount Spinner 8",IDC_SPIN_AMOUNT_8,"SpinnerControl",0x0,205,114,7,10
-
+    CONTROL         "Mask Texture 8",IDC_TEXBTN_MASK_8,"CustButton",WS_TABSTOP,99,114,76,10
+    CONTROL         "Texture Amount Edit 8",IDC_EDIT_AMOUNT_8,"CustEdit",WS_TABSTOP,177,114,25,10
+    CONTROL         "Texture Amount Spinner 8",IDC_SPIN_AMOUNT_8,
+                    "SpinnerControl",0x0,203,114,7,10
     LTEXT           "9:",IDC_LABEL_COAT_9,9,127,8,8
     CONTROL         "Layer Material 9",IDC_MTLBTN_LAYER_9,"CustButton",WS_TABSTOP,18,126,79,10
-    CONTROL         "Mask Texture 9",IDC_TEXBTN_MASK_9,"CustButton",WS_TABSTOP,100,126,76,10
-    CONTROL         "Texture Amount Edit 9",IDC_EDIT_AMOUNT_9,"CustEdit",WS_TABSTOP,179,126,25,10
-    CONTROL         "Texture Amount Spinner 9",IDC_SPIN_AMOUNT_9,"SpinnerControl",0x0,205,126,7,10
+    CONTROL         "Mask Texture 9",IDC_TEXBTN_MASK_9,"CustButton",WS_TABSTOP,99,126,76,10
+    CONTROL         "Texture Amount Edit 9",IDC_EDIT_AMOUNT_9,"CustEdit",WS_TABSTOP,177,126,25,10
+    CONTROL         "Texture Amount Spinner 9",IDC_SPIN_AMOUNT_9,
+                    "SpinnerControl",0x0,203,126,7,10
 END
 
 
@@ -126,9 +126,8 @@ BEGIN
     IDD_FORMVIEW_PARAMS, DIALOG
     BEGIN
         VERTGUIDE, 7
-        VERTGUIDE, 212
+        VERTGUIDE, 210
         TOPMARGIN, 6
-        BOTTOMMARGIN, 136
         HORZGUIDE, 39
     END
 END

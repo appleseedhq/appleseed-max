@@ -25,7 +25,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ENVMAP_PANEL DIALOGEX 0, 0, 217, 175
+IDD_ENVMAP_PANEL DIALOGEX 0, 0, 217, 171
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
@@ -40,12 +40,12 @@ BEGIN
     CONTROL         "Size Multiplier Edit",IDC_EDIT_SIZE_MULTIPLIER,"CustEdit",WS_TABSTOP,82,36,30,10
     CONTROL         "Size Multiplier Spinner",IDC_SPIN_SIZE_MULTIPLIER,
                     "SpinnerControl",0x0,113,36,7,10
-    CONTROL         "Pick Directional Light",IDC_PICK_SUN_NODE,"CustButton",WS_TABSTOP,124,12,71,14
+    CONTROL         "Pick Directional Light",IDC_PICK_SUN_NODE,"CustButton",WS_TABSTOP,124,12,71,10
     GROUPBOX        "Sky",IDC_STATIC,7,55,203,76
     LTEXT           "Turbidity:",IDC_STATIC,13,66,67,8
     CONTROL         "Turbidity Edit",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,82,64,30,10
     CONTROL         "Turbidity Spinner",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,113,64,7,10
-    CONTROL         "None",IDC_PICK_TURB_TEXTURE,"CustButton",WS_TABSTOP,124,64,71,14
+    CONTROL         "None",IDC_PICK_TURB_TEXTURE,"CustButton",WS_TABSTOP,124,64,71,10
     CONTROL         "Turbidity Map",IDC_TURB_TEX_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,198,65,8,10
     LTEXT           "Turbidity Multiplier:",IDC_STATIC,13,78,67,8,SS_CENTERIMAGE
     CONTROL         "Turbidity Multiplier Edit",IDC_EDIT_TURB_MULTIPLIER,
@@ -94,7 +94,6 @@ BEGIN
         VERTGUIDE, 124
         VERTGUIDE, 195
         TOPMARGIN, 7
-        BOTTOMMARGIN, 168
         HORZGUIDE, 12
     END
 END
@@ -146,26 +145,26 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_SUN_NODE                "Sun Node"
-    IDS_ENVMAP_PARAMS           "appleseed Sky Parameters"
-    IDS_THETA                   "Sun Theta Angle"
-    IDS_PICK_SUN_PROMPT         "Pick Directional Light"
-    IDS_PHI                     "Sun Phi Angle"
-    IDS_TURBIDITY               "Turbidity"
-    IDS_TURB_MULTIPLIER         "Turbidity Multiplier"
-    IDS_TURB_MAP                "Turbidity Map"
-    IDS_TURB_MAP_ON             "Turbidity Map On"
-    IDS_LUMINANCE_MULTIPLIER    "Luminance Multiplier"
-    IDS_LUMINANCE_GAMMA         "Luminance Gamma"
+    IDS_SUN_NODE            "Sun Node"
+    IDS_ENVMAP_PARAMS       "appleseed Sky Parameters"
+    IDS_THETA               "Sun Theta Angle"
+    IDS_PICK_SUN_PROMPT     "Pick Directional Light"
+    IDS_PHI                 "Sun Phi Angle"
+    IDS_TURBIDITY           "Turbidity"
+    IDS_TURB_MULTIPLIER     "Turbidity Multiplier"
+    IDS_TURB_MAP            "Turbidity Map"
+    IDS_TURB_MAP_ON         "Turbidity Map On"
+    IDS_LUMINANCE_MULTIPLIER "Luminance Multiplier"
+    IDS_LUMINANCE_GAMMA     "Luminance Gamma"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_SAT_MULITPLIER          "Saturation Multiplier"
-    IDS_HORIZON_SHIFT           "Horizon Shift"
-    IDS_GROUND_ALBEDO           "Ground Albedo"
-    IDS_SUN_NODE_ON             "Sun Node On"
-    IDS_SIZE_MULTIPLIER         "Sun Size Multiplier"
+    IDS_SAT_MULITPLIER      "Saturation Multiplier"
+    IDS_HORIZON_SHIFT       "Horizon Shift"
+    IDS_GROUND_ALBEDO       "Ground Albedo"
+    IDS_SUN_NODE_ON         "Sun Node On"
+    IDS_SIZE_MULTIPLIER     "Sun Size Multiplier"
 END
 
 #endif    // English (United States) resources

@@ -17,6 +17,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -49,43 +50,49 @@ END
 // Dialog
 //
 
-IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 135
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 104
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Surface Color:",IDC_LABEL_SURFACE_COLOR,7,6,48,8
-    CONTROL         "Surface Color Swatch",IDC_SWATCH_SURFACE_COLOR,"ColorSwatch",WS_TABSTOP,69,5,30,10
-    CONTROL         "Surface Color Map",IDC_TEXMAP_SURFACE_COLOR,"CustButton",WS_TABSTOP,101,5,102,10
+    CONTROL         "Surface Color Swatch",IDC_SWATCH_SURFACE_COLOR,
+                    "ColorSwatch",WS_TABSTOP,69,6,30,10
+    CONTROL         "Surface Color Map",IDC_TEXMAP_SURFACE_COLOR,"CustButton",WS_TABSTOP,101,6,109,10
 
-    LTEXT           "Reflection Tint:",IDC_LABEL_REFLECTION_TINT,7,22,48,8
-    CONTROL         "Reflection Tint Swatch",IDC_SWATCH_REFLECTION_TINT,"ColorSwatch",WS_TABSTOP,69,21,30,10
-    CONTROL         "Reflection Tint Map",IDC_TEXMAP_REFLECTION_TINT,"CustButton",WS_TABSTOP,101,21,102,10
+    LTEXT           "Reflection Tint:",IDC_LABEL_REFLECTION_TINT,7,18,48,8
+    CONTROL         "Reflection Tint Swatch",IDC_SWATCH_REFLECTION_TINT,
+                    "ColorSwatch",WS_TABSTOP,69,18,30,10
+    CONTROL         "Reflection Tint Map",IDC_TEXMAP_REFLECTION_TINT,
+                    "CustButton",WS_TABSTOP,101,18,109,10
 
-    LTEXT           "Refraction Tint:",IDC_LABEL_REFRACTION_TINT,7,38,48,8
-    CONTROL         "Refraction Tint Swatch",IDC_SWATCH_REFRACTION_TINT,"ColorSwatch",WS_TABSTOP,69,37,30,10
-    CONTROL         "Refraction Tint Map",IDC_TEXMAP_REFRACTION_TINT,"CustButton",WS_TABSTOP,101,37,102,10
+    LTEXT           "Refraction Tint:",IDC_LABEL_REFRACTION_TINT,7,30,48,8
+    CONTROL         "Refraction Tint Swatch",IDC_SWATCH_REFRACTION_TINT,
+                    "ColorSwatch",WS_TABSTOP,69,30,30,10
+    CONTROL         "Refraction Tint Map",IDC_TEXMAP_REFRACTION_TINT,
+                    "CustButton",WS_TABSTOP,101,30,109,10
 
-    LTEXT           "IOR:",IDC_LABEL_IOR,7,54,48,8
-    CONTROL         "IOR Edit",IDC_EDIT_IOR,"CustEdit",WS_TABSTOP,69,53,30,10
-    CONTROL         "IOR Slider",IDC_SLIDER_IOR,"SliderControl",WS_TABSTOP,101,53,90,13
+    LTEXT           "IOR:",IDC_LABEL_IOR,7,42,48,8
+    CONTROL         "IOR Edit",IDC_EDIT_IOR,"CustEdit",WS_TABSTOP,69,42,30,10
+    CONTROL         "IOR Slider",IDC_SLIDER_IOR,"SliderControl",WS_TABSTOP,101,42,97,13
 
-    LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,70,55,8
-    CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,69,69,30,10
-    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,101,69,90,13
-    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,194,69,9,10
+    LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,54,55,8
+    CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,69,54,30,10
+    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,101,54,97,13
+    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,200,54,10,10
 
-    LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,86,48,8
-    CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,69,85,30,10
-    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,101,85,90,13
-    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,194,85,9,10
+    LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,66,48,8
+    CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,69,66,30,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,101,66,97,13
+    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,200,66,10,10
 
-    LTEXT           "Volume Color:",IDC_LABEL_VOLUME_COLOR,7,102,48,8
-    CONTROL         "Volume Color Swatch",IDC_SWATCH_VOLUME_COLOR,"ColorSwatch",WS_TABSTOP,69,101,30,10
-    CONTROL         "Volume Color Map",IDC_TEXMAP_VOLUME_COLOR,"CustButton",WS_TABSTOP,101,101,102,10
+    LTEXT           "Volume Color:",IDC_LABEL_VOLUME_COLOR,7,78,48,8
+    CONTROL         "Volume Color Swatch",IDC_SWATCH_VOLUME_COLOR,
+                    "ColorSwatch",WS_TABSTOP,69,78,30,10
+    CONTROL         "Volume Color Map",IDC_TEXMAP_VOLUME_COLOR,"CustButton",WS_TABSTOP,101,78,109,10
 
-    LTEXT           "Scale:",IDC_LABEL_SCALE,7,118,48,8
-    CONTROL         "Scale Edit",IDC_EDIT_SCALE,"CustEdit",WS_TABSTOP,69,117,30,10
-    CONTROL         "Scale Spinner",IDC_SPINNER_SCALE,"SpinnerControl",WS_TABSTOP,101,117,6,10
+    LTEXT           "Scale:",IDC_LABEL_SCALE,7,90,48,8
+    CONTROL         "Scale Edit",IDC_EDIT_SCALE,"CustEdit",WS_TABSTOP,69,90,30,10
+    CONTROL         "Scale Spinner",IDC_SPINNER_SCALE,"SpinnerControl",WS_TABSTOP,101,90,6,10
 END
 
 
@@ -99,7 +106,8 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_FORMVIEW_PARAMS, DIALOG
     BEGIN
-        BOTTOMMARGIN, 133
+        VERTGUIDE, 198
+        VERTGUIDE, 210
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -124,10 +132,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_FORMVIEW_PARAMS_TITLE "Glass Parameters"
-END
-
-STRINGTABLE
-BEGIN
     IDS_SURFACE_COLOR       "Surface Color"
     IDS_TEXMAP_SURFACE_COLOR "Surface Color Texture Map"
 END
@@ -141,15 +145,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_REFRACTION_TINT     "Refraction Tint"
-END
-
-STRINGTABLE
-BEGIN
     IDS_TEXMAP_REFRACTION_TINT "Refraction Tint Texture Map"
-END
-
-STRINGTABLE
-BEGIN
     IDS_IOR                 "IOR"
 END
 
@@ -163,15 +159,7 @@ STRINGTABLE
 BEGIN
     IDS_ANISOTROPY          "Anisotropy"
     IDS_TEXMAP_ANISOTROPY   "Anisotropy Texture Map"
-END
-
-STRINGTABLE
-BEGIN
     IDS_VOLUME_COLOR        "Volume Color"
-END
-
-STRINGTABLE
-BEGIN
     IDS_TEXMAP_VOLUME_COLOR "Volume Color Texture Map"
 END
 
