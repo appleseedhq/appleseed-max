@@ -29,7 +29,53 @@
 #pragma once
 
 // appleseed.renderer headers.
+#include "renderer/api/project.h"
 #include "renderer/api/rendering.h"
+#include "renderer/api/scene.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/autoreleaseptr.h"
+
+// appleseed-max headers.
+#include "appleseedinteractive/appleseedinteractive.h"
+
+// Standard headers.
+#include <memory>
+#include <vector>
+
+// Forward declarations.
+namespace renderer { class Camera; }
+namespace renderer { class Project; }
+
+class ScheduledAction
+{
+  public:
+    virtual ~ScheduledAction() {}
+    virtual void update() = 0;
+};
+
+class CameraObjectUpdateAction 
+  : public ScheduledAction
+{
+  public:
+    CameraObjectUpdateAction(
+        renderer::Project&                              project,
+        foundation::auto_release_ptr<renderer::Camera>  camera)
+      : m_project(project)
+      , m_camera(camera)
+    {
+    }
+
+    virtual void update() override
+    {
+        m_project.get_scene()->cameras().clear();
+        m_project.get_scene()->cameras().insert(m_camera);
+    }
+
+  public:
+    foundation::auto_release_ptr<renderer::Camera>    m_camera;
+    renderer::Project&                                m_project;
+};
 
 class InteractiveRendererController
   : public renderer::DefaultRendererController
@@ -42,6 +88,9 @@ class InteractiveRendererController
 
     void set_status(const Status status);
 
+    void schedule_update(std::unique_ptr<ScheduledAction> updater);
+
   private:
-    Status m_status;
+    std::vector<std::unique_ptr<ScheduledAction>>   m_scheduled_actions;
+    Status                                          m_status;
 };

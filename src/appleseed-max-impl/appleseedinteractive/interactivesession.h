@@ -55,13 +55,15 @@ class InteractiveSession
     void reininitialize_render();
     void end_render();
 
-  private:
-    void render_thread();
+    InteractiveRendererController* get_render_controller();
 
+  private:
     std::unique_ptr<InteractiveRendererController>  m_render_ctrl;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
     IIRenderMgr*                                    m_iirender_mgr;
     renderer::Project*                              m_project;
     RendererSettings                                m_renderer_settings;
+
+    void render_thread();
 };
