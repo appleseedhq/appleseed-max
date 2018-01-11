@@ -990,9 +990,10 @@ namespace
         const bool has_lights = !entities.m_lights.empty();
         const bool has_emitting_mats = has_light_emitting_materials(material_map);
         const bool has_emitting_env = !scene.get_environment()->get_parameters().get_optional<std::string>("environment_edf").empty();
-        if (!has_lights &&
+        if (rend_params.inMtlEdit ||
+           (!has_lights &&
             !has_emitting_mats &&
-            !(has_emitting_env && settings.m_background_emits_light))
+            !(has_emitting_env && settings.m_background_emits_light)))
             add_default_lights(assembly, default_lights);
     }
 
