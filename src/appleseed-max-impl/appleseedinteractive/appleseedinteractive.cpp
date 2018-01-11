@@ -37,6 +37,10 @@
 #include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
 
+// Boost headers.
+#include "boost/thread/locks.hpp"
+#include "boost/thread/mutex.hpp"
+
 // 3ds Max headers.
 #include <assert1.h>
 #include <matrix3.h>
@@ -49,6 +53,9 @@ namespace asr = renderer;
 
 namespace
 {
+    boost::mutex                g_current_interactive_mutex;
+    AppleseedInteractiveRender* g_current_interactive;
+
     void get_view_params_from_viewport(
         ViewParams&             view_params,
         ViewExp&                view_exp,
@@ -190,25 +197,15 @@ namespace
           : m_renderer(renderer)
           , m_active_camera(camera)
         {
+            m_callback_key = GetISceneEventManager()->RegisterCallback(this, false, 100, true);
         }
 
-        virtual void ControllerOtherEvent(NodeKeyTab& nodes) override
+        ~SceneChangeCallback() override
         {
-            if (m_active_camera == nullptr || m_renderer == nullptr)
-                return;
-            
-            for (int i = 0, e = nodes.Count(); i < e; ++i)
-            {
-                if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
-                {
-                    m_renderer->update_camera_transform(m_active_camera);
-                    m_renderer->get_render_session()->reininitialize_render();
-                    break;
-                }
-            }
+            GetISceneEventManager()->UnRegisterCallback(m_callback_key);
         }
 
-        virtual void ModelOtherEvent(NodeKeyTab& nodes) override
+        void ModelOtherEvent(NodeKeyTab& nodes) override
         {
             if (m_active_camera == nullptr || m_renderer == nullptr)
                 return;
@@ -217,7 +214,7 @@ namespace
             {
                 if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
                 {
-                    m_renderer->update_camera_parameters(m_active_camera);
+                    m_renderer->update_camera_object(m_active_camera);
                     m_renderer->get_render_session()->reininitialize_render();
                     break;
                 }
@@ -225,8 +222,82 @@ namespace
         }
 
       private:
-        AppleseedInteractiveRender*     m_renderer;
-        INode*                          m_active_camera;
+        SceneEventNamespace::CallbackKey    m_callback_key;
+        AppleseedInteractiveRender*         m_renderer;
+        INode*                              m_active_camera;
+    };
+
+    class ViewportCallback 
+      : public RedrawViewsCallback
+    {
+      public:
+        ViewportCallback()
+          : m_current_view(nullptr)
+          , m_last_fov(0.0f)
+          , m_last_timer(0)
+          , m_max_hwnd(GetCOREInterface()->GetMAXHWnd())
+        {
+            m_last_mat.IdentityMatrix();
+
+            GetCOREInterface()->RegisterRedrawViewsCallback(this);
+        }
+
+        ~ViewportCallback() override
+        {
+            GetCOREInterface()->UnRegisterRedrawViewsCallback(this);
+        }
+
+        static VOID CALLBACK timer_proc(
+            _In_ HWND     hwnd,
+            _In_ UINT     msg,
+            _In_ UINT_PTR id,
+            _In_ DWORD    time
+        )
+        {
+            KillTimer(hwnd, id);
+            {
+                boost::mutex::scoped_lock lock(g_current_interactive_mutex);
+                if (g_current_interactive != nullptr)
+                {
+                    g_current_interactive->update_render_view();
+                    g_current_interactive->get_render_session()->reininitialize_render();
+                }
+            }
+        }
+
+        void proc(Interface* ip) override
+        {
+            ViewExp& view_exp = ip->GetActiveViewExp();
+            if (m_current_view == nullptr)
+                m_current_view = &view_exp;
+
+            if (view_exp.IsAlive())
+            {
+                ViewExp13* vp13 = reinterpret_cast<ViewExp13*>(view_exp.Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
+                    
+                Matrix3 curr_mat;
+                vp13->GetAffineTM(curr_mat);
+                float curr_fov = vp13->GetFOV();
+
+                if (m_last_mat != curr_mat ||
+                    m_last_fov != curr_fov)
+                {
+                    m_last_mat = curr_mat;
+                    m_last_fov = curr_fov;
+                    if (m_last_timer == 0)
+                        m_last_timer = SetTimer(m_max_hwnd, 0, 100, timer_proc);
+                    else
+                        SetTimer(m_max_hwnd, m_last_timer, 100, timer_proc);
+                }
+            }
+        }
+
+      private:
+        ViewExp*    m_current_view;
+        float       m_last_fov;
+        Matrix3     m_last_mat;
+        UINT_PTR    m_last_timer;
+        HWND        m_max_hwnd;
     };
 }
 
@@ -305,32 +376,40 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     return project;
 }
 
-void AppleseedInteractiveRender::update_camera_parameters(INode* camera)
+void AppleseedInteractiveRender::update_camera_object(INode* camera)
 {
     ViewParams view_params;
     get_view_params_from_view_node(view_params, camera, m_time);
 
-    asr::ParamArray& params = m_project->get_scene()->get_active_camera()->get_parameters();
-    params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
-
-#if MAX_RELEASE >= 18000
-    MaxSDK::IPhysicalCamera* phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(camera->EvalWorldState(m_time).obj);
-
-    if (phys_camera && phys_camera->GetDOFEnabled(m_time, FOREVER))
-    {
-        set_camera_dof_params(params, phys_camera, m_bitmap, m_time);
-    }
-#endif
+    auto new_camera = build_camera(camera, view_params, m_bitmap, RendererSettings::defaults(), m_time);
+    get_render_session()->get_render_controller()->schedule_update(
+        std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(m_project.ref(), new_camera)));
 }
 
-void AppleseedInteractiveRender::update_camera_transform(INode* camera)
+void AppleseedInteractiveRender::update_render_view()
 {
-    ViewParams view_params;
-    get_view_params_from_view_node(view_params, camera, m_time);
+    auto time = GetCOREInterface()->GetTime();
 
-    m_project->get_scene()->get_active_camera()->transform_sequence().set_transform(
-        static_cast<float>(m_time),
-        asf::Transformd::from_local_to_parent(to_matrix4d(Inverse(view_params.affineTM))));
+    ViewExp& view_exp = GetCOREInterface()->GetActiveViewExp();
+
+    if (!view_exp.IsAlive())
+        return;
+
+    ViewExp13* vp13 = reinterpret_cast<ViewExp13*>(view_exp.Execute(ViewExp::kEXECUTE_GET_VIEWEXP_13));
+    INode* view_camera = vp13->GetViewCamera();
+
+    ViewParams view_params;
+    if (view_camera != nullptr)
+        get_view_params_from_view_node(view_params, view_camera, m_time);
+    else
+        get_view_params_from_viewport(view_params, view_exp, m_time);
+
+    auto new_camera = build_camera(view_camera, view_params, m_bitmap, RendererSettings::defaults(), m_time);
+    get_render_session()->get_render_controller()->schedule_update(
+        std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(m_project.ref(), new_camera)));
+
+    if (view_camera != nullptr)
+        m_node_callback.reset(new SceneChangeCallback(this, view_camera));
 }
 
 InteractiveSession* AppleseedInteractiveRender::get_render_session()
@@ -371,8 +450,14 @@ void AppleseedInteractiveRender::BeginSession()
     if (m_progress_cb)
         m_progress_cb->SetTitle(L"Rendering...");
 
-    m_node_callback.reset(new SceneChangeCallback(this, active_cam));
-    m_callback_key = GetISceneEventManager()->RegisterCallback(m_node_callback.get(), false, 100, true);
+    {
+        boost::mutex::scoped_lock lock(g_current_interactive_mutex);
+        g_current_interactive = this;
+    }
+
+    if (active_cam != nullptr)
+        m_node_callback.reset(new SceneChangeCallback(this, active_cam));
+    m_view_callback.reset(new ViewportCallback());
 
     m_render_session->start_render();
 }
@@ -381,10 +466,14 @@ void AppleseedInteractiveRender::EndSession()
 {
     if (m_render_session != nullptr)
     {
-        GetISceneEventManager()->UnRegisterCallback(m_callback_key);
         m_node_callback.reset(nullptr);
-
+        m_view_callback.reset(nullptr);
         m_render_session->abort_render();
+        
+        {
+            boost::mutex::scoped_lock lock(g_current_interactive_mutex);
+            g_current_interactive = nullptr;
+        }
 
         // Drain UI message queue to process bitmap updates posted from tilecallback.
         MSG msg;

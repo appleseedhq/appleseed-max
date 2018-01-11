@@ -32,6 +32,9 @@
 // 3ds Max headers.
 #include <interactiverender.h>
 
+// Standard headers.
+#include <utility>
+
 namespace asr = renderer;
 
 InteractiveRendererController::InteractiveRendererController()
@@ -41,6 +44,10 @@ InteractiveRendererController::InteractiveRendererController()
 
 void InteractiveRendererController::on_rendering_begin()
 {
+    for (auto& updater : m_scheduled_actions)
+        updater->update();
+    
+    m_scheduled_actions.clear();
     m_status = ContinueRendering;
 }
 
@@ -52,4 +59,9 @@ asr::IRendererController::Status InteractiveRendererController::get_status() con
 void InteractiveRendererController::set_status(const Status status)
 {
     m_status = status;
+}
+
+void InteractiveRendererController::schedule_update(std::unique_ptr<ScheduledAction> updater)
+{
+    m_scheduled_actions.push_back(std::move(updater));
 }

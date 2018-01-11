@@ -97,14 +97,14 @@ class AppleseedInteractiveRender
     virtual void AbortRender() override;
 #endif
 
-    void update_camera_parameters(INode* camera);
-    void update_camera_transform(INode* camera);
+    void update_camera_object(INode* camera);
+    void update_render_view();
     InteractiveSession* get_render_session();
 
   private:
     std::unique_ptr<InteractiveSession>             m_render_session;
     std::unique_ptr<INodeEventCallback>             m_node_callback;
-    SceneEventNamespace::CallbackKey                m_callback_key;
+    std::unique_ptr<RedrawViewsCallback>            m_view_callback;
     foundation::auto_release_ptr<renderer::Project> m_project;
     Bitmap*                                         m_bitmap;
     std::vector<DefaultLight>                       m_default_lights;

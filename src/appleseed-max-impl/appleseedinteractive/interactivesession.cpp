@@ -93,3 +93,8 @@ void InteractiveSession::end_render()
     if (m_render_thread.joinable())
         m_render_thread.join();
 }
+
+InteractiveRendererController* InteractiveSession::get_render_controller()
+{
+    return m_render_ctrl.get();
+}
