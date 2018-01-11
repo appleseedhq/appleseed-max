@@ -50,32 +50,36 @@ END
 // Dialog
 //
 
-IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 104
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 217, 80
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Facing Tint:",IDC_LABEL_FACING_TINT,7,6,65,8
-    CONTROL         "Facing Tint Color Swatch",IDC_SWATCH_FACING_TINT, "ColorSwatch",WS_TABSTOP,73,5,30,10
-    CONTROL         "Facing Tint Color Map",IDC_TEXMAP_FACING_TINT, "CustButton",WS_TABSTOP,106,5,97,10
-    LTEXT           "Edge Tint:",IDC_LABEL_EDGE_TINT,7,23,48,8
-    LTEXT           "Reflectance:",IDC_LABEL_REFLECTANCE,7,38,48,8
-    CONTROL         "Reflectance Edit",IDC_EDIT_REFLECTANCE,"CustEdit",WS_TABSTOP,73,37,30,10
-    CONTROL         "Reflectance Slider",IDC_SLIDER_REFLECTANCE, "SliderControl",WS_TABSTOP,106,37,85,13
-    CONTROL         "Reflectance Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,194,37,9,10
-    LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,54,48,8
-    CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,73,53,30,10
-    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,53,85,13
-    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,194,53,9,10
-    LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,71,48,8
-    CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,73,70,30,10
-    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,106,70,85,13
-    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,194,70,9,10
-    LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,88,48,8
-    CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,87,30,10
-    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,87,85,13
-    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,194,87,9,10
-    CONTROL         "Edge Tint Color Swatch",IDC_SWATCH_EDGE_TINT, "ColorSwatch",WS_TABSTOP,73,21,30,10
-    CONTROL         "Edge Tint Color Map",IDC_TEXMAP_EDGE_TINT,"CustButton",WS_TABSTOP,106,21,97,10
+    CONTROL         "Facing Tint Color Swatch",IDC_SWATCH_FACING_TINT,
+                    "ColorSwatch",WS_TABSTOP,73,6,30,10
+    CONTROL         "Facing Tint Color Map",IDC_TEXMAP_FACING_TINT,
+                    "CustButton",WS_TABSTOP,106,6,104,10
+    LTEXT           "Edge Tint:",IDC_LABEL_EDGE_TINT,7,18,48,8
+    CONTROL         "Edge Tint Color Swatch",IDC_SWATCH_EDGE_TINT,
+                    "ColorSwatch",WS_TABSTOP,73,18,30,10
+    CONTROL         "Edge Tint Color Map",IDC_TEXMAP_EDGE_TINT,"CustButton",WS_TABSTOP,106,18,104,10
+    LTEXT           "Reflectance:",IDC_LABEL_REFLECTANCE,7,30,48,8
+    CONTROL         "Reflectance Edit",IDC_EDIT_REFLECTANCE,"CustEdit",WS_TABSTOP,73,30,30,10
+    CONTROL         "Reflectance Slider",IDC_SLIDER_REFLECTANCE,
+                    "SliderControl",WS_TABSTOP,106,30,92,13
+    CONTROL         "Reflectance Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,200,30,10,10
+    LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,42,48,8
+    CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,73,42,30,10
+    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,42,92,13
+    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,200,42,10,10
+    LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,54,48,8
+    CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,73,54,30,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,106,54,92,13
+    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,200,54,10,10
+    LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,66,48,8
+    CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,66,30,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,66,92,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,200,66,10,10
 END
 
 
@@ -89,6 +93,7 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_FORMVIEW_PARAMS, DIALOG
     BEGIN
+        RIGHTMARGIN, 210
         VERTGUIDE, 106
     END
 END
