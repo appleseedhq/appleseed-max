@@ -30,7 +30,6 @@
 #include "appleseedinteractive.h"
 
 // appleseed-max headers.
-#include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/appleseedrenderer.h"
@@ -277,7 +276,7 @@ namespace
                     
                 Matrix3 curr_mat;
                 vp13->GetAffineTM(curr_mat);
-                float curr_fov = vp13->GetFOV();
+                const float curr_fov = vp13->GetFOV();
 
                 if (m_last_mat != curr_mat ||
                     m_last_fov != curr_fov)
@@ -382,8 +381,7 @@ void AppleseedInteractiveRender::update_camera_object(INode* camera)
     get_view_params_from_view_node(view_params, camera, m_time);
 
     auto new_camera = build_camera(camera, view_params, m_bitmap, RendererSettings::defaults(), m_time);
-    get_render_session()->get_render_controller()->schedule_update(
-        std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(m_project.ref(), new_camera)));
+    get_render_session()->schedule_camera_update(new_camera);
 }
 
 void AppleseedInteractiveRender::update_render_view()
@@ -405,8 +403,7 @@ void AppleseedInteractiveRender::update_render_view()
         get_view_params_from_viewport(view_params, view_exp, m_time);
 
     auto new_camera = build_camera(view_camera, view_params, m_bitmap, RendererSettings::defaults(), m_time);
-    get_render_session()->get_render_controller()->schedule_update(
-        std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(m_project.ref(), new_camera)));
+    get_render_session()->schedule_camera_update(new_camera);
 
     if (view_camera != nullptr)
         m_node_callback.reset(new SceneChangeCallback(this, view_camera));

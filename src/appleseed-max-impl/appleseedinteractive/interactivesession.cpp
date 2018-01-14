@@ -30,7 +30,6 @@
 #include "interactivesession.h"
 
 // appleseed-max headers.
-#include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 
 // appleseed.renderer headers.
@@ -94,7 +93,9 @@ void InteractiveSession::end_render()
         m_render_thread.join();
 }
 
-InteractiveRendererController* InteractiveSession::get_render_controller()
+void InteractiveSession::schedule_camera_update(
+    asf::auto_release_ptr<asr::Camera>  camera)
 {
-    return m_render_ctrl.get();
+    m_render_ctrl->schedule_update(
+        std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(*m_project, camera)));
 }
