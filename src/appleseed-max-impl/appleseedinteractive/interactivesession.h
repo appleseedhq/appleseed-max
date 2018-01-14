@@ -29,17 +29,21 @@
 #pragma once
 
 // appleseed-max headers.
+#include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedrenderer/renderersettings.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/autoreleaseptr.h"
 
 // Standard headers.
 #include <memory>
 #include <thread>
 
 // Forward declarations.
+namespace renderer { class Camera; }
 namespace renderer { class Project; }
 class Bitmap;
 class IIRenderMgr;
-class InteractiveRendererController;
 
 class InteractiveSession
 {
@@ -55,7 +59,8 @@ class InteractiveSession
     void reininitialize_render();
     void end_render();
 
-    InteractiveRendererController* get_render_controller();
+    void schedule_camera_update(
+        foundation::auto_release_ptr<renderer::Camera>  camera);
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_render_ctrl;
