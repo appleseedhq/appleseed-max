@@ -70,6 +70,10 @@ class Texmap;
 
 Matrix3 transpose(const Matrix3& matrix);
 
+#if MAX_RELEASE == MAX_RELEASE_R17
+bool operator!=(const Matrix3& lhs, const Matrix3& rhs);
+#endif
+
 
 //
 // Type conversion functions.
@@ -225,6 +229,13 @@ inline Matrix3 transpose(const Matrix3& matrix)
         Point3(c2[0], c2[1], c2[2]),    // third row
         Point3(0.0f, 0.0f, 0.0f));      // fourth row
 }
+
+#if MAX_RELEASE == MAX_RELEASE_R17
+inline bool operator!=(const Matrix3& lhs, const Matrix3& rhs)
+{
+    return !(lhs == rhs);
+}
+#endif
 
 inline foundation::Color3f to_color3f(const Color& c)
 {
