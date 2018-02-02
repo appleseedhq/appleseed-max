@@ -53,7 +53,7 @@ class InteractiveTileCallback
         IIRenderMgr*                    iimanager,
         renderer::IRendererController*  render_controller);
 
-    virtual void on_progressive_frame_end(const renderer::Frame* frame) override;
+    virtual void on_progressive_frame_update(const renderer::Frame* frame) override;
 
   private:
     Bitmap*                             m_bitmap;
