@@ -193,7 +193,7 @@ void TileCallback::on_tile_end(
     asf::atomic_inc(m_rendered_tile_count);
 }
 
-void TileCallback::on_progressive_frame_end(
+void TileCallback::on_progressive_frame_update(
     const asr::Frame*       frame)
 {
     const asf::CanvasProperties& props = frame->image().properties();

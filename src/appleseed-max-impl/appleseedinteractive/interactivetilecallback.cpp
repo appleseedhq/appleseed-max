@@ -52,10 +52,10 @@ InteractiveTileCallback::InteractiveTileCallback(
 {
 }
 
-void InteractiveTileCallback::on_progressive_frame_end(
+void InteractiveTileCallback::on_progressive_frame_update(
     const asr::Frame*           frame)
 {
-    TileCallback::on_progressive_frame_end(frame);
+    TileCallback::on_progressive_frame_update(frame);
 
     // Wait until UI proc gets handled to ensure class object is valid.
     m_ui_promise = std::promise<void>();

@@ -63,7 +63,7 @@ class TileCallback
         const size_t                    tile_x,
         const size_t                    tile_y) override;
 
-    virtual void on_progressive_frame_end(
+    virtual void on_progressive_frame_update(
         const renderer::Frame*          frame) override;
 
   private:
