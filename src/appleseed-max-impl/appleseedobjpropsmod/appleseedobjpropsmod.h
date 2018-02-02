@@ -93,6 +93,7 @@ class AppleseedObjPropsMod
     virtual void ModifyObject(TimeValue t, ModContext& mc, ObjectState* os, INode* node) override;
 
     renderer::VisibilityFlags::Type get_visibility_flags(const TimeValue t) const;
+    std::string get_sss_set(const TimeValue t) const;
 
   private:
     IParamBlock2*   m_pblock;

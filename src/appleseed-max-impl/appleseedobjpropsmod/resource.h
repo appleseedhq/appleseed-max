@@ -31,6 +31,9 @@
 
 #define IDC_BUTTON_VISIBILITY_SSS           7090
 #define IDS_VISIBILITY_SSS                  7091
+#define IDC_SSS_SET                         7092
+#define IDS_SSS_SET                         7093
+#define IDC_SSS_SET_LABEL                   7094
 
 // Next default values for new objects
 // 
@@ -38,7 +41,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

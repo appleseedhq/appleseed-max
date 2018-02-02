@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedobjpropsmod/resource.h"
 #include "main.h"
+#include "utilities.h"
 
 // 3ds Max headers.
 #include <modstack.h>
@@ -72,7 +73,8 @@ namespace
         ParamIdVisibilityDiffuse        = 5,
         ParamIdVisibilityGlossy         = 6,
         ParamIdVisibilitySpecular       = 7,
-        ParamIdVisibilitySSS            = 8
+        ParamIdVisibilitySSS            = 8,
+        ParamIdSSSSet                   = 9
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -134,6 +136,9 @@ namespace
         ParamIdVisibilitySSS, L"visibility_sss", TYPE_BOOL, 0, IDS_VISIBILITY_SSS,
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SSS,
+        p_end,
+        ParamIdSSSSet, L"sss_set", TYPE_STRING, 0, IDS_SSS_SET,
+            p_ui, ParamMapIdVisibility, TYPE_EDITBOX, IDC_SSS_SET,
         p_end,
 
         // --- The end ---
@@ -335,6 +340,13 @@ asr::VisibilityFlags::Type AppleseedObjPropsMod::get_visibility_flags(const Time
     return flags;
 }
 
+std::string AppleseedObjPropsMod::get_sss_set(const TimeValue t) const
+{
+    const MCHAR* str_value;
+    m_pblock->GetValue(ParamIdSSSSet, t, str_value, FOREVER);
+    return wide_to_utf8(str_value);
+}
+
 
 //
 // AppleseedObjPropsModClassDesc class implementation.
@@ -353,7 +365,7 @@ void* AppleseedObjPropsModClassDesc::Create(BOOL loading)
 const MCHAR* AppleseedObjPropsModClassDesc::ClassName()
 {
     // Name that appears in the list of available modifiers.
-    return L"Object Properties";
+    return L"appleseed Object Properties";
 }
 
 SClass_ID AppleseedObjPropsModClassDesc::SuperClassID()

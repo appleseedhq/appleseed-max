@@ -446,6 +446,25 @@ namespace
         return asr::VisibilityFlags::AllRays;
     }
 
+    std::string get_sss_set(Object* object, const TimeValue time)
+    {
+        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+        {
+            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
+            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
+            {
+                Modifier* modifier = derived_object->GetModifier(i);
+                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
+                {
+                    const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+                    return obj_props_mod->get_sss_set(time);
+                }
+            }
+        }
+
+        return std::string();
+    }
+
     enum class RenderType
     {
         Default,
@@ -558,10 +577,14 @@ namespace
 
         // Parameters.
         asr::ParamArray params;
-        params.insert(
-            "visibility",
-            asr::VisibilityFlags::to_dictionary(
-                get_visibility_flags(instance_node->GetObjectRef(), time)));
+        params
+            .insert(
+                "visibility",
+                asr::VisibilityFlags::to_dictionary(
+                    get_visibility_flags(instance_node->GetObjectRef(), time)))
+            .insert(
+                "sss_set_id",
+                get_sss_set(instance_node->GetObjectRef(), time));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
