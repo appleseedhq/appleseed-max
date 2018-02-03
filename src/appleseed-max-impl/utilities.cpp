@@ -178,6 +178,10 @@ bool is_supported_procedural_texture(Texmap* map)
 
     switch (part_a)
     {
+      case 0x896EF2FC:                 // Substance (Built-in)   
+        return part_b == 0x44BD743F;
+      case 0xA661C7FF:                 // Map Output Selector  
+        return part_b == 0x68AB72CD;
       case 0x6769144B:                  // VRayHDRI
         return part_b == 0x02C1017D;
       case 0x58F82B74:                  // VRayColor
