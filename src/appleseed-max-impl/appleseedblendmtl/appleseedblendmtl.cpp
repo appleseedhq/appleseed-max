@@ -631,9 +631,17 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         ++layer_index;
     }
     
-    // Must come last.
     shader_group->add_shader("surface", "as_max_blend_material", name, shader_params);
     
+    std::string closure2surface_name = asf::format("{0}_closure2surface_name", name);
+    shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
+
+    shader_group.ref().add_connection(
+        name,
+        "ClosureOut",
+        closure2surface_name.c_str(),
+        "in_input");
+
     assembly.shader_groups().insert(shader_group);
 
     //
