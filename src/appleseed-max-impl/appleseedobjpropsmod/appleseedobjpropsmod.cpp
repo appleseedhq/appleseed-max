@@ -344,7 +344,7 @@ std::string AppleseedObjPropsMod::get_sss_set(const TimeValue t) const
 {
     const MCHAR* str_value;
     m_pblock->GetValue(ParamIdSSSSet, t, str_value, FOREVER);
-    return wide_to_utf8(str_value);
+    return str_value != nullptr ? wide_to_utf8(str_value) : std::string();
 }
 
 

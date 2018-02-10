@@ -681,7 +681,6 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
         }
     }
 
-    // Must come last.
     shader_group->add_shader("surface", "as_max_plastic_material", name, 
         asr::ParamArray()
         .insert("SpecularWeight", fmt_osl_expr(m_specular_weight / 100.0f))
@@ -689,6 +688,15 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
         .insert("Spread", fmt_osl_expr(m_highlight_falloff / 100.0f))
         .insert("Scattering", fmt_osl_expr(m_scattering / 100.0f))
         .insert("IOR", fmt_osl_expr(m_ior)));
+
+    std::string closure2surface_name = asf::format("{0}_closure2surface", name);
+    shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
+
+    shader_group.ref().add_connection(
+        name,
+        "ClosureOut",
+        closure2surface_name.c_str(),
+        "in_input");
 
     assembly.shader_groups().insert(shader_group);
 

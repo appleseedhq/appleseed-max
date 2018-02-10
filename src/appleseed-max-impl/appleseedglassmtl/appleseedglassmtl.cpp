@@ -687,8 +687,16 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
         }
     }
 
-    // Must come last.
     shader_group->add_shader("surface", "as_max_glass_material", name, shader_params);
+
+    std::string closure2surface_name = asf::format("{0}_closure2surface", name);
+    shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
+
+    shader_group.ref().add_connection(
+        name,
+        "ClosureOut",
+        closure2surface_name.c_str(),
+        "in_input");
 
     assembly.shader_groups().insert(shader_group);
 
