@@ -710,7 +710,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
 
     shader_group->add_shader("surface", "as_max_sss_material", name, shader_params);
 
-    std::string closure2surface_name = asf::format("{0}_closure2surface_name", name);
+    std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
 
     shader_group.ref().add_connection(

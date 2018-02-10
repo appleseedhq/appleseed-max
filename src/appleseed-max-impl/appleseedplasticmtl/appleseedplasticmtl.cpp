@@ -689,7 +689,7 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
         .insert("Scattering", fmt_osl_expr(m_scattering / 100.0f))
         .insert("IOR", fmt_osl_expr(m_ior)));
 
-    std::string closure2surface_name = asf::format("{0}_closure2surface_name", name);
+    std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
 
     shader_group.ref().add_connection(
