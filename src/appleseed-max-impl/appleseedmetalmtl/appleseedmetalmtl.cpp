@@ -646,7 +646,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
     connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
     connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy);
 
-    if (is_bitmap_texture(m_bump_texmap))
+    if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {

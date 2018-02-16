@@ -672,8 +672,8 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
     shader_params.insert("Ior", fmt_osl_expr(m_ior));
     shader_params.insert("VolumeTransmittanceDistance", fmt_osl_expr(m_scale));
     shader_params.insert("Distribution", fmt_osl_expr("ggx"));
-
-    if (is_bitmap_texture(m_bump_texmap))
+    
+    if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {

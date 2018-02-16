@@ -694,7 +694,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
 
     shader_params.insert("Ior", fmt_osl_expr(m_sss_ior));
 
-    if (is_bitmap_texture(m_bump_texmap))
+    if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {
