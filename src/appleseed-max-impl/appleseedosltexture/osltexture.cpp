@@ -477,7 +477,7 @@ void OSLTexture::create_osl_texture(
             {
             case MaxParam::Float:
                 {
-                    float param_value = GetParamBlock(0)->GetFloat(max_param.max_param_id, t, FOREVER);
+                    float param_value = GetParamBlock(0)->GetFloat(max_param.max_param_id, t);
                     params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
@@ -485,19 +485,19 @@ void OSLTexture::create_osl_texture(
               case MaxParam::IntCheckbox:
               case MaxParam::IntMapper:
                 {
-                    int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t, FOREVER);
+                    int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
                     params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
               case MaxParam::Color:
                 {
-                    auto param_value = GetParamBlock(0)->GetColor(max_param.max_param_id, t, FOREVER);
+                    auto param_value = GetParamBlock(0)->GetColor(max_param.max_param_id, t);
                     params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
                 }
                 break;
               case MaxParam::VectorParam:
                 {
-                    Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.max_param_id, t, FOREVER);
+                    Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.max_param_id, t);
                     params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
                 }
                 break;
@@ -507,7 +507,7 @@ void OSLTexture::create_osl_texture(
                     std::vector<std::string> fields;
                     asf::tokenize(param_info.options, "|", fields);
 
-                    int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t, FOREVER);
+                    int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
                     params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
                 }
                 break;
@@ -532,7 +532,7 @@ void OSLTexture::create_osl_texture(
     }
 
     shader_group.add_shader("shader", m_shader_info->m_shader_name.c_str(), layer_name.c_str(), params);
-    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.max_param_id, t, FOREVER);
+    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.max_param_id, t);
     m_shader_info->m_output_params[output_slot_index].paramName;
     
     //TODO: Choose right type of output based on expected input type.

@@ -66,14 +66,28 @@
     <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp">
       <Filter>appleseedblendmtl</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp">
-      <Filter>appleseedmetalmtl</Filter>
-    </ClCompile>
-    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp">
-      <Filter>appleseedplasticmtl</Filter>
-    </ClCompile>    
     <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp">
       <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp" />
+    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp" />
+    <ClCompile Include="appleseedosltexture\oslclassdesc.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslmaterial.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslparamdlg.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslshadermetadata.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslshaderregistry.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\osltexture.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,26 +206,33 @@
     <ClInclude Include="appleseedblendmtl\resource.h">
       <Filter>appleseedblendmtl</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h">
-      <Filter>appleseedmetalmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="appleseedmetalmtl\datachunks.h">
-      <Filter>appleseedmetalmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="appleseedmetalmtl\resource.h">
-      <Filter>appleseedmetalmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h">
-      <Filter>appleseedplasticmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="appleseedplasticmtl\datachunks.h">
-      <Filter>appleseedplasticmtl</Filter>
-    </ClInclude>
-    <ClInclude Include="appleseedplasticmtl\resource.h">
-      <Filter>appleseedplasticmtl</Filter>
-    </ClInclude>
     <ClInclude Include="appleseedrenderer\dialoglogtarget.h">
       <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h" />
+    <ClInclude Include="appleseedmetalmtl\datachunks.h" />
+    <ClInclude Include="appleseedmetalmtl\resource.h" />
+    <ClInclude Include="appleseedosltexture\templategenerator.h" />
+    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h" />
+    <ClInclude Include="appleseedplasticmtl\datachunks.h" />
+    <ClInclude Include="appleseedplasticmtl\resource.h" />
+    <ClInclude Include="appleseedosltexture\oslclassdesc.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslmaterial.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslparamdlg.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslshadermetadata.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslshaderregistry.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\osltexture.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -242,12 +263,8 @@
     <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc">
       <Filter>appleseedblendmtl</Filter>
     </ResourceCompile>
-    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc">
-      <Filter>appleseedmetalmtl</Filter>
-    </ResourceCompile>
-    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc">
-      <Filter>appleseedplasticmtl</Filter>
-    </ResourceCompile>
+    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc" />
+    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="bump">
@@ -279,6 +296,9 @@
     </Filter>
     <Filter Include="appleseedblendmtl">
       <UniqueIdentifier>{d115203b-d27f-49e3-9aee-6676110ffc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedoslplugin">
+      <UniqueIdentifier>{a83159d6-f9c3-48db-a640-3631607e2b3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

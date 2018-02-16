@@ -499,7 +499,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                             name,
                             max_param.osl_param_name.c_str(),
                             texmap,
-                            GetParamBlock(0)->GetFloat(max_param.max_param_id, t, FOREVER));
+                            GetParamBlock(0)->GetFloat(max_param.max_param_id, t));
                     }
                     break;
                   case MaxParam::Color:
@@ -509,7 +509,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                             name,
                             max_param.osl_param_name.c_str(),
                             texmap,
-                            GetParamBlock(0)->GetColor(max_param.max_param_id, t, FOREVER));
+                            GetParamBlock(0)->GetColor(max_param.max_param_id, t));
                     }
                     break;
                   case MaxParam::VectorParam:
@@ -541,7 +541,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
             {
             case MaxParam::Float:
             {
-                float param_value = GetParamBlock(0)->GetFloat(max_param.max_param_id, t, FOREVER);
+                float param_value = GetParamBlock(0)->GetFloat(max_param.max_param_id, t);
                 params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
             }
             break;
@@ -549,19 +549,19 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
             case MaxParam::IntCheckbox:
             case MaxParam::IntMapper:
             {
-                int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t, FOREVER);
+                int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
                 params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
             }
             break;
             case MaxParam::Color:
             {
-                auto param_value = GetParamBlock(0)->GetColor(max_param.max_param_id, t, FOREVER);
+                auto param_value = GetParamBlock(0)->GetColor(max_param.max_param_id, t);
                 params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
             }
             break;
             case MaxParam::VectorParam:
             {
-                Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.max_param_id, t, FOREVER);
+                Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.max_param_id, t);
                 params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
             }
             break;
@@ -571,7 +571,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                 std::vector<std::string> fields;
                 asf::tokenize(param_info.options, "|", fields);
 
-                int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t, FOREVER);
+                int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
                 params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
             }
             break;
@@ -618,7 +618,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     auto closure_2_surface_name = asf::format("{0}_closure_2_surface_name", name);
     shader_group.ref().add_shader("shader", "as_max_closure2Surface", closure_2_surface_name.c_str(), asr::ParamArray());
 
-    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.max_param_id, t, FOREVER);
+    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.max_param_id, t);
 
     shader_group.ref().add_connection(
         name,
