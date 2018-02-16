@@ -667,7 +667,7 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
     connect_color_texture(shader_group.ref(), name, "DiffuseColor", m_diffuse_texmap, m_diffuse);
     connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
 
-    if (is_bitmap_texture(m_bump_texmap))
+    if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {

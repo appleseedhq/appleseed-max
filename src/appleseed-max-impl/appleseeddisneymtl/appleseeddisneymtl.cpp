@@ -750,7 +750,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
     connect_float_texture(shader_group.ref(), name, "Clearcoat", m_clearcoat_texmap, m_clearcoat / 100.0f);
     connect_float_texture(shader_group.ref(), name, "ClearcoatGloss", m_clearcoat_gloss_texmap, m_clearcoat_gloss / 100.0f);
 
-    if (is_bitmap_texture(m_bump_texmap))
+    if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {
