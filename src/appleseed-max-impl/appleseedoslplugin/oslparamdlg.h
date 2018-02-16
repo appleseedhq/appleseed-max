@@ -35,7 +35,7 @@
 #include <Windows.h>    // include before 3ds Max headers
 
 // appleseed-max headers.
-#include "appleseedosltexture/oslclassdesc.h"
+#include "appleseedoslplugin/oslclassdesc.h"
 
 // 3ds Max headers.
 #include <imtl.h>

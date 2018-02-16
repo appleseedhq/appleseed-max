@@ -30,8 +30,8 @@
 #include "oslparamdlg.h"
 
 // appleseed-max headers.
-#include "appleseedosltexture/oslshadermetadata.h"
-#include "appleseedosltexture/templategenerator.h"
+#include "appleseedoslplugin/oslshadermetadata.h"
+#include "appleseedoslplugin/templategenerator.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
 #include "main.h"

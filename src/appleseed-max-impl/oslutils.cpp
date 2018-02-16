@@ -30,7 +30,7 @@
 #include "oslutils.h"
 
 // appleseed-max headers.
-#include "appleseedosltexture\osltexture.h"
+#include "appleseedoslplugin\osltexture.h"
 #include "iappleseedmtl.h"
 #include "utilities.h"
 

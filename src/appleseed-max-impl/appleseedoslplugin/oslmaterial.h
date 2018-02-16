@@ -33,7 +33,7 @@
 #include "foundation/utility/autoreleaseptr.h"
 
 // appleseed-max headers.
-#include "appleseedosltexture/oslshadermetadata.h"
+#include "appleseedoslplugin/oslshadermetadata.h"
 #include "iappleseedmtl.h"
 
 // 3ds Max headers.

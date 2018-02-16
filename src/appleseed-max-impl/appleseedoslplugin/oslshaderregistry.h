@@ -29,7 +29,7 @@
 #pragma once
 
 // appleseed-max headers.
-#include "appleseedosltexture/oslshadermetadata.h"
+#include "appleseedoslplugin/oslshadermetadata.h"
 
 // 3ds Max headers.
 #include <maxtypes.h>
