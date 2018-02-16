@@ -156,4 +156,10 @@ extern "C"
             reinterpret_cast<LibShutdownFunc>(GetProcAddress(g_plugin_lib, "LibShutdown"));
         return RealLibShutdown ? RealLibShutdown() : TRUE;
     }
+
+    __declspec(dllexport)
+    ULONG CanAutoDefer()
+    {
+        return FALSE;
+    }
 }
