@@ -113,7 +113,9 @@ del /Q "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\*.oso" 2&gt;nu
 del /Q "$(SolutionDir)..\sandbox\max2017\Current\shaders\*.oso" 2&gt;nul
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,7 +168,9 @@ del /Q "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\*.oso" 2&gt;nu
 del /Q "$(SolutionDir)..\sandbox\max2017\Current\shaders\*.oso" 2&gt;nul
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -219,7 +223,9 @@ del /Q "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\*.oso" 2&gt;nu
 del /Q "$(SolutionDir)..\sandbox\max2017\Current\shaders\*.oso" 2&gt;nul
 
 copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2017\Current\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -231,6 +237,12 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp" />
     <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp" />
     <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp" />
+    <ClCompile Include="appleseedosltexture\osltexture.cpp" />
+    <ClCompile Include="appleseedosltexture\oslclassdesc.cpp" />
+    <ClCompile Include="appleseedosltexture\oslmaterial.cpp" />
+    <ClCompile Include="appleseedosltexture\oslshadermetadata.cpp" />
+    <ClCompile Include="appleseedosltexture\oslshaderregistry.cpp" />
+    <ClCompile Include="appleseedosltexture\oslparamdlg.cpp" />
     <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp" />
     <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp" />
     <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp" />
@@ -270,6 +282,13 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir
     <ClInclude Include="appleseedmetalmtl\resource.h" />
     <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h" />
     <ClInclude Include="appleseedobjpropsmod\resource.h" />
+    <ClInclude Include="appleseedosltexture\osltexture.h" />
+    <ClInclude Include="appleseedosltexture\oslclassdesc.h" />
+    <ClInclude Include="appleseedosltexture\oslmaterial.h" />
+    <ClInclude Include="appleseedosltexture\oslshadermetadata.h" />
+    <ClInclude Include="appleseedosltexture\oslshaderregistry.h" />
+    <ClInclude Include="appleseedosltexture\oslparamdlg.h" />
+    <ClInclude Include="appleseedosltexture\templategenerator.h" />
     <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h" />
     <ClInclude Include="appleseedplasticmtl\datachunks.h" />
     <ClInclude Include="appleseedplasticmtl\resource.h" />

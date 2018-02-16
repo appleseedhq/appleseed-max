@@ -75,6 +75,24 @@
     <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp">
       <Filter>appleseedrenderer</Filter>
     </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslshaderregistry.cpp">
+      <Filter>appleseedosltexture</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslshadermetadata.cpp">
+      <Filter>appleseedosltexture</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslclassdesc.cpp">
+      <Filter>appleseedosltexture</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\osltexture.cpp">
+      <Filter>appleseedosltexture</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslmaterial.cpp">
+      <Filter>appleseedosltexture</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedosltexture\oslparamdlg.cpp">
+      <Filter>appleseedosltexture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -213,6 +231,27 @@
     <ClInclude Include="appleseedrenderer\dialoglogtarget.h">
       <Filter>appleseedrenderer</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslshaderregistry.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\templategenerator.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslshadermetadata.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslclassdesc.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\osltexture.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslmaterial.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedosltexture\oslparamdlg.h">
+      <Filter>appleseedosltexture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -286,8 +325,8 @@
     <Filter Include="appleseedmetalmtl">
       <UniqueIdentifier>{de6d5671-8f96-4a3c-af18-048b097a964c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="appleseedstandardmtl">
-      <UniqueIdentifier>{9f37fbe7-9b9e-4139-b4b0-3be7941f4475}</UniqueIdentifier>
+    <Filter Include="appleseedosltexture">
+      <UniqueIdentifier>{bcc045f6-90ff-4a2a-8998-855b413f2deb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
