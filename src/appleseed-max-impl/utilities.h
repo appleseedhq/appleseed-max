@@ -82,6 +82,7 @@ bool operator!=(const Matrix3& lhs, const Matrix3& rhs);
 // Convert a 3ds Max color to an appleseed one.
 foundation::Color3f to_color3f(const Color& c);
 foundation::Color3f to_color3f(const Point3& p);
+foundation::Vector3f to_vector3f(const Point3& p);
 
 // Convert a 3ds Max transformation matrix to an appleseed one.
 foundation::Matrix4d to_matrix4d(const Matrix3& input);
@@ -148,6 +149,8 @@ void update_map_buttons(IParamMap2* param_map);
 //
 
 bool is_bitmap_texture(Texmap* map);
+
+bool is_osl_texture(Texmap* map);
 
 bool is_supported_procedural_texture(Texmap* map);
 
@@ -245,6 +248,11 @@ inline foundation::Color3f to_color3f(const Color& c)
 inline foundation::Color3f to_color3f(const Point3& p)
 {
     return foundation::Color3f(p.x, p.y, p.z);
+}
+
+inline foundation::Vector3f to_vector3f(const Point3& p)
+{
+    return foundation::Vector3f(p.x, p.y, p.z);
 }
 
 inline foundation::Matrix4d to_matrix4d(const Matrix3& input)

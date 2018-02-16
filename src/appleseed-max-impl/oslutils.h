@@ -36,10 +36,13 @@
 
 // Forward declarations.
 namespace renderer { class Assembly; }
+namespace renderer { class ParamArray; }
 namespace renderer { class ShaderGroup; }
 class Color;
 class Mtl;
 class Texmap;
+
+renderer::ParamArray get_uv_params(Texmap* texmap);
 
 std::string fmt_osl_expr(const std::string& s);
 
@@ -48,6 +51,8 @@ std::string fmt_osl_expr(const int value);
 std::string fmt_osl_expr(const float value);
 
 std::string fmt_osl_expr(const foundation::Color3f& linear_rgb);
+
+std::string fmt_osl_expr(const foundation::Vector3f& vector);
 
 std::string fmt_osl_expr(Texmap* texmap);
 
