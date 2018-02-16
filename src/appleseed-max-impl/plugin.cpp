@@ -35,6 +35,7 @@
 #include "appleseedmetalmtl/appleseedmetalmtl.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedplasticmtl/appleseedplasticmtl.h"
+#include "appleseedosltexture/oslshaderregistry.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
 #include "logtarget.h"
@@ -69,6 +70,7 @@ namespace asr = renderer;
 namespace
 {
     LogTarget g_log_target;
+    OSLShaderRegistry g_shader_registry;
 }
 
 extern "C"
@@ -82,7 +84,7 @@ extern "C"
     __declspec(dllexport)
     int LibNumberClasses()
     {
-        return 10;
+        return 10 + g_shader_registry.get_size();
     }
 
     __declspec(dllexport)
@@ -104,7 +106,7 @@ extern "C"
           // Make sure to update LibNumberClasses() if you add classes here.
 
           default:
-            return nullptr;
+            return g_shader_registry.get_class_descriptor(i - 10);
         }
     }
 
@@ -120,6 +122,8 @@ extern "C"
         start_memory_tracking();
 
         asr::global_logger().add_target(&g_log_target);
+
+        g_shader_registry.create_class_descriptors();
 
         std::stringstream sstr;
         sstr << "appleseed-max ";
