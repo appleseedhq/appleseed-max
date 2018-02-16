@@ -30,8 +30,8 @@
 #include "oslclassdesc.h"
 
 // appleseed-max headers.
-#include "appleseedosltexture/oslmaterial.h"
-#include "appleseedosltexture/osltexture.h"
+#include "appleseedoslplugin/oslmaterial.h"
+#include "appleseedoslplugin/osltexture.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "main.h"
 

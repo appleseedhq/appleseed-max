@@ -75,23 +75,23 @@
     <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp">
       <Filter>appleseedrenderer</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedosltexture\oslshaderregistry.cpp">
-      <Filter>appleseedosltexture</Filter>
+    <ClCompile Include="appleseedoslplugin\oslshaderregistry.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedosltexture\oslshadermetadata.cpp">
-      <Filter>appleseedosltexture</Filter>
+    <ClCompile Include="appleseedoslplugin\oslshadermetadata.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedosltexture\oslclassdesc.cpp">
-      <Filter>appleseedosltexture</Filter>
+    <ClCompile Include="appleseedoslplugin\oslclassdesc.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedosltexture\osltexture.cpp">
-      <Filter>appleseedosltexture</Filter>
+    <ClCompile Include="appleseedoslplugin\osltexture.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedosltexture\oslmaterial.cpp">
-      <Filter>appleseedosltexture</Filter>
+    <ClCompile Include="appleseedoslplugin\oslmaterial.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
-    <ClCompile Include="appleseedosltexture\oslparamdlg.cpp">
-      <Filter>appleseedosltexture</Filter>
+    <ClCompile Include="appleseedoslplugin\oslparamdlg.cpp">
+      <Filter>appleseedoslplugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,26 +231,26 @@
     <ClInclude Include="appleseedrenderer\dialoglogtarget.h">
       <Filter>appleseedrenderer</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\oslshaderregistry.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\oslshaderregistry.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\templategenerator.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\templategenerator.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\oslshadermetadata.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\oslshadermetadata.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\oslclassdesc.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\oslclassdesc.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\osltexture.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\osltexture.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\oslmaterial.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\oslmaterial.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
-    <ClInclude Include="appleseedosltexture\oslparamdlg.h">
-      <Filter>appleseedosltexture</Filter>
+    <ClInclude Include="appleseedoslplugin\oslparamdlg.h">
+      <Filter>appleseedoslplugin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -325,7 +325,7 @@
     <Filter Include="appleseedmetalmtl">
       <UniqueIdentifier>{de6d5671-8f96-4a3c-af18-048b097a964c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="appleseedosltexture">
+    <Filter Include="appleseedoslplugin">
       <UniqueIdentifier>{bcc045f6-90ff-4a2a-8998-855b413f2deb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

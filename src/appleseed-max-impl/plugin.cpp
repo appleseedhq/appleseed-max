@@ -35,7 +35,7 @@
 #include "appleseedmetalmtl/appleseedmetalmtl.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedplasticmtl/appleseedplasticmtl.h"
-#include "appleseedosltexture/oslshaderregistry.h"
+#include "appleseedoslplugin/oslshaderregistry.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
 #include "logtarget.h"

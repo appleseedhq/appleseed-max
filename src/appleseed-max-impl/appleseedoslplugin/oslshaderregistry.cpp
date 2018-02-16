@@ -30,10 +30,10 @@
 #include "oslshaderregistry.h"
 
 // appleseed-max headers.
-#include "appleseedosltexture/osltexture.h"
-#include "appleseedosltexture/oslmaterial.h"
-#include "appleseedosltexture/oslshadermetadata.h"
-#include "appleseedosltexture/oslclassdesc.h"
+#include "appleseedoslplugin/osltexture.h"
+#include "appleseedoslplugin/oslmaterial.h"
+#include "appleseedoslplugin/oslshadermetadata.h"
+#include "appleseedoslplugin/oslclassdesc.h"
 #include "bump/resource.h"
 #include "utilities.h"
 
