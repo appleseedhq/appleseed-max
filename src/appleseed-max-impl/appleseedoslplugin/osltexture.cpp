@@ -30,9 +30,9 @@
 #include "osltexture.h"
 
 // appleseed-max headers.
-#include "appleseedoslplugin/oslparamdlg.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedoslplugin/oslclassdesc.h"
+#include "appleseedoslplugin/oslparamdlg.h"
 #include "main.h"
 #include "oslutils.h"
 #include "utilities.h"
@@ -59,7 +59,7 @@ const USHORT ChunkMtlBase = 0x1000;
 
 namespace
 {
-    const wchar_t* GenericOSLTextureFriendlyClassName = L"appleseed osl texture";
+    const wchar_t* GenericOSLTextureFriendlyClassName = L"appleseed OSL texture";
 }
 
 
@@ -74,20 +74,20 @@ Class_ID OSLTexture::get_class_id()
     return m_classid;
 }
 
-OSLTexture::OSLTexture(Class_ID class_id, ClassDesc2* class_desc)
-    : m_pblock(nullptr)
-    , m_uv_gen(nullptr)
-    , m_has_xyz_coords(false)
-    , m_has_uv_coords(false)
-    , m_classid(class_id)
-    , m_class_desc(class_desc)
-    , m_shader_info(nullptr)
+OSLTexture::OSLTexture(Class_ID class_id, OSLPluginClassDesc* class_desc)
+  : m_pblock(nullptr)
+  , m_uv_gen(nullptr)
+  , m_has_xyz_coords(false)
+  , m_has_uv_coords(false)
+  , m_classid(class_id)
+  , m_class_desc(class_desc)
+  , m_shader_info(nullptr)
 {
-    m_shader_info = static_cast<OSLPluginClassDesc*>(m_class_desc)->m_shader_info;
+    m_shader_info = m_class_desc->m_shader_info;
     m_texture_id_map = m_shader_info->m_texture_id_map;
 
-    m_has_uv_coords = m_shader_info->findParam("in_uvCoord") != nullptr;
-    m_has_xyz_coords = m_shader_info->findParam("in_placementMatrix") != nullptr;
+    m_has_uv_coords = m_shader_info->find_param("in_uvCoord") != nullptr;
+    m_has_xyz_coords = m_shader_info->find_param("in_placementMatrix") != nullptr;
     m_class_desc->MakeAutoParamBlocks(this);
     Reset();
 }
@@ -99,7 +99,7 @@ void OSLTexture::DeleteThis()
 
 void OSLTexture::GetClassName(TSTR& s)
 {
-    s = static_cast<OSLPluginClassDesc*>(m_class_desc)->ClassName();
+    s = m_class_desc->ClassName();
 }
 
 SClass_ID OSLTexture::SuperClassID()
@@ -376,14 +376,14 @@ IOResult OSLTexture::Load(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-        case ChunkFileFormatVersion:
-        {
-            USHORT version;
-            result = read<USHORT>(iload, &version);
-        }
-        break;
+          case ChunkFileFormatVersion:
+            {
+                USHORT version;
+                result = read<USHORT>(iload, &version);
+            }
+            break;
 
-        case ChunkMtlBase:
+          case ChunkMtlBase:
             result = MtlBase::Load(iload);
             break;
         }
@@ -424,26 +424,26 @@ void OSLTexture::create_osl_texture(
     const char* material_input_name)
 {
     const auto t = GetCOREInterface()->GetTime();
-    auto params = asr::ParamArray();
+    asr::ParamArray params;
     auto layer_name = asf::format("{0}_{1}", material_node_name, material_input_name);
 
-    for (auto& param_info : m_shader_info->m_params)
+    for (const auto& param_info : m_shader_info->m_params)
     {
         const MaxParam& max_param = param_info.m_max_param;
         Texmap* texmap = nullptr;
-        if (max_param.connectable)
+        if (max_param.m_connectable)
         {
-            GetParamBlock(0)->GetValue(max_param.max_param_id + 1, t, texmap, FOREVER);
+            GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, t, texmap, FOREVER);
             if (texmap != nullptr)
             {
-                switch (max_param.param_type)
+                switch (max_param.m_param_type)
                 {
                   case MaxParam::Float:
                     {
                         connect_float_texture(
                             shader_group,
                             layer_name.c_str(),
-                            max_param.osl_param_name.c_str(),
+                            max_param.m_osl_param_name.c_str(),
                             texmap,
                             1.0f);
                     }
@@ -453,52 +453,43 @@ void OSLTexture::create_osl_texture(
                         connect_color_texture(
                             shader_group,
                             layer_name.c_str(),
-                            max_param.osl_param_name.c_str(),
+                            max_param.m_osl_param_name.c_str(),
                             texmap,
                             Color(1.0f, 1.0f, 1.0f));
-                    }
-                    break;
-                  case MaxParam::VectorParam:
-                    {
-                        //connect_vector_output(
-                        //    shader_group,
-                        //      layer_name.c_str(),
-                        //      max_param.osl_param_name.c_str(),
-                        //      texmap);
                     }
                     break;
                 }
             }
         }
 
-        if (!max_param.connectable || texmap == nullptr)
+        if (!max_param.m_connectable || texmap == nullptr)
         {
-            switch (max_param.param_type)
+            switch (max_param.m_param_type)
             {
-            case MaxParam::Float:
+              case MaxParam::Float:
                 {
-                    float param_value = GetParamBlock(0)->GetFloat(max_param.max_param_id, t);
-                    params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
+                    const float param_value = GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
               case MaxParam::IntNumber:
               case MaxParam::IntCheckbox:
               case MaxParam::IntMapper:
                 {
-                    int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
-                    params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
+                    const int param_value = GetParamBlock(0)->GetInt(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
               case MaxParam::Color:
                 {
-                    auto param_value = GetParamBlock(0)->GetColor(max_param.max_param_id, t);
-                    params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
+                    const auto param_value = GetParamBlock(0)->GetColor(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
                 }
                 break;
               case MaxParam::VectorParam:
                 {
-                    Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.max_param_id, t);
-                    params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
+                    const Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
                 }
                 break;
 
@@ -507,8 +498,8 @@ void OSLTexture::create_osl_texture(
                     std::vector<std::string> fields;
                     asf::tokenize(param_info.options, "|", fields);
 
-                    int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
-                    params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
+                    const int param_value = GetParamBlock(0)->GetInt(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
                 }
                 break;
               case MaxParam::String:
@@ -532,7 +523,7 @@ void OSLTexture::create_osl_texture(
     }
 
     shader_group.add_shader("shader", m_shader_info->m_shader_name.c_str(), layer_name.c_str(), params);
-    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.max_param_id, t);
+    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id, t);
     m_shader_info->m_output_params[output_slot_index].paramName;
     
     //TODO: Choose right type of output based on expected input type.

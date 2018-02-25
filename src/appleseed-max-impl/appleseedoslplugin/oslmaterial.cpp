@@ -30,8 +30,8 @@
 #include "oslmaterial.h"
 
 // appleseed-max headers.
-#include "appleseedoslplugin/oslshadermetadata.h"
 #include "appleseedoslplugin/oslparamdlg.h"
+#include "appleseedoslplugin/oslshadermetadata.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
@@ -62,12 +62,12 @@ const USHORT ChunkMtlBase = 0x1000;
 
 namespace
 {
-    const wchar_t* GenericOSLTextureFriendlyClassName = L"appleseed osl texture";
+    const wchar_t* GenericOSLTextureFriendlyClassName = L"appleseed OSL texture";
 }
 
 
 //
-// OSLMtlBase class implementation.
+// OSLMaterial class implementation.
 //
 
 Class_ID OSLMaterial::get_class_id()
@@ -75,20 +75,20 @@ Class_ID OSLMaterial::get_class_id()
     return m_classid;
 }
 
-OSLMaterial::OSLMaterial(Class_ID class_id, ClassDesc2* class_desc)
-    : m_pblock(nullptr)
-    , m_classid(class_id)
-    , m_class_desc(class_desc)
-    , m_shader_info(nullptr)
+OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
+  : m_pblock(nullptr)
+  , m_classid(class_id)
+  , m_class_desc(class_desc)
+  , m_shader_info(nullptr)
 {
-    m_shader_info = static_cast<OSLPluginClassDesc*>(m_class_desc)->m_shader_info;
+    m_shader_info = class_desc->m_shader_info;
     m_texture_id_map = m_shader_info->m_texture_id_map;
     m_submaterial_map = m_shader_info->m_material_id_map;
     
-    auto tn_vec = m_shader_info->findParam("Tn");
+    auto tn_vec = m_shader_info->find_param("Tn");
     m_has_bump_params = tn_vec != nullptr;
 
-    m_class_desc->MakeAutoParamBlocks(this);
+    class_desc->MakeAutoParamBlocks(this);
     Reset();
 }
 
@@ -96,8 +96,8 @@ BaseInterface* OSLMaterial::GetInterface(Interface_ID id)
 {
     return
         id == IAppleseedMtl::interface_id()
-        ? static_cast<IAppleseedMtl*>(this)
-        : Mtl::GetInterface(id);
+            ? static_cast<IAppleseedMtl*>(this)
+            : Mtl::GetInterface(id);
 }
 
 void OSLMaterial::DeleteThis()
@@ -107,7 +107,7 @@ void OSLMaterial::DeleteThis()
 
 void OSLMaterial::GetClassName(TSTR& s)
 {
-    s = static_cast<OSLPluginClassDesc*>(m_class_desc)->ClassName();
+    s = m_class_desc->ClassName();
 }
 
 SClass_ID OSLMaterial::SuperClassID()
@@ -127,24 +127,12 @@ int OSLMaterial::NumSubs()
 
 Animatable* OSLMaterial::SubAnim(int i)
 {
-    switch (i)
-    {
-      case 0:
-        return m_pblock;
-      default:
-        return nullptr;
-    }
+    return i == 0 ? m_pblock : nullptr;
 }
 
 TSTR OSLMaterial::SubAnimName(int i)
 {
-    switch (i)
-    {
-      case 0:
-        return L"Parameters";
-      default:
-        return nullptr;
-    }
+    return i == 0 ? L"Parameters" : nullptr;
 }
 
 int OSLMaterial::SubNumToRefNum(int subNum)
@@ -174,25 +162,13 @@ int OSLMaterial::NumRefs()
 
 RefTargetHandle OSLMaterial::GetReference(int i)
 {
-    switch (i)
-    {
-      case 0:
-        return m_pblock;
-      default:
-        return nullptr;
-    }
+    return i == 0 ? m_pblock : nullptr;
 }
 
 void OSLMaterial::SetReference(int i, RefTargetHandle rt_arg)
 {
-    switch (i)
-    {
-      case 0:
+    if (i == 0)
         m_pblock = static_cast<IParamBlock2*>(rt_arg);
-        break;
-      default:
-        break;
-    }
 }
 
 RefResult OSLMaterial::NotifyRefChanged(
@@ -307,7 +283,6 @@ Interval OSLMaterial::Validity(TimeValue t)
 
 ParamDlg* OSLMaterial::CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp)
 {
-    // Will need normal map rollout here
     ParamDlg* master_dlg = new OSLParamDlg(hwMtlEdit, imp, this, m_shader_info);
     return master_dlg;
 }
@@ -341,14 +316,14 @@ IOResult OSLMaterial::Load(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-        case ChunkFileFormatVersion:
-        {
-            USHORT version;
-            result = read<USHORT>(iload, &version);
-        }
-        break;
+          case ChunkFileFormatVersion:
+            {
+                USHORT version;
+                result = read<USHORT>(iload, &version);
+            }
+            break;
 
-        case ChunkMtlBase:
+          case ChunkMtlBase:
             result = MtlBase::Load(iload);
             break;
         }
@@ -462,8 +437,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_material(
     const char*     name,
     const bool      use_max_procedural_maps)
 {
-    return
-        use_max_procedural_maps
+    return use_max_procedural_maps
         ? create_builtin_material(assembly, name)
         : create_osl_material(assembly, name);
 }
@@ -476,30 +450,30 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     // Shader group.
     //
     const auto t = GetCOREInterface()->GetTime();
-    auto params = asr::ParamArray();
+    asr::ParamArray params;
 
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    for (auto& param_info : m_shader_info->m_params)
+    for (const auto& param_info : m_shader_info->m_params)
     {
         const MaxParam& max_param = param_info.m_max_param;
         Texmap* texmap = nullptr;
-        if (max_param.connectable)
+        if (max_param.m_connectable)
         {
-            GetParamBlock(0)->GetValue(max_param.max_param_id + 1, t, texmap, FOREVER);
+            GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, t, texmap, FOREVER);
             if (texmap != nullptr)
             {
-                switch (max_param.param_type)
+                switch (max_param.m_param_type)
                 {
                   case MaxParam::Float:
                     {
                         connect_float_texture(
                             shader_group.ref(),
                             name,
-                            max_param.osl_param_name.c_str(),
+                            max_param.m_osl_param_name.c_str(),
                             texmap,
-                            GetParamBlock(0)->GetFloat(max_param.max_param_id, t));
+                            GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t));
                     }
                     break;
                   case MaxParam::Color:
@@ -507,75 +481,66 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                         connect_color_texture(
                             shader_group.ref(),
                             name,
-                            max_param.osl_param_name.c_str(),
+                            max_param.m_osl_param_name.c_str(),
                             texmap,
-                            GetParamBlock(0)->GetColor(max_param.max_param_id, t));
+                            GetParamBlock(0)->GetColor(max_param.m_max_param_id, t));
                     }
                     break;
-                  case MaxParam::VectorParam:
-                    {
-                    //connect_vector_output(
-                    //    shader_group,
-                    //      layer_name.c_str(),
-                    //      max_param.osl_param_name.c_str(),
-                    //      texmap);
-                    }
-                    break;
-                    }
+                }
             }
         }
 
-        if (max_param.connectable && max_param.param_type == MaxParam::Closure)
+        if (max_param.m_connectable && max_param.m_param_type == MaxParam::Closure)
         {
             Mtl* material = nullptr;
-            GetParamBlock(0)->GetValue(max_param.max_param_id, t, material, FOREVER);
+            GetParamBlock(0)->GetValue(max_param.m_max_param_id, t, material, FOREVER);
             if (material != nullptr)
             {
-                connect_sub_mtl(assembly, shader_group.ref(), name, max_param.osl_param_name.c_str(), material);
+                connect_sub_mtl(assembly, shader_group.ref(), name, max_param.m_osl_param_name.c_str(), material);
             }
         }
 
-        if (!max_param.connectable || texmap == nullptr)
+        if (!max_param.m_connectable || texmap == nullptr)
         {
-            switch (max_param.param_type)
+            switch (max_param.m_param_type)
             {
-            case MaxParam::Float:
-            {
-                float param_value = GetParamBlock(0)->GetFloat(max_param.max_param_id, t);
-                params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
-            }
-            break;
-            case MaxParam::IntNumber:
-            case MaxParam::IntCheckbox:
-            case MaxParam::IntMapper:
-            {
-                int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
-                params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(param_value));
-            }
-            break;
-            case MaxParam::Color:
-            {
-                auto param_value = GetParamBlock(0)->GetColor(max_param.max_param_id, t);
-                params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
-            }
-            break;
-            case MaxParam::VectorParam:
-            {
-                Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.max_param_id, t);
-                params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
-            }
-            break;
+              case MaxParam::Float:
+                {
+                    const float param_value = GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
+                }
+                break;
+              case MaxParam::IntNumber:
+              case MaxParam::IntCheckbox:
+              case MaxParam::IntMapper:
+                {
+                    const int param_value = GetParamBlock(0)->GetInt(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
+                }
+                break;
+              case MaxParam::Color:
+                {
+                    const auto param_value = GetParamBlock(0)->GetColor(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
+                }
+                break;
+              case MaxParam::VectorParam:
+                {
+                    const Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
+                }
+                break;
 
-            case MaxParam::StringPopup:
-            {
-                std::vector<std::string> fields;
-                asf::tokenize(param_info.options, "|", fields);
+              case MaxParam::StringPopup:
+                {
+                    std::vector<std::string> fields;
+                    asf::tokenize(param_info.options, "|", fields);
 
-                int param_value = GetParamBlock(0)->GetInt(max_param.max_param_id, t);
-                params.insert(max_param.osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
-            }
-            break;
-            case MaxParam::String:
+                    const int param_value = GetParamBlock(0)->GetInt(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
+                }
+                break;
+              case MaxParam::String:
                 break;
             }
         }
@@ -594,32 +559,28 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
             get_paramblock_value_by_name(GetParamBlock(0), L"bump_amount", t, bump_amount, FOREVER);
             get_paramblock_value_by_name(GetParamBlock(0), L"bump_up_vector", t, bump_up_vector, FOREVER);
 
-            char* bump_input = m_shader_info->findParam("in_bump_normal_substrate") != nullptr ? 
+            const char* bump_input = m_shader_info->find_param("in_bump_normal_substrate") != nullptr ? 
                 "in_bump_normal_substrate" : "in_bump_normal";
 
-            if (bump_texmap != nullptr)
+            if (bump_method == 0)
             {
-                if (bump_method == 0)
-                {
-                    // Bump mapping.
-                    connect_bump_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_amount);
-                }
-                else
-                {
-                    // Normal mapping.
-                    connect_normal_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_up_vector);
-                }
+                // Bump mapping.
+                connect_bump_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_amount);
+            }
+            else
+            {
+                // Normal mapping.
+                connect_normal_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_up_vector);
             }
         }
     }
 
     shader_group->add_shader("surface", m_shader_info->m_shader_name.c_str(), name, params);
 
-    auto closure_2_surface_name = asf::format("{0}_closure_2_surface_name", name);
+    const auto closure_2_surface_name = asf::format("{0}_closure_2_surface_name", name);
     shader_group.ref().add_shader("shader", "as_max_closure2Surface", closure_2_surface_name.c_str(), asr::ParamArray());
 
-    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.max_param_id, t);
-
+    const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id, t);
     shader_group.ref().add_connection(
         name,
         m_shader_info->m_output_params[output_slot_index].paramName.c_str(),
@@ -635,18 +596,6 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     asr::ParamArray material_params;
     material_params.insert("osl_surface", shader_group_name);
 
-    //const std::string instance_name =
-    //    insert_texture_and_instance(
-    //        assembly,
-    //        m_alpha_texmap,
-    //        false,
-    //        asr::ParamArray(),
-    //        asr::ParamArray()
-    //        .insert("alpha_mode", "detect"));
-    //if (!instance_name.empty())
-    //    material_params.insert("alpha_map", instance_name);
-    //else material_params.insert("alpha_map", m_alpha / 100.0f);
-
     material_params.insert("alpha_map", 1.0f);
     return asr::OSLMaterialFactory().create(name, material_params);
 }
@@ -655,9 +604,5 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_builtin_material(
     asr::Assembly&  assembly,
     const char*     name)
 {
-    //
-    // Material.
-    //
-
     return asr::GenericMaterialFactory().create(name, asr::ParamArray());
 }

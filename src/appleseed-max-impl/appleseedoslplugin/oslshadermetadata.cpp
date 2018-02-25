@@ -34,8 +34,8 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/iostreamop.h"
 #include "foundation/utility/containers/dictionary.h"
+#include "foundation/utility/iostreamop.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/string.h"
 
@@ -46,21 +46,16 @@
 #include <iparamb2.h>
 #include <maxtypes.h>
 
-// Boost headers.
-#include "boost/filesystem.hpp"
-
 // Standard headers.
-#include <vector>
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <vector>
 
-namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
-
 OSLMetadataExtractor::OSLMetadataExtractor(const foundation::Dictionary& metadata)
-    : m_metadata(metadata)
+  : m_metadata(metadata)
 {
 }
 
@@ -69,7 +64,7 @@ bool OSLMetadataExtractor::exists(const char* key) const
     return m_metadata.dictionaries().exist(key);
 }
 
-bool OSLMetadataExtractor::getValue(const char* key, std::string& value)
+bool OSLMetadataExtractor::get_value(const char* key, std::string& value) const
 {
     if (exists(key))
     {
@@ -81,10 +76,10 @@ bool OSLMetadataExtractor::getValue(const char* key, std::string& value)
     return false;
 }
 
-bool OSLMetadataExtractor::getValue(const char* key, bool& value)
+bool OSLMetadataExtractor::get_value(const char* key, bool& value) const
 {
     int tmp;
-    if (getValue(key, tmp))
+    if (get_value(key, tmp))
     {
         value = (tmp != 0);
         return true;
@@ -95,7 +90,7 @@ bool OSLMetadataExtractor::getValue(const char* key, bool& value)
 
 namespace
 {
-    void getFloat3Default(const asf::Dictionary& paramInfo, std::vector<double>& defaultValue)
+    void get_float3_default(const asf::Dictionary& paramInfo, std::vector<double>& defaultValue)
     {
         const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
         defaultValue.push_back(v[0]);
@@ -105,24 +100,22 @@ namespace
 }
 
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
-    : arrayLen(-1)
-    , hasDefault(false)
-    , lockGeom(true)
-    , divider(false)
+  : hasDefault(false)
+  , divider(false)
 {
     paramName = paramInfo.get("name");
     paramType = paramInfo.get("type");
     validDefault = paramInfo.get<bool>("validdefault");
-    mayaAttributeConnectable = true;
+    connectable = true;
 
     // todo: lots of refactoring possibilities here...
-    if (validDefault && lockGeom)
+    if (validDefault)
     {
         if (paramInfo.strings().exist("default"))
         {
             if (paramType == "color")
             {
-                getFloat3Default(paramInfo, defaultValue);
+                get_float3_default(paramInfo, defaultValue);
                 hasDefault = true;
             }
             else if (paramType == "float")
@@ -137,12 +130,12 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
             }
             if (paramType == "normal")
             {
-                getFloat3Default(paramInfo, defaultValue);
+                get_float3_default(paramInfo, defaultValue);
                 hasDefault = true;
             }
             if (paramType == "point")
             {
-                getFloat3Default(paramInfo, defaultValue);
+                get_float3_default(paramInfo, defaultValue);
                 hasDefault = true;
             }
             else if (paramType == "string")
@@ -152,7 +145,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
             }
             else if (paramType == "vector")
             {
-                getFloat3Default(paramInfo, defaultValue);
+                get_float3_default(paramInfo, defaultValue);
                 hasDefault = true;
             }
         }
@@ -160,36 +153,24 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
 
     isOutput = paramInfo.get<bool>("isoutput");
     isClosure = paramInfo.get<bool>("isclosure");
-    isStruct = paramInfo.get<bool>("isstruct");
-
-    if (isStruct)
-        structName = paramInfo.get("structname");
-
-    isArray = paramInfo.get<bool>("isarray");
-
-    if (isArray)
-        arrayLen = paramInfo.get<int>("arraylen");
-    else
-        arrayLen = -1;
 
     if (paramInfo.dictionaries().exist("metadata"))
     {
         OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
 
-        metadata.getValue("lockgeom", lockGeom);
-        metadata.getValue("units", units);
-        metadata.getValue("page", page);
-        metadata.getValue("label", label);
-        metadata.getValue("widget", widget);
-        metadata.getValue("options", options);
-        metadata.getValue("help", help);
-        hasMin = metadata.getValue("min", minValue);
-        hasMax = metadata.getValue("max", maxValue);
-        hasSoftMin = metadata.getValue("softmin", softMinValue);
-        hasSoftMax = metadata.getValue("softmax", softMaxValue);
-        metadata.getValue("divider", divider);
+        metadata.get_value("units", units);
+        metadata.get_value("page", page);
+        metadata.get_value("label", label);
+        metadata.get_value("widget", widget);
+        metadata.get_value("options", options);
+        metadata.get_value("help", help);
+        hasMin = metadata.get_value("min", minValue);
+        hasMax = metadata.get_value("max", maxValue);
+        hasSoftMin = metadata.get_value("softmin", softMinValue);
+        hasSoftMax = metadata.get_value("softmax", softMaxValue);
+        metadata.get_value("divider", divider);
 
-        metadata.getValue("as_maya_attribute_connectable", mayaAttributeConnectable);
+        metadata.get_value("as_maya_attribute_connectable", connectable);
     }
 }
 
@@ -201,13 +182,6 @@ std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo)
     os << "  output         : " << paramInfo.isOutput << "\n";
     os << "  valid default  : " << paramInfo.validDefault << "\n";
     os << "  closure        : " << paramInfo.isClosure << "\n";
-
-    if (paramInfo.isStruct)
-        os << "  struct name    : " << paramInfo.structName << "\n";
-
-    if (paramInfo.isArray)
-        os << "  array len      : " << paramInfo.arrayLen << "\n";
-
     os << std::endl;
     return os;
 }
@@ -240,13 +214,13 @@ OSLShaderInfo::OSLShaderInfo(
     if (metadata.exists("as_max_class_id"))
     {
         std::string max_shader_name;
-        metadata.getValue("as_maya_node_name", max_shader_name);
+        metadata.get_value("as_maya_node_name", max_shader_name);
         m_max_shader_name = utf8_to_wide(max_shader_name);
         
-        metadata.getValue("as_max_class_id", m_class_id);
+        metadata.get_value("as_max_class_id", m_class_id);
         
         std::string plugin_type;
-        metadata.getValue("as_max_plugin_type", plugin_type);
+        metadata.get_value("as_max_plugin_type", plugin_type);
         m_is_texture = plugin_type == "texture";
 
         m_params.reserve(q.get_param_count());
@@ -256,46 +230,46 @@ OSLShaderInfo::OSLShaderInfo(
             
             MaxParam& max_param = osl_param.m_max_param;
 
-            max_param.osl_param_name = osl_param.paramName;
-            max_param.max_label_str = osl_param.label;
-            max_param.connectable = osl_param.mayaAttributeConnectable;
-            max_param.param_type = MaxParam::Unsupported;
-            max_param.page_name = osl_param.page;
+            max_param.m_osl_param_name = osl_param.paramName;
+            max_param.m_max_label_str = osl_param.label;
+            max_param.m_connectable = osl_param.connectable;
+            max_param.m_param_type = MaxParam::Unsupported;
+            max_param.m_page_name = osl_param.page;
 
             if (osl_param.paramType == "color")
-                max_param.param_type = MaxParam::Color;
+                max_param.m_param_type = MaxParam::Color;
             else if (osl_param.paramType == "float")
-                max_param.param_type = MaxParam::Float;
+                max_param.m_param_type = MaxParam::Float;
             else if (osl_param.paramType == "float[2]")
-                max_param.param_type = MaxParam::Float2f;
+                max_param.m_param_type = MaxParam::Float2f;
             else if (osl_param.paramType == "matrix")
-                max_param.param_type = MaxParam::Matrix;
+                max_param.m_param_type = MaxParam::Matrix;
             else if (osl_param.paramType == "pointer")
-                max_param.param_type = MaxParam::Closure;
+                max_param.m_param_type = MaxParam::Closure;
             else if (osl_param.paramType == "int")
             {
                 if (osl_param.widget == "mapper")
-                    max_param.param_type = MaxParam::IntMapper;
+                    max_param.m_param_type = MaxParam::IntMapper;
                 else if (osl_param.widget == "checkBox")
-                    max_param.param_type = MaxParam::IntCheckbox;
+                    max_param.m_param_type = MaxParam::IntCheckbox;
                 else
-                    max_param.param_type = MaxParam::IntNumber;
+                    max_param.m_param_type = MaxParam::IntNumber;
             }
             else if (osl_param.paramType == "point")
-                max_param.param_type = MaxParam::PointParam;
+                max_param.m_param_type = MaxParam::PointParam;
             else if (osl_param.paramType == "vector")
-                max_param.param_type = MaxParam::VectorParam;
+                max_param.m_param_type = MaxParam::VectorParam;
             else if (osl_param.paramType == "normal")
-                max_param.param_type = MaxParam::NormalParam;
+                max_param.m_param_type = MaxParam::NormalParam;
             else if (osl_param.paramType == "string")
             {
                 if (osl_param.widget == "popup")
-                    max_param.param_type = MaxParam::StringPopup;
+                    max_param.m_param_type = MaxParam::StringPopup;
                 else
-                    max_param.param_type = MaxParam::String;
+                    max_param.m_param_type = MaxParam::String;
             }
             
-            if (max_param.param_type != MaxParam::Unsupported)
+            if (max_param.m_param_type != MaxParam::Unsupported)
             {
                 if (osl_param.isOutput)
                     m_output_params.push_back(osl_param);
@@ -306,7 +280,7 @@ OSLShaderInfo::OSLShaderInfo(
     }
 }
 
-const OSLParamInfo* OSLShaderInfo::findParam(const char* param_name) const
+const OSLParamInfo* OSLShaderInfo::find_param(const char* param_name) const
 {
     for (size_t i = 0, e = m_params.size(); i < e; ++i)
     {

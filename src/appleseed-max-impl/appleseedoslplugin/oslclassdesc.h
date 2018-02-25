@@ -46,13 +46,13 @@
 class OSLPluginBrowserEntryInfo
     : public IMaterialBrowserEntryInfo
 {
-public:
+  public:
     explicit OSLPluginBrowserEntryInfo(bool is_texture);
     virtual const MCHAR* GetEntryName() const override;
     virtual const MCHAR* GetEntryCategory() const override;
     virtual Bitmap* GetEntryThumbnail() const override;
 
-private:
+  private:
     bool m_is_texture;
 };
 
@@ -62,10 +62,10 @@ private:
 //
 
 class OSLPluginClassDesc
-    : public ClassDesc2
-    , public IMtlRender_Compatibility_MtlBase
+  : public ClassDesc2
+  , public IMtlRender_Compatibility_MtlBase
 {
-public:
+  public:
     explicit OSLPluginClassDesc(OSLShaderInfo* shader_info);
     virtual int IsPublic() override;
     virtual void* Create(BOOL loading) override;
@@ -84,7 +84,7 @@ public:
 
     OSLShaderInfo*                      m_shader_info;
 
-private:
+  private:
     Class_ID                            m_class_id;
     OSLPluginBrowserEntryInfo   m_browser_entry_info;
 };

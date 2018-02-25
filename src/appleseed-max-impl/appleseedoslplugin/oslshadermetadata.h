@@ -71,18 +71,18 @@ class MaxParam
 
     bool is_vector() const
     {
-        return  param_type == VectorParam ||
-                param_type == NormalParam ||
-                param_type == PointParam;
+        return  m_param_type == VectorParam ||
+                m_param_type == NormalParam ||
+                m_param_type == PointParam;
     }
 
-    ParamType       param_type;
-    bool            connectable;
-    std::string     max_label_str;
-    int             max_param_id;
-    int             max_ctrl_id;
-    std::string     osl_param_name;
-    std::string     page_name;
+    ParamType       m_param_type;
+    bool            m_connectable;
+    std::string     m_max_label_str;
+    int             m_max_param_id;
+    int             m_max_ctrl_id;
+    std::string     m_osl_param_name;
+    std::string     m_page_name;
 };
 
 
@@ -91,19 +91,19 @@ class MaxParam
 //
 
 class OSLMetadataExtractor
-    : public foundation::NonCopyable
+  : public foundation::NonCopyable
 {
-public:
+  public:
     explicit OSLMetadataExtractor(const foundation::Dictionary& metadata);
 
     bool exists(const char* key) const;
 
-    bool getValue(const char* key, std::string& value);
+    bool get_value(const char* key, std::string& value) const;
 
-    bool getValue(const char* key, bool& value);
+    bool get_value(const char* key, bool& value) const;
 
     template <typename T>
-    bool getValue(const char* key, T& value) const
+    bool get_value(const char* key, T& value) const
     {
         if (exists(key))
         {
@@ -115,9 +115,10 @@ public:
         return false;
     }
 
-private:
+  private:
     const foundation::Dictionary& m_metadata;
 };
+
 
 //
 // The OSLParamInfo class holds information about a parameter of an OSL shader.
@@ -134,10 +135,6 @@ class OSLParamInfo
     bool isOutput;
     bool isClosure;
     bool isStruct;
-    std::string structName;
-    bool isArray;
-    int arrayLen;
-    bool lockGeom;
 
     // Defaults.
     bool validDefault;
@@ -162,11 +159,12 @@ class OSLParamInfo
     double softMaxValue;
     bool divider;
 
-    bool mayaAttributeConnectable;
+    bool connectable;
     MaxParam m_max_param;
 };
 
 std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo);
+
 
 //
 // The OSLShaderInfo class holds information about an OSL shader.
@@ -181,7 +179,7 @@ class OSLShaderInfo
         const renderer::ShaderQuery&    q,
         const std::string               filename);
 
-    const OSLParamInfo* findParam(const char* param_name) const;
+    const OSLParamInfo* find_param(const char* param_name) const;
 
     Class_ID                    m_class_id;
     bool                        m_is_texture;

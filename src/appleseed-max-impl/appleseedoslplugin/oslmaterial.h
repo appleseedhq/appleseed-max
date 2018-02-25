@@ -45,16 +45,17 @@
 // Forward declarations.
 namespace renderer { class Material; }
 namespace renderer { class ShaderGroup; }
+class OSLPluginClassDesc;
 
 class OSLMaterial
-    : public Mtl
-    , public IAppleseedMtl
+  : public Mtl
+  , public IAppleseedMtl
 {
   public:
-    Class_ID get_class_id();
-
     // Constructor.
-    OSLMaterial(Class_ID class_id, ClassDesc2* class_desc);
+    OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc);
+
+    Class_ID get_class_id();
 
     // InterfaceServer methods.
     virtual BaseInterface* GetInterface(Interface_ID id) override;
@@ -132,13 +133,13 @@ class OSLMaterial
 
   private:
     Class_ID                m_classid;
-    ClassDesc2*             m_class_desc;
+    OSLPluginClassDesc*     m_class_desc;
     bool                    m_has_bump_params;
     Interval                m_params_validity;
     IParamBlock2*           m_pblock;
     const OSLShaderInfo*    m_shader_info;
-    IdNameVector             m_submaterial_map;
-    IdNameVector             m_texture_id_map;
+    IdNameVector            m_submaterial_map;
+    IdNameVector            m_texture_id_map;
 
     foundation::auto_release_ptr<renderer::Material> create_osl_material(
         renderer::Assembly& assembly,

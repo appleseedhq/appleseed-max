@@ -34,8 +34,8 @@
 #include "appleseedlightmtl/appleseedlightmtl.h"
 #include "appleseedmetalmtl/appleseedmetalmtl.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
-#include "appleseedplasticmtl/appleseedplasticmtl.h"
 #include "appleseedoslplugin/oslshaderregistry.h"
+#include "appleseedplasticmtl/appleseedplasticmtl.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
 #include "logtarget.h"
@@ -123,8 +123,6 @@ extern "C"
 
         asr::global_logger().add_target(&g_log_target);
 
-        g_shader_registry.create_class_descriptors();
-
         std::stringstream sstr;
         sstr << "appleseed-max ";
         sstr << wide_to_utf8(PluginVersionString);
@@ -138,6 +136,8 @@ extern "C"
         RENDERER_LOG_INFO("%s", sep.c_str());
         RENDERER_LOG_INFO("%s", title.c_str());
         RENDERER_LOG_INFO("%s", sep.c_str());
+
+        g_shader_registry.create_class_descriptors();
 
         return TRUE;
     }

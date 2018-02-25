@@ -46,24 +46,16 @@ namespace asf = foundation;
 namespace asr = renderer;
 
 OSLParamDlg::OSLParamDlg(
-    HWND                    hwMtlEdit, 
+    HWND                    hw_mtl_edit,
     IMtlParams*             imp, 
     MtlBase*                map,
     const OSLShaderInfo*    shader_info)
-    : m_hmedit(hwMtlEdit)
-    , m_bump_pmap(nullptr)
-    , m_pmap(nullptr)
-    , m_imp(imp)
-    , m_osl_plugin(map)
-    , m_shader_info(shader_info)
-    , m_col_1(10)
-    , m_col_2(85)
-    , m_col_3(122)
-    , m_col_4(159)
-    , m_label_width(76)
-    , m_edit_width(25)
-    , m_edit_height(10)
-    , m_tex_width(84)
+  : m_hmedit(hw_mtl_edit)
+  , m_bump_pmap(nullptr)
+  , m_pmap(nullptr)
+  , m_imp(imp)
+  , m_osl_plugin(map)
+  , m_shader_info(shader_info)
 {
     m_class_id = m_osl_plugin->ClassID();
     create_dialog();
@@ -123,61 +115,76 @@ void OSLParamDlg::add_ui_parameter(
     const MaxParam&         max_param,
     PageGroupMap&           pages)
 {
+    const int Col1X = 10;
+    const int Col2X = 85;
+    const int Col3X = 122;
+    const int Col4X = 159;
+    const int LabelWidth = 76;
+    const int EditWidth = 25;
+    const int EditHeight = 10;
+    const int TexButtonWidth = 84;
+
     int y_pos = 5;
-    auto param_page = pages.find(max_param.page_name);
+    auto param_page = pages.find(max_param.m_page_name);
     if (param_page != pages.end())
         y_pos = param_page->second.y_pos;
 
-    int ctrl_id = max_param.max_ctrl_id;
-    const std::string param_label = max_param.max_label_str + ":";
-    dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, m_col_1, y_pos, m_label_width, m_edit_height, ctrl_id++);
-    switch (max_param.param_type)
+    int ctrl_id = max_param.m_max_ctrl_id;
+    const std::string param_label = max_param.m_max_label_str + ":";
+    dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, Col1X, y_pos, LabelWidth, EditHeight, ctrl_id++);
+    switch (max_param.m_param_type)
     {
       case MaxParam::Float:
       case MaxParam::IntNumber:
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, m_col_2, y_pos, m_edit_width, m_edit_height, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, m_col_2 + m_edit_width + 2, y_pos, 7, m_edit_height, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
         break;
+
       case MaxParam::VectorParam:
       case MaxParam::NormalParam:
       case MaxParam::PointParam:
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, m_col_2, y_pos, m_edit_width, m_edit_height, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, m_col_2 + m_edit_width + 2, y_pos, 7, m_edit_height, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, m_col_3, y_pos, m_edit_width, m_edit_height, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, m_col_3 + m_edit_width + 2, y_pos, 7, m_edit_height, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, m_col_4, y_pos, m_edit_width, m_edit_height, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, m_col_4 + m_edit_width + 2, y_pos, 7, m_edit_height, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col3X, y_pos, EditWidth, EditHeight, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col3X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col4X, y_pos, EditWidth, EditHeight, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col4X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
         break;
+
       case MaxParam::IntCheckbox:
-        dialog_template.AddButton((LPCSTR)"", WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, NULL, m_col_2, y_pos, 10, 10, ctrl_id++);
+        dialog_template.AddButton((LPCSTR)"", WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, NULL, Col2X, y_pos, 10, 10, ctrl_id++);
         break;
+
       case MaxParam::IntMapper:
       case MaxParam::StringPopup:
-        dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, m_col_2, y_pos, m_tex_width, m_edit_height, ctrl_id++);
+        dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
         y_pos += 2;
         break;
+
       case MaxParam::Color:
-        dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, m_col_2, y_pos, m_edit_width, m_edit_height, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
         break;
+
       case MaxParam::String:
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, m_col_2, y_pos, m_tex_width, m_edit_height, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
         break;
+
       case MaxParam::Closure:
-        dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, m_col_3, y_pos, m_tex_width, m_edit_height, ctrl_id++);
+        dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
     }
 
-    if (max_param.connectable && max_param.param_type != MaxParam::Closure)
+    if (max_param.m_connectable && max_param.m_param_type != MaxParam::Closure)
     {
         Texmap* tex_map = nullptr;
         Interval iv;
-        m_osl_plugin->GetParamBlock(0)->GetValue(max_param.max_param_id + 1, 0, tex_map, iv);
+        m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
         
         const char* label = tex_map != nullptr ? "M" : "";
 
         if (max_param.is_vector())
-            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)label, WS_VISIBLE, NULL, m_col_4 + m_edit_width + 11, y_pos, m_edit_height, m_edit_height, ctrl_id);
+            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)label, WS_VISIBLE, NULL, Col4X + EditWidth + 11, y_pos, EditHeight, EditHeight, ctrl_id);
         else
-            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, m_col_3, y_pos, m_tex_width, m_edit_height, ctrl_id);
+            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id);
     }
 
     y_pos += 12;
@@ -195,8 +202,8 @@ void OSLParamDlg::create_dialog()
             osl_param.page != "UV Coordinates" &&
             osl_param.widget != "null")
         {
-            int param_height = osl_param.m_max_param.param_type == MaxParam::IntMapper ||
-                osl_param.m_max_param.param_type == MaxParam::StringPopup ? 15 : 12;
+            const int param_height = osl_param.m_max_param.m_param_type == MaxParam::IntMapper ||
+                osl_param.m_max_param.m_param_type == MaxParam::StringPopup ? 15 : 12;
             pages[osl_param.page].height += param_height;
         }
     }
@@ -243,7 +250,7 @@ void OSLParamDlg::create_dialog()
         rollout_header.c_str(),
         0);
 
-    auto tn_vec = m_shader_info->findParam("Tn");
+    auto tn_vec = m_shader_info->find_param("Tn");
 
     if (!m_shader_info->m_is_texture &&tn_vec != nullptr)
         m_bump_pmap = CreateMParamMap2(
