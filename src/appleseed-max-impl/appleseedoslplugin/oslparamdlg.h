@@ -42,6 +42,7 @@
 
 // Standard headers.
 #include <map>
+#include <string>
 
 // Forward declarations.
 class IParamMap2;
@@ -64,7 +65,7 @@ class OSLParamDlg : public ParamDlg
 {
   public:
     OSLParamDlg(
-        HWND                    hwMtlEdit, 
+        HWND                    hw_mtl_edit, 
         IMtlParams*             imp, 
         MtlBase*                map,
         const OSLShaderInfo*    shader_info);
@@ -91,18 +92,9 @@ class OSLParamDlg : public ParamDlg
 
     IParamMap2*                 m_bump_pmap;
     Class_ID                    m_class_id;
-    int                         m_col_1;
-    int                         m_col_2;
-    int                         m_col_3;
-    int                         m_col_4;
-    int                         m_edit_height;
-    int                         m_edit_width;
     HWND  	                    m_hmedit;
     IMtlParams*                 m_imp;
-    int                         m_label_width;
     MtlBase*                    m_osl_plugin;
     IParamMap2*                 m_pmap;
     const OSLShaderInfo*        m_shader_info;
-    int                         m_tex_width;
-    int                         m_y_pos;
 };

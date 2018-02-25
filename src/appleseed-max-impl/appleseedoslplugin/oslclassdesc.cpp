@@ -40,7 +40,7 @@
 //
 
 OSLPluginBrowserEntryInfo::OSLPluginBrowserEntryInfo(bool is_texture)
-    : m_is_texture(is_texture)
+  : m_is_texture(is_texture)
 {
 }
 
@@ -64,9 +64,9 @@ Bitmap* OSLPluginBrowserEntryInfo::GetEntryThumbnail() const
 //
 
 OSLPluginClassDesc::OSLPluginClassDesc(OSLShaderInfo* shader_info)
-    : m_class_id(shader_info->m_class_id)
-    , m_shader_info(shader_info)
-    , m_browser_entry_info(shader_info->m_is_texture)
+  : m_class_id(shader_info->m_class_id)
+  , m_shader_info(shader_info)
+  , m_browser_entry_info(shader_info->m_is_texture)
 {
     IMtlRender_Compatibility_MtlBase::Init(*this);
 }

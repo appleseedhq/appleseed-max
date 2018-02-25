@@ -30,10 +30,10 @@
 #include "oslshaderregistry.h"
 
 // appleseed-max headers.
-#include "appleseedoslplugin/osltexture.h"
+#include "appleseedoslplugin/oslclassdesc.h"
 #include "appleseedoslplugin/oslmaterial.h"
 #include "appleseedoslplugin/oslshadermetadata.h"
-#include "appleseedoslplugin/oslclassdesc.h"
+#include "appleseedoslplugin/osltexture.h"
 #include "bump/resource.h"
 #include "utilities.h"
 
@@ -55,7 +55,6 @@
 #include "boost/filesystem.hpp"
 
 // Standard headers.
-#include <vector>
 #include <memory>
 
 namespace bfs = boost::filesystem;
@@ -65,7 +64,7 @@ namespace asr = renderer;
 namespace
 {
     class TextureAccessor
-        : public PBAccessor
+      : public PBAccessor
     {
       public:
         void Set(
@@ -99,9 +98,9 @@ namespace
     
 
     class MaterialAccessor
-        : public PBAccessor
+      : public PBAccessor
     {
-    public:
+      public:
         void Set(
             PB2Value&         v,
             ReferenceMaker*   owner,
@@ -126,11 +125,10 @@ namespace
         }
     };
 
+    static TextureAccessor g_texture_accessor;
+    static MaterialAccessor g_material_accessor;
 
-    static TextureAccessor t_accessor;
-    static MaterialAccessor m_accessor;
-
-    bool doRegisterShader(
+    bool do_register_shader(
         std::vector<OSLShaderInfo>&     shader_vec,
         const bfs::path&                shaderPath,
         asr::ShaderQuery&               query)
@@ -140,10 +138,10 @@ namespace
             // Get the shader filename without the .oso extension.
             OSLShaderInfo shaderInfo(query, shaderPath.filename().replace_extension().string());
 
-            if (shaderInfo.m_max_shader_name.length() == 0)
+            if (shaderInfo.m_max_shader_name.empty())
             {
                 RENDERER_LOG_DEBUG(
-                    "Skipping registration for OSL shader %s. No 3dsmax metadata found.",
+                    "Skipping registration for OSL shader %s. No 3ds Max metadata found.",
                     shaderInfo.m_shader_name);
                 return false;
             }
@@ -159,14 +157,14 @@ namespace
         return false;
     }
 
-    bool registerShader(
+    bool register_shader(
         std::vector<OSLShaderInfo>&     shader_vec,
         const bfs::path&                shaderPath,
         asr::ShaderQuery&               query)
     {
         try
         {
-            return doRegisterShader(shader_vec, shaderPath, query);
+            return do_register_shader(shader_vec, shaderPath, query);
         }
         catch (const asf::StringException& e)
         {
@@ -192,8 +190,7 @@ namespace
         return false;
     }
 
-
-    void registerShadersInDirectory(
+    void register_shaders_in_directory(
         std::vector<OSLShaderInfo>&     shader_vec,
         const bfs::path&                shaderDir,
         asr::ShaderQuery&               query)
@@ -214,7 +211,7 @@ namespace
                                 "Found OSL shader %s.",
                                 shaderPath.string().c_str());
 
-                            registerShader(shader_vec, shaderPath, query);
+                            register_shader(shader_vec, shaderPath, query);
                         }
                     }
 
@@ -231,8 +228,7 @@ namespace
         }
     }
 
-
-    void registerShadingNodes(std::vector<OSLShaderInfo>& shaders)
+    void register_shading_nodes(std::vector<OSLShaderInfo>& shaders)
     {
         // Build list of dirs to look for shaders
         std::vector<bfs::path> shaderPaths;
@@ -261,13 +257,13 @@ namespace
                 "Looking for OSL shaders in path %s.",
                 shaderPaths[i].string().c_str());
 
-            registerShadersInDirectory(shaders, shaderPaths[i], *query);
+            register_shaders_in_directory(shaders, shaderPaths[i], *query);
         }
     }
 
     void add_bump_parameters(
         ParamBlockDesc2*            pb_desc,
-        IdNameVector&                texture_map,
+        IdNameVector&               texture_map,
         int&                        param_id)
     {
         pb_desc->AddParam(
@@ -284,7 +280,7 @@ namespace
         pb_desc->AddParam(
             p_id, L"bump_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
-            p_accessor, &t_accessor,
+            p_accessor, &g_texture_accessor,
             p_end);
 
         pb_desc->AddParam(
@@ -306,7 +302,7 @@ namespace
     MaxParam add_output_parameter(
         ParamBlockDesc2*                    pb_desc,
         const std::vector<OSLParamInfo>&    output_params,
-        IdNameMap&                        string_map,
+        IdNameMap&                          string_map,
         int&                                param_id,
         int&                                ctrl_id)
     {
@@ -314,12 +310,12 @@ namespace
         string_map.insert(std::make_pair(string_id, L"Output"));
 
         MaxParam max_output_param;
-        max_output_param.max_label_str = "Output";
-        max_output_param.osl_param_name = "output";
-        max_output_param.param_type = MaxParam::StringPopup;
-        max_output_param.max_ctrl_id = string_id;
-        max_output_param.max_param_id = param_id;
-        max_output_param.connectable = false;
+        max_output_param.m_max_label_str = "Output";
+        max_output_param.m_osl_param_name = "output";
+        max_output_param.m_param_type = MaxParam::StringPopup;
+        max_output_param.m_max_ctrl_id = string_id;
+        max_output_param.m_max_param_id = param_id;
+        max_output_param.m_connectable = false;
 
         int ctrl_id_1 = ctrl_id++;
         int p_id = param_id++;
@@ -355,7 +351,7 @@ namespace
 
 void OSLShaderRegistry::create_class_descriptors()
 {
-    registerShadingNodes(m_shaders);
+    register_shading_nodes(m_shaders);
 
     for (auto& shader : m_shaders)
     {
@@ -395,13 +391,15 @@ void OSLShaderRegistry::create_class_descriptors()
             param_id,
             ctrl_id);
 
-        auto tn_vec = shader.findParam("Tn");
+        auto tn_vec = shader.find_param("Tn");
 
         if (!shader.m_is_texture && tn_vec != nullptr)
+        {
             add_bump_parameters(
                 param_block_descr,
                 shader.m_texture_id_map,
                 param_id);
+        }
 
         m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(param_block_descr));
         m_class_descriptors.push_back(MaxSDK::AutoPtr<ClassDesc2>(class_descr));
@@ -412,20 +410,20 @@ void OSLShaderRegistry::add_parameter(
     ParamBlockDesc2*        pb_desc,
     const OSLParamInfo&     osl_param,
     MaxParam&               max_param,
-    IdNameMap&            string_map,
-    IdNameVector&            texture_map,
-    IdNameVector&            material_map,
+    IdNameMap&              string_map,
+    IdNameVector&           texture_map,
+    IdNameVector&           material_map,
     int&                    param_id,
     int&                    ctrl_id)
 {
     const int string_id = ctrl_id++;
-    string_map.insert(std::make_pair(string_id, utf8_to_wide(max_param.max_label_str)));
+    string_map.insert(std::make_pair(string_id, utf8_to_wide(max_param.m_max_label_str)));
 
-    max_param.max_ctrl_id = string_id;
-    max_param.max_param_id = param_id;
+    max_param.m_max_ctrl_id = string_id;
+    max_param.m_max_param_id = param_id;
 
-    auto param_str = utf8_to_wide(max_param.osl_param_name);
-    if (max_param.param_type == MaxParam::Color)
+    auto param_str = utf8_to_wide(max_param.m_osl_param_name);
+    if (max_param.m_param_type == MaxParam::Color)
     {
         Color def_val;
         if (osl_param.hasDefault)
@@ -436,7 +434,7 @@ void OSLShaderRegistry::add_parameter(
             def_val = Color(r, g, b);
         }
 
-        int ctrl_id_1 = ctrl_id++;
+        const int ctrl_id_1 = ctrl_id++;
 
         pb_desc->AddParam(
             param_id++,
@@ -450,7 +448,7 @@ void OSLShaderRegistry::add_parameter(
         );
     }
 
-    if (max_param.param_type == MaxParam::Float)
+    if (max_param.m_param_type == MaxParam::Float)
     {
         float min_val = -10000.0f;
         float max_val = 10000.0f;
@@ -482,7 +480,7 @@ void OSLShaderRegistry::add_parameter(
         );
     }
     
-    if (max_param.param_type == MaxParam::IntNumber)
+    if (max_param.m_param_type == MaxParam::IntNumber)
     {
         int min_val = -10000;
         int max_val = 10000;
@@ -514,7 +512,7 @@ void OSLShaderRegistry::add_parameter(
         );
     }
 
-    if (max_param.param_type == MaxParam::IntCheckbox)
+    if (max_param.m_param_type == MaxParam::IntCheckbox)
     {
         int def_val = TRUE;
         if (osl_param.hasDefault)
@@ -534,7 +532,7 @@ void OSLShaderRegistry::add_parameter(
         );
     }
     
-    if (max_param.param_type == MaxParam::IntMapper)
+    if (max_param.m_param_type == MaxParam::IntMapper)
     {
         int def_val = 0;
         if (osl_param.hasDefault)
@@ -579,7 +577,7 @@ void OSLShaderRegistry::add_parameter(
         pb_desc->ParamOption(p_id, p_default, def_val);
     }
 
-    if (max_param.param_type == MaxParam::StringPopup)
+    if (max_param.m_param_type == MaxParam::StringPopup)
     {
         int def_val;
         std::string def_str;
@@ -621,9 +619,9 @@ void OSLShaderRegistry::add_parameter(
         pb_desc->ParamOption(p_id, p_default, def_val);
     }
 
-    if (max_param.param_type == MaxParam::VectorParam ||
-        max_param.param_type == MaxParam::NormalParam ||
-        max_param.param_type == MaxParam::PointParam)
+    if (max_param.m_param_type == MaxParam::VectorParam ||
+        max_param.m_param_type == MaxParam::NormalParam ||
+        max_param.m_param_type == MaxParam::PointParam)
     {
         Point3 def_val;
         if (osl_param.hasDefault)
@@ -654,7 +652,7 @@ void OSLShaderRegistry::add_parameter(
         );
     }
     
-    if (max_param.param_type == MaxParam::String)
+    if (max_param.m_param_type == MaxParam::String)
     {
         int ctrl_id_1 = ctrl_id++;
 
@@ -669,13 +667,13 @@ void OSLShaderRegistry::add_parameter(
         );
     }
 
-    if (max_param.param_type == MaxParam::Closure)
+    if (max_param.m_param_type == MaxParam::Closure)
     {
         int ctrl_id_1 = ctrl_id++;
         const int p_id = param_id++;
 
-        auto param_str = utf8_to_wide(max_param.osl_param_name);
-        material_map.push_back(std::make_pair(p_id, utf8_to_wide(max_param.max_label_str)));
+        auto param_str = utf8_to_wide(max_param.m_osl_param_name);
+        material_map.push_back(std::make_pair(p_id, utf8_to_wide(max_param.m_max_label_str)));
 
         pb_desc->AddParam(
             p_id,
@@ -684,18 +682,18 @@ void OSLShaderRegistry::add_parameter(
             0,
             string_id,
             p_ui, TYPE_MTLBUTTON, ctrl_id_1,
-            p_accessor, &m_accessor,
+            p_accessor, &g_material_accessor,
             p_end
         );
     }
 
-    if (max_param.connectable && max_param.param_type != MaxParam::Closure)
+    if (max_param.m_connectable && max_param.m_param_type != MaxParam::Closure)
     {
         const int ctrl_id_1 = ctrl_id++;
         const int p_id = param_id++;
 
-        auto tex_param_str = utf8_to_wide(max_param.osl_param_name + "_map");
-        texture_map.push_back(std::make_pair(p_id, utf8_to_wide(max_param.max_label_str)));
+        auto tex_param_str = utf8_to_wide(max_param.m_osl_param_name + "_map");
+        texture_map.push_back(std::make_pair(p_id, utf8_to_wide(max_param.m_max_label_str)));
         
         const int flag = max_param.is_vector() ? P_NO_AUTO_LABELS : 0;
 
@@ -706,7 +704,7 @@ void OSLShaderRegistry::add_parameter(
             flag,
             string_id,
             p_ui, TYPE_TEXMAPBUTTON, ctrl_id_1,
-            p_accessor, &t_accessor,
+            p_accessor, &g_texture_accessor,
             p_end
         );
     }
@@ -718,14 +716,14 @@ OSLShaderRegistry::OSLShaderRegistry()
     m_shaders.clear();
 }
 
-ClassDesc2* OSLShaderRegistry::get_class_descriptor(int index)
+ClassDesc2* OSLShaderRegistry::get_class_descriptor(int index) const
 {
     if (index < m_class_descriptors.size())
         return m_class_descriptors[index].Get();
     return nullptr;
 }
 
-int OSLShaderRegistry::get_size()
+int OSLShaderRegistry::get_size() const
 {
     return static_cast<int>(m_class_descriptors.size());
 }

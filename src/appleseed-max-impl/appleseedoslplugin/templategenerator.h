@@ -1,3 +1,6 @@
+﻿
+// This code is taken from http://flipcode.com/archives/Dialog_Template.shtml
+// Included here with the permission from author Max McGuire‏ (@max_mcguire)
 
 #pragma once
 #include <windows.h>

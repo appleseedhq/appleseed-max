@@ -30,7 +30,7 @@
 #include "utilities.h"
 
 // appleseed-max headers.
-#include "appleseedoslplugin\osltexture.h"
+#include "appleseedoslplugin/osltexture.h"
 #include "main.h"
 
 // appleseed.renderer headers.
@@ -171,12 +171,7 @@ bool is_bitmap_texture(Texmap* map)
 
 bool is_osl_texture(Texmap* map)
 {
-    OSLTexture* osl_map = dynamic_cast<OSLTexture*>(map);
-
-    if (osl_map == nullptr)
-        return false;
-
-    return true;
+    return dynamic_cast<OSLTexture*>(map) != nullptr;
 }
 
 bool is_supported_procedural_texture(Texmap* map)

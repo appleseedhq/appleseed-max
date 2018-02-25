@@ -32,20 +32,19 @@
 #include "appleseedoslplugin/oslshadermetadata.h"
 
 // 3ds Max headers.
-#include <maxtypes.h>
 #include <iparamb2.h>
+#include <maxtypes.h>
 
 // Standard headers.
 #include <vector>
-#include <string>
 
 class OSLShaderRegistry
 {
   public:
     OSLShaderRegistry();
     
-    ClassDesc2* get_class_descriptor(int index);
-    int get_size();
+    ClassDesc2* get_class_descriptor(int index) const;
+    int get_size() const;
     void create_class_descriptors();
     void add_parameter(
         ParamBlockDesc2*        pb_desc,

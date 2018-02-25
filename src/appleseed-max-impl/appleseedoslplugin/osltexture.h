@@ -43,15 +43,16 @@
 
 // Forward declarations.
 namespace renderer { class ShaderGroup; }
+class OSLPluginClassDesc;
 
 class OSLTexture
-    : public Texmap
+  : public Texmap
 {
   public:
-    Class_ID get_class_id();
-
     // Constructor.
-    OSLTexture(Class_ID class_id, ClassDesc2* class_desc);
+    OSLTexture(Class_ID class_id, OSLPluginClassDesc* class_desc);
+
+    Class_ID get_class_id();
 
     // Animatable methods.
     void DeleteThis() override;
@@ -102,22 +103,22 @@ class OSLTexture
 
     // Connect output to a material.
     void create_osl_texture(
-        renderer::ShaderGroup& shader_group,
-        const char* material_node_name,
-        const char* material_input_name);
+        renderer::ShaderGroup&  shader_group,
+        const char*             material_node_name,
+        const char*             material_input_name);
 
   protected:
     virtual void SetReference(int i, RefTargetHandle rtarg) override;
 
   private:
-    ClassDesc2*             m_class_desc;
+    OSLPluginClassDesc*     m_class_desc;
     Class_ID                m_classid;
     bool                    m_has_uv_coords;
     bool                    m_has_xyz_coords;
     Interval                m_params_validity;
     IParamBlock2*           m_pblock;
     const OSLShaderInfo*    m_shader_info;    
-    IdNameVector             m_texture_id_map;
+    IdNameVector            m_texture_id_map;
     UVGen*                  m_uv_gen;
     static ParamDlg*        m_uv_gen_dlg;
 };
