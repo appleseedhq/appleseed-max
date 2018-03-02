@@ -74,7 +74,7 @@ namespace
             int               tabIndex,
             TimeValue         t) override
         {
-            IParamBlock2* pblock = static_cast<OSLTexture*>(owner)->GetParamBlock(0);
+            IParamBlock2* pblock = owner->GetParamBlock(0);
             if (pblock == nullptr)
                 return;
 
@@ -108,7 +108,7 @@ namespace
             int               tabIndex,
             TimeValue         t) override
         {
-            IParamBlock2* pblock = static_cast<OSLMaterial*>(owner)->GetParamBlock(0);
+            IParamBlock2* pblock = owner->GetParamBlock(0);
             if (pblock == nullptr)
                 return;
 
@@ -277,10 +277,12 @@ namespace
         const int p_id = param_id++;
         texture_map.push_back(std::make_pair(p_id, utf8_to_wide("Bump")));
 
+        // Keep bump map the last in the list of textures.
+        const int bump_param_index = static_cast<int>(texture_map.size()) - 1;
         pb_desc->AddParam(
             p_id, L"bump_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
-            p_accessor, &g_texture_accessor,
+            p_subtexno, bump_param_index,
             p_end);
 
         pb_desc->AddParam(
@@ -395,10 +397,25 @@ void OSLShaderRegistry::create_class_descriptors()
 
         if (!shader.m_is_texture && tn_vec != nullptr)
         {
+            ParamBlockDesc2* bump_param_block_descr(new ParamBlockDesc2(
+                // --- Required arguments ---
+                1,                                          // parameter block's ID
+                L"oslBumpParams",                           // internal parameter block's name
+                0,                                          // ID of the localized name string
+                class_descr,                                // class descriptor
+                P_AUTO_CONSTRUCT,                           // block flags
+
+                                                            // --- P_AUTO_CONSTRUCT arguments ---
+                1,                                          // parameter block's reference number
+                p_end
+            ));
+
             add_bump_parameters(
-                param_block_descr,
+                bump_param_block_descr,
                 shader.m_texture_id_map,
                 param_id);
+
+            m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(bump_param_block_descr));
         }
 
         m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(param_block_descr));

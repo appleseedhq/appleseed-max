@@ -251,10 +251,11 @@ void OSLParamDlg::create_dialog()
         0);
 
     auto tn_vec = m_shader_info->find_param("Tn");
-
-    if (!m_shader_info->m_is_texture &&tn_vec != nullptr)
+    
+    if (!m_shader_info->m_is_texture && tn_vec != nullptr)
+    {
         m_bump_pmap = CreateMParamMap2(
-            m_osl_plugin->GetParamBlock(0),
+            m_osl_plugin->GetParamBlock(1),
             m_imp,
             g_module,
             m_hmedit,
@@ -264,4 +265,5 @@ void OSLParamDlg::create_dialog()
             L"Bump Parameters",
             0,
             new BumpParamMapDlgProc());
+    }
 }
