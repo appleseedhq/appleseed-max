@@ -199,8 +199,8 @@ void OSLParamDlg::create_dialog()
     for (auto& osl_param : m_shader_info->m_params)
     {
         if (osl_param.page != "" &&
-            osl_param.page != "UV Coordinates" &&
-            osl_param.widget != "null")
+            osl_param.widget != "null" &&
+            !osl_param.max_hidden_attr)
         {
             const int param_height = osl_param.m_max_param.m_param_type == MaxParam::IntMapper ||
                 osl_param.m_max_param.m_param_type == MaxParam::StringPopup ? 15 : 12;
@@ -232,8 +232,7 @@ void OSLParamDlg::create_dialog()
     for (auto& osl_param : m_shader_info->m_params)
     {
         if (osl_param.widget != "null" &&
-            osl_param.paramName != "in_uvCoord" &&
-            osl_param.paramName != "in_uvFilterSize")
+            !osl_param.max_hidden_attr)
             add_ui_parameter(dialogTemplate, osl_param.m_max_param, pages);
     }
 

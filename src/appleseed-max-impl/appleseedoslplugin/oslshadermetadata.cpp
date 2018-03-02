@@ -171,6 +171,8 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         metadata.get_value("divider", divider);
 
         metadata.get_value("as_maya_attribute_connectable", connectable);
+        max_hidden_attr = false;
+        metadata.get_value("as_max_attribute_hidden", max_hidden_attr);
     }
 }
 
