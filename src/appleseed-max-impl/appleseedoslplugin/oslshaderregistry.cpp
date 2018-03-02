@@ -233,6 +233,10 @@ namespace
         // Build list of dirs to look for shaders
         std::vector<bfs::path> shaderPaths;
 
+        bfs::path p(get_root_path());
+        p = p / "shaders/appleseed";
+        shaderPaths.push_back(p);
+
         // Paths from the environment.
         if (const char* envSearchPath = getenv("APPLESEED_SEARCHPATH"))
         {

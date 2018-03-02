@@ -1437,7 +1437,8 @@ asf::auto_release_ptr<asr::Project> build_project(
 
     // Initialize search paths.
     project->search_paths().set_root_path(get_root_path());
-    project->search_paths().push_back("shaders");
+    project->search_paths().push_back("shaders\\max");
+    project->search_paths().push_back("shaders\\appleseed");
 
     // Add default configurations to the project.
     project->add_default_configurations();
