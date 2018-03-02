@@ -160,6 +160,7 @@ class OSLParamInfo
     bool divider;
 
     bool connectable;
+    bool max_hidden_attr;
     MaxParam m_max_param;
 };
 
