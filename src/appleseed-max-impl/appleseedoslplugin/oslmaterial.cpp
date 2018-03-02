@@ -48,6 +48,7 @@
 
 // 3ds Max headers.
 #include <iparamm2.h>
+#include <hsv.h>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -388,27 +389,33 @@ Color OSLMaterial::GetAmbient(int mtlNum, BOOL backFace)
 
 Color OSLMaterial::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    return Color(0.0f, 0.0f, 0.0f);
+    Mtl* mtl = nullptr;
+    Interval iv;
+    if (m_submaterial_map.size() > 0)
+        m_pblock->GetValue(m_submaterial_map[0].first, 0, mtl, iv);
+
+    return mtl != nullptr ? mtl->GetDiffuse() : get_viewport_diffuse_color();
 }
 
 Color OSLMaterial::GetSpecular(int mtlNum, BOOL backFace)
 {
-    return Color(0.0f, 0.0f, 0.0f);
+    return get_viewport_specular_color();
 }
 
 float OSLMaterial::GetShininess(int mtlNum, BOOL backFace)
 {
-    return 0.0f;
+    return get_viewport_shininness_spread();
 }
 
 float OSLMaterial::GetShinStr(int mtlNum, BOOL backFace)
 {
-    return 0.0f;
+    return get_viewport_shininess_amount();
 }
 
 float OSLMaterial::GetXParency(int mtlNum, BOOL backFace)
 {
-    return 0.0f;
+    float transparency = get_viewport_transparency_amount();
+    return transparency > 0.9f ? 0.9f : transparency;
 }
 
 void OSLMaterial::SetAmbient(Color c, TimeValue t)
@@ -667,4 +674,94 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_builtin_material(
     const char*     name)
 {
     return asr::GenericMaterialFactory().create(name, asr::ParamArray());
+}
+
+Color OSLMaterial::get_viewport_diffuse_color() const
+{
+    const OSLParamInfo* color_param = nullptr;
+    const auto* color = m_shader_info->find_param("in_color");
+    const auto* surf_transmittance = m_shader_info->find_param("in_surface_transmittance");
+    const auto* face_reflectance = m_shader_info->find_param("in_face_reflectance");
+
+    if (color != nullptr)
+        color_param = color;
+    else if (surf_transmittance != nullptr)
+        color_param = surf_transmittance;
+    else if (face_reflectance != nullptr)
+        color_param = face_reflectance;
+
+    if (color_param != nullptr)
+        return m_pblock->GetColor(color_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+
+    return Color(0.0f, 0.0f, 0.0f);
+}
+
+Color OSLMaterial::get_viewport_specular_color() const
+{
+    const OSLParamInfo* specular_param = nullptr;
+    const auto* specular_color = m_shader_info->find_param("in_specular_color");
+    const auto* reflection_tint = m_shader_info->find_param("in_reflection_tint");
+
+    if (specular_color != nullptr)
+        specular_param = specular_color;
+    else if (reflection_tint != nullptr)
+        specular_param = reflection_tint;
+
+    if (specular_param != nullptr)
+        return m_pblock->GetColor(specular_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+
+    return Color(0.9f, 0.9f, 0.9f);
+}
+
+float OSLMaterial::get_viewport_shininness_spread() const
+{
+    const OSLParamInfo* roughness_param = nullptr;
+    const auto* specular_roughness = m_shader_info->find_param("in_specular_roughness");
+    const auto* roughness = m_shader_info->find_param("in_roughness");
+
+    if (specular_roughness != nullptr)
+        roughness_param = specular_roughness;
+    else if (roughness != nullptr)
+        roughness_param = roughness;
+
+    if (roughness_param != nullptr)
+        return (1.0f - m_pblock->GetFloat(roughness_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime()));
+
+    return 0.6f;
+}
+
+float OSLMaterial::get_viewport_shininess_amount() const
+{
+    const OSLParamInfo* specular_param = nullptr;
+    const auto* specular_weight = m_shader_info->find_param("in_specular_weight");
+    const auto* specular_spread = m_shader_info->find_param("in_specular_spread");
+    const auto* specular_amount = m_shader_info->find_param("in_specular_amount");
+
+    if (specular_weight != nullptr)
+        specular_param = specular_weight;
+    else if (specular_spread != nullptr)
+        specular_param = specular_spread;
+    else if (specular_amount != nullptr)
+        specular_param = specular_amount;
+
+    if (specular_param != nullptr)
+        return m_pblock->GetFloat(specular_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+
+    return 0.9f;
+}
+
+float OSLMaterial::get_viewport_transparency_amount() const
+{
+    float transparency_value = 0.0f;
+    const auto* transmittance = m_shader_info->find_param("in_transmittance_amount");
+    const auto* transparency = m_shader_info->find_param("in_transparency");
+
+    if (transmittance != nullptr)
+        transparency_value = m_pblock->GetFloat(transmittance->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+    else if (transparency != nullptr)
+    {
+        Color transp_color = m_pblock->GetColor(transparency->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+        transparency_value = (transp_color.r + transp_color.g + transp_color.b) / 3.0f;
+    }
+    return transparency_value;
 }
