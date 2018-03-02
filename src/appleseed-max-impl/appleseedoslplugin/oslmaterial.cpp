@@ -77,6 +77,7 @@ Class_ID OSLMaterial::get_class_id()
 
 OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
   : m_pblock(nullptr)
+  , m_bump_pblock(nullptr)
   , m_classid(class_id)
   , m_class_desc(class_desc)
   , m_shader_info(nullptr)
@@ -142,33 +143,50 @@ int OSLMaterial::SubNumToRefNum(int subNum)
 
 int OSLMaterial::NumParamBlocks()
 {
-    return 1;
+    return m_has_bump_params ? 2 : 1;
 }
 
 IParamBlock2* OSLMaterial::GetParamBlock(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    if (i == 0)
+        return m_pblock;
+    else if (i == 1)
+        return m_bump_pblock;
+    else
+        return nullptr;
 }
 
 IParamBlock2* OSLMaterial::GetParamBlockByID(BlockID id)
 {
-    return id == m_pblock->ID() ? m_pblock : nullptr;
+    if (id == m_pblock->ID())
+        return m_pblock;
+    else if (id == m_bump_pblock->ID())
+        return m_bump_pblock;
+    else
+        return nullptr;
 }
 
 int OSLMaterial::NumRefs()
 {
-    return 1;
+    return m_has_bump_params ? 2 : 1;
 }
 
 RefTargetHandle OSLMaterial::GetReference(int i)
 {
-    return i == 0 ? m_pblock : nullptr;
+    if (i == 0)
+        return m_pblock;
+    else if (i == 1)
+        return m_bump_pblock;
+    else
+        return nullptr;
 }
 
 void OSLMaterial::SetReference(int i, RefTargetHandle rt_arg)
 {
     if (i == 0)
         m_pblock = static_cast<IParamBlock2*>(rt_arg);
+    else if (i == 1)
+        m_bump_pblock = static_cast<IParamBlock2*>(rt_arg);
 }
 
 RefResult OSLMaterial::NotifyRefChanged(
@@ -188,6 +206,8 @@ RefResult OSLMaterial::NotifyRefChanged(
       case REFMSG_CHANGE:
           if (hTarget == m_pblock)
               m_class_desc->GetParamBlockDesc(0)->InvalidateUI(m_pblock->LastNotifyParamID());
+          else if (hTarget == m_bump_pblock)
+              m_class_desc->GetParamBlockDesc(1)->InvalidateUI(m_bump_pblock->LastNotifyParamID());
         break;
     }
 
@@ -201,6 +221,8 @@ RefTargetHandle OSLMaterial::Clone(RemapDir& remap)
     BaseClone(this, mnew, remap);
 
     mnew->ReplaceReference(0, remap.CloneRef(m_pblock));
+    if (m_has_bump_params)
+        mnew->ReplaceReference(1, remap.CloneRef(m_bump_pblock));
 
     return (RefTargetHandle)mnew;
 }
@@ -214,8 +236,14 @@ Texmap* OSLMaterial::GetSubTexmap(int i)
 {
     Texmap* tex_map = nullptr;
     Interval iv;
+
     if (i < m_texture_id_map.size())
-        m_pblock->GetValue(m_texture_id_map[i].first, 0, tex_map, iv);
+    {
+        if (m_has_bump_params && i == m_texture_id_map.size() - 1)
+            m_bump_pblock->GetValue(m_texture_id_map[i].first, 0, tex_map, iv);
+        else
+            m_pblock->GetValue(m_texture_id_map[i].first, 0, tex_map, iv);
+    }
 
     return tex_map;
 }
@@ -224,17 +252,25 @@ void OSLMaterial::SetSubTexmap(int i, Texmap* tex_map)
 {
     if (i < m_texture_id_map.size())
     {
-        const auto param_id = m_texture_id_map[i].first;
-        m_pblock->SetValue(param_id, 0, tex_map);
-
-        if (m_pblock->GetParameterType(param_id - 1) == TYPE_POINT3)
+        const int param_id = m_texture_id_map[i].first;
+        if (m_has_bump_params && i == m_texture_id_map.size() - 1)
         {
-            IParamMap2* map = m_pblock->GetMap(0);
-            if (map != nullptr)
-                map->SetText(param_id, tex_map == nullptr ? L"" : L"M");
+            BOOL result = m_bump_pblock->SetValue(param_id, 0, tex_map);
+            m_class_desc->GetParamBlockDesc(1)->InvalidateUI(param_id);
         }
+        else
+        {
+            BOOL result = m_pblock->SetValue(param_id, 0, tex_map);
+            if (m_pblock->GetParameterType(param_id - 1) == TYPE_POINT3)
+            {
+                IParamMap2* map = m_pblock->GetMap(0);
+                if (map != nullptr)
+                    map->SetText(param_id, tex_map == nullptr ? L"" : L"M");
+            }
                 
-        m_class_desc->GetParamBlockDesc(0)->InvalidateUI(param_id);
+            m_class_desc->GetParamBlockDesc(0)->InvalidateUI(param_id);
+        }
+
     }
 }
 
@@ -258,10 +294,14 @@ void OSLMaterial::Update(TimeValue t, Interval& valid)
     }
     m_params_validity.SetInfinite();
     
-    for (auto& tex_param : m_texture_id_map)
+    for (const auto& tex_param : m_texture_id_map)
     {
         Texmap* tex_map = nullptr;
-        m_pblock->GetValue(tex_param.first, t, tex_map, valid);
+        if (m_has_bump_params && tex_param == m_texture_id_map.back())
+            m_bump_pblock->GetValue(tex_param.first, t, tex_map, valid);
+        else
+            m_pblock->GetValue(tex_param.first, t, tex_map, valid);
+
         if (tex_map)
             tex_map->Update(t, valid);
     }
@@ -549,28 +589,32 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     if (m_has_bump_params)
     {
         Texmap* bump_texmap = nullptr;
-        get_paramblock_value_by_name(GetParamBlock(0), L"bump_texmap", t, bump_texmap, FOREVER);
-        if (bump_texmap != nullptr)
+        IParamBlock2* bump_param_block = GetParamBlock(1);
+        if (bump_param_block != nullptr)
         {
-            int bump_method = 0;
-            int bump_up_vector = 0;
-            float bump_amount = 0.0f;
-            get_paramblock_value_by_name(GetParamBlock(0), L"bump_method", t, bump_method, FOREVER);
-            get_paramblock_value_by_name(GetParamBlock(0), L"bump_amount", t, bump_amount, FOREVER);
-            get_paramblock_value_by_name(GetParamBlock(0), L"bump_up_vector", t, bump_up_vector, FOREVER);
-
-            const char* bump_input = m_shader_info->find_param("in_bump_normal_substrate") != nullptr ? 
-                "in_bump_normal_substrate" : "in_bump_normal";
-
-            if (bump_method == 0)
+            get_paramblock_value_by_name(bump_param_block, L"bump_texmap", t, bump_texmap, FOREVER);
+            if (bump_texmap != nullptr)
             {
-                // Bump mapping.
-                connect_bump_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_amount);
-            }
-            else
-            {
-                // Normal mapping.
-                connect_normal_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_up_vector);
+                int bump_method = 0;
+                int bump_up_vector = 0;
+                float bump_amount = 0.0f;
+                get_paramblock_value_by_name(bump_param_block, L"bump_method", t, bump_method, FOREVER);
+                get_paramblock_value_by_name(bump_param_block, L"bump_amount", t, bump_amount, FOREVER);
+                get_paramblock_value_by_name(bump_param_block, L"bump_up_vector", t, bump_up_vector, FOREVER);
+
+                const char* bump_input = m_shader_info->find_param("in_bump_normal_substrate") != nullptr ?
+                    "in_bump_normal_substrate" : "in_bump_normal";
+
+                if (bump_method == 0)
+                {
+                    // Bump mapping.
+                    connect_bump_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_amount);
+                }
+                else
+                {
+                    // Normal mapping.
+                    connect_normal_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_up_vector);
+                }
             }
         }
     }

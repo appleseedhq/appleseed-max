@@ -137,6 +137,7 @@ class OSLMaterial
     bool                    m_has_bump_params;
     Interval                m_params_validity;
     IParamBlock2*           m_pblock;
+    IParamBlock2*           m_bump_pblock;
     const OSLShaderInfo*    m_shader_info;
     IdNameVector            m_submaterial_map;
     IdNameVector            m_texture_id_map;
