@@ -149,4 +149,10 @@ class OSLMaterial
     foundation::auto_release_ptr<renderer::Material> create_builtin_material(
         renderer::Assembly& assembly,
         const char*         name);
+
+    Color get_viewport_diffuse_color() const;
+    Color get_viewport_specular_color() const;
+    float get_viewport_shininness_spread() const;
+    float get_viewport_shininess_amount() const;
+    float get_viewport_transparency_amount() const;
 };
