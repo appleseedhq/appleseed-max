@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedoslplugin/oslparamdlg.h"
 #include "appleseedoslplugin/oslshadermetadata.h"
+#include "appleseedoslplugin/osltexture.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
@@ -516,6 +517,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                             GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t));
                     }
                     break;
+
                   case MaxParam::Color:
                     {
                         connect_color_texture(
@@ -524,6 +526,18 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                             max_param.m_osl_param_name.c_str(),
                             texmap,
                             GetParamBlock(0)->GetColor(max_param.m_max_param_id, t));
+                    }
+                    break;
+
+                  case MaxParam::VectorParam:
+                  case MaxParam::NormalParam:
+                  case MaxParam::PointParam:
+                    {
+                        if (is_osl_texture(texmap))
+                        {
+                            OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
+                            osl_tex->create_osl_texture(shader_group.ref(), name, max_param.m_osl_param_name.c_str());
+                        }
                     }
                     break;
                 }
@@ -550,6 +564,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
+
               case MaxParam::IntNumber:
               case MaxParam::IntCheckbox:
               case MaxParam::IntMapper:
@@ -558,12 +573,14 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
+
               case MaxParam::Color:
                 {
                     const auto param_value = GetParamBlock(0)->GetColor(max_param.m_max_param_id, t);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
                 }
                 break;
+
               case MaxParam::VectorParam:
                 {
                     const Point3 param_value = GetParamBlock(0)->GetPoint3(max_param.m_max_param_id, t);
@@ -580,6 +597,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
                 }
                 break;
+
               case MaxParam::String:
                 break;
             }
