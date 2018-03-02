@@ -708,7 +708,9 @@ void OSLShaderRegistry::add_parameter(
         );
     }
 
-    if (max_param.m_connectable && max_param.m_param_type != MaxParam::Closure)
+    if (max_param.m_connectable &&
+        osl_param.widget != "null" && 
+        max_param.m_param_type != MaxParam::Closure)
     {
         const int ctrl_id_1 = ctrl_id++;
         const int p_id = param_id++;
