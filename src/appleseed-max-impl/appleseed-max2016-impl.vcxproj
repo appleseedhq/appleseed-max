@@ -107,16 +107,20 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configur
 if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
-mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\" 2&gt;nul
 
-del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\*.oso" 2&gt;nul
 
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,16 +167,20 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configur
 if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
-mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\" 2&gt;nul
 
-del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\*.oso" 2&gt;nul
 
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -220,16 +228,20 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configur
 if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
 if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2016\Current\"
 
-mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\" 2&gt;nul
 
-del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\*.oso" 2&gt;nul
 
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\"</Command>
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\shaders\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2016\Current\shaders\appleseed\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
