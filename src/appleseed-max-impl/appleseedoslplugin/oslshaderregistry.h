@@ -37,6 +37,7 @@
 
 // Standard headers.
 #include <vector>
+#include <string>
 
 class OSLShaderRegistry
 {
@@ -57,7 +58,7 @@ class OSLShaderRegistry
         int&                    ctrl_id);
 
   private:
-    std::vector<OSLShaderInfo>                      m_shaders;
+    std::map<std::wstring, OSLShaderInfo>           m_shader_map;
     std::vector<MaxSDK::AutoPtr<ClassDesc2>>        m_class_descriptors;
     std::vector<MaxSDK::AutoPtr<ParamBlockDesc2>>   m_paramblock_descriptors;
 };

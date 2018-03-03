@@ -61,6 +61,8 @@ namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
+typedef std::map<std::wstring, OSLShaderInfo> OSLShaderInfoMap;
+
 namespace
 {
     class TextureAccessor
@@ -129,7 +131,7 @@ namespace
     static MaterialAccessor g_material_accessor;
 
     bool do_register_shader(
-        std::vector<OSLShaderInfo>&     shader_vec,
+        OSLShaderInfoMap&               shader_map,
         const bfs::path&                shaderPath,
         asr::ShaderQuery&               query)
     {
@@ -146,11 +148,19 @@ namespace
                 return false;
             }
 
+            if (shader_map.count(shaderInfo.m_max_shader_name) != 0)
+            {
+                RENDERER_LOG_DEBUG(
+                    "Skipping registration for OSL shader %s. Already registered.",
+                    shaderInfo.m_shader_name);
+                return false;
+            }
+
             RENDERER_LOG_DEBUG(
                 "Registered OSL shader %s",
                 shaderInfo.m_shader_name);
 
-            shader_vec.push_back(shaderInfo);
+            shader_map[shaderInfo.m_max_shader_name] = shaderInfo;
 
             return true;
         }
@@ -158,13 +168,13 @@ namespace
     }
 
     bool register_shader(
-        std::vector<OSLShaderInfo>&     shader_vec,
-        const bfs::path&                shaderPath,
-        asr::ShaderQuery&               query)
+        OSLShaderInfoMap&       shader_map,
+        const bfs::path&        shaderPath,
+        asr::ShaderQuery&       query)
     {
         try
         {
-            return do_register_shader(shader_vec, shaderPath, query);
+            return do_register_shader(shader_map, shaderPath, query);
         }
         catch (const asf::StringException& e)
         {
@@ -191,9 +201,9 @@ namespace
     }
 
     void register_shaders_in_directory(
-        std::vector<OSLShaderInfo>&     shader_vec,
-        const bfs::path&                shaderDir,
-        asr::ShaderQuery&               query)
+        OSLShaderInfoMap&       shader_map,
+        const bfs::path&        shaderDir,
+        asr::ShaderQuery&       query)
     {
         try
         {
@@ -211,7 +221,7 @@ namespace
                                 "Found OSL shader %s.",
                                 shaderPath.string().c_str());
 
-                            register_shader(shader_vec, shaderPath, query);
+                            register_shader(shader_map, shaderPath, query);
                         }
                     }
 
@@ -228,13 +238,13 @@ namespace
         }
     }
 
-    void register_shading_nodes(std::vector<OSLShaderInfo>& shaders)
+    void register_shading_nodes(OSLShaderInfoMap& shader_map)
     {
         // Build list of dirs to look for shaders
         std::vector<bfs::path> shaderPaths;
 
         bfs::path p(get_root_path());
-        p = p / "shaders/appleseed";
+        p = p / "shaders" / "appleseed";
         shaderPaths.push_back(p);
 
         // Paths from the environment.
@@ -261,7 +271,7 @@ namespace
                 "Looking for OSL shaders in path %s.",
                 shaderPaths[i].string().c_str());
 
-            register_shaders_in_directory(shaders, shaderPaths[i], *query);
+            register_shaders_in_directory(shader_map, shaderPaths[i], *query);
         }
     }
 
@@ -357,10 +367,11 @@ namespace
 
 void OSLShaderRegistry::create_class_descriptors()
 {
-    register_shading_nodes(m_shaders);
+    register_shading_nodes(m_shader_map);
 
-    for (auto& shader : m_shaders)
+    for (auto& shader_pair : m_shader_map)
     {
+        OSLShaderInfo& shader = shader_pair.second;
         ClassDesc2* class_descr(new OSLPluginClassDesc(&shader));
         ParamBlockDesc2* param_block_descr(new ParamBlockDesc2(
             // --- Required arguments ---
@@ -737,7 +748,7 @@ void OSLShaderRegistry::add_parameter(
 OSLShaderRegistry::OSLShaderRegistry()
 {
     m_class_descriptors.clear();
-    m_shaders.clear();
+    m_shader_map.clear();
 }
 
 ClassDesc2* OSLShaderRegistry::get_class_descriptor(int index) const
