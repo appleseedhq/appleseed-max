@@ -90,102 +90,102 @@ bool OSLMetadataExtractor::get_value(const char* key, bool& value) const
 
 namespace
 {
-    void get_float3_default(const asf::Dictionary& paramInfo, std::vector<double>& defaultValue)
+    void get_float3_default(const asf::Dictionary& param_info, std::vector<double>& default_value)
     {
-        const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
-        defaultValue.push_back(v[0]);
-        defaultValue.push_back(v[1]);
-        defaultValue.push_back(v[2]);
+        const asf::Vector3f v = param_info.get<asf::Vector3f>("default");
+        default_value.push_back(v[0]);
+        default_value.push_back(v[1]);
+        default_value.push_back(v[2]);
     }
 }
 
-OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
-  : hasDefault(false)
-  , divider(false)
-  , lockGeom(true)
+OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
+  : m_has_default(false)
+  , m_divider(false)
+  , m_lock_geom(true)
 {
-    paramName = paramInfo.get("name");
-    paramType = paramInfo.get("type");
-    validDefault = paramInfo.get<bool>("validdefault");
-    connectable = true;
+    m_param_name = param_info.get("name");
+    m_param_type = param_info.get("type");
+    m_valid_default = param_info.get<bool>("validdefault");
+    m_connectable = true;
 
     // todo: lots of refactoring possibilities here...
-    if (validDefault)
+    if (m_valid_default)
     {
-        if (paramInfo.strings().exist("default"))
+        if (param_info.strings().exist("default"))
         {
-            if (paramType == "color")
+            if (m_param_type == "color")
             {
-                get_float3_default(paramInfo, defaultValue);
-                hasDefault = true;
+                get_float3_default(param_info, m_default_value);
+                m_has_default = true;
             }
-            else if (paramType == "float")
+            else if (m_param_type == "float")
             {
-                defaultValue.push_back(paramInfo.get<float>("default"));
-                hasDefault = true;
+                m_default_value.push_back(param_info.get<float>("default"));
+                m_has_default = true;
             }
-            else if (paramType == "int")
+            else if (m_param_type == "int")
             {
-                defaultValue.push_back(paramInfo.get<int>("default"));
-                hasDefault = true;
+                m_default_value.push_back(param_info.get<int>("default"));
+                m_has_default = true;
             }
-            if (paramType == "normal")
+            if (m_param_type == "normal")
             {
-                get_float3_default(paramInfo, defaultValue);
-                hasDefault = true;
+                get_float3_default(param_info, m_default_value);
+                m_has_default = true;
             }
-            if (paramType == "point")
+            if (m_param_type == "point")
             {
-                get_float3_default(paramInfo, defaultValue);
-                hasDefault = true;
+                get_float3_default(param_info, m_default_value);
+                m_has_default = true;
             }
-            else if (paramType == "string")
+            else if (m_param_type == "string")
             {
-                defaultStringValue = paramInfo.get("default");
-                hasDefault = true;
+                m_default_string_value = param_info.get("default");
+                m_has_default = true;
             }
-            else if (paramType == "vector")
+            else if (m_param_type == "vector")
             {
-                get_float3_default(paramInfo, defaultValue);
-                hasDefault = true;
+                get_float3_default(param_info, m_default_value);
+                m_has_default = true;
             }
         }
     }
 
-    isOutput = paramInfo.get<bool>("isoutput");
-    isClosure = paramInfo.get<bool>("isclosure");
+    m_is_output = param_info.get<bool>("isoutput");
+    m_is_closure = param_info.get<bool>("isclosure");
 
-    if (paramInfo.dictionaries().exist("metadata"))
+    if (param_info.dictionaries().exist("metadata"))
     {
-        OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
+        OSLMetadataExtractor metadata(param_info.dictionary("metadata"));
 
-        metadata.get_value("lockgeom", lockGeom);
-        metadata.get_value("units", units);
-        metadata.get_value("page", page);
-        metadata.get_value("label", label);
-        metadata.get_value("widget", widget);
-        metadata.get_value("options", options);
-        metadata.get_value("help", help);
-        hasMin = metadata.get_value("min", minValue);
-        hasMax = metadata.get_value("max", maxValue);
-        hasSoftMin = metadata.get_value("softmin", softMinValue);
-        hasSoftMax = metadata.get_value("softmax", softMaxValue);
-        metadata.get_value("divider", divider);
+        metadata.get_value("lockgeom", m_lock_geom);
+        metadata.get_value("units", m_units);
+        metadata.get_value("page", m_page);
+        metadata.get_value("label", m_label);
+        metadata.get_value("widget", m_widget);
+        metadata.get_value("options", m_options);
+        metadata.get_value("help", m_help);
+        m_has_min = metadata.get_value("min", m_min_value);
+        m_has_max = metadata.get_value("max", m_max_value);
+        m_has_soft_min = metadata.get_value("softmin", m_soft_min_value);
+        m_has_soft_max = metadata.get_value("softmax", m_soft_max_value);
+        metadata.get_value("divider", m_divider);
 
-        metadata.get_value("as_maya_attribute_connectable", connectable);
+        metadata.get_value("as_maya_attribute_connectable", m_connectable);
         max_hidden_attr = false;
         metadata.get_value("as_max_attribute_hidden", max_hidden_attr);
     }
 }
 
-std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo)
+std::ostream& operator<<(std::ostream& os, const OSLParamInfo& param_info)
 {
-    os << "Param : " << paramInfo.paramName << "\n";
-    os << "  label name     : " << paramInfo.label << "\n";
-    os << "  type           : " << paramInfo.paramType << "\n";
-    os << "  output         : " << paramInfo.isOutput << "\n";
-    os << "  valid default  : " << paramInfo.validDefault << "\n";
-    os << "  closure        : " << paramInfo.isClosure << "\n";
+    os << "Param : " << param_info.m_param_name << "\n";
+    os << "  label name     : " << param_info.m_label << "\n";
+    os << "  type           : " << param_info.m_param_type << "\n";
+    os << "  output         : " << param_info.m_is_output << "\n";
+    os << "  valid default  : " << param_info.m_valid_default << "\n";
+    os << "  closure        : " << param_info.m_is_closure << "\n";
     os << std::endl;
     return os;
 }
@@ -234,44 +234,44 @@ OSLShaderInfo::OSLShaderInfo(
             
             MaxParam& max_param = osl_param.m_max_param;
 
-            max_param.m_osl_param_name = osl_param.paramName;
-            max_param.m_max_label_str = osl_param.label;
-            max_param.m_connectable = osl_param.connectable;
+            max_param.m_osl_param_name = osl_param.m_param_name;
+            max_param.m_max_label_str = osl_param.m_label;
+            max_param.m_connectable = osl_param.m_connectable;
             max_param.m_param_type = MaxParam::Unsupported;
-            max_param.m_page_name = osl_param.page;
+            max_param.m_page_name = osl_param.m_page;
 
-            max_param.m_has_constant = osl_param.validDefault && 
-                osl_param.lockGeom && 
-                osl_param.widget != "null";
+            max_param.m_has_constant = osl_param.m_valid_default && 
+                osl_param.m_lock_geom && 
+                osl_param.m_widget != "null";
 
-            if (osl_param.paramType == "color")
+            if (osl_param.m_param_type == "color")
                 max_param.m_param_type = MaxParam::Color;
-            else if (osl_param.paramType == "float")
+            else if (osl_param.m_param_type == "float")
                 max_param.m_param_type = MaxParam::Float;
-            else if (osl_param.paramType == "float[2]")
+            else if (osl_param.m_param_type == "float[2]")
                 max_param.m_param_type = MaxParam::Float2f;
-            else if (osl_param.paramType == "matrix")
+            else if (osl_param.m_param_type == "matrix")
                 max_param.m_param_type = MaxParam::Matrix;
-            else if (osl_param.paramType == "pointer")
+            else if (osl_param.m_param_type == "pointer")
                 max_param.m_param_type = MaxParam::Closure;
-            else if (osl_param.paramType == "int")
+            else if (osl_param.m_param_type == "int")
             {
-                if (osl_param.widget == "mapper")
+                if (osl_param.m_widget == "mapper")
                     max_param.m_param_type = MaxParam::IntMapper;
-                else if (osl_param.widget == "checkBox")
+                else if (osl_param.m_widget == "checkBox")
                     max_param.m_param_type = MaxParam::IntCheckbox;
                 else
                     max_param.m_param_type = MaxParam::IntNumber;
             }
-            else if (osl_param.paramType == "point")
+            else if (osl_param.m_param_type == "point")
                 max_param.m_param_type = MaxParam::PointParam;
-            else if (osl_param.paramType == "vector")
+            else if (osl_param.m_param_type == "vector")
                 max_param.m_param_type = MaxParam::VectorParam;
-            else if (osl_param.paramType == "normal")
+            else if (osl_param.m_param_type == "normal")
                 max_param.m_param_type = MaxParam::NormalParam;
-            else if (osl_param.paramType == "string")
+            else if (osl_param.m_param_type == "string")
             {
-                if (osl_param.widget == "popup")
+                if (osl_param.m_widget == "popup")
                     max_param.m_param_type = MaxParam::StringPopup;
                 else
                     max_param.m_param_type = MaxParam::String;
@@ -279,7 +279,7 @@ OSLShaderInfo::OSLShaderInfo(
             
             if (max_param.m_param_type != MaxParam::Unsupported)
             {
-                if (osl_param.isOutput)
+                if (osl_param.m_is_output)
                     m_output_params.push_back(osl_param);
                 else
                     m_params.push_back(osl_param);
@@ -292,7 +292,7 @@ const OSLParamInfo* OSLShaderInfo::find_param(const char* param_name) const
 {
     for (size_t i = 0, e = m_params.size(); i < e; ++i)
     {
-        if (m_params[i].paramName == param_name)
+        if (m_params[i].m_param_name == param_name)
             return &m_params[i];
     }
 

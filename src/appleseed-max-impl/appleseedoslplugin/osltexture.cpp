@@ -512,7 +512,7 @@ void OSLTexture::create_osl_texture(
               case MaxParam::StringPopup:
                 {
                     std::vector<std::string> fields;
-                    asf::tokenize(param_info.options, "|", fields);
+                    asf::tokenize(param_info.m_options, "|", fields);
 
                     const int param_value = GetParamBlock(0)->GetInt(max_param.m_max_param_id, t);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
@@ -541,12 +541,12 @@ void OSLTexture::create_osl_texture(
 
     shader_group.add_shader("shader", m_shader_info->m_shader_name.c_str(), layer_name.c_str(), params);
     int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id, t);
-    m_shader_info->m_output_params[output_slot_index].paramName;
+    m_shader_info->m_output_params[output_slot_index].m_param_name;
     
     //TODO: Choose right type of output based on expected input type.
     shader_group.add_connection(
         layer_name.c_str(),
-        m_shader_info->m_output_params[output_slot_index].paramName.c_str(),
+        m_shader_info->m_output_params[output_slot_index].m_param_name.c_str(),
         material_node_name,
         material_input_name);
 }

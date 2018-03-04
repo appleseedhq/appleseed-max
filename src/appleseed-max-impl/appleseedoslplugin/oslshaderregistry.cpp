@@ -110,9 +110,9 @@ namespace
     };
     
     class BumpTextureAccessor
-        : public PBAccessor
+      : public PBAccessor
     {
-    public:
+      public:
         void Set(
             PB2Value&         v,
             ReferenceMaker*   owner,
@@ -386,7 +386,7 @@ namespace
             int str_id = ctrl_id++;
             string_items[i] = str_id;
 
-            string_map.insert(std::make_pair(str_id, utf8_to_wide(output_params[i].paramName)));
+            string_map.insert(std::make_pair(str_id, utf8_to_wide(output_params[i].m_param_name)));
         }
 
         pb_desc->ParamOptionContentValues(p_id, string_items);
@@ -510,11 +510,11 @@ void OSLShaderRegistry::add_const_parameter(
     if (max_param.m_param_type == MaxParam::Color)
     {
         Color def_val(0.0f, 0.0f, 0.0f);
-        if (osl_param.hasDefault)
+        if (osl_param.m_has_default)
         {
-            const float r = static_cast<float>(osl_param.defaultValue.at(0));
-            const float g = static_cast<float>(osl_param.defaultValue.at(0));
-            const float b = static_cast<float>(osl_param.defaultValue.at(0));
+            const float r = static_cast<float>(osl_param.m_default_value.at(0));
+            const float g = static_cast<float>(osl_param.m_default_value.at(0));
+            const float b = static_cast<float>(osl_param.m_default_value.at(0));
             def_val = Color(r, g, b);
         }
 
@@ -539,14 +539,14 @@ void OSLShaderRegistry::add_const_parameter(
         float step_val = 0.1f;
         float def_val = 0.5f;
 
-        if (osl_param.hasMin)
-            min_val = static_cast<float>(osl_param.minValue);
+        if (osl_param.m_has_min)
+            min_val = static_cast<float>(osl_param.m_min_value);
 
-        if (osl_param.hasMax)
-            max_val = static_cast<float>(osl_param.maxValue);
+        if (osl_param.m_has_max)
+            max_val = static_cast<float>(osl_param.m_max_value);
 
-        if (osl_param.hasDefault)
-            def_val = static_cast<float>(osl_param.defaultValue.at(0));
+        if (osl_param.m_has_default)
+            def_val = static_cast<float>(osl_param.m_default_value.at(0));
 
         const int ctrl_id_1 = ctrl_id++;
         const int ctrl_id_2 = ctrl_id++;
@@ -571,14 +571,14 @@ void OSLShaderRegistry::add_const_parameter(
         int step_val = 1;
         int def_val = 50;
 
-        if (osl_param.hasMin)
-            min_val = static_cast<int>(osl_param.minValue);
+        if (osl_param.m_has_min)
+            min_val = static_cast<int>(osl_param.m_min_value);
 
-        if (osl_param.hasMax)
-            max_val = static_cast<int>(osl_param.maxValue);
+        if (osl_param.m_has_max)
+            max_val = static_cast<int>(osl_param.m_max_value);
 
-        if (osl_param.hasDefault)
-            def_val = static_cast<int>(osl_param.defaultValue.at(0));
+        if (osl_param.m_has_default)
+            def_val = static_cast<int>(osl_param.m_default_value.at(0));
 
         const int ctrl_id_1 = ctrl_id++;
         const int ctrl_id_2 = ctrl_id++;
@@ -599,8 +599,8 @@ void OSLShaderRegistry::add_const_parameter(
     if (max_param.m_param_type == MaxParam::IntCheckbox)
     {
         int def_val = TRUE;
-        if (osl_param.hasDefault)
-            def_val = static_cast<int>(osl_param.defaultValue.at(0));
+        if (osl_param.m_has_default)
+            def_val = static_cast<int>(osl_param.m_default_value.at(0));
 
         const int ctrl_id_1 = ctrl_id++;
 
@@ -619,8 +619,8 @@ void OSLShaderRegistry::add_const_parameter(
     if (max_param.m_param_type == MaxParam::IntMapper)
     {
         int def_val = 0;
-        if (osl_param.hasDefault)
-            def_val = static_cast<int>(osl_param.defaultValue.at(0));
+        if (osl_param.m_has_default)
+            def_val = static_cast<int>(osl_param.m_default_value.at(0));
 
         const int ctrl_id_1 = ctrl_id++;
         const int p_id = param_id;
@@ -637,7 +637,7 @@ void OSLShaderRegistry::add_const_parameter(
         );
         
         std::vector<std::string> fields;
-        asf::tokenize(osl_param.options, "|", fields);
+        asf::tokenize(osl_param.m_options, "|", fields);
         const int num_items = static_cast<int>(fields.size());
 
         Tab<int> string_items;
@@ -665,8 +665,8 @@ void OSLShaderRegistry::add_const_parameter(
     {
         int def_val = 0;
         std::string def_str;
-        if (osl_param.hasDefault)
-            def_str = osl_param.defaultStringValue;
+        if (osl_param.m_has_default)
+            def_str = osl_param.m_default_string_value;
 
         const int ctrl_id_1 = ctrl_id++;
 
@@ -682,7 +682,7 @@ void OSLShaderRegistry::add_const_parameter(
         );
 
         std::vector<std::string> fields;
-        asf::tokenize(osl_param.options, "|", fields);
+        asf::tokenize(osl_param.m_options, "|", fields);
         const int num_items = static_cast<int>(fields.size());
 
         Tab<int> string_items;
@@ -707,11 +707,11 @@ void OSLShaderRegistry::add_const_parameter(
         max_param.m_param_type == MaxParam::PointParam)
     {
         Point3 def_val(0.0f, 0.0f, 0.0f);
-        if (osl_param.hasDefault)
+        if (osl_param.m_has_default)
         {
-            const float x = static_cast<float>(osl_param.defaultValue.at(0));
-            const float y = static_cast<float>(osl_param.defaultValue.at(1));
-            const float z = static_cast<float>(osl_param.defaultValue.at(2));
+            const float x = static_cast<float>(osl_param.m_default_value.at(0));
+            const float y = static_cast<float>(osl_param.m_default_value.at(1));
+            const float z = static_cast<float>(osl_param.m_default_value.at(2));
             def_val = Point3(x, y, z);
         }
 

@@ -36,8 +36,8 @@
 #include <maxtypes.h>
 
 // Standard headers.
-#include <vector>
 #include <string>
+#include <vector>
 
 class OSLShaderRegistry
 {
