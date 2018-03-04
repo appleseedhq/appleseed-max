@@ -48,7 +48,6 @@
 
 // 3ds Max headers.
 #include <iparamm2.h>
-#include <hsv.h>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -257,12 +256,12 @@ void OSLMaterial::SetSubTexmap(int i, Texmap* tex_map)
         const int param_id = m_texture_id_map[i].first;
         if (m_has_bump_params && i == m_texture_id_map.size() - 1)
         {
-            BOOL result = m_bump_pblock->SetValue(param_id, 0, tex_map);
+            m_bump_pblock->SetValue(param_id, 0, tex_map);
             m_class_desc->GetParamBlockDesc(1)->InvalidateUI(param_id);
         }
         else
         {
-            BOOL result = m_pblock->SetValue(param_id, 0, tex_map);
+            m_pblock->SetValue(param_id, 0, tex_map);
             if (m_pblock->GetParameterType(param_id - 1) == TYPE_POINT3)
             {
                 IParamMap2* map = m_pblock->GetMap(0);
@@ -391,7 +390,7 @@ Color OSLMaterial::GetDiffuse(int mtlNum, BOOL backFace)
 {
     Mtl* mtl = nullptr;
     Interval iv;
-    if (m_submaterial_map.size() > 0)
+    if (!m_submaterial_map.empty())
         m_pblock->GetValue(m_submaterial_map[0].first, 0, mtl, iv);
 
     return mtl != nullptr ? mtl->GetDiffuse() : get_viewport_diffuse_color();
@@ -414,7 +413,7 @@ float OSLMaterial::GetShinStr(int mtlNum, BOOL backFace)
 
 float OSLMaterial::GetXParency(int mtlNum, BOOL backFace)
 {
-    float transparency = get_viewport_transparency_amount();
+    const float transparency = get_viewport_transparency_amount();
     return transparency > 0.9f ? 0.9f : transparency;
 }
 
@@ -598,7 +597,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
               case MaxParam::StringPopup:
                 {
                     std::vector<std::string> fields;
-                    asf::tokenize(param_info.options, "|", fields);
+                    asf::tokenize(param_info.m_options, "|", fields);
 
                     const int param_value = GetParamBlock(0)->GetInt(max_param.m_max_param_id, t);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
@@ -652,7 +651,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id, t);
     shader_group.ref().add_connection(
         name,
-        m_shader_info->m_output_params[output_slot_index].paramName.c_str(),
+        m_shader_info->m_output_params[output_slot_index].m_param_name.c_str(),
         closure_2_surface_name.c_str(),
         "in_input");
 

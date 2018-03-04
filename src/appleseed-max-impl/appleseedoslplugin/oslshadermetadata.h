@@ -131,37 +131,37 @@ class OSLParamInfo
     explicit OSLParamInfo(const foundation::Dictionary& paramInfo);
 
     // Query info.
-    std::string paramName;
-    std::string paramType;
-    bool isOutput;
-    bool isClosure;
-    bool isStruct;
-    bool lockGeom;
+    std::string m_param_name;
+    std::string m_param_type;
+    bool m_is_output;
+    bool m_is_closure;
+    bool m_is_struct;
+    bool m_lock_geom;
 
     // Defaults.
-    bool validDefault;
-    bool hasDefault;
-    std::vector<double> defaultValue;
-    std::string defaultStringValue;
+    bool m_valid_default;
+    bool m_has_default;
+    std::vector<double> m_default_value;
+    std::string m_default_string_value;
 
     // Standard metadata info.
-    std::string units;
-    std::string page;
-    std::string label;
-    std::string widget;
-    std::string options;
-    std::string help;
-    bool hasMin;
-    double minValue;
-    bool hasMax;
-    double maxValue;
-    bool hasSoftMin;
-    double softMinValue;
-    bool hasSoftMax;
-    double softMaxValue;
-    bool divider;
+    std::string m_units;
+    std::string m_page;
+    std::string m_label;
+    std::string m_widget;
+    std::string m_options;
+    std::string m_help;
+    bool m_has_min;
+    double m_min_value;
+    bool m_has_max;
+    double m_max_value;
+    bool m_has_soft_min;
+    double m_soft_min_value;
+    bool m_has_soft_max;
+    double m_soft_max_value;
+    bool m_divider;
 
-    bool connectable;
+    bool m_connectable;
     bool max_hidden_attr;
     MaxParam m_max_param;
 };

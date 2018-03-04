@@ -137,15 +137,15 @@ void OSLParamDlg::add_ui_parameter(
     {
         switch (max_param.m_param_type)
         {
-        case MaxParam::Float:
-        case MaxParam::IntNumber:
+          case MaxParam::Float:
+          case MaxParam::IntNumber:
             dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
             dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
             break;
 
-        case MaxParam::VectorParam:
-        case MaxParam::NormalParam:
-        case MaxParam::PointParam:
+          case MaxParam::VectorParam:
+          case MaxParam::NormalParam:
+          case MaxParam::PointParam:
             dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
             dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
             dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col3X, y_pos, EditWidth, EditHeight, ctrl_id++);
@@ -154,21 +154,21 @@ void OSLParamDlg::add_ui_parameter(
             dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col4X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
             break;
 
-        case MaxParam::IntCheckbox:
+          case MaxParam::IntCheckbox:
             dialog_template.AddButton((LPCSTR)"", WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, NULL, Col2X, y_pos, 10, 10, ctrl_id++);
             break;
 
-        case MaxParam::IntMapper:
-        case MaxParam::StringPopup:
+          case MaxParam::IntMapper:
+          case MaxParam::StringPopup:
             dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
             y_pos += 2;
             break;
 
-        case MaxParam::Color:
+          case MaxParam::Color:
             dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
             break;
 
-        case MaxParam::String:
+          case MaxParam::String:
             dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
             break;
         }
@@ -215,13 +215,13 @@ void OSLParamDlg::create_dialog()
 
     for (auto& osl_param : m_shader_info->m_params)
     {
-        if (osl_param.page != "" &&
-            osl_param.widget != "null" &&
+        if (osl_param.m_page != "" &&
+            osl_param.m_widget != "null" &&
             !osl_param.max_hidden_attr)
         {
             const int param_height = osl_param.m_max_param.m_param_type == MaxParam::IntMapper ||
                 osl_param.m_max_param.m_param_type == MaxParam::StringPopup ? 15 : 12;
-            pages[osl_param.page].height += param_height;
+            pages[osl_param.m_page].height += param_height;
         }
     }
 
@@ -248,7 +248,7 @@ void OSLParamDlg::create_dialog()
 
     for (auto& osl_param : m_shader_info->m_params)
     {
-        if (osl_param.widget != "null" &&
+        if (osl_param.m_widget != "null" &&
             !osl_param.max_hidden_attr)
             add_ui_parameter(dialogTemplate, osl_param.m_max_param, pages);
     }
