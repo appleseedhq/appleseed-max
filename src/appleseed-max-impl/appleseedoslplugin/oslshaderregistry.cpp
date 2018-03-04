@@ -65,6 +65,33 @@ typedef std::map<std::wstring, OSLShaderInfo> OSLShaderInfoMap;
 
 namespace
 {
+    void set_button_text(
+        IParamBlock2*   pblock,
+        const ParamID   id,
+        const bool      is_bump = false)
+    {
+        if (pblock == nullptr)
+            return;
+
+        IParamMap2* map = pblock->GetMap();
+        if (map == nullptr)
+            return;
+
+        Texmap* tex_map = nullptr;
+        Interval iv;
+
+        const bool is_vector = pblock->GetParameterType(id - 1) == TYPE_POINT3;
+        const bool is_combobox = pblock->GetParamDef(id - 1).ctrl_type == TYPE_INT_COMBOBOX;
+        const bool is_short_button = is_bump ? false : is_vector || is_combobox;
+
+        pblock->GetValue(id, 0, tex_map, iv);
+
+        if (tex_map != nullptr)
+            map->SetText(id, is_short_button ? L"M" : tex_map->GetFullName());
+        else
+            map->SetText(id, is_short_button ? L"" : L"None");
+    }
+
     class TextureAccessor
       : public PBAccessor
     {
@@ -77,27 +104,27 @@ namespace
             TimeValue         t) override
         {
             IParamBlock2* pblock = owner->GetParamBlock(0);
-            if (pblock == nullptr)
-                return;
-
-            IParamMap2* map = pblock->GetMap();
-            if (map == nullptr)
-                return;
-
-            Texmap* tex_map = nullptr;
-            Interval iv;
             
-            const bool is_short = pblock->GetParameterType(id - 1) == TYPE_POINT3;
-
-            pblock->GetValue(id, 0, tex_map, iv);
-
-            if (tex_map != nullptr)
-                map->SetText(id, is_short ? L"M" : tex_map->GetFullName());
-            else
-                map->SetText(id, is_short ? L"" : L"None");
+            set_button_text(pblock, id);
         }
     };
     
+    class BumpTextureAccessor
+        : public PBAccessor
+    {
+    public:
+        void Set(
+            PB2Value&         v,
+            ReferenceMaker*   owner,
+            ParamID           id,
+            int               tabIndex,
+            TimeValue         t) override
+        {
+            IParamBlock2* pblock = owner->GetParamBlock(1);
+
+            set_button_text(pblock, id, true);
+        }
+    };
 
     class MaterialAccessor
       : public PBAccessor
@@ -128,6 +155,7 @@ namespace
     };
 
     static TextureAccessor g_texture_accessor;
+    static BumpTextureAccessor g_bump_accessor;
     static MaterialAccessor g_material_accessor;
 
     bool do_register_shader(
@@ -297,6 +325,7 @@ namespace
             p_id, L"bump_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_BUMP_MAP,
             p_ui, TYPE_TEXMAPBUTTON, IDC_TEXMAP_BUMP_MAP,
             p_subtexno, bump_param_index,
+            p_accessor, &g_bump_accessor,
             p_end);
 
         pb_desc->AddParam(
@@ -387,15 +416,15 @@ void OSLShaderRegistry::create_class_descriptors()
             p_end
         ));
 
-        int ctrl_id = 100;
         int param_id = 0;
+        int ctrl_id = 100;
+        int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
-            const int string_id = ctrl_id++;
-            shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
-
-            param_info.m_max_param.m_max_ctrl_id = string_id;
+            param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
             param_info.m_max_param.m_max_param_id = param_id;
+
+            shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
 
             if (param_info.m_max_param.m_has_constant)
             {
@@ -403,10 +432,13 @@ void OSLShaderRegistry::create_class_descriptors()
                     param_block_descr,
                     param_info,
                     param_info.m_max_param,
-                    string_id,
                     shader.m_string_map,
                     param_id,
-                    ctrl_id);
+                    ctrl_id,
+                    string_id);
+
+                param_id++;
+                string_id++;
             }
 
             if (param_info.m_max_param.m_connectable)
@@ -417,9 +449,15 @@ void OSLShaderRegistry::create_class_descriptors()
                     param_info.m_max_param,
                     shader.m_texture_id_map,
                     shader.m_material_id_map,
-                    param_id++,
-                    ctrl_id++);
+                    param_id,
+                    ctrl_id,
+                    string_id);
+
+                param_id++;
+                ctrl_id++;
+                string_id++;
             }
+
         }
 
         shader.m_output_param = add_output_parameter(
@@ -463,10 +501,10 @@ void OSLShaderRegistry::add_const_parameter(
     ParamBlockDesc2*        pb_desc,
     const OSLParamInfo&     osl_param,
     MaxParam&               max_param,
-    const int               string_id,
     IdNameMap&              string_map,
-    int&                    param_id,
-    int&                    ctrl_id)
+    const int               param_id,
+    int&                    ctrl_id,
+    int&                    string_id)
 {
     auto param_str = utf8_to_wide(max_param.m_osl_param_name);
     if (max_param.m_param_type == MaxParam::Color)
@@ -483,7 +521,7 @@ void OSLShaderRegistry::add_const_parameter(
         const int ctrl_id_1 = ctrl_id++;
 
         pb_desc->AddParam(
-            param_id++,
+            param_id,
             param_str.c_str(),
             TYPE_RGBA,
             P_ANIMATABLE,
@@ -514,7 +552,7 @@ void OSLShaderRegistry::add_const_parameter(
         const int ctrl_id_2 = ctrl_id++;
 
         pb_desc->AddParam(
-            param_id++,
+            param_id,
             param_str.c_str(),
             TYPE_FLOAT,
             P_ANIMATABLE,
@@ -546,7 +584,7 @@ void OSLShaderRegistry::add_const_parameter(
         const int ctrl_id_2 = ctrl_id++;
 
         pb_desc->AddParam(
-            param_id++,
+            param_id,
             param_str.c_str(),
             TYPE_INT,
             P_ANIMATABLE,
@@ -567,7 +605,7 @@ void OSLShaderRegistry::add_const_parameter(
         const int ctrl_id_1 = ctrl_id++;
 
         pb_desc->AddParam(
-            param_id++,
+            param_id,
             param_str.c_str(),
             TYPE_INT,
             0,
@@ -585,10 +623,10 @@ void OSLShaderRegistry::add_const_parameter(
             def_val = static_cast<int>(osl_param.defaultValue.at(0));
 
         const int ctrl_id_1 = ctrl_id++;
-        const int p_id = param_id++;
+        const int p_id = param_id;
         
         pb_desc->AddParam(
-            p_id,
+            param_id,
             param_str.c_str(),
             TYPE_INT,
             0,
@@ -612,15 +650,15 @@ void OSLShaderRegistry::add_const_parameter(
             subfields.clear();
             asf::tokenize(fields[i].c_str(), ":", subfields);
 
-            int str_id = ctrl_id++;
+            int str_id = ++string_id;
             string_items[i] = str_id;
             string_item_values[i] = asf::from_string<int>(subfields[1]);
 
             string_map.insert(std::make_pair(str_id, utf8_to_wide(subfields[0])));
         }
 
-        pb_desc->ParamOptionContentValues(p_id, string_items, &string_item_values);
-        pb_desc->ParamOption(p_id, p_default, def_val);
+        pb_desc->ParamOptionContentValues(param_id, string_items, &string_item_values);
+        pb_desc->ParamOption(param_id, p_default, def_val);
     }
 
     if (max_param.m_param_type == MaxParam::StringPopup)
@@ -631,10 +669,9 @@ void OSLShaderRegistry::add_const_parameter(
             def_str = osl_param.defaultStringValue;
 
         const int ctrl_id_1 = ctrl_id++;
-        const int p_id = param_id++;
 
         pb_desc->AddParam(
-            p_id,
+            param_id,
             param_str.c_str(),
             TYPE_INT,
             0,
@@ -652,7 +689,7 @@ void OSLShaderRegistry::add_const_parameter(
         string_items.SetCount(num_items);
         for (size_t i = 0, e = fields.size(); i < e; ++i)
         {
-            int str_id = ctrl_id++;
+            int str_id = ++string_id;
             string_items[i] = str_id;
 
             if (def_str == fields[i])
@@ -661,8 +698,8 @@ void OSLShaderRegistry::add_const_parameter(
             string_map.insert(std::make_pair(str_id, utf8_to_wide(fields[i])));
         }
         
-        pb_desc->ParamOptionContentValues(p_id, string_items);
-        pb_desc->ParamOption(p_id, p_default, def_val);
+        pb_desc->ParamOptionContentValues(param_id, string_items);
+        pb_desc->ParamOption(param_id, p_default, def_val);
     }
 
     if (max_param.m_param_type == MaxParam::VectorParam ||
@@ -686,7 +723,7 @@ void OSLShaderRegistry::add_const_parameter(
         const int ctrl_id_6 = ctrl_id++;
 
         pb_desc->AddParam(
-            param_id++,
+            param_id,
             param_str.c_str(),
             TYPE_POINT3,
             P_ANIMATABLE,
@@ -703,7 +740,7 @@ void OSLShaderRegistry::add_const_parameter(
         int ctrl_id_1 = ctrl_id++;
 
         pb_desc->AddParam(
-            param_id++,
+            param_id,
             param_str.c_str(),
             TYPE_STRING,
             0,
@@ -721,7 +758,8 @@ void OSLShaderRegistry::add_input_parameter(
     IdNameVector&           texture_map,
     IdNameVector&           material_map,
     const int               param_id,
-    const int               ctrl_id)
+    const int               ctrl_id,
+    const int               string_id)
 {
     if (max_param.m_param_type == MaxParam::Closure)
     {
@@ -733,7 +771,7 @@ void OSLShaderRegistry::add_input_parameter(
             param_str.c_str(),
             TYPE_MTL,
             0,
-            max_param.m_max_ctrl_id,
+            string_id,
             p_ui, TYPE_MTLBUTTON, ctrl_id,
             p_accessor, &g_material_accessor,
             p_end
@@ -758,7 +796,7 @@ void OSLShaderRegistry::add_input_parameter(
             param_str.c_str(),
             TYPE_TEXMAP,
             flag,
-            max_param.m_max_ctrl_id,
+            string_id,
             p_ui, TYPE_TEXMAPBUTTON, ctrl_id,
             p_accessor, &g_texture_accessor,
             p_end

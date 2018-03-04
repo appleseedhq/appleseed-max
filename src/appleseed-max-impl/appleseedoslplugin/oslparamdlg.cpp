@@ -182,12 +182,6 @@ void OSLParamDlg::add_ui_parameter(
         }
         else
         {
-            Texmap* tex_map = nullptr;
-            Interval iv;
-            m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
-
-            const char* label = tex_map != nullptr ? "M" : "";
-
             const bool short_button = max_param.m_has_constant && 
                 (max_param.m_param_type == MaxParam::VectorParam || 
                     max_param.m_param_type == MaxParam::NormalParam ||
@@ -196,7 +190,15 @@ void OSLParamDlg::add_ui_parameter(
                     max_param.m_param_type == MaxParam::IntMapper);
 
             if (short_button)
+            {
+                Texmap* tex_map = nullptr;
+                Interval iv;
+                m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
+
+                const char* label = tex_map != nullptr ? "M" : "";
+
                 dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)label, WS_VISIBLE, NULL, Col4X + EditWidth + 11, y_pos, EditHeight, EditHeight, ctrl_id);
+            }
             else
                 dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id);
         }
