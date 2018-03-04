@@ -78,6 +78,7 @@ class MaxParam
 
     ParamType       m_param_type;
     bool            m_connectable;
+    bool            m_has_constant;
     std::string     m_max_label_str;
     int             m_max_param_id;
     int             m_max_ctrl_id;
@@ -135,6 +136,7 @@ class OSLParamInfo
     bool isOutput;
     bool isClosure;
     bool isStruct;
+    bool lockGeom;
 
     // Defaults.
     bool validDefault;
