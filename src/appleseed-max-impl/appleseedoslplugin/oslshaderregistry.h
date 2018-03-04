@@ -47,15 +47,22 @@ class OSLShaderRegistry
     ClassDesc2* get_class_descriptor(int index) const;
     int get_size() const;
     void create_class_descriptors();
-    void add_parameter(
+    void add_const_parameter(
         ParamBlockDesc2*        pb_desc,
         const OSLParamInfo&     osl_param,
         MaxParam&               param_info,
+        const int               string_id,
         IdNameMap&              string_map,
-        IdNameVector&           texture_map,
-        IdNameVector&           material_map,
         int&                    param_id,
         int&                    ctrl_id);
+    void add_input_parameter(
+        ParamBlockDesc2*        pb_desc,
+        const OSLParamInfo&     osl_param,
+        MaxParam&               param_info,
+        IdNameVector&           texture_map,
+        IdNameVector&           material_map,
+        const int               param_id,
+        const int               ctrl_id);
 
   private:
     std::map<std::wstring, OSLShaderInfo>           m_shader_map;

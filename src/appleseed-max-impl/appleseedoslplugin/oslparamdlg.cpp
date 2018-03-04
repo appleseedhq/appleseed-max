@@ -132,59 +132,74 @@ void OSLParamDlg::add_ui_parameter(
     int ctrl_id = max_param.m_max_ctrl_id;
     const std::string param_label = max_param.m_max_label_str + ":";
     dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, Col1X, y_pos, LabelWidth, EditHeight, ctrl_id++);
-    switch (max_param.m_param_type)
+    
+    if (max_param.m_has_constant)
     {
-      case MaxParam::Float:
-      case MaxParam::IntNumber:
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
-        break;
+        switch (max_param.m_param_type)
+        {
+        case MaxParam::Float:
+        case MaxParam::IntNumber:
+            dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
+            break;
 
-      case MaxParam::VectorParam:
-      case MaxParam::NormalParam:
-      case MaxParam::PointParam:
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col3X, y_pos, EditWidth, EditHeight, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col3X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col4X, y_pos, EditWidth, EditHeight, ctrl_id++);
-        dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col4X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
-        break;
+        case MaxParam::VectorParam:
+        case MaxParam::NormalParam:
+        case MaxParam::PointParam:
+            dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col2X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col3X, y_pos, EditWidth, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col3X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col4X, y_pos, EditWidth, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"SpinnerControl", (LPCSTR)"Spinner", WS_VISIBLE | WS_TABSTOP, NULL, Col4X + EditWidth + 2, y_pos, 7, EditHeight, ctrl_id++);
+            break;
 
-      case MaxParam::IntCheckbox:
-        dialog_template.AddButton((LPCSTR)"", WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, NULL, Col2X, y_pos, 10, 10, ctrl_id++);
-        break;
+        case MaxParam::IntCheckbox:
+            dialog_template.AddButton((LPCSTR)"", WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, NULL, Col2X, y_pos, 10, 10, ctrl_id++);
+            break;
 
-      case MaxParam::IntMapper:
-      case MaxParam::StringPopup:
-        dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
-        y_pos += 2;
-        break;
+        case MaxParam::IntMapper:
+        case MaxParam::StringPopup:
+            dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
+            y_pos += 2;
+            break;
 
-      case MaxParam::Color:
-        dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
-        break;
+        case MaxParam::Color:
+            dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
+            break;
 
-      case MaxParam::String:
-        dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
-        break;
-
-      case MaxParam::Closure:
-        dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
+        case MaxParam::String:
+            dialog_template.AddComponent((LPCSTR)"CustEdit", (LPCSTR)"Edit", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
+            break;
+        }
     }
 
-    if (max_param.m_connectable && max_param.m_param_type != MaxParam::Closure)
+    if (max_param.m_connectable)
     {
-        Texmap* tex_map = nullptr;
-        Interval iv;
-        m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
-        
-        const char* label = tex_map != nullptr ? "M" : "";
-
-        if (max_param.is_vector())
-            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)label, WS_VISIBLE, NULL, Col4X + EditWidth + 11, y_pos, EditHeight, EditHeight, ctrl_id);
-        else
+        if (max_param.m_param_type == MaxParam::Closure)
+        {
             dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id);
+        }
+        else
+        {
+            Texmap* tex_map = nullptr;
+            Interval iv;
+            m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
+
+            const char* label = tex_map != nullptr ? "M" : "";
+
+            const bool short_button = max_param.m_has_constant && 
+                (max_param.m_param_type == MaxParam::VectorParam || 
+                    max_param.m_param_type == MaxParam::NormalParam ||
+                    max_param.m_param_type == MaxParam::PointParam ||
+                    max_param.m_param_type == MaxParam::StringPopup ||
+                    max_param.m_param_type == MaxParam::IntMapper);
+
+            if (short_button)
+                dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)label, WS_VISIBLE, NULL, Col4X + EditWidth + 11, y_pos, EditHeight, EditHeight, ctrl_id);
+            else
+                dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id);
+        }
     }
 
     y_pos += 12;

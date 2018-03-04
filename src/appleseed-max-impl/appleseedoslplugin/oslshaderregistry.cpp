@@ -332,6 +332,7 @@ namespace
         max_output_param.m_max_ctrl_id = string_id;
         max_output_param.m_max_param_id = param_id;
         max_output_param.m_connectable = false;
+        max_output_param.m_has_constant = true;
 
         int ctrl_id_1 = ctrl_id++;
         int p_id = param_id++;
@@ -390,15 +391,35 @@ void OSLShaderRegistry::create_class_descriptors()
         int param_id = 0;
         for (auto& param_info : shader.m_params)
         {
-            add_parameter(
-                param_block_descr,
-                param_info,
-                param_info.m_max_param,
-                shader.m_string_map,
-                shader.m_texture_id_map,
-                shader.m_material_id_map,
-                param_id,
-                ctrl_id);
+            const int string_id = ctrl_id++;
+            shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
+
+            param_info.m_max_param.m_max_ctrl_id = string_id;
+            param_info.m_max_param.m_max_param_id = param_id;
+
+            if (param_info.m_max_param.m_has_constant)
+            {
+                add_const_parameter(
+                    param_block_descr,
+                    param_info,
+                    param_info.m_max_param,
+                    string_id,
+                    shader.m_string_map,
+                    param_id,
+                    ctrl_id);
+            }
+
+            if (param_info.m_max_param.m_connectable)
+            {
+                add_input_parameter(
+                    param_block_descr,
+                    param_info,
+                    param_info.m_max_param,
+                    shader.m_texture_id_map,
+                    shader.m_material_id_map,
+                    param_id++,
+                    ctrl_id++);
+            }
         }
 
         shader.m_output_param = add_output_parameter(
@@ -438,26 +459,19 @@ void OSLShaderRegistry::create_class_descriptors()
     }
 }
 
-void OSLShaderRegistry::add_parameter(
+void OSLShaderRegistry::add_const_parameter(
     ParamBlockDesc2*        pb_desc,
     const OSLParamInfo&     osl_param,
     MaxParam&               max_param,
+    const int               string_id,
     IdNameMap&              string_map,
-    IdNameVector&           texture_map,
-    IdNameVector&           material_map,
     int&                    param_id,
     int&                    ctrl_id)
 {
-    const int string_id = ctrl_id++;
-    string_map.insert(std::make_pair(string_id, utf8_to_wide(max_param.m_max_label_str)));
-
-    max_param.m_max_ctrl_id = string_id;
-    max_param.m_max_param_id = param_id;
-
     auto param_str = utf8_to_wide(max_param.m_osl_param_name);
     if (max_param.m_param_type == MaxParam::Color)
     {
-        Color def_val;
+        Color def_val(0.0f, 0.0f, 0.0f);
         if (osl_param.hasDefault)
         {
             const float r = static_cast<float>(osl_param.defaultValue.at(0));
@@ -611,7 +625,7 @@ void OSLShaderRegistry::add_parameter(
 
     if (max_param.m_param_type == MaxParam::StringPopup)
     {
-        int def_val;
+        int def_val = 0;
         std::string def_str;
         if (osl_param.hasDefault)
             def_str = osl_param.defaultStringValue;
@@ -655,7 +669,7 @@ void OSLShaderRegistry::add_parameter(
         max_param.m_param_type == MaxParam::NormalParam ||
         max_param.m_param_type == MaxParam::PointParam)
     {
-        Point3 def_val;
+        Point3 def_val(0.0f, 0.0f, 0.0f);
         if (osl_param.hasDefault)
         {
             const float x = static_cast<float>(osl_param.defaultValue.at(0));
@@ -698,47 +712,54 @@ void OSLShaderRegistry::add_parameter(
             p_end
         );
     }
+}
 
+void OSLShaderRegistry::add_input_parameter(
+    ParamBlockDesc2*        pb_desc,
+    const OSLParamInfo&     osl_param,
+    MaxParam&               max_param,
+    IdNameVector&           texture_map,
+    IdNameVector&           material_map,
+    const int               param_id,
+    const int               ctrl_id)
+{
     if (max_param.m_param_type == MaxParam::Closure)
     {
-        int ctrl_id_1 = ctrl_id++;
-        const int p_id = param_id++;
-
         auto param_str = utf8_to_wide(max_param.m_osl_param_name);
-        material_map.push_back(std::make_pair(p_id, utf8_to_wide(max_param.m_max_label_str)));
+        material_map.push_back(std::make_pair(param_id, utf8_to_wide(max_param.m_max_label_str)));
 
         pb_desc->AddParam(
-            p_id,
+            param_id,
             param_str.c_str(),
             TYPE_MTL,
             0,
-            string_id,
-            p_ui, TYPE_MTLBUTTON, ctrl_id_1,
+            max_param.m_max_ctrl_id,
+            p_ui, TYPE_MTLBUTTON, ctrl_id,
             p_accessor, &g_material_accessor,
             p_end
         );
-    }
-
-    if (max_param.m_connectable &&
-        (osl_param.widget != "null" &&
-        !osl_param.max_hidden_attr) &&
-        max_param.m_param_type != MaxParam::Closure)
+    } 
+    else
     {
-        const int ctrl_id_1 = ctrl_id++;
-        const int p_id = param_id++;
+        auto param_str = utf8_to_wide(max_param.m_osl_param_name + "_map");
+        texture_map.push_back(std::make_pair(param_id, utf8_to_wide(max_param.m_max_label_str)));
 
-        auto tex_param_str = utf8_to_wide(max_param.m_osl_param_name + "_map");
-        texture_map.push_back(std::make_pair(p_id, utf8_to_wide(max_param.m_max_label_str)));
-        
-        const int flag = max_param.is_vector() ? P_NO_AUTO_LABELS : 0;
+        const bool short_button = max_param.m_has_constant &&
+            (max_param.m_param_type == MaxParam::VectorParam || 
+                max_param.m_param_type == MaxParam::NormalParam ||
+                max_param.m_param_type == MaxParam::PointParam ||
+                max_param.m_param_type == MaxParam::StringPopup ||
+                max_param.m_param_type == MaxParam::IntMapper);
+
+        const int flag = short_button ? P_NO_AUTO_LABELS : 0;
 
         pb_desc->AddParam(
-            p_id,
-            tex_param_str.c_str(),
+            param_id,
+            param_str.c_str(),
             TYPE_TEXMAP,
             flag,
-            string_id,
-            p_ui, TYPE_TEXMAPBUTTON, ctrl_id_1,
+            max_param.m_max_ctrl_id,
+            p_ui, TYPE_TEXMAPBUTTON, ctrl_id,
             p_accessor, &g_texture_accessor,
             p_end
         );

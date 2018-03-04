@@ -102,6 +102,7 @@ namespace
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
   : hasDefault(false)
   , divider(false)
+  , lockGeom(true)
 {
     paramName = paramInfo.get("name");
     paramType = paramInfo.get("type");
@@ -158,6 +159,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     {
         OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
 
+        metadata.get_value("lockgeom", lockGeom);
         metadata.get_value("units", units);
         metadata.get_value("page", page);
         metadata.get_value("label", label);
@@ -237,6 +239,10 @@ OSLShaderInfo::OSLShaderInfo(
             max_param.m_connectable = osl_param.connectable;
             max_param.m_param_type = MaxParam::Unsupported;
             max_param.m_page_name = osl_param.page;
+
+            max_param.m_has_constant = osl_param.validDefault && 
+                osl_param.lockGeom && 
+                osl_param.widget != "null";
 
             if (osl_param.paramType == "color")
                 max_param.m_param_type = MaxParam::Color;
