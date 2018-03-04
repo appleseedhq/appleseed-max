@@ -51,10 +51,10 @@ class OSLShaderRegistry
         ParamBlockDesc2*        pb_desc,
         const OSLParamInfo&     osl_param,
         MaxParam&               param_info,
-        const int               string_id,
         IdNameMap&              string_map,
-        int&                    param_id,
-        int&                    ctrl_id);
+        const int               param_id,
+        int&                    ctrl_id,
+        int&                    string_id);
     void add_input_parameter(
         ParamBlockDesc2*        pb_desc,
         const OSLParamInfo&     osl_param,
@@ -62,7 +62,8 @@ class OSLShaderRegistry
         IdNameVector&           texture_map,
         IdNameVector&           material_map,
         const int               param_id,
-        const int               ctrl_id);
+        const int               ctrl_id,
+        const int               string_id);
 
   private:
     std::map<std::wstring, OSLShaderInfo>           m_shader_map;
