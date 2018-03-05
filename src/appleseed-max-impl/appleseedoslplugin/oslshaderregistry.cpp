@@ -344,35 +344,21 @@ namespace
             p_end);
     }
 
-    MaxParam add_output_parameter(
+    void add_output_parameter(
         ParamBlockDesc2*                    pb_desc,
         const std::vector<OSLParamInfo>&    output_params,
         IdNameMap&                          string_map,
-        int&                                param_id,
-        int&                                ctrl_id)
+        const int                           param_id,
+        const int                           ctrl_id,
+        int&                                string_id)
     {
-        int string_id = ctrl_id++;
-        string_map.insert(std::make_pair(string_id, L"Output"));
-
-        MaxParam max_output_param;
-        max_output_param.m_max_label_str = "Output";
-        max_output_param.m_osl_param_name = "output";
-        max_output_param.m_param_type = MaxParam::StringPopup;
-        max_output_param.m_max_ctrl_id = string_id;
-        max_output_param.m_max_param_id = param_id;
-        max_output_param.m_connectable = false;
-        max_output_param.m_has_constant = true;
-
-        int ctrl_id_1 = ctrl_id++;
-        int p_id = param_id++;
-
         pb_desc->AddParam(
-            p_id,
+            param_id,
             L"Output",
             TYPE_INT,
             0,
             string_id,
-            p_ui, TYPE_INT_COMBOBOX, ctrl_id_1,
+            p_ui, TYPE_INT_COMBOBOX, ctrl_id,
             0,
             p_end
         );
@@ -383,15 +369,13 @@ namespace
         string_items.SetCount(num_items);
         for (size_t i = 0, e = num_items; i < e; ++i)
         {
-            int str_id = ctrl_id++;
+            int str_id = ++string_id;
             string_items[i] = str_id;
 
             string_map.insert(std::make_pair(str_id, utf8_to_wide(output_params[i].m_param_name)));
         }
 
-        pb_desc->ParamOptionContentValues(p_id, string_items);
-
-        return max_output_param;
+        pb_desc->ParamOptionContentValues(param_id, string_items);
     }
 }
 
@@ -460,12 +444,26 @@ void OSLShaderRegistry::create_class_descriptors()
 
         }
 
-        shader.m_output_param = add_output_parameter(
+        shader.m_string_map.insert(std::make_pair(string_id++, L"Output"));
+
+        MaxParam max_output_param;
+        max_output_param.m_max_label_str = "Output";
+        max_output_param.m_osl_param_name = "output";
+        max_output_param.m_param_type = MaxParam::StringPopup;
+        max_output_param.m_max_ctrl_id = ctrl_id++;
+        max_output_param.m_max_param_id = param_id;
+        max_output_param.m_connectable = false;
+        max_output_param.m_has_constant = true;
+
+        shader.m_output_param = max_output_param;
+        
+        add_output_parameter(
             param_block_descr,
             shader.m_output_params,
             shader.m_string_map,
             param_id,
-            ctrl_id);
+            ctrl_id,
+            string_id);
 
         auto tn_vec = shader.find_param("Tn");
 
