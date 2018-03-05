@@ -143,6 +143,47 @@ asr::ParamArray get_uv_params(Texmap* texmap)
     return uv_params;
 }
 
+
+asr::ParamArray get_output_params(Texmap* texmap)
+{
+    asr::ParamArray output_params;
+    output_params.insert("in_clamp_output", fmt_osl_expr(0));
+    output_params.insert("in_invert", fmt_osl_expr(0));
+    output_params.insert("in_colorGain", fmt_osl_expr(foundation::Color3f(1.0f)));
+    output_params.insert("in_colorOffset", fmt_osl_expr(foundation::Color3f(0.0f)));
+    output_params.insert("in_alphaGain", fmt_osl_expr(1.0f));
+    output_params.insert("in_alphaOffset", fmt_osl_expr(0.0f));
+    output_params.insert("in_alphaIsLuminance", fmt_osl_expr(0));
+
+    if (texmap == nullptr)
+        return output_params;
+
+    BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
+
+    TextureOutput* texture_output = bitmap_tex->GetTexout();
+    StdTexoutGen* std_tex_output = static_cast<StdTexoutGen*>(texture_output);
+    if (!texture_output || !std_tex_output->IsStdTexoutGen())
+        return output_params;
+
+    auto time = GetCOREInterface()->GetTime();
+
+    BOOL invert = std_tex_output->GetInvert();
+    BOOL clamp = std_tex_output->GetClamp();
+    BOOL alpha_from_rgb = std_tex_output->GetAlphaFromRGB();
+    float rgb_level = std_tex_output->GetRGBAmt(time);
+    float rgb_offset = std_tex_output->GetRGBOff(time);
+
+    output_params.insert("in_clamp_output", fmt_osl_expr(clamp));
+    output_params.insert("in_invert", fmt_osl_expr(invert));
+    output_params.insert("in_colorGain", fmt_osl_expr(foundation::Color3f(rgb_level)));
+    output_params.insert("in_colorOffset", fmt_osl_expr(foundation::Color3f(rgb_offset)));
+    output_params.insert("in_alphaGain", fmt_osl_expr(rgb_level));
+    output_params.insert("in_alphaOffset", fmt_osl_expr(rgb_offset));
+    output_params.insert("in_alphaIsLuminance", fmt_osl_expr(alpha_from_rgb));
+
+    return output_params;
+}
+
 std::string fmt_osl_expr(const std::string& s)
 {
     return asf::format("string {0}", s);
@@ -195,11 +236,14 @@ void connect_float_texture(
     auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
     shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
 
-    auto layer_name = asf::format("{0}_{1}", material_node_name, material_input_name);
+    auto layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
     shader_group.add_shader("shader", "as_max_float_texture", layer_name.c_str(),
         asr::ParamArray()
             .insert("Filename", fmt_osl_expr(texmap))
             .insert("Multiplier", fmt_osl_expr(multiplier)));
+
+    auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
+    shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), get_output_params(texmap));
 
     shader_group.add_connection(
         uv_transform_layer_name.c_str(), "out_U",
@@ -211,6 +255,10 @@ void connect_float_texture(
 
     shader_group.add_connection(
         layer_name.c_str(), "FloatOut",
+        color_balance_layer_name.c_str(), "in_defaultFloat");
+
+    shader_group.add_connection(
+        color_balance_layer_name.c_str(), "out_outAlpha",
         material_node_name, material_input_name);
 }
 
@@ -230,7 +278,7 @@ void connect_color_texture(
     
     auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
     shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
-
+    
     if (is_bitmap_texture(texmap) && !is_linear_texture(static_cast<BitmapTex*>(texmap)))
     {
         auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
@@ -238,6 +286,9 @@ void connect_color_texture(
             asr::ParamArray()
                 .insert("Filename", fmt_osl_expr(texmap))
                 .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
+
+        auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), get_output_params(texmap));
 
         auto srgb_to_linear_layer_name = asf::format("{0}_{1}_srgb_to_linear", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_srgb_to_linear_rgb", srgb_to_linear_layer_name.c_str(),
@@ -253,6 +304,10 @@ void connect_color_texture(
 
         shader_group.add_connection(
             texture_layer_name.c_str(), "ColorOut",
+            color_balance_layer_name.c_str(), "in_defaultColor");
+
+        shader_group.add_connection(
+            color_balance_layer_name.c_str(), "out_outColor",
             srgb_to_linear_layer_name.c_str(), "ColorIn");
 
         shader_group.add_connection(
