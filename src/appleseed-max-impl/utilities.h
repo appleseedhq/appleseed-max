@@ -147,6 +147,7 @@ void update_map_buttons(IParamMap2* param_map);
 //
 // Bitmap functions.
 //
+float get_output_amount(Texmap* map, TimeValue t);
 
 bool is_bitmap_texture(Texmap* map);
 

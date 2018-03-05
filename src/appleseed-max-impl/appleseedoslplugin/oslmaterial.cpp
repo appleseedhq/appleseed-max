@@ -511,27 +511,30 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
             GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, t, texmap, FOREVER);
             if (texmap != nullptr)
             {
+                float output_amount = get_output_amount(texmap, t);
                 switch (max_param.m_param_type)
                 {
                   case MaxParam::Float:
                     {
+                        float constant_value = GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t);
                         connect_float_texture(
                             shader_group.ref(),
                             name,
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t));
+                            asf::mix(constant_value, 1.0f, output_amount));
                     }
                     break;
-
                   case MaxParam::Color:
                     {
+                        Color constant_color = GetParamBlock(0)->GetColor(max_param.m_max_param_id, t);
+                        auto mix_amount = asf::mix(to_color3f(constant_color), asf::Color3f(1.0f), output_amount);
                         connect_color_texture(
                             shader_group.ref(),
                             name,
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            GetParamBlock(0)->GetColor(max_param.m_max_param_id, t));
+                            Color(mix_amount.r, mix_amount.g, mix_amount.b));
                     }
                     break;
 

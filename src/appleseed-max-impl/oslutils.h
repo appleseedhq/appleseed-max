@@ -44,6 +44,8 @@ class Texmap;
 
 renderer::ParamArray get_uv_params(Texmap* texmap);
 
+renderer::ParamArray get_output_params(Texmap* texmap);
+
 std::string fmt_osl_expr(const std::string& s);
 
 std::string fmt_osl_expr(const int value);
