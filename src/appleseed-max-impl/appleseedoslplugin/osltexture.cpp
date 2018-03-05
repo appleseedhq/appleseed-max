@@ -520,6 +520,12 @@ void OSLTexture::create_osl_texture(
                 break;
 
               case MaxParam::String:
+                {
+                    const wchar_t* str_value;
+                    GetParamBlock(0)->GetValue(max_param.m_max_param_id, t, str_value, FOREVER);
+                    if (str_value != nullptr)
+                        params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(wide_to_utf8(str_value)));
+                }
                 break;
             }
         }
