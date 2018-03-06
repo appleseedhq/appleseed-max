@@ -224,8 +224,13 @@ void connect_float_texture(
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,
-    const float         multiplier)
+    const float         const_value)
 {
+    auto time = GetCOREInterface()->GetTime();
+    float output_amount = 1.0f;
+    if (texmap != nullptr)
+        output_amount = get_output_amount(texmap, time);
+
     if (is_osl_texture(texmap))
     {
         OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
@@ -239,11 +244,16 @@ void connect_float_texture(
     auto layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
     shader_group.add_shader("shader", "as_max_float_texture", layer_name.c_str(),
         asr::ParamArray()
-            .insert("Filename", fmt_osl_expr(texmap))
-            .insert("Multiplier", fmt_osl_expr(multiplier)));
+            .insert("Filename", fmt_osl_expr(texmap)));
 
     auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
     shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), get_output_params(texmap));
+
+    auto mix_layer_name = asf::format("{0}_{1}_mix", material_node_name, material_input_name);
+    shader_group.add_shader("shader", "as_max_mix_texture_constant", mix_layer_name.c_str(),
+        asr::ParamArray()
+        .insert("Multiplier", fmt_osl_expr(output_amount))
+        .insert("FloatConstant", fmt_osl_expr(const_value)));
 
     shader_group.add_connection(
         uv_transform_layer_name.c_str(), "out_U",
@@ -259,6 +269,10 @@ void connect_float_texture(
 
     shader_group.add_connection(
         color_balance_layer_name.c_str(), "out_outAlpha",
+        mix_layer_name.c_str(), "FloatTexture");
+
+    shader_group.add_connection(
+        mix_layer_name.c_str(), "FloatOut",
         material_node_name, material_input_name);
 }
 
@@ -267,8 +281,13 @@ void connect_color_texture(
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,
-    const Color         multiplier)
+    const Color         const_color)
 {
+    auto time = GetCOREInterface()->GetTime();
+    float output_amount = 1.0f;
+    if (texmap != nullptr)
+        output_amount = get_output_amount(texmap, time);
+
     if (is_osl_texture(texmap))
     {
         OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
@@ -278,14 +297,14 @@ void connect_color_texture(
     
     auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
     shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
-    
+
     if (is_bitmap_texture(texmap) && !is_linear_texture(static_cast<BitmapTex*>(texmap)))
     {
+
         auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
             asr::ParamArray()
-                .insert("Filename", fmt_osl_expr(texmap))
-                .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
+                .insert("Filename", fmt_osl_expr(texmap)));
 
         auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), get_output_params(texmap));
@@ -293,6 +312,12 @@ void connect_color_texture(
         auto srgb_to_linear_layer_name = asf::format("{0}_{1}_srgb_to_linear", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_srgb_to_linear_rgb", srgb_to_linear_layer_name.c_str(),
             asr::ParamArray());
+
+        auto mix_layer_name = asf::format("{0}_{1}_mix", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_mix_texture_constant", mix_layer_name.c_str(),
+            asr::ParamArray()
+            .insert("Multiplier", fmt_osl_expr(output_amount))
+            .insert("ColorConstant", fmt_osl_expr(to_color3f(const_color))));
 
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_U",
@@ -312,6 +337,10 @@ void connect_color_texture(
 
         shader_group.add_connection(
             srgb_to_linear_layer_name.c_str(), "ColorOut",
+            mix_layer_name.c_str(), "ColorTexture");
+
+        shader_group.add_connection(
+            mix_layer_name.c_str(), "ColorOut",
             material_node_name, material_input_name);
     }
     else
@@ -320,7 +349,17 @@ void connect_color_texture(
         shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
             asr::ParamArray()
                 .insert("Filename", fmt_osl_expr(texmap))
-                .insert("Multiplier", fmt_osl_expr(to_color3f(multiplier))));
+                .insert("Multiplier", fmt_osl_expr(0.0f))
+                .insert("ConstColor", fmt_osl_expr(to_color3f(const_color))));
+
+        auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), get_output_params(texmap));
+
+        auto mix_layer_name = asf::format("{0}_{1}_mix", material_node_name, material_input_name);
+        shader_group.add_shader("shader", "as_max_mix_texture_constant", mix_layer_name.c_str(),
+            asr::ParamArray()
+            .insert("Multiplier", fmt_osl_expr(output_amount))
+            .insert("ColorConstant", fmt_osl_expr(to_color3f(const_color))));
 
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_U",
@@ -332,6 +371,14 @@ void connect_color_texture(
 
         shader_group.add_connection(
             texture_layer_name.c_str(), "ColorOut",
+            color_balance_layer_name.c_str(), "in_defaultColor");
+
+        shader_group.add_connection(
+            color_balance_layer_name.c_str(), "out_outColor",
+            mix_layer_name.c_str(), "ColorTexture");
+
+        shader_group.add_connection(
+            mix_layer_name.c_str(), "ColorOut",
             material_node_name, material_input_name);
     }
 }

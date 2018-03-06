@@ -70,7 +70,7 @@ void connect_color_texture(
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const Color             multiplier);
+    const Color             constant_color);
 
 void connect_bump_map(
     renderer::ShaderGroup&  shader_group,

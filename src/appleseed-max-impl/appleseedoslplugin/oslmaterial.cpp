@@ -528,13 +528,12 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                   case MaxParam::Color:
                     {
                         Color constant_color = GetParamBlock(0)->GetColor(max_param.m_max_param_id, t);
-                        auto mix_amount = asf::mix(to_color3f(constant_color), asf::Color3f(1.0f), output_amount);
                         connect_color_texture(
                             shader_group.ref(),
                             name,
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            Color(mix_amount.r, mix_amount.g, mix_amount.b));
+                            constant_color);
                     }
                     break;
 
