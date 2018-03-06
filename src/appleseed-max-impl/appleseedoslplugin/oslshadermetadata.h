@@ -161,6 +161,7 @@ class OSLParamInfo
     double m_soft_max_value;
     bool m_divider;
 
+    std::string m_maya_attribute_name;
     bool m_connectable;
     bool max_hidden_attr;
     MaxParam m_max_param;
@@ -183,6 +184,7 @@ class OSLShaderInfo
         const std::string               filename);
 
     const OSLParamInfo* find_param(const char* param_name) const;
+    const OSLParamInfo* find_maya_attribute(const char* param_name) const;
 
     Class_ID                    m_class_id;
     bool                        m_is_texture;

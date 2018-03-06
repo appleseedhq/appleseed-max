@@ -135,6 +135,7 @@ class OSLMaterial
     Class_ID                m_classid;
     OSLPluginClassDesc*     m_class_desc;
     bool                    m_has_bump_params;
+    bool                    m_has_normal_params;
     Interval                m_params_validity;
     IParamBlock2*           m_pblock;
     IParamBlock2*           m_bump_pblock;

@@ -86,8 +86,9 @@ OSLTexture::OSLTexture(Class_ID class_id, OSLPluginClassDesc* class_desc)
     m_shader_info = m_class_desc->m_shader_info;
     m_texture_id_map = m_shader_info->m_texture_id_map;
 
-    m_has_uv_coords = m_shader_info->find_param("in_uvCoord") != nullptr;
-    m_has_xyz_coords = m_shader_info->find_param("in_placementMatrix") != nullptr;
+    m_has_uv_coords = m_shader_info->find_maya_attribute("uvCoord") != nullptr && 
+        m_shader_info->find_maya_attribute("uvFilterSize") != nullptr;
+    m_has_xyz_coords = m_shader_info->find_maya_attribute("placementMatrix") != nullptr;
     m_class_desc->MakeAutoParamBlocks(this);
     Reset();
 }
@@ -536,13 +537,16 @@ void OSLTexture::create_osl_texture(
         auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(this));
 
+        auto* uv_coord_input = m_shader_info->find_maya_attribute("uvCoord");
+        auto* uv_filter_input = m_shader_info->find_maya_attribute("uvFilterSize");
+
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_outUV",
-            layer_name.c_str(), "in_uvCoord");
+            layer_name.c_str(), uv_coord_input->m_param_name.c_str());
 
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_outUvFilterSize",
-            layer_name.c_str(), "in_uvFilterSize");
+            layer_name.c_str(), uv_filter_input->m_param_name.c_str());
     }
 
     shader_group.add_shader("shader", m_shader_info->m_shader_name.c_str(), layer_name.c_str(), params);

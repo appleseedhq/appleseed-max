@@ -87,8 +87,8 @@ OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
     m_texture_id_map = m_shader_info->m_texture_id_map;
     m_submaterial_map = m_shader_info->m_material_id_map;
     
-    auto tn_vec = m_shader_info->find_param("Tn");
-    m_has_bump_params = tn_vec != nullptr;
+    m_has_bump_params = m_shader_info->find_maya_attribute("normalCamera") != nullptr;
+    m_has_normal_params = m_shader_info->find_param("Tn") != nullptr;
 
     class_desc->MakeAutoParamBlocks(this);
     Reset();
@@ -635,18 +635,17 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                 get_paramblock_value_by_name(bump_param_block, L"bump_amount", t, bump_amount, FOREVER);
                 get_paramblock_value_by_name(bump_param_block, L"bump_up_vector", t, bump_up_vector, FOREVER);
 
-                const char* bump_input = m_shader_info->find_param("in_bump_normal_substrate") != nullptr ?
-                    "in_bump_normal_substrate" : "in_bump_normal";
+                const auto* bump_param = m_shader_info->find_maya_attribute("normalCamera");
 
                 if (bump_method == 0)
                 {
                     // Bump mapping.
-                    connect_bump_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_amount);
+                    connect_bump_map(shader_group.ref(), name, bump_param->m_param_name.c_str(), "Tn", bump_texmap, bump_amount);
                 }
-                else
+                else if (m_has_normal_params)
                 {
                     // Normal mapping.
-                    connect_normal_map(shader_group.ref(), name, bump_input, "Tn", bump_texmap, bump_up_vector);
+                    connect_normal_map(shader_group.ref(), name, bump_param->m_param_name.c_str(), "Tn", bump_texmap, bump_up_vector);
                 }
             }
         }
