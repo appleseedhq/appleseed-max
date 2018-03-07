@@ -750,6 +750,18 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
     connect_float_texture(shader_group.ref(), name, "Clearcoat", m_clearcoat_texmap, m_clearcoat / 100.0f);
     connect_float_texture(shader_group.ref(), name, "ClearcoatGloss", m_clearcoat_gloss_texmap, m_clearcoat_gloss / 100.0f);
 
+    auto params = asr::ParamArray()
+        .insert("BaseColor", fmt_osl_expr(to_color3f(m_base_color)))
+        .insert("Metallic", fmt_osl_expr(m_metallic / 100.0f))
+        .insert("Specular", fmt_osl_expr(m_specular / 100.0f))
+        .insert("SpecularTint", fmt_osl_expr(m_specular_tint / 100.0f))
+        .insert("Roughness", fmt_osl_expr(m_roughness / 100.0f))
+        .insert("Sheen", fmt_osl_expr(m_sheen / 100.0f))
+        .insert("SheenTint", fmt_osl_expr(m_sheen_tint / 100.0f))
+        .insert("Anisotropic", fmt_osl_expr(m_anisotropy))
+        .insert("Clearcoat", fmt_osl_expr(m_clearcoat / 100.0f))
+        .insert("ClearcoatGloss", fmt_osl_expr(m_clearcoat_gloss / 100.0f));
+
     if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
@@ -764,7 +776,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
         }
     }
 
-    shader_group->add_shader("surface", "as_max_disney_material", name, asr::ParamArray());
+    shader_group->add_shader("surface", "as_max_disney_material", name, params);
 
     std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());

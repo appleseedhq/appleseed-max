@@ -522,7 +522,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                             name,
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            asf::mix(constant_value, 1.0f, output_amount));
+                            constant_value);
                     }
                     break;
                   case MaxParam::Color:

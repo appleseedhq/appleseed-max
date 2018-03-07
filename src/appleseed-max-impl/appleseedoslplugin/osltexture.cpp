@@ -441,23 +441,25 @@ void OSLTexture::create_osl_texture(
                 {
                   case MaxParam::Float:
                     {
+                        float constant_value = GetParamBlock(0)->GetFloat(max_param.m_max_param_id, t);
                         connect_float_texture(
                             shader_group,
                             layer_name.c_str(),
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            1.0f);
+                            constant_value);
                     }
                     break;
 
                   case MaxParam::Color:
                     {
+                        Color constant_color = GetParamBlock(0)->GetColor(max_param.m_max_param_id, t);
                         connect_color_texture(
                             shader_group,
                             layer_name.c_str(),
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            Color(1.0f, 1.0f, 1.0f));
+                            constant_color);
                     }
                     break;
 
