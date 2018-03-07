@@ -466,8 +466,11 @@ void OSLShaderRegistry::create_class_descriptors()
             string_id);
 
         auto tn_vec = shader.find_param("Tn");
+        auto bump_normal = shader.find_maya_attribute("normalCamera");
 
-        if (!shader.m_is_texture && tn_vec != nullptr)
+        if (!shader.m_is_texture && 
+            (tn_vec != nullptr || 
+            bump_normal != nullptr))
         {
             ParamBlockDesc2* bump_param_block_descr(new ParamBlockDesc2(
                 // --- Required arguments ---
