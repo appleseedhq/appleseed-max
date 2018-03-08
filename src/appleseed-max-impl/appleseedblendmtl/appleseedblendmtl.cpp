@@ -613,20 +613,19 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 
         Texmap* tex = nullptr;
         m_pblock->GetValue(ParamIdMaskTex, time, tex, FOREVER, i);
+        const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
         if (tex != nullptr)
         {
-            const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
-            connect_float_texture(shader_group.ref(), name, asf::format("MaskColor_{0}", layer_index).c_str(), tex, mask_amount);
-            shader_params.insert(
-                asf::format("MixAmount_{0}", layer_index).c_str(), 
-                fmt_osl_expr(1.0f));
+            connect_float_texture(
+                shader_group.ref(),
+                name,
+                asf::format("MaskColor_{0}", layer_index).c_str(),
+                tex,
+                mask_amount);
         }
-        else
-        {
-            const float mix_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
-            shader_params.insert(
-                asf::format("MixAmount_{0}", layer_index).c_str(), fmt_osl_expr(mix_amount));
-        }
+
+        shader_params.insert(
+            asf::format("MixAmount_{0}", layer_index).c_str(), fmt_osl_expr(mask_amount));
 
         ++layer_index;
     }

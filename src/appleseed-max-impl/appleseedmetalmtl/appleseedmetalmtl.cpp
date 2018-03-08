@@ -660,7 +660,13 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
         }
     }
 
-    shader_group->add_shader("surface", "as_max_metal_material", name, asr::ParamArray());
+    shader_group->add_shader("surface", "as_max_metal_material", name, 
+        asr::ParamArray()
+        .insert("NormalReflectance", fmt_osl_expr(to_color3f(m_facing_tint_color)))
+        .insert("EdgeTint", fmt_osl_expr(to_color3f(m_edge_tint_color)))
+        .insert("Reflectance", fmt_osl_expr(m_reflectance / 100.0f))
+        .insert("Roughness", fmt_osl_expr(m_roughness / 100.0f))
+        .insert("Anisotropic", fmt_osl_expr(m_anisotropy)));
 
     std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
