@@ -267,8 +267,11 @@ void OSLParamDlg::create_dialog()
         0);
 
     auto tn_vec = m_shader_info->find_param("Tn");
-    
-    if (!m_shader_info->m_is_texture && tn_vec != nullptr)
+    auto bump_normal = m_shader_info->find_maya_attribute("normalCamera");
+
+    if (!m_shader_info->m_is_texture &&
+        (tn_vec != nullptr ||
+        bump_normal != nullptr))
     {
         m_bump_pmap = CreateMParamMap2(
             m_osl_plugin->GetParamBlock(1),

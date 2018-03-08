@@ -673,7 +673,6 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
     //
     // Shader group.
     //
-    asr::ParamArray shader_params;
 
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
@@ -681,18 +680,12 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
     // BSSRDF.
     connect_color_texture(shader_group.ref(), name, "Radius", m_sss_scattering_color_texmap, m_sss_scattering_color);
     connect_color_texture(shader_group.ref(), name, "SSSColor", m_sss_color_texmap, m_sss_color);
-    shader_params.insert("RadiusScale", fmt_osl_expr(m_sss_scale));
-    shader_params.insert("Profile", fmt_osl_expr("normalized_diffusion"));
-    shader_params.insert("SSSReflectance", fmt_osl_expr(m_sss_amount / 100.0f));
     
     // BRDF.
     connect_color_texture(shader_group.ref(), name, "SpecularColor", m_specular_color_texmap, m_specular_color);
     connect_float_texture(shader_group.ref(), name, "SpecularReflectance", m_specular_amount_texmap, m_specular_amount / 100.0f);
     connect_float_texture(shader_group.ref(), name, "Roughness", m_specular_roughness_texmap, m_specular_roughness / 100.0f);
     connect_float_texture(shader_group.ref(), name, "Anisotropic", m_specular_anisotropy_texmap, m_specular_anisotropy / 100.0f);
-    shader_params.insert("Distribution", fmt_osl_expr("ggx"));
-
-    shader_params.insert("Ior", fmt_osl_expr(m_sss_ior));
 
     if (m_bump_texmap != nullptr)
     {
@@ -708,7 +701,19 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
         }
     }
 
-    shader_group->add_shader("surface", "as_max_sss_material", name, shader_params);
+    shader_group->add_shader("surface", "as_max_sss_material", name, 
+        asr::ParamArray()
+        .insert("Radius", fmt_osl_expr(to_color3f(m_sss_scattering_color)))
+        .insert("SSSColor", fmt_osl_expr(to_color3f(m_sss_color)))
+        .insert("SpecularColor", fmt_osl_expr(to_color3f(m_specular_color)))
+        .insert("SpecularReflectance", fmt_osl_expr(m_specular_amount / 100.0f))
+        .insert("Roughness", fmt_osl_expr(m_specular_roughness / 100.0f))
+        .insert("Anisotropic", fmt_osl_expr(m_specular_anisotropy / 100.0f))
+        .insert("RadiusScale", fmt_osl_expr(m_sss_scale))
+        .insert("Profile", fmt_osl_expr("normalized_diffusion"))
+        .insert("SSSReflectance", fmt_osl_expr(m_sss_amount / 100.0f))
+        .insert("Distribution", fmt_osl_expr("ggx"))
+        .insert("Ior", fmt_osl_expr(m_sss_ior)));
 
     std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());
