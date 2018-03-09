@@ -70,9 +70,6 @@ namespace
         const ParamID   id,
         const bool      is_bump = false)
     {
-        if (pblock == nullptr)
-            return;
-
         IParamMap2* map = pblock->GetMap();
         if (map == nullptr)
             return;
@@ -80,17 +77,45 @@ namespace
         Texmap* tex_map = nullptr;
         Interval iv;
 
-        const bool is_vector = pblock->GetParameterType(id - 1) == TYPE_POINT3;
-        const bool is_combobox = pblock->GetParamDef(id - 1).ctrl_type == TYPE_INT_COMBOBOX;
-        const bool is_short_button = is_bump ? false : is_vector || is_combobox;
+        pblock->GetValue(id, 0, tex_map, iv);
+
+        map->SetText(id, tex_map != nullptr ? tex_map->GetFullName() : L"None");
+    }
+
+    void set_short_button_text(
+        IParamBlock2*   pblock,
+        const ParamID   id,
+        const bool      is_bump = false)
+    {
+        IParamMap2* map = pblock->GetMap();
+        if (map == nullptr)
+            return;
+
+        Texmap* tex_map = nullptr;
+        Interval iv;
 
         pblock->GetValue(id, 0, tex_map, iv);
 
-        if (tex_map != nullptr)
-            map->SetText(id, is_short_button ? L"M" : tex_map->GetFullName());
-        else
-            map->SetText(id, is_short_button ? L"" : L"None");
+        map->SetText(id, tex_map != nullptr ? L"M" : L"");
     }
+
+    class TextureAccessorShort
+        : public PBAccessor
+    {
+    public:
+        void Set(
+            PB2Value&         v,
+            ReferenceMaker*   owner,
+            ParamID           id,
+            int               tabIndex,
+            TimeValue         t) override
+        {
+            IParamBlock2* pblock = owner->GetParamBlock(0);
+            
+            if (pblock != nullptr)
+                set_short_button_text(pblock, id);
+        }
+    };
 
     class TextureAccessor
       : public PBAccessor
@@ -105,7 +130,8 @@ namespace
         {
             IParamBlock2* pblock = owner->GetParamBlock(0);
             
-            set_button_text(pblock, id);
+            if (pblock != nullptr)
+                set_button_text(pblock, id);
         }
     };
     
@@ -155,6 +181,7 @@ namespace
     };
 
     static TextureAccessor g_texture_accessor;
+    static TextureAccessorShort g_texture_accessor_short;
     static BumpTextureAccessor g_bump_accessor;
     static MaterialAccessor g_material_accessor;
 
@@ -624,7 +651,6 @@ void OSLShaderRegistry::add_const_parameter(
             def_val = static_cast<int>(osl_param.m_default_value.at(0));
 
         const int ctrl_id_1 = ctrl_id++;
-        const int p_id = param_id;
         
         pb_desc->AddParam(
             param_id,
@@ -791,6 +817,9 @@ void OSLShaderRegistry::add_input_parameter(
                 max_param.m_param_type == MaxParam::IntMapper);
 
         const int flag = short_button ? P_NO_AUTO_LABELS : 0;
+        PBAccessor* tex_accessor = &g_texture_accessor;
+        if (short_button)
+            tex_accessor = &g_texture_accessor_short;
 
         pb_desc->AddParam(
             param_id,
@@ -799,7 +828,7 @@ void OSLShaderRegistry::add_input_parameter(
             flag,
             string_id,
             p_ui, TYPE_TEXMAPBUTTON, ctrl_id,
-            p_accessor, &g_texture_accessor,
+            p_accessor, tex_accessor,
             p_end
         );
     }
