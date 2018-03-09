@@ -29,7 +29,11 @@
 #pragma once
 
 // appleseed.foundation headers.
+#include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/image/color.h"
+
+// 3ds Max Headers.
+#include <maxtypes.h>
 
 // Standard headers.
 #include <string>
@@ -39,7 +43,9 @@ namespace renderer { class Assembly; }
 namespace renderer { class ParamArray; }
 namespace renderer { class ShaderGroup; }
 class Color;
+class IParamBlock2;
 class Mtl;
+class OSLShaderInfo;
 class Texmap;
 
 renderer::ParamArray get_uv_params(Texmap* texmap);
@@ -55,6 +61,10 @@ std::string fmt_osl_expr(const float value);
 std::string fmt_osl_expr(const foundation::Color3f& linear_rgb);
 
 std::string fmt_osl_expr(const foundation::Vector3f& vector);
+
+std::string fmt_osl_normal_expr(const foundation::Vector3f& normal);
+
+std::string fmt_osl_point_expr(const foundation::Vector3f& point);
 
 std::string fmt_osl_expr(Texmap* texmap);
 
@@ -94,3 +104,10 @@ void connect_sub_mtl(
     const char*             shader_name,
     const char*             shader_input,
     Mtl*                    mat);
+
+void create_osl_shader(
+    renderer::Assembly*     assembly,
+    renderer::ShaderGroup&  shader_group,
+    const char*             layer_name,
+    IParamBlock2*           param_block,
+    const OSLShaderInfo*    shader_info);

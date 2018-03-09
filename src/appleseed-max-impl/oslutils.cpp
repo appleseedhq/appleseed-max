@@ -30,6 +30,7 @@
 #include "oslutils.h"
 
 // appleseed-max headers.
+#include "appleseedoslplugin/oslshadermetadata.h"
 #include "appleseedoslplugin/osltexture.h"
 #include "iappleseedmtl.h"
 #include "utilities.h"
@@ -45,7 +46,9 @@
 #include <bitmap.h>
 #include <imtl.h>
 #include <maxapi.h>
+#include <maxtypes.h>
 #include <stdmat.h>
+#include <iparamm2.h>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -165,13 +168,13 @@ asr::ParamArray get_output_params(Texmap* texmap)
     if (!texture_output || !std_tex_output->IsStdTexoutGen())
         return output_params;
 
-    auto time = GetCOREInterface()->GetTime();
+    const auto time = GetCOREInterface()->GetTime();
 
-    BOOL invert = std_tex_output->GetInvert();
-    BOOL clamp = std_tex_output->GetClamp();
-    BOOL alpha_from_rgb = std_tex_output->GetAlphaFromRGB();
-    float rgb_level = std_tex_output->GetRGBAmt(time);
-    float rgb_offset = std_tex_output->GetRGBOff(time);
+    const BOOL invert = std_tex_output->GetInvert();
+    const BOOL clamp = std_tex_output->GetClamp();
+    const BOOL alpha_from_rgb = std_tex_output->GetAlphaFromRGB();
+    const float rgb_level = std_tex_output->GetRGBAmt(time);
+    const float rgb_offset = std_tex_output->GetRGBOff(time);
 
     output_params.insert("in_clamp_output", fmt_osl_expr(clamp));
     output_params.insert("in_invert", fmt_osl_expr(invert));
@@ -207,6 +210,16 @@ std::string fmt_osl_expr(const asf::Color3f& linear_rgb)
 std::string fmt_osl_expr(const asf::Vector3f& vector)
 {
     return asf::format("vector {0} {1} {2}", vector.x, vector.y, vector.z);
+}
+
+std::string fmt_osl_normal_expr(const asf::Vector3f& normal)
+{
+    return asf::format("normal {0} {1} {2}", normal.x, normal.y, normal.z);
+}
+
+std::string fmt_osl_point_expr(const asf::Vector3f& point)
+{
+    return asf::format("point {0} {1} {2}", point.x, point.y, point.z);
 }
 
 std::string fmt_osl_expr(Texmap* texmap)
@@ -534,3 +547,151 @@ void connect_sub_mtl(
     auto last_conn = mtl_group->shader_connections().get_by_index(mtl_group->shader_connections().size() - 1);
     shader_group.add_connection(layer_name.c_str(), last_conn->get_src_param(), shader_name, shader_input);
 }
+
+void create_osl_shader(
+    renderer::Assembly*     assembly,
+    asr::ShaderGroup&       shader_group,
+    const char*             layer_name,
+    IParamBlock2*           param_block,
+    const OSLShaderInfo*    shader_info)
+{
+    asr::ParamArray params;
+    const auto t = GetCOREInterface()->GetTime();
+
+    for (const auto& param_info : shader_info->m_params)
+    {
+        const MaxParam& max_param = param_info.m_max_param;
+        Texmap* texmap = nullptr;
+        if (max_param.m_connectable)
+        {
+            int texture_param_id = 
+                max_param.m_has_constant ? max_param.m_max_param_id + 1 : max_param.m_max_param_id;
+            param_block->GetValue(texture_param_id, t, texmap, FOREVER);
+
+            if (texmap != nullptr)
+            {
+                switch (max_param.m_param_type)
+                {
+                  case MaxParam::Float:
+                    {
+                        const float constant_value = 
+                            max_param.m_has_constant ? param_block->GetFloat(max_param.m_max_param_id, t) : 1.0f;
+                        connect_float_texture(
+                            shader_group,
+                            layer_name,
+                            max_param.m_osl_param_name.c_str(),
+                            texmap,
+                            constant_value);
+                    }
+                    break;
+                  case MaxParam::Color:
+                    {
+                        const Color constant_color = 
+                            max_param.m_has_constant ? param_block->GetColor(max_param.m_max_param_id, t) : Color(1.0, 1.0, 1.0);
+                        connect_color_texture(
+                            shader_group,
+                            layer_name,
+                            max_param.m_osl_param_name.c_str(),
+                            texmap,
+                            constant_color);
+                    }
+                    break;
+
+                  case MaxParam::VectorParam:
+                  case MaxParam::NormalParam:
+                  case MaxParam::PointParam:
+                    {
+                        if (is_osl_texture(texmap))
+                        {
+                            OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
+                            osl_tex->create_osl_texture(shader_group, layer_name, max_param.m_osl_param_name.c_str());
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (max_param.m_connectable && max_param.m_param_type == MaxParam::Closure)
+        {
+            Mtl* material = nullptr;
+            param_block->GetValue(max_param.m_max_param_id, t, material, FOREVER);
+            if (material != nullptr && assembly != nullptr)
+            {
+                connect_sub_mtl(*assembly, shader_group, layer_name, max_param.m_osl_param_name.c_str(), material);
+            }
+        }
+
+        if (!max_param.m_connectable || texmap == nullptr)
+        {
+            switch (max_param.m_param_type)
+            {
+              case MaxParam::Float:
+                {
+                    const float param_value = param_block->GetFloat(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
+                }
+                break;
+
+              case MaxParam::IntNumber:
+              case MaxParam::IntCheckbox:
+              case MaxParam::IntMapper:
+                {
+                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
+                }
+                break;
+
+              case MaxParam::Color:
+                {
+                    const auto param_value = param_block->GetColor(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
+                }
+                break;
+
+              case MaxParam::VectorParam:
+                {
+                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
+                }
+                break;
+
+              case MaxParam::NormalParam:
+                {
+                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_normal_expr(to_vector3f(param_value)));
+                }
+                break;
+
+              case MaxParam::PointParam:
+                {
+                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_point_expr(to_vector3f(param_value)));
+                }
+                break;
+
+              case MaxParam::StringPopup:
+                {
+                    std::vector<std::string> fields;
+                    asf::tokenize(param_info.m_options, "|", fields);
+
+                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t);
+                    params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
+                }
+                break;
+
+              case MaxParam::String:
+                {
+                    const wchar_t* str_value;
+                    param_block->GetValue(max_param.m_max_param_id, t, str_value, FOREVER);
+                    if (str_value != nullptr)
+                        params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(wide_to_utf8(str_value)));
+                }
+                break;
+            }
+        }
+    }
+
+    shader_group.add_shader("shader", shader_info->m_shader_name.c_str(), layer_name, params);
+}
+
