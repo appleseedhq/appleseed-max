@@ -39,7 +39,6 @@
 
 // 3ds Max Headers.
 #include <imtl.h>
-#include <maxtypes.h>
 
 namespace asf = foundation;
 namespace asr = renderer;

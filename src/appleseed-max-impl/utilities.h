@@ -152,7 +152,7 @@ bool is_bitmap_texture(Texmap* map);
 
 bool is_osl_texture(Texmap* map);
 
-bool is_supported_procedural_texture(Texmap* map, bool osl_mode);
+bool is_supported_procedural_texture(Texmap* map, const bool use_max_procedural_maps);
 
 bool is_linear_texture(BitmapTex* bitmap_tex);
 

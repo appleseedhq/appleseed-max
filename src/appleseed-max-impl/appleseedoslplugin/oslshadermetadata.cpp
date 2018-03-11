@@ -174,8 +174,8 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
 
         metadata.get_value("as_maya_attribute_name", m_maya_attribute_name);
         metadata.get_value("as_maya_attribute_connectable", m_connectable);
-        max_hidden_attr = false;
-        metadata.get_value("as_max_attribute_hidden", max_hidden_attr);
+        m_max_hidden_attr = false;
+        metadata.get_value("as_max_attribute_hidden", m_max_hidden_attr);
     }
 }
 

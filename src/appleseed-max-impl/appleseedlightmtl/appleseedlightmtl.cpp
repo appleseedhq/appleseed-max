@@ -511,8 +511,8 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_osl_material(
     
     shader_group->add_shader("surface", "as_max_light_material", name, 
         asr::ParamArray()
-        .insert("Color", fmt_osl_expr(to_color3f(m_light_color)))
-        .insert("Emission", fmt_osl_expr(m_light_power)));
+            .insert("Color", fmt_osl_expr(to_color3f(m_light_color)))
+            .insert("Emission", fmt_osl_expr(m_light_power)));
 
     std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());

@@ -31,6 +31,7 @@
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/image/color.h"
+#include "foundation/math/vector.h"
 
 // 3ds Max Headers.
 #include <maxtypes.h>
@@ -73,14 +74,14 @@ void connect_float_texture(
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const float             multiplier);
+    const float             const_value);
 
 void connect_color_texture(
     renderer::ShaderGroup&  shader_group,
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const Color             constant_color);
+    const Color             const_color);
 
 void connect_bump_map(
     renderer::ShaderGroup&  shader_group,

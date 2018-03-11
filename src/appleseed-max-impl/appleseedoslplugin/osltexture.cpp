@@ -86,7 +86,8 @@ OSLTexture::OSLTexture(Class_ID class_id, OSLPluginClassDesc* class_desc)
     m_shader_info = m_class_desc->m_shader_info;
     m_texture_id_map = m_shader_info->m_texture_id_map;
 
-    m_has_uv_coords = m_shader_info->find_maya_attribute("uvCoord") != nullptr && 
+    m_has_uv_coords = 
+        m_shader_info->find_maya_attribute("uvCoord") != nullptr && 
         m_shader_info->find_maya_attribute("uvFilterSize") != nullptr;
     m_has_xyz_coords = m_shader_info->find_maya_attribute("placementMatrix") != nullptr;
     m_class_desc->MakeAutoParamBlocks(this);
@@ -443,7 +444,6 @@ void OSLTexture::create_osl_texture(
         m_pblock,
         m_shader_info);
 
-    //TODO: Choose right type of output based on expected input type.
     int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id);
     shader_group.add_connection(
         layer_name.c_str(),
