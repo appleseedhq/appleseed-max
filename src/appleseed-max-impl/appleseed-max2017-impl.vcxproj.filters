@@ -93,6 +93,7 @@
     <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp">
       <Filter>appleseedplasticmtl</Filter>
     </ClCompile>
+    <ClCompile Include="builtinmapsupport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -250,6 +251,7 @@
     <ClInclude Include="appleseedmetalmtl\resource.h">
       <Filter>appleseedmetalmtl</Filter>
     </ClInclude>
+    <ClInclude Include="builtinmapsupport.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">

@@ -153,25 +153,6 @@ void update_map_buttons(IParamMap2* param_map)
     }
 }
 
-float get_output_amount(Texmap* texmap, TimeValue t)
-{
-    float output_value = 1.0f;
-    for (int i = 0, e = texmap->NumRefs(); i < e; ++i)
-    {
-        ReferenceTarget* ref = texmap->GetReference(i);
-        if (ref != nullptr && ref->SuperClassID() == TEXOUTPUT_CLASS_ID)
-        {
-            StdTexoutGen* tex_output = dynamic_cast<StdTexoutGen*>(ref);
-            if (tex_output != nullptr)
-            {
-                tex_output->Update(t, FOREVER);
-                output_value = tex_output->GetOutAmt(t);
-            }
-        }
-    }
-    return output_value;
-}
-
 bool is_bitmap_texture(Texmap* map)
 {
     if (map == nullptr)
@@ -193,13 +174,24 @@ bool is_osl_texture(Texmap* map)
     return dynamic_cast<OSLTexture*>(map) != nullptr;
 }
 
-bool is_supported_procedural_texture(Texmap* map)
+bool is_supported_procedural_texture(Texmap* map, bool osl_mode)
 {
     if (map == nullptr)
         return false;
 
     auto part_a = map->ClassID().PartA();
     auto part_b = map->ClassID().PartB();
+
+    if (osl_mode)
+    {
+        switch (part_a)
+        {
+          case OUTPUT_CLASS_ID:
+            return true;
+          default:
+            return false;
+        }
+    }
 
     switch (part_a)
     {
@@ -316,7 +308,7 @@ std::string insert_texture_and_instance(
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    if (use_max_procedural_maps && is_supported_procedural_texture(texmap))
+    if (use_max_procedural_maps && is_supported_procedural_texture(texmap, !use_max_procedural_maps))
     {
         return
             insert_procedural_texture_and_instance(
