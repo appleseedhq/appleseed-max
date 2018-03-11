@@ -147,13 +147,12 @@ void update_map_buttons(IParamMap2* param_map);
 //
 // Bitmap functions.
 //
-float get_output_amount(Texmap* map, TimeValue t);
 
 bool is_bitmap_texture(Texmap* map);
 
 bool is_osl_texture(Texmap* map);
 
-bool is_supported_procedural_texture(Texmap* map);
+bool is_supported_procedural_texture(Texmap* map, bool osl_mode);
 
 bool is_linear_texture(BitmapTex* bitmap_tex);
 

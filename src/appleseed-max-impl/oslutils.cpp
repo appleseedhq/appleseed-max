@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedoslplugin/oslshadermetadata.h"
 #include "appleseedoslplugin/osltexture.h"
+#include "builtinmapsupport.h"
 #include "iappleseedmtl.h"
 #include "utilities.h"
 
@@ -150,6 +151,7 @@ asr::ParamArray get_uv_params(Texmap* texmap)
 asr::ParamArray get_output_params(Texmap* texmap)
 {
     asr::ParamArray output_params;
+    output_params.insert("in_multiplier", fmt_osl_expr(1.0f));
     output_params.insert("in_clamp_output", fmt_osl_expr(0));
     output_params.insert("in_invert", fmt_osl_expr(0));
     output_params.insert("in_colorGain", fmt_osl_expr(foundation::Color3f(1.0f)));
@@ -161,28 +163,28 @@ asr::ParamArray get_output_params(Texmap* texmap)
     if (texmap == nullptr)
         return output_params;
 
-    BitmapTex* bitmap_tex = static_cast<BitmapTex*>(texmap);
-
-    TextureOutput* texture_output = bitmap_tex->GetTexout();
-    StdTexoutGen* std_tex_output = static_cast<StdTexoutGen*>(texture_output);
-    if (!texture_output || !std_tex_output->IsStdTexoutGen())
+    StdTexoutGen* std_tex_output = nullptr;
+    for (int i = 0, e = texmap->NumRefs(); i < e, std_tex_output == nullptr; ++i)
+    {
+        ReferenceTarget* ref = texmap->GetReference(i);
+        if (ref != nullptr && ref->SuperClassID() == TEXOUTPUT_CLASS_ID)
+        {
+            std_tex_output = dynamic_cast<StdTexoutGen*>(ref);
+        }
+    }
+    if (std_tex_output == nullptr)
         return output_params;
 
     const auto time = GetCOREInterface()->GetTime();
 
-    const BOOL invert = std_tex_output->GetInvert();
-    const BOOL clamp = std_tex_output->GetClamp();
-    const BOOL alpha_from_rgb = std_tex_output->GetAlphaFromRGB();
-    const float rgb_level = std_tex_output->GetRGBAmt(time);
-    const float rgb_offset = std_tex_output->GetRGBOff(time);
-
-    output_params.insert("in_clamp_output", fmt_osl_expr(clamp));
-    output_params.insert("in_invert", fmt_osl_expr(invert));
-    output_params.insert("in_colorGain", fmt_osl_expr(foundation::Color3f(rgb_level)));
-    output_params.insert("in_colorOffset", fmt_osl_expr(foundation::Color3f(rgb_offset)));
-    output_params.insert("in_alphaGain", fmt_osl_expr(rgb_level));
-    output_params.insert("in_alphaOffset", fmt_osl_expr(rgb_offset));
-    output_params.insert("in_alphaIsLuminance", fmt_osl_expr(alpha_from_rgb));
+    output_params.insert("in_multiplier", fmt_osl_expr(std_tex_output->GetOutAmt(time)));
+    output_params.insert("in_clamp_output", fmt_osl_expr(std_tex_output->GetClamp()));
+    output_params.insert("in_invert", fmt_osl_expr(std_tex_output->GetInvert()));
+    output_params.insert("in_colorGain", fmt_osl_expr(foundation::Color3f(std_tex_output->GetRGBAmt(time))));
+    output_params.insert("in_colorOffset", fmt_osl_expr(foundation::Color3f(std_tex_output->GetRGBOff(time))));
+    output_params.insert("in_alphaGain", fmt_osl_expr(std_tex_output->GetRGBAmt(time)));
+    output_params.insert("in_alphaOffset", fmt_osl_expr(std_tex_output->GetRGBOff(time)));
+    output_params.insert("in_alphaIsLuminance", fmt_osl_expr(std_tex_output->GetAlphaFromRGB()));
 
     return output_params;
 }
@@ -239,10 +241,11 @@ void connect_float_texture(
     Texmap*             texmap,
     const float         const_value)
 {
-    auto time = GetCOREInterface()->GetTime();
-    float output_amount = 1.0f;
-    if (texmap != nullptr)
-        output_amount = get_output_amount(texmap, time);
+    if (is_supported_procedural_texture(texmap, true))
+    {
+        create_supported_texture(shader_group, material_node_name, material_input_name, texmap, const_value);
+        return;
+    }
 
     if (is_osl_texture(texmap))
     {
@@ -262,7 +265,6 @@ void connect_float_texture(
             .insert("Filename", fmt_osl_expr(texmap)));
 
         asr::ParamArray color_balance_params = get_output_params(texmap)
-            .insert("in_multiplier", fmt_osl_expr(output_amount))
             .insert("in_constantFloat", fmt_osl_expr(const_value));
 
         auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -293,10 +295,11 @@ void connect_color_texture(
     Texmap*             texmap,
     const Color         const_color)
 {
-    auto time = GetCOREInterface()->GetTime();
-    float output_amount = 1.0f;
-    if (texmap != nullptr)
-        output_amount = get_output_amount(texmap, time);
+    if (is_supported_procedural_texture(texmap, true))
+    {
+        create_supported_texture(shader_group, material_node_name, material_input_name, texmap, const_color);
+        return;
+    }
 
     if (is_osl_texture(texmap))
     {
@@ -322,7 +325,6 @@ void connect_color_texture(
                 asr::ParamArray());
 
             asr::ParamArray color_balance_params = get_output_params(texmap)
-                .insert("in_multiplier", fmt_osl_expr(output_amount))
                 .insert("in_constantColor", fmt_osl_expr(to_color3f(const_color)));
 
             auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -356,7 +358,6 @@ void connect_color_texture(
                 .insert("Filename", fmt_osl_expr(texmap)));
 
             asr::ParamArray color_balance_params = get_output_params(texmap)
-                .insert("in_multiplier", fmt_osl_expr(output_amount))
                 .insert("in_constantColor", fmt_osl_expr(to_color3f(const_color)));
 
             auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
