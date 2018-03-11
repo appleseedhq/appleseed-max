@@ -66,7 +66,7 @@ asr::ParamArray get_uv_params(Texmap* texmap)
         return uv_params;
 
     StdUVGen* std_uv = static_cast<StdUVGen*>(uv_gen);
-    auto time = GetCOREInterface()->GetTime();
+    const auto time = GetCOREInterface()->GetTime();
 
     DbgAssert(texmap->MapSlotType(texmap->GetMapChannel()) == MAPSLOT_TEXTURE);
     DbgAssert(static_cast<StdUVGen*>(uv_gen)->GetUVWSource() == UVWSRC_EXPLICIT);
@@ -164,12 +164,14 @@ asr::ParamArray get_output_params(Texmap* texmap)
         return output_params;
 
     StdTexoutGen* std_tex_output = nullptr;
-    for (int i = 0, e = texmap->NumRefs(); i < e, std_tex_output == nullptr; ++i)
+    for (int i = 0, e = texmap->NumRefs(); i < e; ++i)
     {
         ReferenceTarget* ref = texmap->GetReference(i);
         if (ref != nullptr && ref->SuperClassID() == TEXOUTPUT_CLASS_ID)
         {
             std_tex_output = dynamic_cast<StdTexoutGen*>(ref);
+            if (std_tex_output != nullptr)
+                break;
         }
     }
     if (std_tex_output == nullptr)
@@ -241,7 +243,7 @@ void connect_float_texture(
     Texmap*             texmap,
     const float         const_value)
 {
-    if (is_supported_procedural_texture(texmap, true))
+    if (is_supported_procedural_texture(texmap, false))
     {
         create_supported_texture(shader_group, material_node_name, material_input_name, texmap, const_value);
         return;
@@ -256,18 +258,18 @@ void connect_float_texture(
 
     if (is_bitmap_texture(texmap))
     {
-        auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
+        const auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
 
-        auto layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
+        const auto layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_float_texture", layer_name.c_str(),
             asr::ParamArray()
-            .insert("Filename", fmt_osl_expr(texmap)));
+                .insert("Filename", fmt_osl_expr(texmap)));
 
         asr::ParamArray color_balance_params = get_output_params(texmap)
             .insert("in_constantFloat", fmt_osl_expr(const_value));
 
-        auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
+        const auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), color_balance_params);
 
         shader_group.add_connection(
@@ -295,7 +297,7 @@ void connect_color_texture(
     Texmap*             texmap,
     const Color         const_color)
 {
-    if (is_supported_procedural_texture(texmap, true))
+    if (is_supported_procedural_texture(texmap, false))
     {
         create_supported_texture(shader_group, material_node_name, material_input_name, texmap, const_color);
         return;
@@ -310,24 +312,23 @@ void connect_color_texture(
     
     if (is_bitmap_texture(texmap))
     {
-        auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
+        const auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
-
         if (!is_linear_texture(static_cast<BitmapTex*>(texmap)))
         {
-            auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
+            const auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
             shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
                 asr::ParamArray()
-                .insert("Filename", fmt_osl_expr(texmap)));
+                    .insert("Filename", fmt_osl_expr(texmap)));
 
-            auto srgb_to_linear_layer_name = asf::format("{0}_{1}_srgb_to_linear", material_node_name, material_input_name);
+            const auto srgb_to_linear_layer_name = asf::format("{0}_{1}_srgb_to_linear", material_node_name, material_input_name);
             shader_group.add_shader("shader", "as_max_srgb_to_linear_rgb", srgb_to_linear_layer_name.c_str(),
                 asr::ParamArray());
 
             asr::ParamArray color_balance_params = get_output_params(texmap)
                 .insert("in_constantColor", fmt_osl_expr(to_color3f(const_color)));
 
-            auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
+            const auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
             shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), color_balance_params);
 
             shader_group.add_connection(
@@ -352,15 +353,15 @@ void connect_color_texture(
         }
         else
         {
-            auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
+            const auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
             shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
                 asr::ParamArray()
-                .insert("Filename", fmt_osl_expr(texmap)));
+                    .insert("Filename", fmt_osl_expr(texmap)));
 
             asr::ParamArray color_balance_params = get_output_params(texmap)
                 .insert("in_constantColor", fmt_osl_expr(to_color3f(const_color)));
 
-            auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
+            const auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
             shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), color_balance_params);
 
             shader_group.add_connection(
@@ -403,7 +404,7 @@ void connect_bump_map(
 
         shader_group.add_shader("shader", "as_max_bump_map", bump_map_layer_name.c_str(),
             asr::ParamArray()
-            .insert("Amount", fmt_osl_expr(amount)));
+                .insert("Amount", fmt_osl_expr(amount)));
 
         shader_group.add_connection(
             bump_map_layer_name.c_str(), "NormalOut",
@@ -420,12 +421,12 @@ void connect_bump_map(
         auto texture_layer_name = asf::format("{0}_bump_map_texture", material_node_name);
         shader_group.add_shader("shader", "as_max_float_texture", texture_layer_name.c_str(),
             asr::ParamArray()
-            .insert("Filename", fmt_osl_expr(texmap)));
+                .insert("Filename", fmt_osl_expr(texmap)));
 
         auto bump_map_layer_name = asf::format("{0}_bump_map", material_node_name);
         shader_group.add_shader("shader", "as_max_bump_map", bump_map_layer_name.c_str(),
             asr::ParamArray()
-            .insert("Amount", fmt_osl_expr(amount)));
+                .insert("Amount", fmt_osl_expr(amount)));
 
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_U",
@@ -465,7 +466,7 @@ void connect_normal_map(
 
         shader_group.add_shader("shader", "as_max_normal_map", normal_map_layer_name.c_str(),
             asr::ParamArray()
-            .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue")));
+                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue")));
 
         shader_group.add_connection(
             normal_map_layer_name.c_str(), "NormalOut",
@@ -695,4 +696,3 @@ void create_osl_shader(
 
     shader_group.add_shader("shader", shader_info->m_shader_name.c_str(), layer_name, params);
 }
-

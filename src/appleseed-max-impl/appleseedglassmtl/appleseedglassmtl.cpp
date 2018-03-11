@@ -683,15 +683,15 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
 
     shader_group->add_shader("surface", "as_max_glass_material", name, 
         asr::ParamArray()
-        .insert("SurfaceTransmittance", fmt_osl_expr(to_color3f(m_surface_color)))
-        .insert("ReflectionTint", fmt_osl_expr(to_color3f(m_reflection_tint)))
-        .insert("RefractionTint", fmt_osl_expr(to_color3f(m_refraction_tint)))
-        .insert("VolumeTransmittance", fmt_osl_expr(to_color3f(m_volume_color)))
-        .insert("Roughness", fmt_osl_expr(m_roughness / 100.0f))
-        .insert("Anisotropic", fmt_osl_expr(m_anisotropy / 100.0f))
-        .insert("Ior", fmt_osl_expr(m_ior))
-        .insert("VolumeTransmittanceDistance", fmt_osl_expr(m_scale))
-        .insert("Distribution", fmt_osl_expr("ggx")));
+            .insert("SurfaceTransmittance", fmt_osl_expr(to_color3f(m_surface_color)))
+            .insert("ReflectionTint", fmt_osl_expr(to_color3f(m_reflection_tint)))
+            .insert("RefractionTint", fmt_osl_expr(to_color3f(m_refraction_tint)))
+            .insert("VolumeTransmittance", fmt_osl_expr(to_color3f(m_volume_color)))
+            .insert("Roughness", fmt_osl_expr(m_roughness / 100.0f))
+            .insert("Anisotropic", fmt_osl_expr(m_anisotropy / 100.0f))
+            .insert("Ior", fmt_osl_expr(m_ior))
+            .insert("VolumeTransmittanceDistance", fmt_osl_expr(m_scale))
+            .insert("Distribution", fmt_osl_expr("ggx")));
 
     std::string closure2surface_name = asf::format("{0}_closure2surface", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure2surface_name.c_str(), asr::ParamArray());

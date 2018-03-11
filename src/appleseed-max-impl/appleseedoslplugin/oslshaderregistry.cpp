@@ -100,9 +100,9 @@ namespace
     }
 
     class TextureAccessorShort
-        : public PBAccessor
+      : public PBAccessor
     {
-    public:
+      public:
         void Set(
             PB2Value&         v,
             ReferenceMaker*   owner,
@@ -496,8 +496,7 @@ void OSLShaderRegistry::create_class_descriptors()
         auto bump_normal = shader.find_maya_attribute("normalCamera");
 
         if (!shader.m_is_texture && 
-            (tn_vec != nullptr || 
-            bump_normal != nullptr))
+            (tn_vec != nullptr || bump_normal != nullptr))
         {
             ParamBlockDesc2* bump_param_block_descr(new ParamBlockDesc2(
                 // --- Required arguments ---

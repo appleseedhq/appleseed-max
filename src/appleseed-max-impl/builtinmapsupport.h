@@ -57,7 +57,7 @@ void connect_output_map(
     Texmap*                 texmap,
     const float             const_value);
 
-template<typename T>
+template <typename T>
 void create_supported_texture(
     renderer::ShaderGroup&  shader_group,
     const char*             material_node_name,
@@ -79,6 +79,6 @@ void create_supported_texture(
             const_value);
 
       default:
-        return;
+        break;
     }
 }

@@ -174,7 +174,7 @@ bool is_osl_texture(Texmap* map)
     return dynamic_cast<OSLTexture*>(map) != nullptr;
 }
 
-bool is_supported_procedural_texture(Texmap* map, bool osl_mode)
+bool is_supported_procedural_texture(Texmap* map, const bool use_max_procedural_maps)
 {
     if (map == nullptr)
         return false;
@@ -182,7 +182,7 @@ bool is_supported_procedural_texture(Texmap* map, bool osl_mode)
     auto part_a = map->ClassID().PartA();
     auto part_b = map->ClassID().PartB();
 
-    if (osl_mode)
+    if (!use_max_procedural_maps)
     {
         switch (part_a)
         {
@@ -308,7 +308,7 @@ std::string insert_texture_and_instance(
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    if (use_max_procedural_maps && is_supported_procedural_texture(texmap, !use_max_procedural_maps))
+    if (use_max_procedural_maps && is_supported_procedural_texture(texmap, use_max_procedural_maps))
     {
         return
             insert_procedural_texture_and_instance(
