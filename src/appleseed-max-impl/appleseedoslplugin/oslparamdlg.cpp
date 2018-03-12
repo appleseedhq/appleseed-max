@@ -45,6 +45,57 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
+namespace
+{
+    class OSLParamMapDlgProc
+      : public ParamMap2UserDlgProc
+    {
+      public:
+        void DeleteThis() override
+        {
+            delete this;
+        }
+
+        INT_PTR DlgProc(
+            TimeValue   t,
+            IParamMap2* map,
+            HWND        hwnd,
+            UINT        umsg,
+            WPARAM      wparam,
+            LPARAM      lparam) override
+        {
+            switch (umsg)
+            {
+              case WM_INITDIALOG:
+                {
+                    ParamBlockDesc2* desc = map->GetDesc();
+                    for (int i = 0, e = desc->Count(); i < e; ++i)
+                    {
+                        const ParamDef* param_def = desc->GetParamDefByIndex(i);
+                        if (param_def->ctrl_type == TYPE_SPINNER)
+                        {
+                            const int* ctrl_ids = param_def->ctrl_IDs;
+                            const int spinner_ctrl_id = ctrl_ids[param_def->ctrl_count - 1];
+
+                            ISpinnerControl* ispinner = GetISpinner(GetDlgItem(hwnd, spinner_ctrl_id));
+                            if (param_def->type == TYPE_INT)
+                                ispinner->SetResetValue(param_def->def.i);
+                            else if (param_def->type == TYPE_FLOAT)
+                                ispinner->SetResetValue(param_def->def.f);
+
+                            ReleaseISpinner(ispinner);
+                        }
+                    }
+                }
+                return TRUE;
+
+              default:
+                return FALSE;
+            }
+        }
+    };
+}
+
 OSLParamDlg::OSLParamDlg(
     HWND                    hw_mtl_edit,
     IMtlParams*             imp, 
@@ -264,7 +315,8 @@ void OSLParamDlg::create_dialog()
         nullptr,
         (DLGTEMPLATE*)dialogTemplate,
         rollout_header.c_str(),
-        0);
+        0,
+        new OSLParamMapDlgProc());
 
     auto tn_vec = m_shader_info->find_param("Tn");
     auto bump_normal = m_shader_info->find_maya_attribute("normalCamera");
