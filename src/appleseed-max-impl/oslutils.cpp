@@ -391,7 +391,7 @@ void connect_bump_map(
     Texmap*             texmap,
     const float         amount)
 {
-    if (is_osl_texture(texmap))
+    if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
     {
         auto bump_map_layer_name = asf::format("{0}_bump_map", material_node_name);
 
@@ -453,7 +453,7 @@ void connect_normal_map(
     Texmap*             texmap,
     const int           up_vector)
 {
-    if (is_osl_texture(texmap))
+    if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
     {
         auto normal_map_layer_name = asf::format("{0}_normal_map", material_node_name);
 
