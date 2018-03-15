@@ -28,6 +28,9 @@
 
 #pragma once
 
+// appleseed-max headers.
+#include "osloutputselectormap/osloutputselector.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/image/color.h"
@@ -57,6 +60,20 @@ void connect_output_map(
     Texmap*                 texmap,
     const float             const_value);
 
+void connect_output_selector(
+    renderer::ShaderGroup&  shader_group,
+    const char*             material_node_name,
+    const char*             material_input_name,
+    Texmap*                 texmap,
+    const Color             const_value);
+
+void connect_output_selector(
+    renderer::ShaderGroup&  shader_group,
+    const char*             material_node_name,
+    const char*             material_input_name,
+    Texmap*                 texmap,
+    const float             const_value);
+
 template <typename T>
 void create_supported_texture(
     renderer::ShaderGroup&  shader_group,
@@ -67,6 +84,17 @@ void create_supported_texture(
 {
     auto part_a = texmap->ClassID().PartA();
     auto part_b = texmap->ClassID().PartB();
+
+    if (texmap->ClassID() == OSLOutputSelector::get_class_id())
+    {
+        connect_output_selector(
+            shader_group,
+            material_node_name,
+            material_input_name,
+            texmap,
+            const_value);
+        return;
+    }
 
     switch (part_a)
     {

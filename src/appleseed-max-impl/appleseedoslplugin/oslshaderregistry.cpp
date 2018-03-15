@@ -381,7 +381,7 @@ namespace
     {
         pb_desc->AddParam(
             param_id,
-            L"Output",
+            L"OSLOutputIndex",
             TYPE_INT,
             0,
             string_id,

@@ -30,6 +30,7 @@
 #include "builtinmapsupport.h"
 
 // appleseed-max headers.
+#include "appleseedoslplugin/osltexture.h"
 #include "oslutils.h"
 #include "utilities.h"
 
@@ -42,6 +43,47 @@
 
 namespace asf = foundation;
 namespace asr = renderer;
+
+void connect_output_selector(
+    renderer::ShaderGroup&  shader_group,
+    const char*             material_node_name,
+    const char*             material_input_name,
+    Texmap*                 texmap,
+    const Color             const_value)
+{
+    const auto t = GetCOREInterface()->GetTime();
+
+    Texmap* input_map = nullptr;
+    get_paramblock_value_by_name(texmap->GetParamBlock(0), L"source_map", t, input_map, FOREVER);
+    int output_index = 0;
+    get_paramblock_value_by_name(texmap->GetParamBlock(0), L"output_index", t, output_index, FOREVER);
+
+    if (input_map != nullptr && is_osl_texture(input_map))
+    {
+        auto output_names = static_cast<OSLTexture*>(input_map)->get_output_names();
+
+        static_cast<OSLTexture*>(input_map)->create_osl_texture(
+            shader_group,
+            material_node_name,
+            material_input_name,
+            static_cast<int>((output_index - 1) % output_names.size()));
+    }
+}
+
+void connect_output_selector(
+    renderer::ShaderGroup&  shader_group,
+    const char*             material_node_name,
+    const char*             material_input_name,
+    Texmap*                 texmap,
+    const float             const_value)
+{
+    connect_output_selector(
+        shader_group,
+        material_node_name,
+        material_input_name,
+        texmap,
+        Color());
+}
 
 void connect_output_map(
     renderer::ShaderGroup&  shader_group,

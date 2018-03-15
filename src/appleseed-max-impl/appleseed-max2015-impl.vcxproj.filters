@@ -94,6 +94,9 @@
       <Filter>appleseedplasticmtl</Filter>
     </ClCompile>
     <ClCompile Include="builtinmapsupport.cpp" />
+    <ClCompile Include="osloutputselectormap\osloutputselector.cpp">
+      <Filter>osloutputselectormap</Filter>
+    </ClCompile>    
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -252,6 +255,15 @@
       <Filter>appleseedplasticmtl</Filter>
     </ClInclude>
     <ClInclude Include="builtinmapsupport.h" />
+    <ClInclude Include="osloutputselectormap\datachunks.h">
+      <Filter>osloutputselectormap</Filter>
+    </ClInclude>
+    <ClInclude Include="osloutputselectormap\osloutputselector.h">
+      <Filter>osloutputselectormap</Filter>
+    </ClInclude>
+    <ClInclude Include="osloutputselectormap\resource.h">
+      <Filter>osloutputselectormap</Filter>
+    </ClInclude>    
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -286,6 +298,9 @@
     </ResourceCompile>
     <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc">
       <Filter>appleseedplasticmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc">
+      <Filter>osloutputselectormap</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -327,6 +342,9 @@
     </Filter>
     <Filter Include="appleseedplasticmtl">
       <UniqueIdentifier>{caf24c4c-64a6-49b1-9441-497c747c7374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="osloutputselectormap">
+      <UniqueIdentifier>{318596f7-e094-4f52-95b8-a84b79e03602}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
