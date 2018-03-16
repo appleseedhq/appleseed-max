@@ -95,18 +95,29 @@ namespace
                     {
                         auto output_names = static_cast<OSLTexture*>(texmap)->get_output_names();
 
-                        int output_index = v.i;
+                        int output_index = v.i - 1;
                         if (!output_names.empty())
                         {
                             HWND dlg_hwnd = 0;
                             dlg_hwnd = map->GetHWnd();
                             if (dlg_hwnd != 0)
                             {
-                                SendMessage(
-                                    GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME),
-                                    CB_SETCURSEL,
-                                    (output_index - 1) % output_names.size(),
-                                    0);
+                                if (output_index < output_names.size())
+                                {
+                                    SendMessage(
+                                        GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME),
+                                        CB_SETCURSEL,
+                                        output_index,
+                                        0);
+                                }
+                                else
+                                {
+                                    SendMessage(
+                                        GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME),
+                                        CB_SETCURSEL,
+                                        -1,
+                                        0);
+                                }
                             }
                         }
                     }
@@ -172,6 +183,7 @@ namespace
         Texmap* texmap = nullptr;
         param_map->GetParamBlock()->GetValue(ParamIdSourceMap, time, texmap, FOREVER);
 
+        SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_RESETCONTENT, 0, 0);
         if (texmap != nullptr && is_osl_texture(texmap))
         {
             auto output_names = static_cast<OSLTexture*>(texmap)->get_output_names();
@@ -179,11 +191,10 @@ namespace
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
 
             int output_index = param_map->GetParamBlock()->GetInt(ParamIdOutputIndex, time, FOREVER);
-            SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, (output_index - 1) % output_names.size(), 0);
-        }
-        else
-        {
-            SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_RESETCONTENT, 0, 0);
+            if (--output_index < output_names.size())
+                SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, output_index, 0);
+            else
+                SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, -1, 0);
         }
     }
 

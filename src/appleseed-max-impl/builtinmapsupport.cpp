@@ -62,11 +62,14 @@ void connect_output_selector(
         OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
         auto output_names = osl_texture->get_output_names();
 
-        osl_texture->create_osl_texture(
-            shader_group,
-            material_node_name,
-            material_input_name,
-            static_cast<int>((output_index - 1) % output_names.size()));
+        if (--output_index < output_names.size())
+        {
+            osl_texture->create_osl_texture(
+                shader_group,
+                material_node_name,
+                material_input_name,
+                output_index);
+        }
     }
 }
 
