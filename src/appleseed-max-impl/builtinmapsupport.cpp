@@ -45,11 +45,10 @@ namespace asf = foundation;
 namespace asr = renderer;
 
 void connect_output_selector(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const Color             const_value)
+    asr::ShaderGroup&   shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name,
+    Texmap*             texmap)
 {
     const auto t = GetCOREInterface()->GetTime();
 
@@ -60,9 +59,10 @@ void connect_output_selector(
 
     if (input_map != nullptr && is_osl_texture(input_map))
     {
-        auto output_names = static_cast<OSLTexture*>(input_map)->get_output_names();
+        OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
+        auto output_names = osl_texture->get_output_names();
 
-        static_cast<OSLTexture*>(input_map)->create_osl_texture(
+        osl_texture->create_osl_texture(
             shader_group,
             material_node_name,
             material_input_name,
@@ -70,27 +70,12 @@ void connect_output_selector(
     }
 }
 
-void connect_output_selector(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const float             const_value)
-{
-    connect_output_selector(
-        shader_group,
-        material_node_name,
-        material_input_name,
-        texmap,
-        Color());
-}
-
 void connect_output_map(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const Color             const_value)
+    asr::ShaderGroup&  shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name,
+    Texmap*             texmap,
+    const Color         const_value)
 {
     const auto t = GetCOREInterface()->GetTime();
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -111,11 +96,11 @@ void connect_output_map(
 }
 
 void connect_output_map(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const float             const_value)
+    asr::ShaderGroup&   shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name,
+    Texmap*             texmap,
+    const float         const_value)
 {
     const auto t = GetCOREInterface()->GetTime();
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);

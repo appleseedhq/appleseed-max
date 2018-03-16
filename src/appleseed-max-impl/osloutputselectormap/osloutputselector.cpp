@@ -137,6 +137,7 @@ namespace
         ParamBlockRefOutputSelector,                // parameter block's reference number
 
         // --- P_AUTO_UI arguments for Parameters rollup ---
+
         IDD_OUTPUTSELECTOR_PANEL,                   // ID of the dialog template
         IDS_OUTPUTSELECTOR_PARAMS,                  // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
@@ -187,9 +188,9 @@ namespace
     }
 
     class OutputSelectorDlgProc
-        : public ParamMap2UserDlgProc
+      : public ParamMap2UserDlgProc
     {
-    public:
+      public:
         virtual void DeleteThis() override
         {
             delete this;

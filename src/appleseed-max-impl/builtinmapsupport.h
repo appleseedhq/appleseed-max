@@ -64,15 +64,7 @@ void connect_output_selector(
     renderer::ShaderGroup&  shader_group,
     const char*             material_node_name,
     const char*             material_input_name,
-    Texmap*                 texmap,
-    const Color             const_value);
-
-void connect_output_selector(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const float             const_value);
+    Texmap*                 texmap);
 
 template <typename T>
 void create_supported_texture(
@@ -91,8 +83,7 @@ void create_supported_texture(
             shader_group,
             material_node_name,
             material_input_name,
-            texmap,
-            const_value);
+            texmap);
         return;
     }
 

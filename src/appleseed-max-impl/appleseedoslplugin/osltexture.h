@@ -105,7 +105,7 @@ class OSLTexture
     Point3 EvalNormalPerturb(ShadeContext& sc) override;
     UVGen* GetTheUVGen() override;
 
-    // Connect output to a material.
+    // Create OSL shader and connect to a given output.
     void create_osl_texture(
         renderer::ShaderGroup&  shader_group,
         const char*             material_node_name,
