@@ -38,9 +38,9 @@
 #include "appleseedplasticmtl/appleseedplasticmtl.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
-#include "osloutputselectormap/osloutputselector.h"
 #include "logtarget.h"
 #include "main.h"
+#include "osloutputselectormap/osloutputselector.h"
 #include "utilities.h"
 #include "version.h"
 

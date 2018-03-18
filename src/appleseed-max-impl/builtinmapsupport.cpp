@@ -62,7 +62,7 @@ void connect_output_selector(
         OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
         auto output_names = osl_texture->get_output_names();
 
-        if (--output_index < output_names.size())
+        if (output_index > 0 && --output_index < output_names.size())
         {
             osl_texture->create_osl_texture(
                 shader_group,
@@ -74,7 +74,7 @@ void connect_output_selector(
 }
 
 void connect_output_map(
-    asr::ShaderGroup&  shader_group,
+    asr::ShaderGroup&   shader_group,
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,

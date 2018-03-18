@@ -191,7 +191,7 @@ namespace
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
 
             int output_index = param_map->GetParamBlock()->GetInt(ParamIdOutputIndex, time, FOREVER);
-            if (--output_index < output_names.size())
+            if (output_index > 0 && --output_index < output_names.size())
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, output_index, 0);
             else
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, -1, 0);
@@ -525,7 +525,7 @@ AColor OSLOutputSelector::EvalColor(ShadeContext& sc)
     return Color(0.13f, 0.58f, 1.0f);
 }
 
-Point3 OSLOutputSelector::EvalNormalPerturb(ShadeContext& /*sc*/)
+Point3 OSLOutputSelector::EvalNormalPerturb(ShadeContext& sc)
 {
     return Point3(0.0f, 0.0f, 0.0f);
 }
