@@ -55,7 +55,6 @@
 // 3ds Max headers.
 #include <assert1.h>
 #include <bitmap.h>
-#include <iimageviewer.h>
 #include <interactiverender.h>
 
 // Standard headers.
