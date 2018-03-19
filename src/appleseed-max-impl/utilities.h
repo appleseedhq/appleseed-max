@@ -82,6 +82,8 @@ bool operator!=(const Matrix3& lhs, const Matrix3& rhs);
 // Convert a 3ds Max color to an appleseed one.
 foundation::Color3f to_color3f(const Color& c);
 foundation::Color3f to_color3f(const Point3& p);
+
+// Convert a 3ds Max point/vector to an appleseed one.
 foundation::Vector3f to_vector3f(const Point3& p);
 
 // Convert a 3ds Max transformation matrix to an appleseed one.
@@ -375,9 +377,9 @@ const T load_ini_setting(const wchar_t* category, const wchar_t* key_name, const
     filename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
     filename += L"\\appleseed\\appleseed.ini";
 
-    const int BufferSize = 100;
+    const DWORD BufferSize = 1024;
     wchar_t buf[BufferSize];
-    int count = GetPrivateProfileString(
+    GetPrivateProfileString(
         category,
         key_name,
         utf8_to_wide(foundation::to_string(default_value)).c_str(),

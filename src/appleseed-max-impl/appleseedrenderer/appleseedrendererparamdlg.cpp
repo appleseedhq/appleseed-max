@@ -46,10 +46,10 @@
 #include <assert1.h>
 
 // Windows headers.
+#include <shellapi.h>
 #include <tchar.h>
 
 // Standard headers.
-#include <cstring>
 #include <future>
 #include <memory>
 #include <sstream>
@@ -100,6 +100,8 @@ namespace
 
     struct PanelBase
     {
+        virtual ~PanelBase() {}
+
         virtual void init(HWND hwnd) = 0;
 
         virtual INT_PTR CALLBACK dialog_proc(

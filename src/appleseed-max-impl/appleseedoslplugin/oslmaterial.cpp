@@ -34,9 +34,6 @@
 #include "appleseedoslplugin/oslshadermetadata.h"
 #include "appleseedoslplugin/osltexture.h"
 #include "appleseedrenderer/appleseedrenderer.h"
-#include "bump/bumpparammapdlgproc.h"
-#include "bump/resource.h"
-#include "main.h"
 #include "oslutils.h"
 #include "utilities.h"
 #include "version.h"
@@ -225,7 +222,7 @@ RefTargetHandle OSLMaterial::Clone(RemapDir& remap)
     if (m_has_bump_params)
         mnew->ReplaceReference(1, remap.CloneRef(m_bump_pblock));
 
-    return (RefTargetHandle)mnew;
+    return mnew;
 }
 
 int OSLMaterial::NumSubTexmaps()
@@ -489,6 +486,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     //
     // Shader group.
     //
+
     const auto t = GetCOREInterface()->GetTime();
 
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
@@ -647,7 +645,7 @@ float OSLMaterial::get_viewport_transparency_amount() const
         transparency_value = m_pblock->GetFloat(transmittance->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
     else if (transparency != nullptr)
     {
-        Color transp_color = m_pblock->GetColor(transparency->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+        const Color transp_color = m_pblock->GetColor(transparency->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
         transparency_value = (transp_color.r + transp_color.g + transp_color.b) / 3.0f;
     }
     return transparency_value;

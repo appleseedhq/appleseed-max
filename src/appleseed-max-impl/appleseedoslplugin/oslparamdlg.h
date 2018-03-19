@@ -28,14 +28,11 @@
 
 #pragma once
 
-// Windows headers.
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <Windows.h>    // include before 3ds Max headers
-
 // appleseed-max headers.
 #include "appleseedoslplugin/oslclassdesc.h"
+
+// appleseed.foundation headers.
+#include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
 #include <imtl.h>
@@ -56,14 +53,6 @@ class OSLShaderInfo;
 
 struct PageGroup
 {
-    PageGroup()
-        : m_y(0)
-        , m_x(0)
-        , m_height(0)
-        , m_width(0)
-        , m_parent(nullptr)
-    {}
-
     int                         m_x;
     int                         m_y;
     int                         m_width;
@@ -71,6 +60,15 @@ struct PageGroup
     std::string                 m_short_name;
     std::vector<PageGroup*>     m_children;
     PageGroup*                  m_parent;
+
+    PageGroup()
+      : m_y(0)
+      , m_x(0)
+      , m_width(0)
+      , m_height(0)
+      , m_parent(nullptr)
+    {
+    }
 };
 
 typedef std::map<std::string, PageGroup> PageGroupMap;
