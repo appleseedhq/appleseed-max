@@ -54,15 +54,16 @@ void connect_output_selector(
 
     Texmap* input_map = nullptr;
     get_paramblock_value_by_name(texmap->GetParamBlock(0), L"source_map", t, input_map, FOREVER);
-    int output_index = 0;
-    get_paramblock_value_by_name(texmap->GetParamBlock(0), L"output_index", t, output_index, FOREVER);
-
     if (input_map != nullptr && is_osl_texture(input_map))
     {
         OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
         auto output_names = osl_texture->get_output_names();
 
-        if (output_index > 0 && --output_index < output_names.size())
+        int output_index = 0;
+        get_paramblock_value_by_name(texmap->GetParamBlock(0), L"output_index", t, output_index, FOREVER);
+        DbgAssert(output_index >= 1);
+        output_index -= 1;
+        if (output_index < output_names.size())
         {
             osl_texture->create_osl_texture(
                 shader_group,

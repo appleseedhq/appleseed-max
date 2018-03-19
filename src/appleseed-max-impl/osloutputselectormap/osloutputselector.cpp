@@ -191,7 +191,9 @@ namespace
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
 
             int output_index = param_map->GetParamBlock()->GetInt(ParamIdOutputIndex, time, FOREVER);
-            if (output_index > 0 && --output_index < output_names.size())
+            DbgAssert(output_index >= 1);
+            output_index -= 1;
+            if (output_index < output_names.size())
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, output_index, 0);
             else
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_SETCURSEL, -1, 0);
