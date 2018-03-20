@@ -368,6 +368,7 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
             frame_rend_params,
             renderer_settings,
             m_bitmap,
+            m_progress_cb,
             time));
 
     std::setlocale(LC_ALL, previous_locale.c_str());

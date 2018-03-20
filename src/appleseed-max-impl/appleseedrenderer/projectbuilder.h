@@ -63,6 +63,7 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const FrameRendParams&              frame_rend_params,
     const RendererSettings&             settings,
     Bitmap*                             bitmap,
+    RendProgressCallback*               progress_cb,
     const TimeValue                     time);
 
 #if MAX_RELEASE >= 18000
