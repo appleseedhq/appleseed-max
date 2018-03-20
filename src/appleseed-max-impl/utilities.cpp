@@ -31,6 +31,7 @@
 
 // appleseed-max headers.
 #include "appleseedoslplugin/osltexture.h"
+#include "osloutputselectormap/osloutputselector.h"
 #include "main.h"
 
 // appleseed.renderer headers.
@@ -184,10 +185,14 @@ bool is_supported_procedural_texture(Texmap* map, const bool use_max_procedural_
 
     if (!use_max_procedural_maps)
     {
+        if (map->ClassID() == OSLOutputSelector::get_class_id())
+            return true;
+
         switch (part_a)
         {
           case OUTPUT_CLASS_ID:
             return true;
+
           default:
             return false;
         }

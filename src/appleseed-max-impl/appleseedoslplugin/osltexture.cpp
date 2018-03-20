@@ -220,7 +220,6 @@ RefResult OSLTexture::NotifyRefChanged(
         if (hTarget == m_pblock)
             m_pblock = nullptr;
         break;
-
       case REFMSG_CHANGE:
           if (hTarget == m_pblock)
               m_class_desc->GetParamBlockDesc(0)->InvalidateUI(m_pblock->LastNotifyParamID());
@@ -416,7 +415,8 @@ UVGen* OSLTexture::GetTheUVGen()
 void OSLTexture::create_osl_texture(
     asr::ShaderGroup&   shader_group,
     const char*         material_node_name,
-    const char*         material_input_name)
+    const char*         material_input_name,
+    const int           output_slot_index)
 {
     auto layer_name = asf::format("{0}_{1}", material_node_name, material_input_name);
 
@@ -444,10 +444,32 @@ void OSLTexture::create_osl_texture(
         m_pblock,
         m_shader_info);
 
-    int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id);
     shader_group.add_connection(
         layer_name.c_str(),
         m_shader_info->m_output_params[output_slot_index].m_param_name.c_str(),
         material_node_name,
         material_input_name);
+}
+
+void OSLTexture::create_osl_texture(
+    asr::ShaderGroup&   shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name)
+{
+    const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id);
+    create_osl_texture(
+        shader_group,
+        material_node_name,
+        material_input_name,
+        output_slot_index);
+}
+
+std::vector<std::string> OSLTexture::get_output_names() const
+{
+    std::vector<std::string> output_names;
+
+    for (const auto& output_param : m_shader_info->m_output_params)
+        output_names.push_back(output_param.m_param_name);
+
+    return output_names;
 }

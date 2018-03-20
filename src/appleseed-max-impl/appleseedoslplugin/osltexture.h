@@ -41,6 +41,10 @@
 #include <maxtypes.h>
 #undef base_type
 
+// Standard headers.
+#include <string>
+#include <vector>
+
 // Forward declarations.
 namespace renderer { class ShaderGroup; }
 class OSLPluginClassDesc;
@@ -101,11 +105,19 @@ class OSLTexture
     Point3 EvalNormalPerturb(ShadeContext& sc) override;
     UVGen* GetTheUVGen() override;
 
-    // Connect output to a material.
+    // Create OSL shader and connect to a given output.
+    void create_osl_texture(
+        renderer::ShaderGroup&  shader_group,
+        const char*             material_node_name,
+        const char*             material_input_name,
+        const int               output_slot_index);
+
     void create_osl_texture(
         renderer::ShaderGroup&  shader_group,
         const char*             material_node_name,
         const char*             material_input_name);
+
+    std::vector<std::string> get_output_names() const;
 
   protected:
     virtual void SetReference(int i, RefTargetHandle rtarg) override;

@@ -40,6 +40,7 @@
 #include "appleseedsssmtl/appleseedsssmtl.h"
 #include "logtarget.h"
 #include "main.h"
+#include "osloutputselectormap/osloutputselector.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -84,7 +85,7 @@ extern "C"
     __declspec(dllexport)
     int LibNumberClasses()
     {
-        return 10 + g_shader_registry.get_size();
+        return 11 + g_shader_registry.get_size();
     }
 
     __declspec(dllexport)
@@ -102,6 +103,7 @@ extern "C"
           case 7: return &g_appleseed_blendmtl_classdesc;
           case 8: return &g_appleseed_metalmtl_classdesc;
           case 9: return &g_appleseed_plasticmtl_classdesc;
+          case 10: return &g_appleseed_outputselector_classdesc;
 
           // Make sure to update LibNumberClasses() if you add classes here.
 

@@ -30,6 +30,7 @@
 #include "builtinmapsupport.h"
 
 // appleseed-max headers.
+#include "appleseedoslplugin/osltexture.h"
 #include "oslutils.h"
 #include "utilities.h"
 
@@ -43,12 +44,42 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
+void connect_output_selector(
+    asr::ShaderGroup&   shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name,
+    Texmap*             texmap)
+{
+    const auto t = GetCOREInterface()->GetTime();
+
+    Texmap* input_map = nullptr;
+    get_paramblock_value_by_name(texmap->GetParamBlock(0), L"source_map", t, input_map, FOREVER);
+    if (input_map != nullptr && is_osl_texture(input_map))
+    {
+        OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
+        auto output_names = osl_texture->get_output_names();
+
+        int output_index = 0;
+        get_paramblock_value_by_name(texmap->GetParamBlock(0), L"output_index", t, output_index, FOREVER);
+        DbgAssert(output_index >= 1);
+        output_index -= 1;
+        if (output_index < output_names.size())
+        {
+            osl_texture->create_osl_texture(
+                shader_group,
+                material_node_name,
+                material_input_name,
+                output_index);
+        }
+    }
+}
+
 void connect_output_map(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const Color             const_value)
+    asr::ShaderGroup&   shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name,
+    Texmap*             texmap,
+    const Color         const_value)
 {
     const auto t = GetCOREInterface()->GetTime();
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -69,11 +100,11 @@ void connect_output_map(
 }
 
 void connect_output_map(
-    renderer::ShaderGroup&  shader_group,
-    const char*             material_node_name,
-    const char*             material_input_name,
-    Texmap*                 texmap,
-    const float             const_value)
+    asr::ShaderGroup&   shader_group,
+    const char*         material_node_name,
+    const char*         material_input_name,
+    Texmap*             texmap,
+    const float         const_value)
 {
     const auto t = GetCOREInterface()->GetTime();
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);

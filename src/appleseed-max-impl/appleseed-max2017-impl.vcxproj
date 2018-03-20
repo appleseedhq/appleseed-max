@@ -264,6 +264,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="osloutputselectormap\osloutputselector.cpp" />
     <ClCompile Include="oslutils.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp" />
@@ -334,6 +335,9 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h" />
     <ClInclude Include="appleseedsssmtl\datachunks.h" />
     <ClInclude Include="appleseedsssmtl\resource.h" />
+    <ClInclude Include="osloutputselectormap\datachunks.h" />
+    <ClInclude Include="osloutputselectormap\osloutputselector.h" />
+    <ClInclude Include="osloutputselectormap\resource.h" />    
     <ClInclude Include="oslutils.h" />
     <ClInclude Include="seexprutils.h" />
     <ClInclude Include="utilities.h" />
@@ -351,6 +355,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ResourceCompile Include="appleseedlightmtl\appleseedlightmtl.rc" />
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc" />
     <ResourceCompile Include="appleseedsssmtl\appleseedsssmtl.rc" />
+    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc" />    
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
