@@ -43,6 +43,7 @@
 // Standard headers.
 #include <map>
 #include <string>
+#include <vector>
 
 // Forward declarations.
 class IParamMap2;
@@ -55,8 +56,21 @@ class OSLShaderInfo;
 
 struct PageGroup
 {
-    int y_pos;
-    int height;
+    PageGroup()
+        : m_y_pos(0)
+        , m_x_pos(0)
+        , m_height(0)
+        , m_width(0)
+        , m_parent(nullptr)
+    {}
+
+    int                         m_x_pos;
+    int                         m_y_pos;
+    int                         m_width;
+    int                         m_height;
+    std::string                 m_short_name;
+    std::vector<PageGroup*>     m_children;
+    PageGroup*                  m_parent;
 };
 
 typedef std::map<std::string, PageGroup> PageGroupMap;
