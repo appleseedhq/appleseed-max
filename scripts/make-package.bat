@@ -9,9 +9,11 @@ echo ============ Cleaning up ============
 rmdir /S /Q appleseed-max2015 2>nul
 rmdir /S /Q appleseed-max2016 2>nul
 rmdir /S /Q appleseed-max2017 2>nul
+rmdir /S /Q appleseed-max2018 2>nul
 del appleseed-max2015-x.x.x-yyyy.zip 2>nul
 del appleseed-max2016-x.x.x-yyyy.zip 2>nul
 del appleseed-max2017-x.x.x-yyyy.zip 2>nul
+del appleseed-max2018-x.x.x-yyyy.zip 2>nul
 echo.
 
 echo ============ Creating 3ds Max 2015 archive ============
@@ -33,6 +35,13 @@ mkdir appleseed-max2017
 xcopy /S ..\sandbox\max2017\%config%\*.* appleseed-max2017
 %zipcmd% a -r -mx=9 appleseed-max2017-x.x.x-yyyy.zip appleseed-max2017
 rmdir /S /Q appleseed-max2017
+echo.
+
+echo ============ Creating 3ds Max 2018 archive ============
+mkdir appleseed-max2018
+xcopy /S ..\sandbox\max2018\%config%\*.* appleseed-max2018
+%zipcmd% a -r -mx=9 appleseed-max2018-x.x.x-yyyy.zip appleseed-max2018
+rmdir /S /Q appleseed-max2018
 echo.
 
 popd
