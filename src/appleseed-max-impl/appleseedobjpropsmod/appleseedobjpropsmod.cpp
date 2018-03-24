@@ -139,7 +139,7 @@ namespace
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SSS,
         p_end,
         ParamIdGenerateAssembly, L"generate_assembly", TYPE_BOOL, 0, IDS_GENERATE_ASSEMBLY,
-            p_default, TRUE,
+            p_default, FALSE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_GENERATE_ASSEMBLY,
         p_end,
         ParamIdSSSSet, L"sss_set", TYPE_STRING, 0, IDS_SSS_SET,

@@ -494,7 +494,7 @@ namespace
     void create_object_instance(
         asr::Assembly&          assembly,
         INode*                  instance_node,
-        asf::Transformd         transform,
+        const asf::Transformd&  transform,
         const ObjectInfo&       object_info,
         const RenderType        type,
         const bool              use_max_proc_maps,
@@ -643,8 +643,8 @@ namespace
 
         if (get_generate_assembly(object, time))
         {
-            std::string object_assembly_name = wide_to_utf8(node->GetName());
-            object_assembly_name = make_unique_name(assembly.assemblies(), object_assembly_name + "_object_assembly");
+            std::string assembly_name = wide_to_utf8(node->GetName());
+            assembly_name = make_unique_name(assembly.assemblies(), assembly_name + "_assembly");
 
             const AssemblyMap::const_iterator it = assembly_map.find(object);
 
@@ -652,9 +652,9 @@ namespace
             {
                 // Create an assembly.
                 asf::auto_release_ptr<asr::Assembly> object_assembly(
-                    asr::AssemblyFactory().create(object_assembly_name.c_str()));
+                    asr::AssemblyFactory().create(assembly_name.c_str()));
 
-                // Add objects and object_instances to it
+                // Add objects and object instances to it.
                 const auto object_infos = create_mesh_objects(object_assembly.ref(), node, time);
                 for (const auto& object_info : object_infos)
                 {
@@ -669,24 +669,24 @@ namespace
                         material_map);
                 }
 
-                assembly_map.insert(std::make_pair(object, object_assembly_name));
+                assembly_map.insert(std::make_pair(object, assembly_name));
                     
                 // Insert the assembly into the scene.
                 assembly.assemblies().insert(object_assembly);
             }
             else
             {
-                object_assembly_name = it->second;
+                assembly_name = it->second;
             }
 
             // Create an instance of the assembly and insert it into the scene.
-            std::string assembly_instance_name = make_unique_name(assembly.assembly_instances(), object_assembly_name + "_instance");
+            std::string assembly_instance_name = make_unique_name(assembly.assembly_instances(), assembly_name + "_instance");
 
             asf::auto_release_ptr<asr::AssemblyInstance> object_assembly_instance(
                 asr::AssemblyInstanceFactory::create(
                     assembly_instance_name.c_str(),
                     asr::ParamArray(),
-                    object_assembly_name.c_str()));
+                    assembly_name.c_str()));
 
             object_assembly_instance->transform_sequence()
                 .set_transform(0.0, transform);
@@ -695,7 +695,7 @@ namespace
         }
         else
         {
-            // Check if we already generated the corresponding appleseed object.
+            // Check if we already generated the corresponding appleseed objects.
             const ObjectMap::const_iterator it = object_map.find(object);
             if (it == object_map.end())
             {
@@ -741,10 +741,10 @@ namespace
         const RenderType        type,
         const bool              use_max_proc_maps,
         const TimeValue         time,
-        RendProgressCallback*   progress_cb,
         ObjectMap&              object_map,
         MaterialMap&            material_map,
-        AssemblyMap&            assembly_map)
+        AssemblyMap&            assembly_map,
+        RendProgressCallback*   progress_cb)
     {
         for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
         {
@@ -761,7 +761,7 @@ namespace
 
             const int done = static_cast<int>(i);
             const int total = static_cast<int>(e);
-            if (progress_cb->Progress(done, total) == RENDPROG_ABORT)
+            if (progress_cb->Progress(done + 1, total) == RENDPROG_ABORT)
                 break;
         }
     }
@@ -1078,24 +1078,23 @@ namespace
         const std::vector<DefaultLight>&    default_lights,
         const RenderType                    type,
         const RendererSettings&             settings,
-        RendProgressCallback*               progress_cb,
-        const TimeValue                     time)
+        const TimeValue                     time,
+        RendProgressCallback*               progress_cb)
     {
         // Add objects, object instances and materials to the assembly.
         ObjectMap object_map;
         MaterialMap material_map;
         AssemblyMap assembly_map;
-
         add_objects(
             assembly,
             entities,
             type,
             settings.m_use_max_procedural_maps,
             time,
-            progress_cb,
             object_map,
             material_map,
-            assembly_map);
+            assembly_map,
+            progress_cb);
 
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
         add_lights(assembly, rend_params, entities, time);
@@ -1523,8 +1522,8 @@ asf::auto_release_ptr<asr::Project> build_project(
     const FrameRendParams&                  frame_rend_params,
     const RendererSettings&                 settings,
     Bitmap*                                 bitmap,
-    RendProgressCallback*                   progress_cb,
-    const TimeValue                         time)
+    const TimeValue                         time,
+    RendProgressCallback*                   progress_cb)
 {
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
@@ -1564,8 +1563,8 @@ asf::auto_release_ptr<asr::Project> build_project(
         default_lights,
         type,
         settings,
-        progress_cb,
-        time);
+        time,
+        progress_cb);
 
     // Create an instance of the assembly and insert it into the scene.
     asf::auto_release_ptr<asr::AssemblyInstance> assembly_instance(
