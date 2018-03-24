@@ -94,6 +94,88 @@ namespace
             }
         }
     };
+
+    void adjust_group_heights(PageGroup* page)
+    {
+        for (auto child : page->m_children)
+            adjust_group_heights(child);
+
+        page->m_height += 12;                                   // extra space for the controls
+        if (page->m_parent != nullptr)
+        {
+            page->m_parent->m_height += page->m_height;
+            page->m_parent->m_height += 3;                      // spacing between the groups
+        }
+    }
+
+    void adjust_group_positions(PageGroup* page)
+    {
+        int y_pos = page->m_y + page->m_height;
+        for (auto it = page->m_children.rbegin(); it != page->m_children.rend(); ++it)
+        {
+            PageGroup* child = *it;
+            child->m_y = y_pos - child->m_height - 3;       // spacing between the groups
+            y_pos = child->m_y;
+
+            child->m_width = page->m_width - 8;
+            child->m_x = page->m_x + 4;
+        }
+
+        for (auto child : page->m_children)
+            adjust_group_positions(child);
+    }
+
+    int build_page_tree(const std::vector<OSLParamInfo>& shader_params, PageGroupMap& pages)
+    {
+        // Calculate height of each group based on controls.
+        for (auto& param : shader_params)
+        {
+            if (param.m_page != "" &&
+                param.m_widget != "null" &&
+                !param.m_max_hidden_attr)
+            {
+                const int param_height = 
+                    param.m_max_param.m_param_type == MaxParam::IntMapper ||
+                    param.m_max_param.m_param_type == MaxParam::StringPopup ? 15 : 12;
+
+                pages[param.m_page].m_height += param_height;
+            }
+        }
+        
+        // Build root page.
+        PageGroup root_page;
+        root_page.m_width = 217;
+        for (auto& page : pages)
+        {
+            auto parent_name = page.first;
+            const size_t dot_pos = parent_name.find_last_of('.');
+            if (dot_pos == std::string::npos)
+            {
+                page.second.m_short_name = page.first;
+                root_page.m_children.push_back(&page.second);
+                page.second.m_parent = &root_page;
+            }
+            else
+            {
+                page.second.m_short_name = parent_name.substr(dot_pos + 1, parent_name.size() - 1);
+                parent_name = parent_name.substr(0, dot_pos);
+
+                if (pages.find(parent_name) != pages.end())
+                {
+                    pages[parent_name].m_children.push_back(&page.second);
+                    page.second.m_parent = &pages[parent_name];
+                }
+            }
+        }
+
+        adjust_group_heights(&root_page);
+        adjust_group_positions(&root_page);
+
+        for (auto page : root_page.m_children)
+            page->m_parent = nullptr;
+
+        return root_page.m_height;
+    }
 }
 
 OSLParamDlg::OSLParamDlg(
@@ -150,14 +232,20 @@ void OSLParamDlg::add_groupboxes(
     DialogTemplate&         dialog_template,
     PageGroupMap&           pages)
 {
-    int y_pos = 17;
     for (auto& page : pages)
     {
-        int height = page.second.height + 10;
-        page.second.y_pos = y_pos + 10;
-        dialog_template.AddButton((LPCSTR)page.first.c_str(), WS_VISIBLE | BS_GROUPBOX | WS_CHILD | WS_GROUP, NULL, 4, y_pos, 209, height, 0);
-        y_pos += height;
-        y_pos += 4;
+        page.second.m_y += 12;      // offset from the top of the dialog
+        dialog_template.AddButton(
+            (LPCSTR)page.second.m_short_name.c_str(),
+            WS_VISIBLE | BS_GROUPBOX | WS_CHILD | WS_GROUP,
+            NULL,
+            page.second.m_x,
+            page.second.m_y,
+            page.second.m_width,
+            page.second.m_height,
+            0);
+        
+        page.second.m_y += 10;      // offset to start placing controls
     }
 }
 
@@ -166,7 +254,6 @@ void OSLParamDlg::add_ui_parameter(
     const MaxParam&         max_param,
     PageGroupMap&           pages)
 {
-    const int Col1X = 10;
     const int Col2X = 85;
     const int Col3X = 122;
     const int Col4X = 159;
@@ -175,14 +262,18 @@ void OSLParamDlg::add_ui_parameter(
     const int EditHeight = 10;
     const int TexButtonWidth = 84;
 
+    int col1_x = 10;
     int y_pos = 5;
     auto param_page = pages.find(max_param.m_page_name);
     if (param_page != pages.end())
-        y_pos = param_page->second.y_pos;
+    {
+        y_pos = param_page->second.m_y;
+        col1_x = param_page->second.m_x + 5;
+    }
 
     int ctrl_id = max_param.m_max_ctrl_id;
     const std::string param_label = max_param.m_max_label_str + ":";
-    dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, Col1X, y_pos, LabelWidth, EditHeight, ctrl_id++);
+    dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, col1_x, y_pos, LabelWidth, EditHeight, ctrl_id++);
     
     if (max_param.m_has_constant)
     {
@@ -257,31 +348,15 @@ void OSLParamDlg::add_ui_parameter(
 
     y_pos += 12;
     if (param_page != pages.end())
-        param_page->second.y_pos = y_pos;
+        param_page->second.m_y = y_pos;
 }
 
 void OSLParamDlg::create_dialog()
 {
     PageGroupMap pages;
 
-    for (auto& osl_param : m_shader_info->m_params)
-    {
-        if (osl_param.m_page != "" &&
-            osl_param.m_widget != "null" &&
-            !osl_param.m_max_hidden_attr)
-        {
-            const int param_height = osl_param.m_max_param.m_param_type == MaxParam::IntMapper ||
-                osl_param.m_max_param.m_param_type == MaxParam::StringPopup ? 15 : 12;
-            pages[osl_param.m_page].height += param_height;
-        }
-    }
-
-    int dlg_height = 27;
-    for (const auto& page : pages)
-    {
-        dlg_height += page.second.height;
-        dlg_height += 14;
-    }
+    int dlg_height = build_page_tree(m_shader_info->m_params, pages);
+    dlg_height += 12;
 
     DialogTemplate dialogTemplate(
         (LPCSTR)"OSL Texture",
