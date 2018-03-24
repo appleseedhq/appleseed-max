@@ -142,10 +142,9 @@ namespace
             }
         }
         
-        // Build page tree.
+        // Build root page.
         PageGroup root_page;
         root_page.m_width = 217;
-        std::vector<PageGroup*> page_tree;
         for (auto& page : pages)
         {
             auto parent_name = page.first;
@@ -153,7 +152,7 @@ namespace
             if (dot_pos == std::string::npos)
             {
                 page.second.m_short_name = page.first;
-                page_tree.push_back(&page.second);
+                root_page.m_children.push_back(&page.second);
                 page.second.m_parent = &root_page;
             }
             else
@@ -168,8 +167,6 @@ namespace
                 }
             }
         }
-
-        root_page.m_children = page_tree;
 
         adjust_group_heights(&root_page);
         adjust_group_positions(&root_page);
@@ -265,18 +262,18 @@ void OSLParamDlg::add_ui_parameter(
     const int EditHeight = 10;
     const int TexButtonWidth = 84;
 
-    int col_1x = 10;
+    int col1_x = 10;
     int y_pos = 5;
     auto param_page = pages.find(max_param.m_page_name);
     if (param_page != pages.end())
     {
         y_pos = param_page->second.m_y;
-        col_1x = param_page->second.m_x + 5;
+        col1_x = param_page->second.m_x + 5;
     }
 
     int ctrl_id = max_param.m_max_ctrl_id;
     const std::string param_label = max_param.m_max_label_str + ":";
-    dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, col_1x, y_pos, LabelWidth, EditHeight, ctrl_id++);
+    dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, col1_x, y_pos, LabelWidth, EditHeight, ctrl_id++);
     
     if (max_param.m_has_constant)
     {
