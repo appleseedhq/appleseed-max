@@ -75,7 +75,7 @@ namespace
         ParamIdVisibilitySpecular       = 7,
         ParamIdVisibilitySSS            = 8,
         ParamIdSSSSet                   = 9,
-        ParamIdGenerateAssembly         = 10
+        ParamIdOptimizeForInstancing    = 10
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -138,9 +138,9 @@ namespace
             p_default, TRUE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_VISIBILITY_SSS,
         p_end,
-        ParamIdGenerateAssembly, L"generate_assembly", TYPE_BOOL, 0, IDS_GENERATE_ASSEMBLY,
+        ParamIdOptimizeForInstancing, L"optimize_for_instancing", TYPE_BOOL, 0, IDS_OPTIMIZE_FOR_INSTANCING,
             p_default, FALSE,
-            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_GENERATE_ASSEMBLY,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_OPTIMIZE_FOR_INSTANCING,
         p_end,
         ParamIdSSSSet, L"sss_set", TYPE_STRING, 0, IDS_SSS_SET,
             p_ui, ParamMapIdVisibility, TYPE_EDITBOX, IDC_SSS_SET,
