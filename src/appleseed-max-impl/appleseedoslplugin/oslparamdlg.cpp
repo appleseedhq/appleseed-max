@@ -100,7 +100,7 @@ namespace
         for (auto child : page->m_children)
             adjust_group_heights(child);
 
-        page->m_height += 12;                                   // extra space for the contols
+        page->m_height += 12;                                   // extra space for the controls
         if (page->m_parent != nullptr)
         {
             page->m_parent->m_height += page->m_height;
@@ -110,15 +110,15 @@ namespace
 
     void adjust_group_positions(PageGroup* page)
     {
-        int y_pos = page->m_y_pos + page->m_height;
+        int y_pos = page->m_y + page->m_height;
         for (auto it = page->m_children.rbegin(); it != page->m_children.rend(); ++it)
         {
             PageGroup* child = *it;
-            child->m_y_pos = y_pos - child->m_height - 3;       // spacing between the groups
-            y_pos = child->m_y_pos;
+            child->m_y = y_pos - child->m_height - 3;       // spacing between the groups
+            y_pos = child->m_y;
 
             child->m_width = page->m_width - 8;
-            child->m_x_pos = page->m_x_pos + 4;
+            child->m_x = page->m_x + 4;
         }
 
         for (auto child : page->m_children)
@@ -149,7 +149,7 @@ namespace
         for (auto& page : pages)
         {
             auto parent_name = page.first;
-            size_t dot_pos = parent_name.find_last_of('.');
+            const size_t dot_pos = parent_name.find_last_of('.');
             if (dot_pos == std::string::npos)
             {
                 page.second.m_short_name = page.first;
@@ -173,6 +173,9 @@ namespace
 
         adjust_group_heights(&root_page);
         adjust_group_positions(&root_page);
+
+        for (auto page : root_page.m_children)
+            page->m_parent = nullptr;
 
         return root_page.m_height;
     }
@@ -234,18 +237,18 @@ void OSLParamDlg::add_groupboxes(
 {
     for (auto& page : pages)
     {
-        page.second.m_y_pos += 12;      // offset from the top of the dialog
+        page.second.m_y += 12;      // offset from the top of the dialog
         dialog_template.AddButton(
             (LPCSTR)page.second.m_short_name.c_str(),
             WS_VISIBLE | BS_GROUPBOX | WS_CHILD | WS_GROUP,
             NULL,
-            page.second.m_x_pos,
-            page.second.m_y_pos,
+            page.second.m_x,
+            page.second.m_y,
             page.second.m_width,
             page.second.m_height,
             0);
         
-        page.second.m_y_pos += 10;      // offset to start placing controls
+        page.second.m_y += 10;      // offset to start placing controls
     }
 }
 
@@ -267,8 +270,8 @@ void OSLParamDlg::add_ui_parameter(
     auto param_page = pages.find(max_param.m_page_name);
     if (param_page != pages.end())
     {
-        y_pos = param_page->second.m_y_pos;
-        col_1x = param_page->second.m_x_pos + 5;
+        y_pos = param_page->second.m_y;
+        col_1x = param_page->second.m_x + 5;
     }
 
     int ctrl_id = max_param.m_max_ctrl_id;
@@ -348,7 +351,7 @@ void OSLParamDlg::add_ui_parameter(
 
     y_pos += 12;
     if (param_page != pages.end())
-        param_page->second.m_y_pos = y_pos;
+        param_page->second.m_y = y_pos;
 }
 
 void OSLParamDlg::create_dialog()
