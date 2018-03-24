@@ -35,6 +35,9 @@
 #define IDS_SSS_SET                         7093
 #define IDC_SSS_SET_LABEL                   7094
 
+#define IDC_BUTTON_OPTIMIZE_FOR_INSTANCING  7101
+#define IDS_OPTIMIZE_FOR_INSTANCING         7102
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

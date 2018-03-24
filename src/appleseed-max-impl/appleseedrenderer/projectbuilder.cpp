@@ -465,6 +465,26 @@ namespace
         return std::string();
     }
 
+    bool should_optimize_for_instancing(Object* object, const TimeValue time)
+    {
+        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+        {
+            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
+            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
+            {
+                Modifier* modifier = derived_object->GetModifier(i);
+                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
+                {
+                    int optimize_for_instancing = 0;
+                    modifier->GetParamBlockByID(0)->GetValueByName(L"optimize_for_instancing", time, optimize_for_instancing, FOREVER);
+                    return optimize_for_instancing == TRUE;
+                }
+            }
+        }
+
+        return false;
+    }
+
     enum class RenderType
     {
         Default,
@@ -474,6 +494,7 @@ namespace
     void create_object_instance(
         asr::Assembly&          assembly,
         INode*                  instance_node,
+        const asf::Transformd&  transform,
         const ObjectInfo&       object_info,
         const RenderType        type,
         const bool              use_max_proc_maps,
@@ -588,11 +609,6 @@ namespace
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
-        // Compute the transform of this instance.
-        const asf::Transformd transform =
-            asf::Transformd::from_local_to_parent(
-                to_matrix4d(instance_node->GetObjTMAfterWSM(time)));
-
         // Create the instance and insert it into the assembly.
         assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
@@ -605,6 +621,7 @@ namespace
     }
 
     typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
+    typedef std::map<Object*, std::string> AssemblyMap;
 
     void add_object(
         asr::Assembly&          assembly,
@@ -613,44 +630,107 @@ namespace
         const bool              use_max_proc_maps,
         const TimeValue         time,
         ObjectMap&              object_map,
-        MaterialMap&            material_map)
+        MaterialMap&            material_map,
+        AssemblyMap&            assembly_map)
     {
         // Retrieve the geometrical object referenced by this node.
         Object* object = node->GetObjectRef();
 
-        // Check if we already generated the corresponding appleseed object.
-        const ObjectMap::const_iterator it = object_map.find(object);
+        // Compute the transform of this instance.
+        const asf::Transformd transform =
+            asf::Transformd::from_local_to_parent(
+                to_matrix4d(node->GetObjTMAfterWSM(time)));
 
-        if (it == object_map.end())
+        if (should_optimize_for_instancing(object, time))
         {
-            // The appleseed objects do not exist yet, create and instantiate them.
-            const auto object_infos = create_mesh_objects(assembly, node, time);
-            object_map.insert(std::make_pair(object, object_infos));
-            for (const auto& object_info : object_infos)
+            std::string assembly_name = wide_to_utf8(node->GetName());
+            assembly_name = make_unique_name(assembly.assemblies(), assembly_name + "_assembly");
+
+            const AssemblyMap::const_iterator it = assembly_map.find(object);
+
+            if (it == assembly_map.end())
             {
-                create_object_instance(
-                    assembly,
-                    node,
-                    object_info,
-                    type,
-                    use_max_proc_maps,
-                    time,
-                    material_map);
+                // Create an assembly.
+                asf::auto_release_ptr<asr::Assembly> object_assembly(
+                    asr::AssemblyFactory().create(assembly_name.c_str()));
+
+                // Add objects and object instances to it.
+                const auto object_infos = create_mesh_objects(object_assembly.ref(), node, time);
+                for (const auto& object_info : object_infos)
+                {
+                    create_object_instance(
+                        object_assembly.ref(),
+                        node,
+                        asf::Transformd::identity(),
+                        object_info,
+                        type,
+                        use_max_proc_maps,
+                        time,
+                        material_map);
+                }
+
+                assembly_map.insert(std::make_pair(object, assembly_name));
+                    
+                // Insert the assembly into the scene.
+                assembly.assemblies().insert(object_assembly);
             }
+            else
+            {
+                assembly_name = it->second;
+            }
+
+            // Create an instance of the assembly and insert it into the scene.
+            std::string assembly_instance_name = make_unique_name(assembly.assembly_instances(), assembly_name + "_instance");
+
+            asf::auto_release_ptr<asr::AssemblyInstance> object_assembly_instance(
+                asr::AssemblyInstanceFactory::create(
+                    assembly_instance_name.c_str(),
+                    asr::ParamArray(),
+                    assembly_name.c_str()));
+
+            object_assembly_instance->transform_sequence()
+                .set_transform(0.0, transform);
+
+            assembly.assembly_instances().insert(object_assembly_instance);
         }
         else
         {
-            // The appleseed objects already exist, simply instantiate them.
-            for (const auto& object_info : it->second)
+            // Check if we already generated the corresponding appleseed objects.
+            const ObjectMap::const_iterator it = object_map.find(object);
+            if (it == object_map.end())
             {
-                create_object_instance(
-                    assembly,
-                    node,
-                    object_info,
-                    type,
-                    use_max_proc_maps,
-                    time,
-                    material_map);
+                // The appleseed objects do not exist yet, create and instantiate them.
+                const auto object_infos = create_mesh_objects(assembly, node, time);
+                object_map.insert(std::make_pair(object, object_infos));
+
+                for (const auto& object_info : object_infos)
+                {
+                    create_object_instance(
+                        assembly,
+                        node,
+                        transform,
+                        object_info,
+                        type,
+                        use_max_proc_maps,
+                        time,
+                        material_map);
+                }
+            }
+            else
+            {
+                // The appleseed objects already exist, simply instantiate them.
+                for (const auto& object_info : it->second)
+                {
+                    create_object_instance(
+                        assembly,
+                        node,
+                        transform,
+                        object_info,
+                        type,
+                        use_max_proc_maps,
+                        time,
+                        material_map);
+                }
             }
         }
     }
@@ -662,10 +742,13 @@ namespace
         const bool              use_max_proc_maps,
         const TimeValue         time,
         ObjectMap&              object_map,
-        MaterialMap&            material_map)
+        MaterialMap&            material_map,
+        AssemblyMap&            assembly_map,
+        RendProgressCallback*   progress_cb)
     {
-        for (const auto& object : entities.m_objects)
+        for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
         {
+            const auto& object = entities.m_objects[i];
             add_object(
                 assembly,
                 object,
@@ -673,7 +756,13 @@ namespace
                 use_max_proc_maps,
                 time,
                 object_map,
-                material_map);
+                material_map,
+                assembly_map);
+
+            const int done = static_cast<int>(i);
+            const int total = static_cast<int>(e);
+            if (progress_cb->Progress(done + 1, total) == RENDPROG_ABORT)
+                break;
         }
     }
 
@@ -989,11 +1078,13 @@ namespace
         const std::vector<DefaultLight>&    default_lights,
         const RenderType                    type,
         const RendererSettings&             settings,
-        const TimeValue                     time)
+        const TimeValue                     time,
+        RendProgressCallback*               progress_cb)
     {
         // Add objects, object instances and materials to the assembly.
         ObjectMap object_map;
         MaterialMap material_map;
+        AssemblyMap assembly_map;
         add_objects(
             assembly,
             entities,
@@ -1001,7 +1092,9 @@ namespace
             settings.m_use_max_procedural_maps,
             time,
             object_map,
-            material_map);
+            material_map,
+            assembly_map,
+            progress_cb);
 
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
         add_lights(assembly, rend_params, entities, time);
@@ -1429,7 +1522,8 @@ asf::auto_release_ptr<asr::Project> build_project(
     const FrameRendParams&                  frame_rend_params,
     const RendererSettings&                 settings,
     Bitmap*                                 bitmap,
-    const TimeValue                         time)
+    const TimeValue                         time,
+    RendProgressCallback*                   progress_cb)
 {
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
@@ -1469,7 +1563,8 @@ asf::auto_release_ptr<asr::Project> build_project(
         default_lights,
         type,
         settings,
-        time);
+        time,
+        progress_cb);
 
     // Create an instance of the assembly and insert it into the scene.
     asf::auto_release_ptr<asr::AssemblyInstance> assembly_instance(

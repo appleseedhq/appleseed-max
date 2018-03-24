@@ -466,7 +466,8 @@ int AppleseedRenderer::Render(
             frame_rend_params,
             renderer_settings,
             bitmap,
-            time));
+            time,
+            progress_cb));
 
     if (m_rend_params.inMtlEdit)
     {
