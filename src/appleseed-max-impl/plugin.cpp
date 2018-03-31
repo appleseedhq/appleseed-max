@@ -125,19 +125,41 @@ extern "C"
 
         asr::global_logger().add_target(&g_log_target);
 
-        std::stringstream sstr;
+        std::wstringstream sstr;
         sstr << "appleseed-max ";
-        sstr << wide_to_utf8(PluginVersionString);
-        sstr << " plug-in for ";
-        sstr << asf::Appleseed::get_synthetic_version_string();
+        sstr << PluginVersionString;
+        sstr << " plug-in using ";
+        sstr << utf8_to_wide(asf::Appleseed::get_synthetic_version_string());
         sstr << " loaded";
 
-        const std::string title = sstr.str();
-        const std::string sep(title.size(), '=');
+        const auto title = sstr.str();
+        const std::wstring sep(title.size(), L'=');
 
-        RENDERER_LOG_INFO("%s", sep.c_str());
-        RENDERER_LOG_INFO("%s", title.c_str());
-        RENDERER_LOG_INFO("%s", sep.c_str());
+        // We use GetCOREInterface()->Log()->LogEntry() directly rather than RENDERER_LOG_INFO()
+        // because it seems that we are not running on the main thread (hence log messages are
+        // enqueued to later be emitted from the main thread rather than being emitted directly)
+        // but the Win32 message that should trigger message emission seems to get lost.
+
+        GetCOREInterface()->Log()->LogEntry(
+            SYSLOG_INFO,
+            FALSE,
+            L"appleseed",
+            L"[appleseed] %s",
+            sep.c_str());
+
+        GetCOREInterface()->Log()->LogEntry(
+            SYSLOG_INFO,
+            FALSE,
+            L"appleseed",
+            L"[appleseed] %s",
+            title.c_str());
+
+        GetCOREInterface()->Log()->LogEntry(
+            SYSLOG_INFO,
+            FALSE,
+            L"appleseed",
+            L"[appleseed] %s",
+            sep.c_str());
 
         g_shader_registry.create_class_descriptors();
 
