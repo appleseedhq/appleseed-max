@@ -37,6 +37,7 @@
 #include "appleseedrenderer/projectbuilder.h"
 #include "appleseedrenderer/renderercontroller.h"
 #include "appleseedrenderer/tilecallback.h"
+#include "appleseedrenderelement/appleseedrenderelement.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -56,6 +57,9 @@
 #include <assert1.h>
 #include <bitmap.h>
 #include <interactiverender.h>
+#include <notify.h>
+#include <pbbitmap.h>
+#include <renderelements.h>
 
 // Standard headers.
 #include <clocale>
@@ -125,6 +129,10 @@ void* AppleseedRenderer::GetInterface(ULONG id)
 
         return static_cast<IInteractiveRender*>(m_interactive_renderer);
     }
+    if (id == IRenderElementCompatible::IID)
+    {
+        return new AppleseedRECompatible();
+    }
     else
 #endif
     {
@@ -178,12 +186,12 @@ bool AppleseedRenderer::HasRequirement(Requirement requirement)
 
 bool AppleseedRenderer::CompatibleWithAnyRenderElement() const
 {
-    return false;
+    return true;
 }
 
-bool AppleseedRenderer::CompatibleWithRenderElement(IRenderElement& pIRenderElement) const
+bool AppleseedRenderer::CompatibleWithRenderElement(IRenderElement& render_element) const
 {
-    return false;
+    return render_element.ClassID() == AppleseedRenderElement::get_class_id();
 }
 
 IInteractiveRender* AppleseedRenderer::GetIInteractiveRender()
@@ -240,6 +248,8 @@ int AppleseedRenderer::Open(
     int                     default_light_count,
     RendProgressCallback*   progress_cb)
 {
+    BroadcastNotification(NOTIFY_PRE_RENDER, static_cast<void*>(&rend_params));
+
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
     m_scene = scene;
@@ -373,7 +383,7 @@ namespace
         proc.EndEnumeration();
     }
 
-    void render(
+    asr::IRendererController::Status render(
         asr::Project&           project,
         const RendererSettings& settings,
         Bitmap*                 bitmap,
@@ -405,6 +415,7 @@ namespace
         // Render the frame.
         renderer->render();
 
+        return renderer_controller.get_status();
         // Make sure the master renderer is deleted before the project.
     }
 }
@@ -441,6 +452,9 @@ int AppleseedRenderer::Render(
 
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
         create_log_window();
+
+    TimeValue eval_time = time;
+    BroadcastNotification(NOTIFY_RENDER_PREEVAL, &eval_time);
 
     // Collect the entities we're interested in.
     if (progress_cb)
@@ -498,6 +512,15 @@ int AppleseedRenderer::Render(
         if (m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ||
             m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
         {
+
+            RenderGlobalContext render_context;
+            render_context.time = eval_time;
+            render_context.inMtlEdit = m_rend_params.inMtlEdit;
+            render_context.SetRenderElementMgr(m_rend_params.GetRenderElementMgr());
+            BroadcastNotification(NOTIFY_PRE_RENDERFRAME, &render_context);
+
+            auto render_status = asr::IRendererController::Status::ContinueRendering;
+
             if (progress_cb)
                 progress_cb->SetTitle(L"Rendering...");
             if (m_settings.m_low_priority_mode)
@@ -505,12 +528,18 @@ int AppleseedRenderer::Render(
                 asf::ProcessPriorityContext background_context(
                     asf::ProcessPriority::ProcessPriorityLow,
                     &asr::global_logger());
-                render(project.ref(), m_settings, bitmap, progress_cb);
+                render_status = render(project.ref(), m_settings, bitmap, progress_cb);
             }
             else
             {
-                render(project.ref(), m_settings, bitmap, progress_cb);
+                render_status = render(project.ref(), m_settings, bitmap, progress_cb);
             }
+
+            if (render_status != asr::IRendererController::Status::AbortRendering &&
+                !GetCOREInterface16()->GetRendUseIterative())
+                project->get_frame()->write_main_and_aov_images();
+
+            BroadcastNotification(NOTIFY_POST_RENDERFRAME, &render_context);
         }
     }
 
@@ -531,6 +560,8 @@ void AppleseedRenderer::Close(
     render_end(m_entities.m_objects, m_time);
 
     clear();
+
+    BroadcastNotification(NOTIFY_POST_RENDER);
 }
 
 RendParamDlg* AppleseedRenderer::CreateParamDialog(

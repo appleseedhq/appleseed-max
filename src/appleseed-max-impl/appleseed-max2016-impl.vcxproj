@@ -262,6 +262,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile Include="appleseedoslplugin\oslshaderregistry.cpp" />
     <ClCompile Include="appleseedoslplugin\oslparamdlg.cpp" />
     <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp" />
+    <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp" />
     <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp" />
     <ClCompile Include="builtinmapsupport.cpp" />
     <ClCompile Include="iappleseedmtl.cpp" />
@@ -310,6 +311,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h" />
     <ClInclude Include="appleseedplasticmtl\datachunks.h" />
     <ClInclude Include="appleseedplasticmtl\resource.h" />
+    <ClInclude Include="appleseedrenderelement\appleseedrenderelement.h" />
+    <ClInclude Include="appleseedrenderelement\resource.h" />
     <ClInclude Include="appleseedrenderer\dialoglogtarget.h" />
     <ClInclude Include="builtinmapsupport.h" />
     <ClInclude Include="bump\bumpparammapdlgproc.h" />
@@ -353,6 +356,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc" />
     <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc" />
     <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc" />
+    <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc" />
     <ResourceCompile Include="bump\bump.rc" />
     <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="appleseedglassmtl\appleseedglassmtl.rc" />

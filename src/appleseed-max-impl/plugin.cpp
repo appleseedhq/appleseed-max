@@ -36,6 +36,7 @@
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedoslplugin/oslshaderregistry.h"
 #include "appleseedplasticmtl/appleseedplasticmtl.h"
+#include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/appleseedrenderer.h"
 #include "appleseedsssmtl/appleseedsssmtl.h"
 #include "logtarget.h"
@@ -85,7 +86,7 @@ extern "C"
     __declspec(dllexport)
     int LibNumberClasses()
     {
-        return 11 + g_shader_registry.get_size();
+        return 12 + g_shader_registry.get_size();
     }
 
     __declspec(dllexport)
@@ -104,11 +105,12 @@ extern "C"
           case 8: return &g_appleseed_metalmtl_classdesc;
           case 9: return &g_appleseed_plasticmtl_classdesc;
           case 10: return &g_appleseed_outputselector_classdesc;
+          case 11: return &g_appleseed_renderelement_classdesc;
 
           // Make sure to update LibNumberClasses() if you add classes here.
 
           default:
-            return g_shader_registry.get_class_descriptor(i - 10);
+            return g_shader_registry.get_class_descriptor(i - 11);
         }
     }
 

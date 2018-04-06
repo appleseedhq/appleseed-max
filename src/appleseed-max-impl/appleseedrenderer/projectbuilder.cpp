@@ -32,6 +32,7 @@
 // appleseed-max headers.
 #include "appleseedenvmap/appleseedenvmap.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
+#include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/maxsceneentities.h"
 #include "appleseedrenderer/renderersettings.h"
 #include "iappleseedmtl.h"
@@ -39,6 +40,7 @@
 #include "utilities.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/aov.h"
 #include "renderer/api/camera.h"
 #include "renderer/api/color.h"
 #include "renderer/api/environment.h"
@@ -74,6 +76,8 @@
 #include <INodeTab.h>
 #include <modstack.h>
 #include <object.h>
+#include <pbbitmap.h>
+#include <renderelements.h>
 #include <RendType.h>
 #if MAX_RELEASE >= 18000
 #include <Scene/IPhysicalCamera.h>
@@ -1385,6 +1389,41 @@ namespace
         }
         else
         {
+            asr::AOVContainer aovs;
+
+            IRenderElementMgr* re_manager = GetCOREInterface()->GetCurRenderElementMgr();
+            re_manager->SetDisplayElements(false);
+            for (size_t i = 0, e = re_manager->NumRenderElements(); i < e; ++i)
+            {
+                const asr::AOVFactoryRegistrar factory_registrar;
+                auto factories = factory_registrar.get_factories();
+
+                auto* render_element = re_manager->GetRenderElement(static_cast<int>(i));
+                render_element->SetEnabled(false);
+
+                if (render_element->ClassID() == AppleseedRenderElement::get_class_id())
+                {
+                    AppleseedRenderElement* element = static_cast<AppleseedRenderElement*>(render_element);
+                    int aov_index = 0;
+                    element->GetParamBlock(0)->GetValueByName(L"aov_index", 0, aov_index, FOREVER);
+                    if (aov_index > 0 && aov_index <= factories.size())
+                    {
+                        asf::auto_release_ptr<asr::AOV> aov_entity = factories[aov_index - 1]->create(asr::ParamArray());
+                        if (aovs.get_by_name(aov_entity->get_name()) == nullptr)
+                        {
+                            PBBitmap* p_bitmap = nullptr;
+                            render_element->GetPBBitmap(p_bitmap);
+                            if (p_bitmap != nullptr)
+                                aov_entity->get_parameters().insert(
+                                    "output_filename", 
+                                    wide_to_utf8(p_bitmap->bi.Name()).c_str());
+
+                            aovs.insert(aov_entity);
+                        }
+                    }
+                }
+            }
+
             asf::auto_release_ptr<asr::Frame> frame(
                 asr::FrameFactory::create(
                     "beauty",
@@ -1394,7 +1433,8 @@ namespace
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
                         .insert("filter", "blackman-harris")
-                        .insert("filter_size", 1.5)));
+                        .insert("filter_size", 1.5),
+                    aovs));
 
             if (rend_params.rendType == RENDTYPE_REGION)
             {
