@@ -416,7 +416,7 @@ namespace
             m_text_bounces = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES));
             m_spinner_bounces = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_BOUNCES));
             m_spinner_bounces->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES), EDITTYPE_POS_INT);
-            m_spinner_bounces->SetLimits(0, 1000, FALSE);
+            m_spinner_bounces->SetLimits(0, 100, FALSE);
             m_spinner_bounces->SetResetValue(RendererSettings::defaults().m_bounces);
             m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
 
