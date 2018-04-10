@@ -31,13 +31,13 @@
 
 // appleseed-max headers.
 #include "appleseedinteractive/appleseedinteractive.h"
+#include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/appleseedrendererparamdlg.h"
 #include "appleseedrenderer/datachunks.h"
 #include "appleseedrenderer/dialoglogtarget.h"
 #include "appleseedrenderer/projectbuilder.h"
 #include "appleseedrenderer/renderercontroller.h"
 #include "appleseedrenderer/tilecallback.h"
-#include "appleseedrenderelement/appleseedrenderelement.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -78,7 +78,7 @@ namespace
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 asf::auto_release_ptr<DialogLogTarget> g_dialog_log_target;
-
+AppleseedRECompatible g_appleseed_renderelement_compatible;
 
 //
 // AppleseedRenderer class implementation.
@@ -131,7 +131,7 @@ void* AppleseedRenderer::GetInterface(ULONG id)
     }
     if (id == IRenderElementCompatible::IID)
     {
-        return new AppleseedRECompatible();
+        return &g_appleseed_renderelement_compatible;
     }
     else
 #endif
@@ -248,7 +248,7 @@ int AppleseedRenderer::Open(
     int                     default_light_count,
     RendProgressCallback*   progress_cb)
 {
-    BroadcastNotification(NOTIFY_PRE_RENDER, static_cast<void*>(&rend_params));
+    BroadcastNotification(NOTIFY_PRE_RENDER, &rend_params);
 
     SuspendAll suspend(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 

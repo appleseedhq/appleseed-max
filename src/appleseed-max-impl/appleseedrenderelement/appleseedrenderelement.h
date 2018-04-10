@@ -32,8 +32,14 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
-#include <renderelements.h>
 #include <iparamb2.h>
+#include <renderelements.h>
+
+// Forward declarations.
+namespace renderer
+{
+    class AOVFactoryRegistrar;
+}
 
 class AppleseedRenderElement
   : public IRenderElement
@@ -43,7 +49,6 @@ class AppleseedRenderElement
 
     // Constructor.
     explicit AppleseedRenderElement(const bool loading);
-    ~AppleseedRenderElement();
 
     // Animatable methods.
     void GetClassName(TSTR& s) override;
@@ -132,3 +137,4 @@ class AppleseedRenderElementClassDesc
 };
 
 extern AppleseedRenderElementClassDesc g_appleseed_renderelement_classdesc;
+extern renderer::AOVFactoryRegistrar g_aov_factory_registrar;

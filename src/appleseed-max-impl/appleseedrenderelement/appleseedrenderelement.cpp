@@ -66,6 +66,8 @@ namespace
 }
 
 AppleseedRenderElementClassDesc g_appleseed_renderelement_classdesc;
+asr::AOVFactoryRegistrar g_aov_factory_registrar;
+
 
 //
 // AppleseedRenderElement class implementation.
@@ -76,21 +78,20 @@ namespace
     
     std::vector<std::string> get_aov_names()
     {
-        const asr::AOVFactoryRegistrar factory_registrar;
-        auto factories = factory_registrar.get_factories();
-        auto aov_names = std::vector<std::string>();
-        for (size_t i = 0, e = factories.size(); i < e; ++i)
-            aov_names.push_back(factories[i]->get_model_metadata().get("label"));
+        auto factories = asf::array_vector<std::vector<asr::IAOVFactory*>>(g_aov_factory_registrar.get_factories());
+        std::vector<std::string> aov_names;
+        for (const auto& factory : factories)
+            aov_names.push_back(factory->get_model_metadata().get("label"));
 
         return aov_names;
     }
 
     void init_combo_box(IParamMap2* param_map)
     {
-        HWND dlg_hwnd = 0;
+        HWND dlg_hwnd = nullptr;
         if (param_map != nullptr)
             dlg_hwnd = param_map->GetHWnd();
-        if (dlg_hwnd == 0)
+        if (dlg_hwnd == nullptr)
             return;
 
         SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME), CB_RESETCONTENT, 0, 0);
@@ -228,10 +229,6 @@ AppleseedRenderElement::AppleseedRenderElement(const bool loading)
     }
 }
 
-AppleseedRenderElement::~AppleseedRenderElement()
-{
-}
-
 void AppleseedRenderElement::DeleteThis()
 {
     delete this;
@@ -348,7 +345,7 @@ RefResult AppleseedRenderElement::NotifyRefChanged(
     return REF_SUCCEED;
 }
 
-RefTargetHandle	AppleseedRenderElement::Clone(RemapDir& remap)
+RefTargetHandle AppleseedRenderElement::Clone(RemapDir& remap)
 {
     AppleseedRenderElement* clone = new AppleseedRenderElement(false);
 
@@ -379,7 +376,7 @@ void AppleseedRenderElement::SetEnabled(BOOL on)
 
 BOOL AppleseedRenderElement::IsEnabled() const
 {
-    int	is_on;
+    int is_on;
     m_pblock->GetValue(ParamIdEnableOn, 0, is_on, FOREVER);
     return is_on;
 }

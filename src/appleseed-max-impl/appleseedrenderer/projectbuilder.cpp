@@ -1393,12 +1393,11 @@ namespace
 
             IRenderElementMgr* re_manager = GetCOREInterface()->GetCurRenderElementMgr();
             re_manager->SetDisplayElements(false);
-            for (size_t i = 0, e = re_manager->NumRenderElements(); i < e; ++i)
+            for (int i = 0, e = re_manager->NumRenderElements(); i < e; ++i)
             {
-                const asr::AOVFactoryRegistrar factory_registrar;
-                auto factories = factory_registrar.get_factories();
+                auto factories = g_aov_factory_registrar.get_factories();
 
-                auto* render_element = re_manager->GetRenderElement(static_cast<int>(i));
+                auto* render_element = re_manager->GetRenderElement(i);
                 render_element->SetEnabled(false);
 
                 if (render_element->ClassID() == AppleseedRenderElement::get_class_id())
@@ -1406,7 +1405,7 @@ namespace
                     AppleseedRenderElement* element = static_cast<AppleseedRenderElement*>(render_element);
                     int aov_index = 0;
                     element->GetParamBlock(0)->GetValueByName(L"aov_index", 0, aov_index, FOREVER);
-                    if (aov_index > 0 && aov_index <= factories.size())
+                    if (aov_index > 0 && aov_index <= static_cast<int>(factories.size()))
                     {
                         asf::auto_release_ptr<asr::AOV> aov_entity = factories[aov_index - 1]->create(asr::ParamArray());
                         if (aovs.get_by_name(aov_entity->get_name()) == nullptr)
@@ -1414,10 +1413,11 @@ namespace
                             PBBitmap* p_bitmap = nullptr;
                             render_element->GetPBBitmap(p_bitmap);
                             if (p_bitmap != nullptr)
+                            {
                                 aov_entity->get_parameters().insert(
-                                    "output_filename", 
+                                    "output_filename",
                                     wide_to_utf8(p_bitmap->bi.Name()).c_str());
-
+                            }
                             aovs.insert(aov_entity);
                         }
                     }
