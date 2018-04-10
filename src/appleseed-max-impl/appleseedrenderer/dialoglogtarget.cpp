@@ -92,6 +92,21 @@ namespace
             }
             break;
 
+          case WM_COMMAND:
+            switch (LOWORD(wparam))
+            {
+              case ID_ACCELERATOR_LOG_CTRL_A:
+                {
+                    const int text_length = GetWindowTextLength(g_log_dialog);
+                    SendMessage(g_log_dialog, EM_SETSEL, 0, text_length);
+                }
+                break;
+
+              default:
+                break;
+            }
+            break;
+
           default:
             return FALSE;
         }
