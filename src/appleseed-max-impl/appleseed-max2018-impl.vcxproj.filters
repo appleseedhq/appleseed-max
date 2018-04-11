@@ -97,6 +97,10 @@
     <ClCompile Include="osloutputselectormap\osloutputselector.cpp">
       <Filter>osloutputselectormap</Filter>
     </ClCompile>    
+    </ClCompile>
+    <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp">
+      <Filter>appleseedrenderelement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -264,6 +268,13 @@
     <ClInclude Include="osloutputselectormap\resource.h">
       <Filter>osloutputselectormap</Filter>
     </ClInclude>    
+    </ClInclude>
+    <ClInclude Include="appleseedrenderelement\appleseedrenderelement.h">
+      <Filter>appleseedrenderelement</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderelement\resource.h">
+      <Filter>appleseedrenderelement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -301,6 +312,9 @@
     </ResourceCompile>
     <ResourceCompile Include="osloutputselectormap\osloutputselector.rc">
       <Filter>osloutputselectormap</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc">
+      <Filter>appleseedrenderelement</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -346,5 +360,13 @@
     <Filter Include="osloutputselectormap">
       <UniqueIdentifier>{318596f7-e094-4f52-95b8-a84b79e03602}</UniqueIdentifier>
     </Filter>
+    <Filter Include="appleseedrenderelement">
+      <UniqueIdentifier>{eb4fdb58-b637-4d91-a7e6-7b1455b4c6a1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="appleseedrenderelement\appleseedrenderelement.aps">
+      <Filter>appleseedrenderelement</Filter>
+    </None>
   </ItemGroup>
 </Project>
