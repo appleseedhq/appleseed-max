@@ -120,6 +120,7 @@ namespace
       public:
         void DeleteThis() override
         {
+            delete this;
         }
 
         INT_PTR DlgProc(
@@ -173,8 +174,6 @@ namespace
         }
     };
 
-    AppleseedRenderElementParamDlgProc element_dlg_proc;
-
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
         ParamBlockIdRenderElement,                  // parameter block's ID
@@ -191,7 +190,7 @@ namespace
         IDS_RENDERELEMENT_PARAMS,                   // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
-        &element_dlg_proc,
+        nullptr,
 
         // --- Parameters specifications for Parameters rollup ---
         ParamIdElementName, L"elementName", TYPE_STRING, 0, IDS_ELEMENT_NAME,
@@ -434,7 +433,9 @@ void AppleseedRenderElement::GetPBBitmap(PBBitmap*& bitmap) const
 
 IRenderElementParamDlg* AppleseedRenderElement::CreateParamDialog(IRendParams* imp)
 {
-    return g_appleseed_renderelement_classdesc.CreateParamDialogs(imp, this);
+    IRenderElementParamDlg* param_dialog = g_appleseed_renderelement_classdesc.CreateParamDialogs(imp, this);
+    g_block_desc.SetUserDlgProc(new AppleseedRenderElementParamDlgProc());
+    return param_dialog;
 }
 
 
