@@ -75,13 +75,12 @@ asr::AOVFactoryRegistrar g_aov_factory_registrar;
 
 namespace
 {
-    
     std::vector<std::string> get_aov_names()
     {
-        auto factories = asf::array_vector<std::vector<asr::IAOVFactory*>>(g_aov_factory_registrar.get_factories());
+        auto factories = g_aov_factory_registrar.get_factories();
         std::vector<std::string> aov_names;
-        for (const auto& factory : factories)
-            aov_names.push_back(factory->get_model_metadata().get("label"));
+        for (size_t i = 0, e = factories.size(); i < e; ++i)
+            aov_names.push_back(factories[i]->get_model_metadata().get("label"));
 
         return aov_names;
     }
@@ -95,27 +94,24 @@ namespace
             return;
 
         SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME), CB_RESETCONTENT, 0, 0);
-        if (true)
+        
+        auto aov_names = get_aov_names();
+        for (const auto& name : aov_names)
         {
-            auto aov_names = get_aov_names();
-
-            for (const auto& name : aov_names)
-            {
-                SendMessage(
-                    GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME),
-                    CB_ADDSTRING,
-                    0,
-                    reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
-            }
-
-            int output_index = param_map->GetParamBlock()->GetInt(ParamIdAOVIndex, 0, FOREVER);
-            DbgAssert(output_index >= 1);
-            output_index -= 1;
-            if (output_index < aov_names.size())
-                SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME), CB_SETCURSEL, output_index, 0);
-            else
-                SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME), CB_SETCURSEL, -1, 0);
+            SendMessage(
+                GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME),
+                CB_ADDSTRING,
+                0,
+                reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
         }
+
+        int output_index = param_map->GetParamBlock()->GetInt(ParamIdAOVIndex, 0, FOREVER);
+        DbgAssert(output_index >= 1);
+        output_index -= 1;
+        if (output_index < static_cast<int>(aov_names.size()))
+            SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME), CB_SETCURSEL, output_index, 0);
+        else
+            SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_AOV_NAME), CB_SETCURSEL, -1, 0);
     }
 
     class AppleseedRenderElementParamDlgProc
@@ -152,7 +148,7 @@ namespace
                             int aov_index = static_cast<int>(selected);
                             map->GetParamBlock()->SetValue(ParamIdAOVIndex, t, aov_index + 1);
                             auto aov_names = get_aov_names();
-                            if (aov_index < aov_names.size())
+                            if (aov_index < static_cast<int>(aov_names.size()))
                             {
                                 std::wstring element_name = std::wstring(AppleseedRenderElementFriendlyClassName);
                                 element_name += L"_";
