@@ -451,7 +451,8 @@ void connect_normal_map(
     const char*         material_normal_input_name,
     const char*         material_tn_input_name,
     Texmap*             texmap,
-    const int           up_vector)
+    const int           up_vector,
+    const float         amount)
 {
     if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
     {
@@ -466,7 +467,8 @@ void connect_normal_map(
 
         shader_group.add_shader("shader", "as_max_normal_map", normal_map_layer_name.c_str(),
             asr::ParamArray()
-                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue")));
+                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue"))
+                .insert("Amount", fmt_osl_expr(amount)));
 
         shader_group.add_connection(
             normal_map_layer_name.c_str(), "NormalOut",
@@ -491,7 +493,8 @@ void connect_normal_map(
         auto normal_map_layer_name = asf::format("{0}_normal_map", material_node_name);
         shader_group.add_shader("shader", "as_max_normal_map", normal_map_layer_name.c_str(),
             asr::ParamArray()
-                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue")));
+                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue"))
+                .insert("Amount", fmt_osl_expr(amount)));
 
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_U",

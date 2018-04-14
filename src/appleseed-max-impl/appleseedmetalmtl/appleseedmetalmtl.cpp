@@ -656,7 +656,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
         else
         {
             // Normal mapping.
-            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector);
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount);
         }
     }
 
