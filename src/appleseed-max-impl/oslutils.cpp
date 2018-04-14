@@ -148,6 +148,28 @@ asr::ParamArray get_uv_params(Texmap* texmap)
 }
 
 
+float get_bump_amount_param(Texmap* texmap)
+{
+    StdTexoutGen* std_tex_output = nullptr;
+    for (int i = 0, e = texmap->NumRefs(); i < e; ++i)
+    {
+        ReferenceTarget* ref = texmap->GetReference(i);
+        if (ref != nullptr && ref->SuperClassID() == TEXOUTPUT_CLASS_ID)
+        {
+            std_tex_output = dynamic_cast<StdTexoutGen*>(ref);
+            if (std_tex_output != nullptr)
+                break;
+        }
+    }
+
+    if (std_tex_output == nullptr)
+        return 1.0f;
+
+    const auto time = GetCOREInterface()->GetTime();
+
+    return std_tex_output->GetBumpAmt(time);
+}
+
 asr::ParamArray get_output_params(Texmap* texmap)
 {
     asr::ParamArray output_params;
@@ -466,7 +488,8 @@ void connect_normal_map(
 
         shader_group.add_shader("shader", "as_max_normal_map", normal_map_layer_name.c_str(),
             asr::ParamArray()
-                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue")));
+                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue"))
+                .insert("Amount", fmt_osl_expr(get_bump_amount_param(texmap))));
 
         shader_group.add_connection(
             normal_map_layer_name.c_str(), "NormalOut",
@@ -491,7 +514,8 @@ void connect_normal_map(
         auto normal_map_layer_name = asf::format("{0}_normal_map", material_node_name);
         shader_group.add_shader("shader", "as_max_normal_map", normal_map_layer_name.c_str(),
             asr::ParamArray()
-                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue")));
+                .insert("UpVector", fmt_osl_expr(up_vector == 0 ? "Green" : "Blue"))
+                .insert("Amount", fmt_osl_expr(get_bump_amount_param(texmap))));
 
         shader_group.add_connection(
             uv_transform_layer_name.c_str(), "out_U",
