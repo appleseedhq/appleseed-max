@@ -97,7 +97,8 @@ void connect_normal_map(
     const char*             material_normal_input_name,
     const char*             material_tn_input_name,
     Texmap*                 texmap,
-    const int               up_vector);
+    const int               up_vector,
+    const float             amount);
 
 void connect_sub_mtl(
     renderer::Assembly&     assembly,

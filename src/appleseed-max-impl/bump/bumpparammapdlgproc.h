@@ -84,8 +84,6 @@ class BumpParamMapDlgProc
     void enable_disable_controls(HWND hwnd)
     {
         auto selected = SendMessage(GetDlgItem(hwnd, IDC_COMBO_BUMP_METHOD), CB_GETCURSEL, 0, 0);
-        EnableWindow(GetDlgItem(hwnd, IDC_EDIT_BUMP_AMOUNT), selected == 0 ? TRUE : FALSE);
-        EnableWindow(GetDlgItem(hwnd, IDC_SPINNER_BUMP_AMOUNT), selected == 0 ? TRUE : FALSE);
         EnableWindow(GetDlgItem(hwnd, IDC_COMBO_BUMP_UP_VECTOR), selected == 1 ? TRUE : FALSE);
     }
 };

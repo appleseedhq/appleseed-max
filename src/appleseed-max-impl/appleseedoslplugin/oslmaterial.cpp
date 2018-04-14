@@ -518,7 +518,14 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                 else if (m_has_normal_params)
                 {
                     // Normal mapping.
-                    connect_normal_map(shader_group.ref(), name, bump_param->m_param_name.c_str(), "Tn", bump_texmap, bump_up_vector);
+                    connect_normal_map(
+                        shader_group.ref(),
+                        name,
+                        bump_param->m_param_name.c_str(),
+                        "Tn",
+                        bump_texmap,
+                        bump_up_vector,
+                        bump_amount);
                 }
             }
         }
