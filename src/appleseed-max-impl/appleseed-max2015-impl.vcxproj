@@ -210,7 +210,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\sandbox\max2015\$(Configuration)" 2&gt;nul
@@ -268,7 +268,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="osloutputselectormap\osloutputselector.cpp" />    
+    <ClCompile Include="osloutputselectormap\osloutputselector.cpp" />
     <ClCompile Include="oslutils.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp" />
@@ -359,7 +359,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ResourceCompile Include="appleseedlightmtl\appleseedlightmtl.rc" />
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc" />
     <ResourceCompile Include="appleseedsssmtl\appleseedsssmtl.rc" />
-    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc" />    
+    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
