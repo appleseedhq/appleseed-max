@@ -209,7 +209,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
