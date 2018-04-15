@@ -78,7 +78,9 @@ namespace
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 asf::auto_release_ptr<DialogLogTarget> g_dialog_log_target;
+#if MAX_RELEASE == MAX_RELEASE_R18
 AppleseedRECompatible g_appleseed_renderelement_compatible;
+#endif
 
 //
 // AppleseedRenderer class implementation.
