@@ -72,7 +72,7 @@ class AppleseedRenderer
     virtual void* GetInterface(ULONG id) override;
     virtual BaseInterface* GetInterface(Interface_ID id) override;
 
-#if MAX_RELEASE > MAX_RELEASE_R18
+#if MAX_RELEASE > 18000
 
     virtual bool IsStopSupported() const override;
     virtual void StopRendering() override;
