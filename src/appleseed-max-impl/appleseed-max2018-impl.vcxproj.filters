@@ -96,7 +96,6 @@
     <ClCompile Include="builtinmapsupport.cpp" />
     <ClCompile Include="osloutputselectormap\osloutputselector.cpp">
       <Filter>osloutputselectormap</Filter>
-    </ClCompile>    
     </ClCompile>
     <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp">
       <Filter>appleseedrenderelement</Filter>
@@ -267,7 +266,6 @@
     </ClInclude>
     <ClInclude Include="osloutputselectormap\resource.h">
       <Filter>osloutputselectormap</Filter>
-    </ClInclude>    
     </ClInclude>
     <ClInclude Include="appleseedrenderelement\appleseedrenderelement.h">
       <Filter>appleseedrenderelement</Filter>
