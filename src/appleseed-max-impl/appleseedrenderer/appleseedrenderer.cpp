@@ -149,7 +149,7 @@ BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
     else return Renderer::GetInterface(id);
 }
 
-#if MAX_RELEASE > MAX_RELEASE_R18
+#if MAX_RELEASE > 18000
 
 bool AppleseedRenderer::IsStopSupported() const
 {
