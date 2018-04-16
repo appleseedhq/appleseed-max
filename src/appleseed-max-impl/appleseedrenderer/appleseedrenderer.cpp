@@ -78,7 +78,7 @@ namespace
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 asf::auto_release_ptr<DialogLogTarget> g_dialog_log_target;
-#if MAX_RELEASE == MAX_RELEASE_R18
+#if MAX_RELEASE < 19000
 AppleseedRECompatible g_appleseed_renderelement_compatible;
 #endif
 
@@ -121,7 +121,7 @@ void AppleseedRenderer::DeleteThis()
 
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
-#if MAX_RELEASE == MAX_RELEASE_R18
+#if MAX_RELEASE < 19000
     // This code is specific to 3ds Max 2016: We don't support interactive
     // rendering in 3ds Max 2015, and 3ds Max 2017 has a new API for that.
     if (id == I_RENDER_ID)
@@ -538,7 +538,7 @@ int AppleseedRenderer::Render(
             }
 
             if (render_status != asr::IRendererController::Status::AbortRendering &&
-                !GetCOREInterface16()->GetRendUseIterative())
+                !GetCOREInterface14()->GetRendUseIterative())
                 project->get_frame()->write_main_and_aov_images();
 
             BroadcastNotification(NOTIFY_POST_RENDERFRAME, &render_context);

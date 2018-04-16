@@ -200,7 +200,6 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2018 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
@@ -340,7 +339,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedsssmtl\resource.h" />
     <ClInclude Include="osloutputselectormap\datachunks.h" />
     <ClInclude Include="osloutputselectormap\osloutputselector.h" />
-    <ClInclude Include="osloutputselectormap\resource.h" />    
+    <ClInclude Include="osloutputselectormap\resource.h" />
     <ClInclude Include="oslutils.h" />
     <ClInclude Include="seexprutils.h" />
     <ClInclude Include="utilities.h" />
@@ -359,7 +358,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ResourceCompile Include="appleseedlightmtl\appleseedlightmtl.rc" />
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc" />
     <ResourceCompile Include="appleseedsssmtl\appleseedsssmtl.rc" />
-    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc" />    
+    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="appleseedrenderelement\appleseedrenderelement.aps" />
