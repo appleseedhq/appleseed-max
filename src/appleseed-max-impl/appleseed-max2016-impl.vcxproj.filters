@@ -313,8 +313,6 @@
     <ResourceCompile Include="osloutputselectormap\osloutputselector.rc">
       <Filter>osloutputselectormap</Filter>
     </ResourceCompile>
-    <ResourceCompile Include="appleseedrenderelement.rc" />
-    <ResourceCompile Include="resource.rc" />
     <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc">
       <Filter>appleseedrenderelement</Filter>
     </ResourceCompile>
