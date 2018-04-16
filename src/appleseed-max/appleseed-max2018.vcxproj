@@ -168,7 +168,6 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2018 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>

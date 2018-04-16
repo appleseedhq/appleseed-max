@@ -190,7 +190,7 @@ namespace
             for (const auto& name : output_names)
                 SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
 
-            int output_index = param_map->GetParamBlock()->GetInt(ParamIdOutputIndex, time, FOREVER);
+            int output_index = param_map->GetParamBlock()->GetInt(ParamIdOutputIndex, time);
             DbgAssert(output_index >= 1);
             output_index -= 1;
             if (output_index < output_names.size())

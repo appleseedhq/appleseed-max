@@ -71,17 +71,17 @@ namespace
                     ParamBlockDesc2* desc = map->GetDesc();
                     for (int i = 0, e = desc->Count(); i < e; ++i)
                     {
-                        const ParamDef* param_def = desc->GetParamDefByIndex(i);
-                        if (param_def->ctrl_type == TYPE_SPINNER)
+                        const ParamDef param_def = desc->GetParamDef(desc->IndextoID(i));
+                        if (param_def.ctrl_type == TYPE_SPINNER)
                         {
-                            const int* ctrl_ids = param_def->ctrl_IDs;
-                            const int spinner_ctrl_id = ctrl_ids[param_def->ctrl_count - 1];
+                            const int* ctrl_ids = param_def.ctrl_IDs;
+                            const int spinner_ctrl_id = ctrl_ids[param_def.ctrl_count - 1];
 
                             ISpinnerControl* ispinner = GetISpinner(GetDlgItem(hwnd, spinner_ctrl_id));
-                            if (param_def->type == TYPE_INT)
-                                ispinner->SetResetValue(param_def->def.i);
-                            else if (param_def->type == TYPE_FLOAT)
-                                ispinner->SetResetValue(param_def->def.f);
+                            if (param_def.type == TYPE_INT)
+                                ispinner->SetResetValue(param_def.def.i);
+                            else if (param_def.type == TYPE_FLOAT)
+                                ispinner->SetResetValue(param_def.def.f);
 
                             ReleaseISpinner(ispinner);
                         }

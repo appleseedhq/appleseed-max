@@ -104,7 +104,7 @@ class AppleseedRenderElement
 // AppleseedRECompatible.
 //
 
-#if MAX_RELEASE == MAX_RELEASE_R18
+#if MAX_RELEASE < 19000
 class AppleseedRECompatible
   : public IRenderElementCompatible
 {
