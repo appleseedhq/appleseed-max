@@ -1468,6 +1468,7 @@ void set_camera_dof_params(
 
     // DOF settings.
     params.insert("f_stop", camera_node->GetLensApertureFNumber(time, FOREVER));
+    params.insert("autofocus_enabled", false);
     params.insert("focal_distance", camera_node->GetFocusDistance(time, FOREVER));
     switch (camera_node->GetBokehShape(time, FOREVER))
     {
