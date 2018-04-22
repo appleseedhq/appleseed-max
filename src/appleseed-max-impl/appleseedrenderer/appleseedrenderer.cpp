@@ -330,7 +330,7 @@ namespace
         {
         }
 
-        virtual int proc(ReferenceMaker* rm) override
+        int proc(ReferenceMaker* rm) override
         {
             rm->RenderBegin(m_time);
             return REF_ENUM_CONTINUE;
@@ -349,7 +349,7 @@ namespace
         {
         }
 
-        virtual int proc(ReferenceMaker* rm) override
+        int proc(ReferenceMaker* rm) override
         {
             rm->RenderEnd(m_time);
             return REF_ENUM_CONTINUE;
@@ -418,6 +418,7 @@ namespace
         renderer->render();
 
         return renderer_controller.get_status();
+
         // Make sure the master renderer is deleted before the project.
     }
 }
