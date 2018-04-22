@@ -1436,7 +1436,9 @@ namespace
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
                         .insert("filter", "blackman-harris")
-                        .insert("filter_size", 1.5),
+                        .insert("filter_size", 1.5)
+                        .insert("enable_render_stamp", settings.m_enable_render_stamp)
+                        .insert("render_stamp_format", wide_to_utf8(settings.m_render_stamp_format)),
                     aovs));
 
             if (rend_params.rendType == RENDTYPE_REGION)

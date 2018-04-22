@@ -683,6 +683,7 @@ namespace
         HWND                    m_rollup;
         ICustEdit*              m_text_renderingthreads;
         ISpinnerControl*        m_spinner_renderingthreads;
+        ICustEdit*              m_text_render_stamp;
         AppleseedRenderer*      m_renderer;
 
         SystemPanel(
@@ -706,6 +707,7 @@ namespace
         {
             ReleaseISpinner(m_spinner_renderingthreads);
             ReleaseICustEdit(m_text_renderingthreads);
+            ReleaseICustEdit(m_text_render_stamp);
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
@@ -726,6 +728,17 @@ namespace
             CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS, m_settings.m_use_max_procedural_maps ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR, m_settings.m_log_material_editor_messages ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hwnd, IDC_CHECK_RENDER_STAMP, m_settings.m_enable_render_stamp? BST_CHECKED : BST_UNCHECKED);
+
+            m_text_render_stamp = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_RENDER_STAMP));
+            m_text_render_stamp->SetText(m_settings.m_render_stamp_format);
+
+            enable_disable_controls();
+        }
+
+        void enable_disable_controls()
+        {
+            m_text_render_stamp->Enable(m_settings.m_enable_render_stamp);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -736,6 +749,17 @@ namespace
         {
             switch (umsg)
             {
+              case WM_CUSTEDIT_ENTER:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_TEXT_RENDER_STAMP:
+                    m_text_render_stamp->GetText(m_settings.m_render_stamp_format);
+                    return TRUE;
+
+                  default:
+                    return FALSE;
+                }
+
               case WM_COMMAND:
                 switch (LOWORD(wparam))
                 {
@@ -768,6 +792,11 @@ namespace
                     }
                     break;
                   
+                  case IDC_CHECK_RENDER_STAMP:
+                    m_settings.m_enable_render_stamp = IsDlgButtonChecked(hwnd, IDC_CHECK_RENDER_STAMP) == BST_CHECKED;
+                    enable_disable_controls();
+                    return TRUE;
+
                   default:
                     return FALSE;
                 }
