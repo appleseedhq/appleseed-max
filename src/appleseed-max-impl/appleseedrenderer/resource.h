@@ -53,6 +53,9 @@
 #define IDC_STATIC_LOG                              602
 #define IDC_BUTTON_LOG                              603
 #define IDC_EDIT_LOG                                604
+#define IDC_CHECK_RENDER_STAMP                      605
+#define IDC_TEXT_RENDER_STAMP                       606
+
 #define ID_ACCELERATOR_LOG_CTRL_A                   40001
 
 // Next default values for new objects

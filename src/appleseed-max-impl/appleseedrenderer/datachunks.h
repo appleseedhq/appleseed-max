@@ -63,3 +63,5 @@ const USHORT ChunkSettingsSystem                        = 0x1400;
 const USHORT ChunkSettingsSystemRenderingThreads        = 0x1410;
 const USHORT ChunkSettingsSystemLowPriorityMode         = 0x1420;
 const USHORT ChunkSettingsSystemUseMaxProceduralMaps    = 0x1430;
+const USHORT ChunkSettingsSystemEnableRenderStamp       = 0x1440;
+const USHORT ChunkSettingsSystemRenderStampString       = 0x1450;

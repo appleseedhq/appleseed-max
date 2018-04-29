@@ -71,6 +71,9 @@ namespace
             const int log_open_mode = load_system_setting(L"LogOpenMode", static_cast<int>(DialogLogTarget::OpenMode::Errors));
             m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(log_open_mode);
             m_log_material_editor_messages = load_system_setting(L"LogMaterialEditorMessages", false);
+
+            m_enable_render_stamp = false;
+            m_render_stamp_format = L"appleseed {lib-version} | Time: {render-time}";
         }
     };
 }
@@ -244,6 +247,14 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsSystemUseMaxProceduralMaps);
         success &= write<bool>(isave, m_use_max_procedural_maps);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSystemEnableRenderStamp);
+        success &= write<bool>(isave, m_enable_render_stamp);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSystemRenderStampString);
+        success &= write(isave, m_render_stamp_format);
         isave->EndChunk();
         
     isave->EndChunk();
@@ -468,6 +479,14 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
 
           case ChunkSettingsSystemUseMaxProceduralMaps:
             result = read<bool>(iload, &m_use_max_procedural_maps);
+            break;
+
+          case ChunkSettingsSystemEnableRenderStamp:
+            result = read<bool>(iload, &m_enable_render_stamp);
+            break;
+
+          case ChunkSettingsSystemRenderStampString:
+            result = read(iload, &m_render_stamp_format);
             break;
         }
 
