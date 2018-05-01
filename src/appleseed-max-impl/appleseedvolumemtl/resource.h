@@ -1,0 +1,46 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ generated include file.
+// Used by appleseedvolumemtl.rc
+//
+#define IDD_FORMVIEW_VOLUME_PARAMS                  14000
+#define IDS_FORMVIEW_VOLUME_PARAMS_TITLE            14001
+
+#define IDC_LABEL_VOLUME_ABSORTION                  14010
+#define IDC_VOLUME_ABSORTION                        14011
+#define IDS_VOLUME_ABSORTION                        14012
+
+#define IDC_LABEL_VOLUME_SCATTERING                 14020
+#define IDC_VOLUME_SCATTERING                       14021
+#define IDS_VOLUME_SCATTERING                       14022
+
+#define IDC_LABEL_VOLUME_ABSORTION_MULTIPLIER       14030
+#define IDC_EDIT_VOLUME_ABSORTION_MULTIPLIER        14031
+#define IDC_SLIDER_VOLUME_ABSORTION_MULTIPLIER      14032
+#define IDS_VOLUME_ABSORTION_MULTIPLIER             14033
+
+#define IDC_LABEL_VOLUME_SCATTERING_MULTIPLIER      14040
+#define IDC_EDIT_VOLUME_SCATTERING_MULTIPLIER       14041
+#define IDC_SPINNER_VOLUME_SCATTERING_MULTIPLIER    14042
+#define IDS_VOLUME_SCATTERING_MULTIPLIER            14043
+
+#define IDC_LABEL_VOLUME_AVERAGE_COSINE             14050
+#define IDC_EDIT_VOLUME_AVERAGE_COSINE              14051
+#define IDC_SPINNER_VOLUME_AVERAGE_COSINE           14052
+#define IDS_VOLUME_AVERAGE_COSINE                   14053
+
+#define IDC_COMBO_VOLUME_PHASE_FUNCTION_MODEL       14060
+#define IDC_LABEL_VOLUME_PHASE_FUNCTION_MODEL       14061
+#define IDS_VOLUME_PHASE_FUNCTION_MODEL             14062
+#define IDS_VOLUME_HENYEY_MODEL                     14063
+#define IDS_VOLUME_ISOTROPIC_MODEL                  14064
+
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NEXT_RESOURCE_VALUE        104
+#define _APS_NEXT_COMMAND_VALUE         40001
+#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_SYMED_VALUE           101
+#endif
+#endif

@@ -100,6 +100,9 @@
     <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp">
       <Filter>appleseedrenderelement</Filter>
     </ClCompile>
+    <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClCompile>   
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -273,6 +276,15 @@
     <ClInclude Include="appleseedrenderelement\resource.h">
       <Filter>appleseedrenderelement</Filter>
     </ClInclude>
+    <ClInclude Include="appleseedvolumemtl\appleseedvolumemtl.h">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedvolumemtl\datachunks.h">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedvolumemtl\resource.h">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClInclude>  
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -314,6 +326,9 @@
     <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc">
       <Filter>appleseedrenderelement</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="appleseedvolumemtl\appleseedvolumemtl.rc">
+      <Filter>appleseedvolumemtl</Filter>
+    </ResourceCompile>    
   </ItemGroup>
   <ItemGroup>
     <Filter Include="bump">
@@ -360,6 +375,9 @@
     </Filter>
     <Filter Include="appleseedrenderelement">
       <UniqueIdentifier>{eb4fdb58-b637-4d91-a7e6-7b1455b4c6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedvolumemtl">
+      <UniqueIdentifier>{d40f57d8-69cf-46e7-9c2b-34744338b501}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
