@@ -45,6 +45,11 @@
 #define IDS_ALPHA                       10064
 #define IDS_TEXMAP_ALPHA                10065
 
+#define IDC_LABEL_ENERGY_COMPENSATION   10070
+#define IDC_EDIT_ENERGY_COMPENSATION    10071
+#define IDC_SLIDER_ENERGY_COMPENSATION  10072
+#define IDS_ENERGY_COMPENSATION         10074
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

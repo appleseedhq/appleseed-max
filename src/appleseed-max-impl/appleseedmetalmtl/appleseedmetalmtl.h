@@ -145,6 +145,7 @@ class AppleseedMetalMtl
     Texmap*         m_reflectance_texmap;
     float           m_roughness;
     Texmap*         m_roughness_texmap;
+    float           m_energy_compensation;
     float           m_anisotropy;
     Texmap*         m_anisotropy_texmap;
     float           m_alpha;
