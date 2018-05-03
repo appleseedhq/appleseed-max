@@ -29,6 +29,7 @@
 #define IDC_STATIC_BACKGROUND_ALPHA                 310
 #define IDC_TEXT_BACKGROUND_ALPHA                   311
 #define IDC_SPINNER_BACKGROUND_ALPHA                312
+#define IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT           313
 
 #define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT          400
 #define IDC_RADIO_RENDER                            401

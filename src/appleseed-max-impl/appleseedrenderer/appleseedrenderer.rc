@@ -80,7 +80,7 @@ BEGIN
     CONTROL         "Tile Size",IDC_SPINNER_TILESIZE,"SpinnerControl",WS_TABSTOP,82,19,6,10
 END
 
-IDD_FORMVIEW_RENDERERPARAMS_LIGHTING DIALOGEX 0, 0, 200, 80
+IDD_FORMVIEW_RENDERERPARAMS_LIGHTING DIALOGEX 0, 0, 200, 95
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -93,12 +93,14 @@ BEGIN
     CONTROL         "Max Ray Intensity",IDC_TEXT_MAX_RAY_INTENSITY,"CustEdit",WS_TABSTOP,68,35,30,10
     CONTROL         "Max Ray Intensity",IDC_SPINNER_MAX_RAY_INTENSITY,
                     "SpinnerControl",WS_TABSTOP,100,35,6,10
+    CONTROL         "Force Off Default Lights",IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,50,106,10
     CONTROL         "Background Emits Light",IDC_CHECK_BACKGROUND_EMITS_LIGHT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,50,89,10
-    LTEXT           "Background Alpha:",IDC_STATIC_BACKGROUND_ALPHA,0,65,60,8
-    CONTROL         "Background Alpha",IDC_TEXT_BACKGROUND_ALPHA,"CustEdit",WS_TABSTOP,61,64,30,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,64,89,10
+    LTEXT           "Background Alpha:",IDC_STATIC_BACKGROUND_ALPHA,0,80,60,8
+    CONTROL         "Background Alpha",IDC_TEXT_BACKGROUND_ALPHA,"CustEdit",WS_TABSTOP,61,79,30,10
     CONTROL         "Background Alpha",IDC_SPINNER_BACKGROUND_ALPHA,
-                    "SpinnerControl",WS_TABSTOP,93,64,6,10
+                    "SpinnerControl",WS_TABSTOP,93,79,6,10
 END
 
 IDD_FORMVIEW_RENDERERPARAMS_OUTPUT DIALOGEX 0, 0, 200, 95
