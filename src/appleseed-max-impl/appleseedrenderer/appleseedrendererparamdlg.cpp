@@ -531,6 +531,9 @@ namespace
         RendererSettings&       m_settings;
         HWND                    m_rollup;
         HWND                    m_static_project_filepath;
+        HWND                    m_radio_render_only;
+        HWND                    m_radio_save_only;
+        HWND                    m_radio_save_and_render;
         ICustEdit*              m_text_project_filepath;
         ICustButton*            m_button_browse;
         ICustEdit*              m_text_scale_multiplier;
@@ -562,6 +565,9 @@ namespace
 
         virtual void init(HWND hwnd) override
         {
+            m_radio_render_only = GetDlgItem(hwnd, IDC_RADIO_RENDER);
+            m_radio_save_only = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT);
+            m_radio_save_and_render = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT_AND_RENDER);
             m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
             m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
             m_text_project_filepath->SetText(m_settings.m_project_file_path);
@@ -583,18 +589,22 @@ namespace
             m_spinner_scale_multiplier->SetResetValue(RendererSettings::defaults().m_scale_multiplier);
             m_spinner_scale_multiplier->SetValue(m_settings.m_scale_multiplier, FALSE);
 
-            enable_disable_controls();
+            enable_disable_controls(false);
         }
 
-        void enable_disable_controls()
+        void enable_disable_controls(bool use_max_procedural_maps)
         {
             const bool save_project =
                 m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
                 m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender;
 
-            EnableWindow(m_static_project_filepath, save_project ? TRUE : FALSE);
-            m_text_project_filepath->Enable(save_project);
-            m_button_browse->Enable(save_project);
+            EnableWindow(m_radio_render_only, use_max_procedural_maps ? FALSE : TRUE);
+            EnableWindow(m_radio_save_only, use_max_procedural_maps ? FALSE : TRUE);
+            EnableWindow(m_radio_save_and_render, use_max_procedural_maps ? FALSE : TRUE);
+
+            EnableWindow(m_static_project_filepath, save_project && !use_max_procedural_maps ? TRUE : FALSE);
+            m_text_project_filepath->Enable(save_project && !use_max_procedural_maps);
+            m_button_browse->Enable(save_project && !use_max_procedural_maps);
 
             // Fix wrong background color on label when it becomes enabled.
             RedrawWindow(m_static_project_filepath, nullptr, nullptr, RDW_INVALIDATE);
@@ -626,17 +636,17 @@ namespace
                 {
                   case IDC_RADIO_RENDER:
                     m_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
-                    enable_disable_controls();
+                    enable_disable_controls(false);
                     return TRUE;
 
                   case IDC_RADIO_SAVEPROJECT:
                     m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectOnly;
-                    enable_disable_controls();
+                    enable_disable_controls(false);
                     return TRUE;
 
                   case IDC_RADIO_SAVEPROJECT_AND_RENDER:
                     m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectAndRender;
-                    enable_disable_controls();
+                    enable_disable_controls(false);
                     return TRUE;
 
                   case IDC_BUTTON_BROWSE:
@@ -685,14 +695,17 @@ namespace
         ISpinnerControl*        m_spinner_renderingthreads;
         ICustEdit*              m_text_render_stamp;
         AppleseedRenderer*      m_renderer;
+        OutputPanel*            m_output_panel;
 
         SystemPanel(
             IRendParams*        rend_params,
             RendererSettings&   settings,
-            AppleseedRenderer*  renderer)
+            AppleseedRenderer*  renderer,
+            OutputPanel*        output_panel)
           : m_rend_params(rend_params)
           , m_settings(settings)
           , m_renderer(renderer)
+          , m_output_panel(output_panel)
         {
             m_rollup =
                 rend_params->AddRollupPage(
@@ -739,6 +752,7 @@ namespace
         void enable_disable_controls()
         {
             m_text_render_stamp->Enable(m_settings.m_enable_render_stamp);
+            m_output_panel->enable_disable_controls(m_settings.m_use_max_procedural_maps);
         }
 
         virtual INT_PTR CALLBACK dialog_proc(
@@ -769,6 +783,7 @@ namespace
 
                   case IDC_CHECK_USE_MAX_PROCEDURAL_MAPS:
                     m_settings.m_use_max_procedural_maps = IsDlgButtonChecked(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS) == BST_CHECKED;
+                    m_output_panel->enable_disable_controls(m_settings.m_use_max_procedural_maps);
                     return TRUE;
 
                   case IDC_CHECK_LOG_MATERIAL_EDITOR:
@@ -844,7 +859,7 @@ struct AppleseedRendererParamDlg::Impl
             m_image_sampling_panel.reset(new ImageSamplingPanel(rend_params, m_temp_settings));
             m_lighting_panel.reset(new LightingPanel(rend_params, m_temp_settings));
             m_output_panel.reset(new OutputPanel(rend_params, m_temp_settings));
-            m_system_panel.reset(new SystemPanel(rend_params, m_temp_settings, renderer));
+            m_system_panel.reset(new SystemPanel(rend_params, m_temp_settings, renderer, m_output_panel.get()));
         }
     }
 };
