@@ -44,6 +44,8 @@ const USHORT ChunkSettingsImageSampling                 = 0x1100;
 const USHORT ChunkSettingsImageSamplingPixelSamples     = 0x1110;
 const USHORT ChunkSettingsImageSamplingPasses           = 0x1120;
 const USHORT ChunkSettingsImageSamplingTileSize         = 0x1130;
+const USHORT ChunkSettingsPixelFilter                   = 0x1140;
+const USHORT ChunkSettingsPixelFilterSize               = 0x1150;
 
 const USHORT ChunkSettingsLighting                      = 0x1200;
 const USHORT ChunkSettingsLightingGI                    = 0x1210;

@@ -60,6 +60,13 @@ class RendererSettings
     int         m_tile_size;
 
     //
+    // Pixel Filtering.
+    //
+
+    int         m_pixel_filter;
+    float       m_pixel_filter_size;
+
+    //
     // Lighting.
     //
 

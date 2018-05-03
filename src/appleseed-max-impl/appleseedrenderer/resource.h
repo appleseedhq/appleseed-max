@@ -15,6 +15,9 @@
 #define IDC_SPINNER_PASSES                          204
 #define IDC_TEXT_TILESIZE                           205
 #define IDC_SPINNER_TILESIZE                        206
+#define IDC_COMBO_FILTER                            207
+#define IDC_TEXT_FILTER_SIZE                        208
+#define IDC_SPINNER_FILTER_SIZE                     209
 
 #define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        300
 #define IDC_CHECK_GI                                301
