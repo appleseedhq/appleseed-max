@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2016-2018 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -135,7 +135,7 @@ class AppleseedVolumeMtl
         const char*         name,
         const bool          use_max_procedural_maps) override;
 
-private:
+  private:
     IParamBlock2*   m_pblock;
     Interval        m_params_validity;
 };

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2016-2018 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -91,18 +91,18 @@ namespace
 
     ParamBlockDesc2 g_block_desc(
         // --- Required arguments ---
-        ParamBlockIdVolumeMtl,                         // parameter block's ID
+        ParamBlockIdVolumeMtl,                      // parameter block's ID
         L"appleseedVolumeMtlParams",                // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_volumemtl_classdesc,           // class descriptor
         P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
 
         // --- P_AUTO_CONSTRUCT arguments ---
-        ParamBlockRefVolumeMtl,                        // parameter block's reference number
+        ParamBlockRefVolumeMtl,                     // parameter block's reference number
 
         // --- P_AUTO_UI arguments for Volume rollup ---
-        IDD_FORMVIEW_VOLUME_PARAMS,                    // ID of the dialog template
-        IDS_FORMVIEW_VOLUME_PARAMS_TITLE,              // ID of the dialog's title string
+        IDD_FORMVIEW_VOLUME_PARAMS,                 // ID of the dialog template
+        IDS_FORMVIEW_VOLUME_PARAMS_TITLE,           // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
         nullptr,                                    // user dialog procedure
@@ -165,8 +165,8 @@ BaseInterface* AppleseedVolumeMtl::GetInterface(Interface_ID id)
 {
     return
         id == IAppleseedMtl::interface_id()
-        ? static_cast<IAppleseedMtl*>(this)
-        : Mtl::GetInterface(id);
+            ? static_cast<IAppleseedMtl*>(this)
+            : Mtl::GetInterface(id);
 }
 
 void AppleseedVolumeMtl::DeleteThis()
@@ -387,9 +387,9 @@ Color AppleseedVolumeMtl::GetAmbient(int mtlNum, BOOL backFace)
 
 Color AppleseedVolumeMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    Color color;
-    m_pblock->GetValue(ParamIdVolumeScattering, GetCOREInterface()->GetTime(), color, FOREVER);
-    return color;
+    Color color = m_pblock->GetColor(ParamIdVolumeScattering, GetCOREInterface()->GetTime(), FOREVER);
+    float multiplier =  m_pblock->GetFloat(ParamIdVolumeScatteringMultiplier, GetCOREInterface()->GetTime(), FOREVER);
+    return color * multiplier;
 }
 
 Color AppleseedVolumeMtl::GetSpecular(int mtlNum, BOOL backFace)
@@ -409,8 +409,7 @@ float AppleseedVolumeMtl::GetShinStr(int mtlNum, BOOL backFace)
 
 float AppleseedVolumeMtl::GetXParency(int mtlNum, BOOL backFace)
 {
-    float multiplier;
-    m_pblock->GetValue(ParamIdVolumeScatteringMultiplier, GetCOREInterface()->GetTime(), multiplier, FOREVER);
+    float multiplier = m_pblock->GetFloat(ParamIdVolumeScatteringMultiplier, GetCOREInterface()->GetTime(), FOREVER);
     return asf::min(1 - (multiplier / 100.0f), 0.95f);
 }
 
@@ -460,37 +459,31 @@ asf::auto_release_ptr<asr::Material> AppleseedVolumeMtl::create_material(
     asr::ParamArray volume_params;
 
     // Absorption.
-    Color absorption;
-    m_pblock->GetValue(ParamIdVolumeAbsorption, time, absorption, m_params_validity);
+    Color absorption = m_pblock->GetColor(ParamIdVolumeAbsorption, time, m_params_validity);
     const auto absorption_color_name = std::string(name) + "_volume_absorption";
     insert_color(assembly, absorption, absorption_color_name.c_str());
     volume_params.insert("absorption", absorption_color_name);
 
     // Absorption Multiplier.
-    float absorption_multiplier = 0.0f;
-    m_pblock->GetValue(ParamIdVolumeAbsorptionMultiplier, time, absorption_multiplier, m_params_validity);
+    float absorption_multiplier = m_pblock->GetFloat(ParamIdVolumeAbsorptionMultiplier, time, m_params_validity);
     volume_params.insert("absorption_multiplier", absorption_multiplier / 100.0f);
 
     // Scattering.
-    Color scattering;
-    m_pblock->GetValue(ParamIdVolumeScattering, time, scattering, m_params_validity);
+    Color scattering = m_pblock->GetColor(ParamIdVolumeScattering, time, m_params_validity);
     const auto scattering_color_name = std::string(name) + "_volume_scattering";
     insert_color(assembly, scattering, scattering_color_name.c_str());
     volume_params.insert("scattering", scattering_color_name);
 
     // Scattering Multiplier.
-    float scattering_multiplier = 0.0f;
-    m_pblock->GetValue(ParamIdVolumeScatteringMultiplier, time, scattering_multiplier, m_params_validity);
+    float scattering_multiplier = m_pblock->GetFloat(ParamIdVolumeScatteringMultiplier, time, m_params_validity);
     volume_params.insert("scattering_multiplier", scattering_multiplier / 100.0f);
 
     // Phase Function Model.
-    int phase_function_model = 0;
-    m_pblock->GetValue(ParamIdVolumePhaseFunctionModel, time, phase_function_model, m_params_validity);
+    int phase_function_model = m_pblock->GetInt(ParamIdVolumePhaseFunctionModel, time, m_params_validity);
     volume_params.insert("phase_function_model", phase_function_model == 0 ? "henyey" : "isotropic");
 
     // Average Cosine.
-    float average_cosine = 0.0f;
-    m_pblock->GetValue(ParamIdVolumeAverageCosine, time, average_cosine, m_params_validity);
+    float average_cosine = m_pblock->GetFloat(ParamIdVolumeAverageCosine, time, m_params_validity);
     volume_params.insert("average_cosine", average_cosine);
 
     // Volume.
