@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2018 Sergo Pogosyan, The appleseedhq Organization
+// Copyright (c) 2018 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -387,8 +387,8 @@ Color AppleseedVolumeMtl::GetAmbient(int mtlNum, BOOL backFace)
 
 Color AppleseedVolumeMtl::GetDiffuse(int mtlNum, BOOL backFace)
 {
-    Color color = m_pblock->GetColor(ParamIdVolumeScattering, GetCOREInterface()->GetTime(), FOREVER);
-    float multiplier =  m_pblock->GetFloat(ParamIdVolumeScatteringMultiplier, GetCOREInterface()->GetTime(), FOREVER);
+    const Color color = m_pblock->GetColor(ParamIdVolumeScattering, GetCOREInterface()->GetTime(), FOREVER);
+    const float multiplier =  m_pblock->GetFloat(ParamIdVolumeScatteringMultiplier, GetCOREInterface()->GetTime(), FOREVER);
     return color * multiplier;
 }
 
