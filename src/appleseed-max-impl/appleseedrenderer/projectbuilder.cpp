@@ -480,7 +480,7 @@ namespace
                 if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
                 {
                     int optimize_for_instancing = 0;
-                    get_paramblock_value_by_name(modifier->GetParamBlockByID(0), L"optimize_for_instancing", time, optimize_for_instancing, FOREVER);
+                    modifier->GetParamBlockByID(0)->GetValueByName(L"optimize_for_instancing", time, optimize_for_instancing, FOREVER);
                     return optimize_for_instancing == TRUE;
                 }
             }
@@ -891,10 +891,10 @@ namespace
             rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
             AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-            get_paramblock_value_by_name(env_map->GetParamBlock(0), L"sun_node", time, sun_node, FOREVER);
-            get_paramblock_value_by_name(env_map->GetParamBlock(0), L"sun_node", time, sun_node, FOREVER);
-            get_paramblock_value_by_name(env_map->GetParamBlock(0), L"sun_node_on", time, sun_node_on, FOREVER);
-            get_paramblock_value_by_name(env_map->GetParamBlock(0), L"sun_size_multiplier", time, sun_size_mult, FOREVER);
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);                     
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);                     
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_node_on", time, sun_node_on, FOREVER);               
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_size_multiplier", time, sun_size_mult, FOREVER);     
         }
 
         if (sun_node && sun_node_on && light_node == sun_node)
@@ -1433,7 +1433,7 @@ namespace
                     {
                         AppleseedRenderElement* element = static_cast<AppleseedRenderElement*>(render_element);
                         int aov_index = 0;
-                        get_paramblock_value_by_name(element->GetParamBlock(0), L"aov_index", 0, aov_index, FOREVER);
+                        element->GetParamBlock(0)->GetValueByName(L"aov_index", 0, aov_index, FOREVER);
                         if (aov_index > 0 && aov_index <= static_cast<int>(factories.size()))
                         {
                             asf::auto_release_ptr<asr::AOV> aov_entity = factories[aov_index - 1]->create(asr::ParamArray());

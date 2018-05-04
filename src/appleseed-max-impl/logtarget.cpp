@@ -100,11 +100,7 @@ namespace
 
     bool is_main_thread()
     {
-        // There does not appear to be a GetCOREInterface15() function in the 3ds Max 2015 SDK.
-        Interface15* interface15 =
-            reinterpret_cast<Interface15*>(GetCOREInterface14()->GetInterface(Interface15::kInterface15InterfaceID));
-
-        return interface15->GetMainThreadID() == GetCurrentThreadId();
+        return GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
     }
 }
 

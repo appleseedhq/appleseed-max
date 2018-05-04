@@ -118,16 +118,16 @@ asr::ParamArray get_uv_params(Texmap* texmap)
     auto pblock = texmap->GetParamBlock(bmtex_params);
     if (pblock)
     {
-        const int use_clip = pblock->GetInt(bmtex_apply, time);
+        const int use_clip = pblock->GetInt(bmtex_apply, time, FOREVER);
         if (use_clip)
         {
-            const float clip_u = pblock->GetFloat(bmtex_clipu, time);
-            const float clip_v = pblock->GetFloat(bmtex_clipv, time);
+            const float clip_u = pblock->GetFloat(bmtex_clipu, time, FOREVER);
+            const float clip_v = pblock->GetFloat(bmtex_clipv, time, FOREVER);
 
-            const float clip_w = pblock->GetFloat(bmtex_clipw, time);
-            const float clip_h = pblock->GetFloat(bmtex_cliph, time);
+            const float clip_w = pblock->GetFloat(bmtex_clipw, time, FOREVER);
+            const float clip_h = pblock->GetFloat(bmtex_cliph, time, FOREVER);
 
-            const int crop_place = pblock->GetInt(bmtex_crop_place, time);
+            const int crop_place = pblock->GetInt(bmtex_crop_place, time, FOREVER);
 
             uv_params.insert("in_cropU", fmt_osl_expr(clip_u));
             uv_params.insert("in_cropV", fmt_osl_expr(clip_v));
@@ -633,7 +633,7 @@ void create_osl_shader(
             {
               case MaxParam::Float:
                 {
-                    const float param_value = param_block->GetFloat(max_param.m_max_param_id, t);
+                    const float param_value = param_block->GetFloat(max_param.m_max_param_id, t, FOREVER);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
@@ -642,7 +642,7 @@ void create_osl_shader(
               case MaxParam::IntCheckbox:
               case MaxParam::IntMapper:
                 {
-                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t);
+                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t, FOREVER);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
@@ -680,7 +680,7 @@ void create_osl_shader(
                     std::vector<std::string> fields;
                     asf::tokenize(param_info.m_options, "|", fields);
 
-                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t);
+                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t, FOREVER);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
                 }
                 break;

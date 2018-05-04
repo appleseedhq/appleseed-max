@@ -122,8 +122,7 @@ void AppleseedRenderer::DeleteThis()
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
 #if MAX_RELEASE < 19000
-    // This code is specific to 3ds Max 2016: We don't support interactive
-    // rendering in 3ds Max 2015, and 3ds Max 2017 has a new API for that.
+    // This code is specific to 3ds Max 2016 3ds Max 2017 has a new API for that.
     if (id == I_RENDER_ID)
     {
         if (m_interactive_renderer == nullptr)

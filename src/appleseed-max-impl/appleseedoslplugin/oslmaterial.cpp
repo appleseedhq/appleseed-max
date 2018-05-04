@@ -498,15 +498,15 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
         IParamBlock2* bump_param_block = GetParamBlock(1);
         if (bump_param_block != nullptr)
         {
-            get_paramblock_value_by_name(bump_param_block, L"bump_texmap", t, bump_texmap, FOREVER);
+            bump_param_block->GetValueByName(L"bump_texmap", t, bump_texmap, FOREVER);
             if (bump_texmap != nullptr)
             {
                 int bump_method = 0;
                 int bump_up_vector = 0;
                 float bump_amount = 0.0f;
-                get_paramblock_value_by_name(bump_param_block, L"bump_method", t, bump_method, FOREVER);
-                get_paramblock_value_by_name(bump_param_block, L"bump_amount", t, bump_amount, FOREVER);
-                get_paramblock_value_by_name(bump_param_block, L"bump_up_vector", t, bump_up_vector, FOREVER);
+                bump_param_block->GetValueByName(L"bump_method", t, bump_method, FOREVER);
+                bump_param_block->GetValueByName(L"bump_amount", t, bump_amount, FOREVER);
+                bump_param_block->GetValueByName(L"bump_up_vector", t, bump_up_vector, FOREVER);
 
                 const auto* bump_param = m_shader_info->find_maya_attribute("normalCamera");
 
@@ -617,7 +617,7 @@ float OSLMaterial::get_viewport_shininness_spread() const
         roughness_param = roughness;
 
     if (roughness_param != nullptr)
-        return (1.0f - m_pblock->GetFloat(roughness_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime()));
+        return (1.0f - m_pblock->GetFloat(roughness_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime(), FOREVER));
 
     return 0.6f;
 }
@@ -637,7 +637,7 @@ float OSLMaterial::get_viewport_shininess_amount() const
         specular_param = specular_amount;
 
     if (specular_param != nullptr)
-        return m_pblock->GetFloat(specular_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+        return m_pblock->GetFloat(specular_param->m_max_param.m_max_param_id, GetCOREInterface()->GetTime(), FOREVER);
 
     return 0.9f;
 }
@@ -649,7 +649,7 @@ float OSLMaterial::get_viewport_transparency_amount() const
     const auto* transparency = m_shader_info->find_param("in_transparency");
 
     if (transmittance != nullptr)
-        transparency_value = m_pblock->GetFloat(transmittance->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());
+        transparency_value = m_pblock->GetFloat(transmittance->m_max_param.m_max_param_id, GetCOREInterface()->GetTime(), FOREVER);
     else if (transparency != nullptr)
     {
         const Color transp_color = m_pblock->GetColor(transparency->m_max_param.m_max_param_id, GetCOREInterface()->GetTime());

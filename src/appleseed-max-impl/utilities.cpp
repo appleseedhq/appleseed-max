@@ -144,11 +144,7 @@ void update_map_buttons(IParamMap2* param_map)
         const ParamDef& param_def = param_block->GetParamDef(param_id);
         if (param_def.type == TYPE_TEXMAP && (param_def.flags & P_NO_AUTO_LABELS))
         {
-#if MAX_RELEASE > MAX_RELEASE_R17
             const auto texmap = param_block->GetTexmap(param_id, GetCOREInterface()->GetTime(), FOREVER);
-#else
-            const auto texmap = param_block->GetTexmap(param_id, GetCOREInterface()->GetTime());
-#endif
             param_map->SetText(param_id, texmap == nullptr ? L"" : L"M");
         }
     }

@@ -625,9 +625,7 @@ BOOL AppleseedInteractiveRender::IsRendering()
     return m_render_session != nullptr;
 }
 
-#if MAX_RELEASE > MAX_RELEASE_R17
 void AppleseedInteractiveRender::AbortRender()
 {
     EndSession();
 }
-#endif

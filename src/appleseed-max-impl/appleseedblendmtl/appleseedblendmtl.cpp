@@ -613,7 +613,7 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 
         Texmap* tex = nullptr;
         m_pblock->GetValue(ParamIdMaskTex, time, tex, FOREVER, i);
-        const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, i) / 100.0f;
+        const float mask_amount = m_pblock->GetFloat(ParamIdMaskAmount, time, FOREVER, i) / 100.0f;
         if (tex != nullptr)
         {
             connect_float_texture(
