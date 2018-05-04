@@ -95,10 +95,18 @@ namespace
           case WM_COMMAND:
             switch (LOWORD(wparam))
             {
-              case ID_ACCELERATOR_LOG_CTRL_A:
+              case IDC_EDIT_LOG:
+                switch (HIWORD(wparam))
                 {
-                    const int text_length = GetWindowTextLength(g_log_dialog);
-                    SendMessage(g_log_dialog, EM_SETSEL, 0, text_length);
+                  case EN_SETFOCUS:
+                    if (AcceleratorsEnabled())
+                        DisableAccelerators();
+                    break;
+
+                  case EN_KILLFOCUS:
+                    if (!AcceleratorsEnabled())
+                        EnableAccelerators();
+                    break;
                 }
                 break;
 
