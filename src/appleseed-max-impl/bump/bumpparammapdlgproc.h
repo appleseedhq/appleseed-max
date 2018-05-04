@@ -38,12 +38,12 @@ class BumpParamMapDlgProc
   : public ParamMap2UserDlgProc
 {
   public:
-    virtual void DeleteThis() override
+    void DeleteThis() override
     {
         delete this;
     }
 
-    virtual INT_PTR DlgProc(
+    INT_PTR DlgProc(
         TimeValue   t,
         IParamMap2* map,
         HWND        hwnd,

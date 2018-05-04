@@ -34,6 +34,7 @@
 // Standard headers.
 #include <cstddef>
 #include <string>
+#include <utility>
 #include <vector>
 #include <utility>
 
@@ -73,9 +74,9 @@ class DialogLogTarget
     explicit DialogLogTarget(
         const OpenMode          open_mode);
 
-    virtual void release() override;
+    void release() override;
 
-    virtual void write(
+    void write(
         const MessageType       category,
         const char*             file,
         const size_t            line,

@@ -48,9 +48,9 @@ class OSLPluginBrowserEntryInfo
 {
   public:
     explicit OSLPluginBrowserEntryInfo(bool is_texture);
-    virtual const MCHAR* GetEntryName() const override;
-    virtual const MCHAR* GetEntryCategory() const override;
-    virtual Bitmap* GetEntryThumbnail() const override;
+    const MCHAR* GetEntryName() const override;
+    const MCHAR* GetEntryCategory() const override;
+    Bitmap* GetEntryThumbnail() const override;
 
   private:
     bool m_is_texture;
@@ -67,20 +67,20 @@ class OSLPluginClassDesc
 {
   public:
     explicit OSLPluginClassDesc(OSLShaderInfo* shader_info);
-    virtual int IsPublic() override;
-    virtual void* Create(BOOL loading) override;
-    virtual const wchar_t* ClassName() override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual const wchar_t* Category() override;
-    virtual const wchar_t* InternalName() override;
-    virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance() override;
+    int IsPublic() override;
+    void* Create(BOOL loading) override;
+    const wchar_t* ClassName() override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    const wchar_t* Category() override;
+    const wchar_t* InternalName() override;
+    FPInterface* GetInterface(Interface_ID id) override;
+    HINSTANCE HInstance() override;
 
-    virtual const MCHAR* GetRsrcString(INT_PTR id) override;
+    const MCHAR* GetRsrcString(INT_PTR id) override;
 
     // IMtlRender_Compatibility_MtlBase methods.
-    virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
+    bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
     OSLShaderInfo*                      m_shader_info;
 

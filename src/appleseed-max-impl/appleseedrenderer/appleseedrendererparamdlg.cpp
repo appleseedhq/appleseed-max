@@ -170,7 +170,7 @@ namespace
                     reinterpret_cast<LPARAM>(this));
         }
 
-        ~AboutPanel()
+        ~AboutPanel() override
         {
             ReleaseICustButton(m_button_download);
             m_rend_params->DeleteRollupPage(m_rollup);
@@ -196,7 +196,7 @@ namespace
             PostMessage(hwnd, WM_UPDATE_CHECK_DATA, reinterpret_cast<WPARAM>(data.release()), 0);
         }
 
-        virtual void init(HWND hwnd) override
+        void init(HWND hwnd) override
         {
             m_button_download_hwnd = GetDlgItem(hwnd, IDC_BUTTON_DOWNLOAD);
             m_button_download = GetICustButton(m_button_download_hwnd);
@@ -211,7 +211,7 @@ namespace
             std::async(std::launch::async, async_update_check, hwnd);
         }
 
-        virtual INT_PTR CALLBACK dialog_proc(
+        INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -297,7 +297,7 @@ namespace
                     reinterpret_cast<LPARAM>(this));
         }
 
-        ~ImageSamplingPanel()
+        ~ImageSamplingPanel() override
         {
             ReleaseISpinner(m_spinner_tile_size);
             ReleaseICustEdit(m_text_tile_size);
@@ -310,7 +310,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hwnd) override
+        void init(HWND hwnd) override
         {
             // Pixel Samples.
             m_text_pixel_samples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXEL_SAMPLES));
@@ -361,7 +361,7 @@ namespace
             m_spinner_filter_size->SetValue(m_settings.m_pixel_filter_size, FALSE);
         }
 
-        virtual INT_PTR CALLBACK dialog_proc(
+        INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -451,7 +451,7 @@ namespace
                     reinterpret_cast<LPARAM>(this));
         }
 
-        ~LightingPanel()
+        ~LightingPanel() override
         {
             ReleaseISpinner(m_spinner_background_alpha);
             ReleaseICustEdit(m_text_background_alpha);
@@ -460,7 +460,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hwnd) override
+        void init(HWND hwnd) override
         {
             m_static_bounces = GetDlgItem(hwnd, IDC_STATIC_BOUNCES);
             m_text_bounces = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES));
@@ -513,7 +513,7 @@ namespace
             RedrawWindow(m_static_bounces, nullptr, nullptr, RDW_INVALIDATE);
         }
 
-        virtual INT_PTR CALLBACK dialog_proc(
+        INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -609,7 +609,7 @@ namespace
                     reinterpret_cast<LPARAM>(this));
         }
 
-        ~OutputPanel()
+        ~OutputPanel() override
         {
             ReleaseISpinner(m_spinner_scale_multiplier);
             ReleaseICustEdit(m_text_scale_multiplier);
@@ -618,7 +618,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hwnd) override
+        void init(HWND hwnd) override
         {
             m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
             m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
@@ -658,7 +658,7 @@ namespace
             RedrawWindow(m_static_project_filepath, nullptr, nullptr, RDW_INVALIDATE);
         }
 
-        virtual INT_PTR CALLBACK dialog_proc(
+        INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,
@@ -761,7 +761,7 @@ namespace
                     reinterpret_cast<LPARAM>(this));
         }
 
-        ~SystemPanel()
+        ~SystemPanel() override
         {
             ReleaseISpinner(m_spinner_renderingthreads);
             ReleaseICustEdit(m_text_renderingthreads);
@@ -769,7 +769,7 @@ namespace
             m_rend_params->DeleteRollupPage(m_rollup);
         }
 
-        virtual void init(HWND hwnd) override
+        void init(HWND hwnd) override
         {
             m_text_renderingthreads = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS));
             m_spinner_renderingthreads = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_RENDERINGTHREADS));
@@ -799,7 +799,7 @@ namespace
             m_text_render_stamp->Enable(m_settings.m_enable_render_stamp);
         }
 
-        virtual INT_PTR CALLBACK dialog_proc(
+        INT_PTR CALLBACK dialog_proc(
             HWND                hwnd,
             UINT                umsg,
             WPARAM              wparam,

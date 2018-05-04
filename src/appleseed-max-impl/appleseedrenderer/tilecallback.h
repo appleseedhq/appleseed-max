@@ -51,19 +51,19 @@ class TileCallback
         Bitmap*                         bitmap,
         volatile foundation::uint32*    rendered_tile_count);
 
-    virtual void release() override;
+    void release() override;
 
-    virtual void on_tile_begin(
+    void on_tile_begin(
         const renderer::Frame*          frame,
         const size_t                    tile_x,
         const size_t                    tile_y) override;
 
-    virtual void on_tile_end(
+    void on_tile_end(
         const renderer::Frame*          frame,
         const size_t                    tile_x,
         const size_t                    tile_y) override;
 
-    virtual void on_progressive_frame_update(
+    void on_progressive_frame_update(
         const renderer::Frame*          frame) override;
 
   private:

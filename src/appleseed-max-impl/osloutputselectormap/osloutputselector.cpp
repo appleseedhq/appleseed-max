@@ -98,9 +98,9 @@ namespace
                         int output_index = v.i - 1;
                         if (!output_names.empty())
                         {
-                            HWND dlg_hwnd = 0;
+                            HWND dlg_hwnd = nullptr;
                             dlg_hwnd = map->GetHWnd();
-                            if (dlg_hwnd != 0)
+                            if (dlg_hwnd != nullptr)
                             {
                                 if (output_index < output_names.size())
                                 {
@@ -173,10 +173,10 @@ namespace
 
     void init_combo_box(IParamMap2* param_map)
     {
-        HWND dlg_hwnd = 0;
+        HWND dlg_hwnd = nullptr;
         if (param_map != nullptr)
             dlg_hwnd = param_map->GetHWnd();
-        if (dlg_hwnd == 0)
+        if (dlg_hwnd == nullptr)
             return;
 
         const auto time = GetCOREInterface()->GetTime();
@@ -204,12 +204,12 @@ namespace
       : public ParamMap2UserDlgProc
     {
       public:
-        virtual void DeleteThis() override
+        void DeleteThis() override
         {
             delete this;
         }
 
-        virtual INT_PTR DlgProc(
+        INT_PTR DlgProc(
             TimeValue   t,
             IParamMap2* map,
             HWND        hwnd,

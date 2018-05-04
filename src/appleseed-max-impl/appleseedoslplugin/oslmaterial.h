@@ -58,7 +58,7 @@ class OSLMaterial
     Class_ID get_class_id();
 
     // InterfaceServer methods.
-    virtual BaseInterface* GetInterface(Interface_ID id) override;
+    BaseInterface* GetInterface(Interface_ID id) override;
     
     // Animatable methods.
     void DeleteThis() override;
@@ -115,21 +115,21 @@ class OSLMaterial
     void Shade(ShadeContext& sc) override;
 
     // Sub-material part of Mtl methods
-    virtual int NumSubMtls() override;
-    virtual Mtl* GetSubMtl(int i) override;
-    virtual void SetSubMtl(int i, Mtl *m) override;
-    virtual MSTR GetSubMtlSlotName(int i) override;
+    int NumSubMtls() override;
+    Mtl* GetSubMtl(int i) override;
+    void SetSubMtl(int i, Mtl *m) override;
+    MSTR GetSubMtlSlotName(int i) override;
 
     // IAppleseedMtl methods.
-    virtual int get_sides() const override;
-    virtual bool can_emit_light() const override;
-    virtual foundation::auto_release_ptr<renderer::Material> create_material(
+    int get_sides() const override;
+    bool can_emit_light() const override;
+    foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,
         const bool          use_max_procedural_maps) override;
 
   protected:
-    virtual void SetReference(int i, RefTargetHandle rtarg) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
   private:
     Class_ID                m_classid;

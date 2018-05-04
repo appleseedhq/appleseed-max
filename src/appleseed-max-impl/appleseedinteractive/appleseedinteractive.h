@@ -61,37 +61,37 @@ class AppleseedInteractiveRender
 {
   public:
     AppleseedInteractiveRender();
-    virtual ~AppleseedInteractiveRender();
+    ~AppleseedInteractiveRender() override;
 
     // IInteractiveRender methods.
-    virtual void BeginSession() override;
-    virtual void EndSession() override;
-    virtual void SetOwnerWnd(HWND owner_wnd) override;
-    virtual HWND GetOwnerWnd() const override;
-    virtual void SetIIRenderMgr(IIRenderMgr* iirender_mgr) override;
-    virtual IIRenderMgr* GetIIRenderMgr(IIRenderMgr* iirender_mgr) const override;
-    virtual void SetBitmap(Bitmap* bitmap) override;
-    virtual Bitmap* GetBitmap(Bitmap* bitmap) const override;
-    virtual void SetSceneINode(INode* scene_inode) override;
-    virtual INode* GetSceneINode() const override;
-    virtual void SetUseViewINode(bool use_view_inode) override;
-    virtual bool GetUseViewINode() const override;
-    virtual void SetViewINode(INode* view_inode) override;
-    virtual INode* GetViewINode() const override;
-    virtual void SetViewExp(ViewExp* view_exp) override;
-    virtual ViewExp* GetViewExp() const override;
-    virtual void SetRegion(const Box2& region) override;
-    virtual const Box2& GetRegion() const override;
-    virtual void SetDefaultLights(DefaultLight* def_lights, int num_def_lights) override;
-    virtual const DefaultLight* GetDefaultLights(int& num_def_lights) const override;
-    virtual void SetProgressCallback(IRenderProgressCallback* prog_cb) override;
-    virtual const IRenderProgressCallback* GetProgressCallback() const override;
-    virtual void Render(Bitmap* bitmap) override;
-    virtual ULONG GetNodeHandle(int x, int y) override;
-    virtual bool GetScreenBBox(Box2& s_bbox, INode* inode) override;
-    virtual ActionTableId GetActionTableId() override;
-    virtual ActionCallback* GetActionCallback() override;
-    virtual BOOL IsRendering() override;
+    void BeginSession() override;
+    void EndSession() override;
+    void SetOwnerWnd(HWND owner_wnd) override;
+    HWND GetOwnerWnd() const override;
+    void SetIIRenderMgr(IIRenderMgr* iirender_mgr) override;
+    IIRenderMgr* GetIIRenderMgr(IIRenderMgr* iirender_mgr) const override;
+    void SetBitmap(Bitmap* bitmap) override;
+    Bitmap* GetBitmap(Bitmap* bitmap) const override;
+    void SetSceneINode(INode* scene_inode) override;
+    INode* GetSceneINode() const override;
+    void SetUseViewINode(bool use_view_inode) override;
+    bool GetUseViewINode() const override;
+    void SetViewINode(INode* view_inode) override;
+    INode* GetViewINode() const override;
+    void SetViewExp(ViewExp* view_exp) override;
+    ViewExp* GetViewExp() const override;
+    void SetRegion(const Box2& region) override;
+    const Box2& GetRegion() const override;
+    void SetDefaultLights(DefaultLight* def_lights, int num_def_lights) override;
+    const DefaultLight* GetDefaultLights(int& num_def_lights) const override;
+    void SetProgressCallback(IRenderProgressCallback* prog_cb) override;
+    const IRenderProgressCallback* GetProgressCallback() const override;
+    void Render(Bitmap* bitmap) override;
+    ULONG GetNodeHandle(int x, int y) override;
+    bool GetScreenBBox(Box2& s_bbox, INode* inode) override;
+    ActionTableId GetActionTableId() override;
+    ActionCallback* GetActionCallback() override;
+    BOOL IsRendering() override;
 
     // IAbortableRenderer methods.
     void AbortRender() override;

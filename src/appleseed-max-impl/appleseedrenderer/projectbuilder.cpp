@@ -165,7 +165,7 @@ namespace
             screenH = 480.0f;
         }
 
-        virtual Point2 ViewToScreen(Point3 p) override
+        Point2 ViewToScreen(Point3 p) override
         {
             return Point2(p.x, p.y);
         }

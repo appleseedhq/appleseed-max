@@ -563,12 +563,12 @@ namespace
         {
         }
 
-        virtual asf::uint64 compute_signature() const override
+        asf::uint64 compute_signature() const override
         {
             return asf::siphash24(m_texmap);
         }
 
-        virtual Hints get_hints() const override
+        Hints get_hints() const override
         {
             Hints hints;
 
@@ -588,7 +588,7 @@ namespace
             return hints;
         }
 
-        virtual void evaluate(
+        void evaluate(
             asr::TextureCache&          texture_cache,
             const asr::SourceInputs&    source_inputs,
             float&                      scalar) const override
@@ -596,7 +596,7 @@ namespace
             scalar = evaluate_float(source_inputs);
         }
 
-        virtual void evaluate(
+        void evaluate(
             asr::TextureCache&          texture_cache,
             const asr::SourceInputs&    source_inputs,
             asf::Color3f&               linear_rgb) const override
@@ -604,7 +604,7 @@ namespace
             evaluate_color(source_inputs, linear_rgb.r, linear_rgb.g, linear_rgb.b);
         }
 
-        virtual void evaluate(
+        void evaluate(
             asr::TextureCache&          texture_cache,
             const asr::SourceInputs&    source_inputs,
             asr::Spectrum&              spectrum) const override
@@ -613,7 +613,7 @@ namespace
             evaluate_color(source_inputs, spectrum[0], spectrum[1], spectrum[2]);
         }
 
-        virtual void evaluate(
+        void evaluate(
             asr::TextureCache&          texture_cache,
             const asr::SourceInputs&    source_inputs,
             asr::Alpha&                 alpha) const override
@@ -621,7 +621,7 @@ namespace
             alpha.set(evaluate_float(source_inputs));
         }
 
-        virtual void evaluate(
+        void evaluate(
             asr::TextureCache&          texture_cache,
             const asr::SourceInputs&    source_inputs,
             asf::Color3f&               linear_rgb,
@@ -630,7 +630,7 @@ namespace
             evaluate_color(source_inputs, linear_rgb.r, linear_rgb.g, linear_rgb.b, alpha);
         }
 
-        virtual void evaluate(
+        void evaluate(
             asr::TextureCache&          texture_cache,
             const asr::SourceInputs&    source_inputs,
             asr::Spectrum&              spectrum,
@@ -691,41 +691,41 @@ namespace
                     3, asf::PixelFormat::PixelFormatUInt8);
         }
 
-        virtual void release() override
+        void release() override
         {
             delete this;
         }
 
-        virtual const char* get_model() const override
+        const char* get_model() const override
         {
             return "max_procedural_texture";
         }
 
-        virtual asf::ColorSpace get_color_space() const override
+        asf::ColorSpace get_color_space() const override
         {
             return asf::ColorSpaceLinearRGB;
         }
 
-        virtual const asf::CanvasProperties& properties() override
+        const asf::CanvasProperties& properties() override
         {
             return m_properties;
         }
 
-        virtual asr::Source* create_source(
+        asr::Source* create_source(
             const asf::UniqueID         assembly_uid,
             const asr::TextureInstance& texture_instance) override
         {
             return new MaxProceduralTextureSource(m_texmap);
         }
 
-        virtual asf::Tile* load_tile(
+        asf::Tile* load_tile(
             const size_t                tile_x,
             const size_t                tile_y) override
         {
             return nullptr;
         }
 
-        virtual void unload_tile(
+        void unload_tile(
             const size_t                tile_x,
             const size_t                tile_y,
             const asf::Tile*            tile) override

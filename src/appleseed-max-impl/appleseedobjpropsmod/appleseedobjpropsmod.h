@@ -53,25 +53,25 @@ class AppleseedObjPropsMod
     AppleseedObjPropsMod();
 
     // Animatable methods.
-    virtual void DeleteThis() override;
-    virtual void GetClassName(TSTR& s) override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual void BeginEditParams(IObjParam* ip, ULONG flags, Animatable* prev = nullptr) override;
-    virtual void EndEditParams(IObjParam* ip, ULONG flags, Animatable* next = nullptr) override;
-    virtual int NumSubs() override;
-    virtual Animatable* SubAnim(int i) override;
-    virtual TSTR SubAnimName(int i) override;
-    virtual int SubNumToRefNum(int subNum) override;
-    virtual int NumParamBlocks() override;
-    virtual IParamBlock2* GetParamBlock(int i) override;
-    virtual IParamBlock2* GetParamBlockByID(BlockID id) override;
+    void DeleteThis() override;
+    void GetClassName(TSTR& s) override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    void BeginEditParams(IObjParam* ip, ULONG flags, Animatable* prev = nullptr) override;
+    void EndEditParams(IObjParam* ip, ULONG flags, Animatable* next = nullptr) override;
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
+    TSTR SubAnimName(int i) override;
+    int SubNumToRefNum(int subNum) override;
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
     // ReferenceMaker methods.
-    virtual int NumRefs() override;
-    virtual RefTargetHandle GetReference(int i) override;
-    virtual void SetReference(int i, RefTargetHandle rtarg) override;
-    virtual RefResult NotifyRefChanged(
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
+    RefResult NotifyRefChanged(
         const Interval&     changeInt,
         RefTargetHandle     hTarget,
         PartID&             partID,
@@ -79,18 +79,18 @@ class AppleseedObjPropsMod
         BOOL                propagate) override;
 
     // ReferenceTarget methods.
-    virtual RefTargetHandle Clone(RemapDir& remap) override;
+    RefTargetHandle Clone(RemapDir& remap) override;
 
     // BaseObject methods.
-    virtual CreateMouseCallBack* GetCreateMouseCallBack() override;
-    virtual const MCHAR* GetObjectName() override;
-    virtual void NotifyPostCollapse(INode* node, Object* obj, IDerivedObject* derObj, int index);
+    CreateMouseCallBack* GetCreateMouseCallBack() override;
+    const MCHAR* GetObjectName() override;
+    void NotifyPostCollapse(INode* node, Object* obj, IDerivedObject* derObj, int index) override;
 
     // Modifier methods.
-    virtual ChannelMask ChannelsUsed() override;
-    virtual ChannelMask ChannelsChanged() override;
-    virtual Class_ID InputType() override;
-    virtual void ModifyObject(TimeValue t, ModContext& mc, ObjectState* os, INode* node) override;
+    ChannelMask ChannelsUsed() override;
+    ChannelMask ChannelsChanged() override;
+    Class_ID InputType() override;
+    void ModifyObject(TimeValue t, ModContext& mc, ObjectState* os, INode* node) override;
 
     renderer::VisibilityFlags::Type get_visibility_flags(const TimeValue t) const;
     std::string get_sss_set(const TimeValue t) const;
@@ -108,14 +108,14 @@ class AppleseedObjPropsModClassDesc
   : public ClassDesc2
 {
   public:
-    virtual int IsPublic() override;
-    virtual void* Create(BOOL loading) override;
-    virtual const MCHAR* ClassName() override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual const MCHAR* Category() override;
-    virtual const MCHAR* InternalName() override;
-    virtual HINSTANCE HInstance() override;
+    int IsPublic() override;
+    void* Create(BOOL loading) override;
+    const MCHAR* ClassName() override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    const MCHAR* Category() override;
+    const MCHAR* InternalName() override;
+    HINSTANCE HInstance() override;
 };
 
 extern AppleseedObjPropsModClassDesc g_appleseed_objpropsmod_classdesc;

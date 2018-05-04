@@ -46,7 +46,7 @@ class IAppleseedMtl
   public:
     static Interface_ID interface_id();
 
-    virtual Interface_ID GetID() override;
+    Interface_ID GetID() override;
 
     // The sides (front and/or back) on which this material should be applied.
     // The return value is a combination of renderer::ObjectInstance::Side values.

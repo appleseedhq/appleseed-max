@@ -86,9 +86,9 @@ class OSLParamDlg : public ParamDlg
     ReferenceTarget* GetThing() override;
     void SetThing(ReferenceTarget *m) override;
     void DeleteThis() override;
-    void SetTime(TimeValue t);
-    void ReloadDialog(void);
-    void ActivateDlg(BOOL onOff);
+    void SetTime(TimeValue t) override;
+    void ReloadDialog(void) override;
+    void ActivateDlg(BOOL onOff) override;
 
   private:
     void add_groupboxes(

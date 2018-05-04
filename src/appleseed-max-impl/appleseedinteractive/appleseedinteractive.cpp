@@ -133,7 +133,7 @@ namespace
         {
         }
 
-        virtual int proc(ReferenceMaker* rm) override
+        int proc(ReferenceMaker* rm) override
         {
             rm->RenderBegin(m_time);
             return REF_ENUM_CONTINUE;
@@ -152,7 +152,7 @@ namespace
         {
         }
 
-        virtual int proc(ReferenceMaker* rm) override
+        int proc(ReferenceMaker* rm) override
         {
             rm->RenderEnd(m_time);
             return REF_ENUM_CONTINUE;
@@ -306,7 +306,7 @@ namespace
 //
 
 AppleseedInteractiveRender::AppleseedInteractiveRender()
-  : m_owner_wnd(0)
+  : m_owner_wnd(nullptr)
   , m_bitmap(nullptr)
   , m_iirender_mgr(nullptr)
   , m_scene_inode(nullptr)

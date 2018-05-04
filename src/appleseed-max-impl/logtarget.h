@@ -38,9 +38,9 @@ class LogTarget
   : public foundation::ILogTarget
 {
   public:
-    virtual void release() override;
+    void release() override;
 
-    virtual void write(
+    void write(
         const foundation::LogMessage::Category  category,
         const char*                             file,
         const size_t                            line,

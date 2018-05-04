@@ -56,22 +56,22 @@ class AppleseedEnvMap
     AppleseedEnvMap();
 
     // Animatable methods.
-    virtual void DeleteThis() override;
-    virtual void GetClassName(TSTR& s) override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID  ClassID() override;
-    virtual int NumSubs() override;
-    virtual Animatable* SubAnim(int i) override;
-    virtual TSTR SubAnimName(int i) override;
-    virtual int SubNumToRefNum(int subNum) override;
-    virtual int NumParamBlocks() override;
-    virtual IParamBlock2* GetParamBlock(int i) override;
-    virtual IParamBlock2* GetParamBlockByID(BlockID id) override;
+    void DeleteThis() override;
+    void GetClassName(TSTR& s) override;
+    SClass_ID SuperClassID() override;
+    Class_ID  ClassID() override;
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
+    TSTR SubAnimName(int i) override;
+    int SubNumToRefNum(int subNum) override;
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
     // ReferenceMaker methods.
-    virtual int NumRefs() override;
-    virtual RefTargetHandle GetReference(int i) override;
-    virtual RefResult NotifyRefChanged(
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    RefResult NotifyRefChanged(
         const Interval&     changeInt,
         RefTargetHandle     hTarget,
         PartID&             partID,
@@ -79,31 +79,31 @@ class AppleseedEnvMap
         BOOL                propagate) override;
 
     // ReferenceTarget methods.
-    virtual RefTargetHandle Clone(RemapDir& remap) override;
+    RefTargetHandle Clone(RemapDir& remap) override;
 
     // ISubMap methods.
-    virtual int NumSubTexmaps() override;
-    virtual Texmap* GetSubTexmap(int i) override;
-    virtual void SetSubTexmap(int i, Texmap* texmap) override;
-    virtual int MapSlotType(int i) override;
-    virtual MSTR GetSubTexmapSlotName(int i) override;
+    int NumSubTexmaps() override;
+    Texmap* GetSubTexmap(int i) override;
+    void SetSubTexmap(int i, Texmap* texmap) override;
+    int MapSlotType(int i) override;
+    MSTR GetSubTexmapSlotName(int i) override;
 
     // MtlBase methods.
-    virtual void Update(TimeValue t, Interval& valid) override;
-    virtual void Reset() override;
-    virtual Interval Validity(TimeValue t) override;
-    virtual ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp) override;
-    virtual IOResult Save(ISave* isave) override;
-    virtual IOResult Load(ILoad* iload) override;
+    void Update(TimeValue t, Interval& valid) override;
+    void Reset() override;
+    Interval Validity(TimeValue t) override;
+    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp) override;
+    IOResult Save(ISave* isave) override;
+    IOResult Load(ILoad* iload) override;
 
     // Texmap methods.
-    virtual RGBA EvalColor(ShadeContext& sc) override;
-    virtual Point3 EvalNormalPerturb(ShadeContext& sc) override;
+    RGBA EvalColor(ShadeContext& sc) override;
+    Point3 EvalNormalPerturb(ShadeContext& sc) override;
 
     virtual foundation::auto_release_ptr<renderer::EnvironmentEDF> create_envmap(const char* name);
 
   protected:
-    virtual void SetReference(int i, RefTargetHandle rtarg) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
   private:
     IParamBlock2*   m_pblock;          // ref 0
@@ -147,7 +147,7 @@ class SunNodePBValidator
   : public PBValidator 
 {
   public:
-    virtual BOOL Validate(PB2Value& v);
+    BOOL Validate(PB2Value& v) override;
 };
 
 
@@ -159,9 +159,9 @@ class AppleseedEnvMapBrowserEntryInfo
   : public IMaterialBrowserEntryInfo
 {
   public:
-    virtual const MCHAR* GetEntryName() const override;
-    virtual const MCHAR* GetEntryCategory() const override;
-    virtual Bitmap* GetEntryThumbnail() const override;
+    const MCHAR* GetEntryName() const override;
+    const MCHAR* GetEntryCategory() const override;
+    Bitmap* GetEntryThumbnail() const override;
 };
 
 
@@ -175,18 +175,18 @@ class AppleseedEnvMapClassDesc
 {
   public:
     AppleseedEnvMapClassDesc();
-    virtual int IsPublic() override;
-    virtual void* Create(BOOL loading) override;
-    virtual const wchar_t* ClassName() override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual const wchar_t* Category() override;
-    virtual const wchar_t* InternalName() override;
-    virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance() override;
+    int IsPublic() override;
+    void* Create(BOOL loading) override;
+    const wchar_t* ClassName() override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    const wchar_t* Category() override;
+    const wchar_t* InternalName() override;
+    FPInterface* GetInterface(Interface_ID id) override;
+    HINSTANCE HInstance() override;
 
     // IMtlRender_Compatibility_MtlBase methods.
-    virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
+    bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
   private:
     AppleseedEnvMapBrowserEntryInfo m_browser_entry_info;

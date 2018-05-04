@@ -70,26 +70,26 @@ class AppleseedSSSMtl
     AppleseedSSSMtl();
 
     // InterfaceServer methods.
-    virtual BaseInterface* GetInterface(Interface_ID id) override;
+    BaseInterface* GetInterface(Interface_ID id) override;
 
     // Animatable methods.
-    virtual void DeleteThis() override;
-    virtual void GetClassName(TSTR& s) override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual int NumSubs() override;
-    virtual Animatable* SubAnim(int i) override;
-    virtual TSTR SubAnimName(int i) override;
-    virtual int SubNumToRefNum(int subNum) override;
-    virtual int NumParamBlocks() override;
-    virtual IParamBlock2* GetParamBlock(int i) override;
-    virtual IParamBlock2* GetParamBlockByID(BlockID id) override;
+    void DeleteThis() override;
+    void GetClassName(TSTR& s) override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
+    TSTR SubAnimName(int i) override;
+    int SubNumToRefNum(int subNum) override;
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
     // ReferenceMaker methods.
-    virtual int NumRefs() override;
-    virtual RefTargetHandle GetReference(int i) override;
-    virtual void SetReference(int i, RefTargetHandle rtarg) override;
-    virtual RefResult NotifyRefChanged(
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
+    RefResult NotifyRefChanged(
         const Interval&     changeInt,
         RefTargetHandle     hTarget,
         PartID&             partID,
@@ -97,40 +97,40 @@ class AppleseedSSSMtl
         BOOL                propagate) override;
 
     // ReferenceTarget methods.
-    virtual RefTargetHandle Clone(RemapDir& remap) override;
+    RefTargetHandle Clone(RemapDir& remap) override;
 
     // ISubMap methods.
-    virtual int NumSubTexmaps() override;
-    virtual Texmap* GetSubTexmap(int i) override;
-    virtual void SetSubTexmap(int i, Texmap* texmap) override;
-    virtual int MapSlotType(int i) override;
-    virtual MSTR GetSubTexmapSlotName(int i) override;
+    int NumSubTexmaps() override;
+    Texmap* GetSubTexmap(int i) override;
+    void SetSubTexmap(int i, Texmap* texmap) override;
+    int MapSlotType(int i) override;
+    MSTR GetSubTexmapSlotName(int i) override;
 
     // MtlBase methods.
-    virtual void Update(TimeValue t, Interval& valid) override;
-    virtual void Reset() override;
-    virtual Interval Validity(TimeValue t) override;
-    virtual ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp) override;
-    virtual IOResult Save(ISave* isave) override;
-    virtual IOResult Load(ILoad* iload) override;
+    void Update(TimeValue t, Interval& valid) override;
+    void Reset() override;
+    Interval Validity(TimeValue t) override;
+    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams* imp) override;
+    IOResult Save(ISave* isave) override;
+    IOResult Load(ILoad* iload) override;
 
     // Mtl methods.
-    virtual Color GetAmbient(int mtlNum, BOOL backFace) override;
-    virtual Color GetDiffuse(int mtlNum, BOOL backFace) override;
-    virtual Color GetSpecular(int mtlNum, BOOL backFace) override;
-    virtual float GetShininess(int mtlNum, BOOL backFace) override;
-    virtual float GetShinStr(int mtlNum, BOOL backFace) override;
-    virtual float GetXParency(int mtlNum, BOOL backFace) override;
-    virtual void SetAmbient(Color c, TimeValue t) override;
-    virtual void SetDiffuse(Color c, TimeValue t) override;
-    virtual void SetSpecular(Color c, TimeValue t) override;
-    virtual void SetShininess(float v, TimeValue t) override;
-    virtual void Shade(ShadeContext& sc) override;
+    Color GetAmbient(int mtlNum, BOOL backFace) override;
+    Color GetDiffuse(int mtlNum, BOOL backFace) override;
+    Color GetSpecular(int mtlNum, BOOL backFace) override;
+    float GetShininess(int mtlNum, BOOL backFace) override;
+    float GetShinStr(int mtlNum, BOOL backFace) override;
+    float GetXParency(int mtlNum, BOOL backFace) override;
+    void SetAmbient(Color c, TimeValue t) override;
+    void SetDiffuse(Color c, TimeValue t) override;
+    void SetSpecular(Color c, TimeValue t) override;
+    void SetShininess(float v, TimeValue t) override;
+    void Shade(ShadeContext& sc) override;
 
     // IAppleseedMtl methods.
-    virtual int get_sides() const override;
-    virtual bool can_emit_light() const override;
-    virtual foundation::auto_release_ptr<renderer::Material> create_material(
+    int get_sides() const override;
+    bool can_emit_light() const override;
+    foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,
         const bool          use_max_procedural_maps) override;
@@ -174,9 +174,9 @@ class AppleseedSSSMtlBrowserEntryInfo
   : public IMaterialBrowserEntryInfo
 {
   public:
-    virtual const MCHAR* GetEntryName() const override;
-    virtual const MCHAR* GetEntryCategory() const override;
-    virtual Bitmap* GetEntryThumbnail() const override;
+    const MCHAR* GetEntryName() const override;
+    const MCHAR* GetEntryCategory() const override;
+    Bitmap* GetEntryThumbnail() const override;
 };
 
 
@@ -190,18 +190,18 @@ class AppleseedSSSMtlClassDesc
 {
   public:
     AppleseedSSSMtlClassDesc();
-    virtual int IsPublic() override;
-    virtual void* Create(BOOL loading) override;
-    virtual const MCHAR* ClassName() override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual const MCHAR* Category() override;
-    virtual const MCHAR* InternalName() override;
-    virtual FPInterface* GetInterface(Interface_ID id) override;
-    virtual HINSTANCE HInstance() override;
+    int IsPublic() override;
+    void* Create(BOOL loading) override;
+    const MCHAR* ClassName() override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    const MCHAR* Category() override;
+    const MCHAR* InternalName() override;
+    FPInterface* GetInterface(Interface_ID id) override;
+    HINSTANCE HInstance() override;
 
     // IMtlRender_Compatibility_MtlBase methods.
-    virtual bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
+    bool IsCompatibleWithRenderer(ClassDesc& renderer_class_desc) override;
 
   private:
     AppleseedSSSMtlBrowserEntryInfo m_browser_entry_info;
