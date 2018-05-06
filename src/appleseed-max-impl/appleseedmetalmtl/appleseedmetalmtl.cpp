@@ -108,7 +108,6 @@ namespace
         ParamIdBumpTexmap           = 13,
         ParamIdBumpAmount           = 14,
         ParamIdBumpUpVector         = 15,
-        ParamIdEnergyCompensation   = 16
     };
 
     enum TexmapId
@@ -236,12 +235,6 @@ namespace
             p_ui, ParamMapIdMetal, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
         p_end,
 
-        ParamIdEnergyCompensation, L"energy_compensation", TYPE_FLOAT, P_ANIMATABLE, IDS_ENERGY_COMPENSATION,
-            p_default, 0.0f,
-            p_range, 0.0f, 100.0f,
-            p_ui, ParamMapIdMetal, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ENERGY_COMPENSATION, IDC_SLIDER_ENERGY_COMPENSATION, 10.0f,
-        p_end,
-
         // --- Parameters specifications for Bump rollup ---
 
         ParamIdBumpMethod, L"bump_method", TYPE_INT, 0, IDS_BUMP_METHOD,
@@ -288,7 +281,6 @@ AppleseedMetalMtl::AppleseedMetalMtl()
   , m_reflectance_texmap(nullptr)
   , m_roughness(10.0f)
   , m_roughness_texmap(nullptr)
-  , m_energy_compensation(0.0f)
   , m_anisotropy(0.0f)
   , m_anisotropy_texmap(nullptr)
   , m_alpha(100.0f)
@@ -471,8 +463,6 @@ void AppleseedMetalMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdRoughness, t, m_roughness, m_params_validity);
         m_pblock->GetValue(ParamIdRoughnessTexmap, t, m_roughness_texmap, m_params_validity);
-
-        m_pblock->GetValue(ParamIdEnergyCompensation, t, m_energy_compensation, m_params_validity);
 
         m_pblock->GetValue(ParamIdAnisotropy, t, m_anisotropy, m_params_validity);
         m_pblock->GetValue(ParamIdAnisotropyTexmap, t, m_anisotropy_texmap, m_params_validity);
@@ -676,7 +666,6 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
             .insert("EdgeTint", fmt_osl_expr(to_color3f(m_edge_tint_color)))
             .insert("Reflectance", fmt_osl_expr(m_reflectance / 100.0f))
             .insert("Roughness", fmt_osl_expr(m_roughness / 100.0f))
-            .insert("EnergyCompensation", fmt_osl_expr(m_energy_compensation / 100.0f))
             .insert("Anisotropic", fmt_osl_expr(m_anisotropy)));
 
     std::string closure2surface_name = asf::format("{0}_closure2surface", name);
@@ -763,7 +752,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
         // Energy Compensation.
-        bsdf_params.insert("energy_compensation", m_energy_compensation / 100.0f);
+        bsdf_params.insert("energy_compensation", 1.0f);
 
         // Anisotropic.
         instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
