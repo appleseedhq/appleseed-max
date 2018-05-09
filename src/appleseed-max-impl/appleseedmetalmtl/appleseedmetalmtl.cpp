@@ -751,6 +751,9 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
             bsdf_params.insert("roughness", instance_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
+        // Energy Compensation.
+        bsdf_params.insert("energy_compensation", 1.0f);
+
         // Anisotropic.
         instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
         if (!instance_name.empty())
