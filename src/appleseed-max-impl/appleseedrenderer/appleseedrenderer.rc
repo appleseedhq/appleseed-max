@@ -93,7 +93,7 @@ BEGIN
     CONTROL         "Max Ray Intensity",IDC_TEXT_MAX_RAY_INTENSITY,"CustEdit",WS_TABSTOP,68,35,30,10
     CONTROL         "Max Ray Intensity",IDC_SPINNER_MAX_RAY_INTENSITY,
                     "SpinnerControl",WS_TABSTOP,100,35,6,10
-    CONTROL         "Force Off Default Lights",IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
+    CONTROL         "Force Default Lights Off",IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,50,106,10
     CONTROL         "Background Emits Light",IDC_CHECK_BACKGROUND_EMITS_LIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,64,89,10
