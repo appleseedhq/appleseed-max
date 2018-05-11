@@ -320,21 +320,6 @@ namespace
             m_spinner_pixel_samples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
             m_spinner_pixel_samples->SetValue(m_settings.m_pixel_samples, FALSE);
 
-            // Pixel Filtering.
-            static const wchar_t* FilterComboItems[] = { 
-                L"Blackman-Harris", 
-                L"Box", 
-                L"Catmull-Rom Spline", 
-                L"Cubic B-spline", 
-                L"Gaussian", 
-                L"Lanczos", 
-                L"Mitchell-Netravali", 
-                L"Triangle" };
-
-            for (size_t i = 0; i < 8; i++)
-                SendMessage(GetDlgItem(hwnd, IDC_COMBO_FILTER), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(FilterComboItems[i]));
-            SendMessage(GetDlgItem(hwnd, IDC_COMBO_FILTER), CB_SETCURSEL, static_cast<int>(m_settings.m_pixel_filter), 0);
-
             // Passes.
             m_text_passes = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PASSES));
             m_spinner_passes = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PASSES));
@@ -351,11 +336,27 @@ namespace
             m_spinner_tilesize->SetResetValue(RendererSettings::defaults().m_tile_size);
             m_spinner_tilesize->SetValue(m_settings.m_tile_size, FALSE);
 
-            // Filter size.
+            // Pixel Filtering.
+            static const wchar_t* FilterComboItems[] =
+            {
+                L"Blackman-Harris",
+                L"Box",
+                L"Catmull-Rom Spline",
+                L"Cubic B-spline",
+                L"Gaussian",
+                L"Lanczos",
+                L"Mitchell-Netravali",
+                L"Triangle"
+            };
+
+            for (size_t i = 0; i < 8; i++)
+                SendMessage(GetDlgItem(hwnd, IDC_COMBO_FILTER), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(FilterComboItems[i]));
+            SendMessage(GetDlgItem(hwnd, IDC_COMBO_FILTER), CB_SETCURSEL, static_cast<int>(m_settings.m_pixel_filter), 0);
+
             m_text_filter_size = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_FILTER_SIZE));
             m_spinner_filter_size = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_FILTER_SIZE));
             m_spinner_filter_size->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_FILTER_SIZE), EDITTYPE_FLOAT);
-            m_spinner_filter_size->SetLimits(0, 100, FALSE);
+            m_spinner_filter_size->SetLimits(1, 20, FALSE);
             m_spinner_filter_size->SetResetValue(RendererSettings::defaults().m_pixel_filter_size);
             m_spinner_filter_size->SetValue(m_settings.m_pixel_filter_size, FALSE);
         }

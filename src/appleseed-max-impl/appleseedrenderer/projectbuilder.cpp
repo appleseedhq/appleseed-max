@@ -1368,7 +1368,7 @@ namespace
         else setup_solid_environment(scene, frame_rend_params, settings);
     }
 
-    std::string get_filter_type(const int filter_type)
+    const char* get_filter_type(const int filter_type)
     {
         switch (filter_type)
         {
@@ -1460,7 +1460,7 @@ namespace
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
-                        .insert("filter", get_filter_type(settings.m_pixel_filter).c_str())
+                        .insert("filter", get_filter_type(settings.m_pixel_filter))
                         .insert("filter_size", settings.m_pixel_filter_size)
                         .insert("enable_render_stamp", settings.m_enable_render_stamp)
                         .insert("render_stamp_format", wide_to_utf8(settings.m_render_stamp_format)),
