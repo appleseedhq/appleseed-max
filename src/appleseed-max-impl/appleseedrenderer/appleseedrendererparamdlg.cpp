@@ -565,10 +565,10 @@ namespace
 
         virtual void init(HWND hwnd) override
         {
+            m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
             m_radio_render_only = GetDlgItem(hwnd, IDC_RADIO_RENDER);
             m_radio_save_only = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT);
             m_radio_save_and_render = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT_AND_RENDER);
-            m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
             m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
             m_text_project_filepath->SetText(m_settings.m_project_file_path);
             m_button_browse = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_BROWSE));
