@@ -277,8 +277,8 @@ namespace
         ISpinnerControl*        m_spinner_pixel_samples;
         ICustEdit*              m_text_passes;
         ISpinnerControl*        m_spinner_passes;
-        ICustEdit*              m_text_tilesize;
-        ISpinnerControl*        m_spinner_tilesize;
+        ICustEdit*              m_text_tile_size;
+        ISpinnerControl*        m_spinner_tile_size;
         ICustEdit*              m_text_filter_size;
         ISpinnerControl*        m_spinner_filter_size;
 
@@ -299,8 +299,8 @@ namespace
 
         ~ImageSamplingPanel()
         {
-            ReleaseISpinner(m_spinner_tilesize);
-            ReleaseICustEdit(m_text_tilesize);
+            ReleaseISpinner(m_spinner_tile_size);
+            ReleaseICustEdit(m_text_tile_size);
             ReleaseICustEdit(m_text_filter_size);
             ReleaseISpinner(m_spinner_filter_size);
             ReleaseISpinner(m_spinner_passes);
@@ -313,9 +313,9 @@ namespace
         virtual void init(HWND hwnd) override
         {
             // Pixel Samples.
-            m_text_pixel_samples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES));
-            m_spinner_pixel_samples = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PIXELSAMPLES));
-            m_spinner_pixel_samples->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PIXELSAMPLES), EDITTYPE_INT);
+            m_text_pixel_samples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXEL_SAMPLES));
+            m_spinner_pixel_samples = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PIXEL_SAMPLES));
+            m_spinner_pixel_samples->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PIXEL_SAMPLES), EDITTYPE_INT);
             m_spinner_pixel_samples->SetLimits(1, 1000000, FALSE);
             m_spinner_pixel_samples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
             m_spinner_pixel_samples->SetValue(m_settings.m_pixel_samples, FALSE);
@@ -329,12 +329,12 @@ namespace
             m_spinner_passes->SetValue(m_settings.m_passes, FALSE);
 
             // Tile size.
-            m_text_tilesize = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_TILESIZE));
-            m_spinner_tilesize = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_TILESIZE));
-            m_spinner_tilesize->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_TILESIZE), EDITTYPE_INT);
-            m_spinner_tilesize->SetLimits(1, 4096, FALSE);
-            m_spinner_tilesize->SetResetValue(RendererSettings::defaults().m_tile_size);
-            m_spinner_tilesize->SetValue(m_settings.m_tile_size, FALSE);
+            m_text_tile_size = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_TILE_SIZE));
+            m_spinner_tile_size = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_TILE_SIZE));
+            m_spinner_tile_size->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_TILE_SIZE), EDITTYPE_INT);
+            m_spinner_tile_size->SetLimits(1, 4096, FALSE);
+            m_spinner_tile_size->SetResetValue(RendererSettings::defaults().m_tile_size);
+            m_spinner_tile_size->SetValue(m_settings.m_tile_size, FALSE);
 
             // Pixel Filtering.
             static const wchar_t* FilterComboItems[] =
@@ -372,7 +372,7 @@ namespace
               case CC_SPINNER_CHANGE:
                 switch (LOWORD(wparam))
                 {
-                  case IDC_SPINNER_PIXELSAMPLES:
+                  case IDC_SPINNER_PIXEL_SAMPLES:
                     m_settings.m_pixel_samples = m_spinner_pixel_samples->GetIVal();
                     return TRUE;
 
@@ -380,8 +380,8 @@ namespace
                     m_settings.m_passes = m_spinner_passes->GetIVal();
                     return TRUE;
 
-                  case IDC_SPINNER_TILESIZE:
-                    m_settings.m_tile_size = m_spinner_tilesize->GetIVal();
+                  case IDC_SPINNER_TILE_SIZE:
+                    m_settings.m_tile_size = m_spinner_tile_size->GetIVal();
                     return TRUE;
 
                   case IDC_SPINNER_FILTER_SIZE:

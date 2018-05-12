@@ -9,12 +9,12 @@
 #define IDC_BUTTON_DOWNLOAD                         104
 
 #define IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING   200
-#define IDC_TEXT_PIXELSAMPLES                       201
-#define IDC_SPINNER_PIXELSAMPLES                    202
+#define IDC_TEXT_PIXEL_SAMPLES                      201
+#define IDC_SPINNER_PIXEL_SAMPLES                   202
 #define IDC_TEXT_PASSES                             203
 #define IDC_SPINNER_PASSES                          204
-#define IDC_TEXT_TILESIZE                           205
-#define IDC_SPINNER_TILESIZE                        206
+#define IDC_TEXT_TILE_SIZE                          205
+#define IDC_SPINNER_TILE_SIZE                       206
 #define IDC_COMBO_FILTER                            207
 #define IDC_TEXT_FILTER_SIZE                        208
 #define IDC_SPINNER_FILTER_SIZE                     209
