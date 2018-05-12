@@ -52,6 +52,9 @@ namespace
             m_pixel_samples = 16;
             m_passes = 1;
             m_tile_size = 64;
+            
+            m_pixel_filter = 0;
+            m_pixel_filter_size = 1.5f;
 
             m_gi = true;
             m_caustics = false;
@@ -161,6 +164,14 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsImageSamplingTileSize);
         success &= write<int>(isave, m_tile_size);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPixelFilter);
+        success &= write<int>(isave, m_pixel_filter);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPixelFilterSize);
+        success &= write<float>(isave, m_pixel_filter_size);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -333,6 +344,14 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
 
           case ChunkSettingsImageSamplingTileSize:
             result = read<int>(iload, &m_tile_size);
+            break;
+
+          case ChunkSettingsPixelFilter:
+            result = read<int>(iload, &m_pixel_filter);
+            break;
+
+          case ChunkSettingsPixelFilterSize:
+            result = read<float>(iload, &m_pixel_filter_size);
             break;
         }
 

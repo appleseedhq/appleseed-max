@@ -1370,6 +1370,31 @@ namespace
         else setup_solid_environment(scene, frame_rend_params, settings);
     }
 
+    const char* get_filter_type(const int filter_type)
+    {
+        switch (filter_type)
+        {
+          case 0:
+            return "blackman-harris";
+          case 1:
+            return "box";
+          case 2:
+            return "catmull";
+          case 3:
+            return "bspline";
+          case 4:
+            return "gaussian";
+          case 5:
+            return "lanczos";
+          case 6:
+            return "mitchell";
+          case 7:
+            return "triangle";
+          default:
+            return "box";
+        }
+    }
+
     asf::auto_release_ptr<asr::Frame> build_frame(
         const RendParams&       rend_params,
         const FrameRendParams&  frame_rend_params,
@@ -1437,8 +1462,8 @@ namespace
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
-                        .insert("filter", "blackman-harris")
-                        .insert("filter_size", 1.5)
+                        .insert("filter", get_filter_type(settings.m_pixel_filter))
+                        .insert("filter_size", settings.m_pixel_filter_size)
                         .insert("enable_render_stamp", settings.m_enable_render_stamp)
                         .insert("render_stamp_format", wide_to_utf8(settings.m_render_stamp_format)),
                     aovs));
