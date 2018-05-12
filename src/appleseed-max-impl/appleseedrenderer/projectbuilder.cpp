@@ -1107,13 +1107,15 @@ namespace
         //       the scene does not contain non-physical lights (point lights, spot lights, etc.)
         //   and the scene does not contain light-emitting materials
         //   and the scene does not contain a light-emitting environment.
+        //   and checkbox Force Off Default Lights is off
         const bool has_lights = !entities.m_lights.empty();
         const bool has_emitting_mats = has_light_emitting_materials(material_map);
         const bool has_emitting_env = !scene.get_environment()->get_parameters().get_optional<std::string>("environment_edf").empty();
         if (rend_params.inMtlEdit ||
            (!has_lights &&
             !has_emitting_mats &&
-            !(has_emitting_env && settings.m_background_emits_light)))
+            !(has_emitting_env && settings.m_background_emits_light) &&
+            !settings.m_force_off_default_lights))
             add_default_lights(assembly, default_lights);
     }
 

@@ -60,6 +60,7 @@ namespace
             m_max_ray_intensity = 1.0f;
             m_background_emits_light = true;
             m_background_alpha = 0.0f;
+            m_force_off_default_lights = false;
 
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
@@ -196,6 +197,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsLightingBackgroundAlpha);
         success &= write<float>(isave, m_background_alpha);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingForceOffDefaultLights);
+        success &= write<bool>(isave, m_force_off_default_lights);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -382,6 +387,10 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
           case ChunkSettingsLightingBackgroundAlpha:
             result = read<float>(iload, &m_background_alpha);
+            break;
+
+          case ChunkSettingsLightingForceOffDefaultLights:
+            result = read<bool>(iload, &m_force_off_default_lights);
             break;
         }
 

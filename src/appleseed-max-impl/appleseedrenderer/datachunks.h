@@ -53,6 +53,7 @@ const USHORT ChunkSettingsLightingMaxRayIntensitySet    = 0x1240;
 const USHORT ChunkSettingsLightingMaxRayIntensity       = 0x1250;
 const USHORT ChunkSettingsLightingBackgroundEmitsLight  = 0x1230;
 const USHORT ChunkSettingsLightingBackgroundAlpha       = 0x1260;
+const USHORT ChunkSettingsLightingForceOffDefaultLights = 0x1270;
 
 const USHORT ChunkSettingsOutput                        = 0x1300;
 const USHORT ChunkSettingsOutputMode                    = 0x1310;

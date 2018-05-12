@@ -445,6 +445,9 @@ namespace
             m_spinner_background_alpha->SetResetValue(RendererSettings::defaults().m_background_alpha);
             m_spinner_background_alpha->SetValue(m_settings.m_background_alpha, FALSE);
 
+            CheckDlgButton(hwnd, IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
+                m_settings.m_force_off_default_lights ? BST_CHECKED : BST_UNCHECKED);
+
             enable_disable_controls();
         }
 
@@ -489,6 +492,11 @@ namespace
                   case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
                     m_settings.m_background_emits_light =
                         IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
+                    return TRUE;
+
+                  case IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT:
+                    m_settings.m_force_off_default_lights =
+                        IsDlgButtonChecked(hwnd, IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT) == BST_CHECKED;
                     return TRUE;
 
                   default:
