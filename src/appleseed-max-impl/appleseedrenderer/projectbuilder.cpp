@@ -891,10 +891,10 @@ namespace
             rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
             AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);                     
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);                     
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_node_on", time, sun_node_on, FOREVER);               
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_size_multiplier", time, sun_size_mult, FOREVER);     
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_node_on", time, sun_node_on, FOREVER);
+            env_map->GetParamBlock(0)->GetValueByName(L"sun_size_multiplier", time, sun_size_mult, FOREVER);
         }
 
         if (sun_node && sun_node_on && light_node == sun_node)

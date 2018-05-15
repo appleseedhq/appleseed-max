@@ -36,7 +36,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <utility>
 
 typedef std::vector<std::string> StringVec;
 typedef foundation::LogMessage::Category MessageType;
