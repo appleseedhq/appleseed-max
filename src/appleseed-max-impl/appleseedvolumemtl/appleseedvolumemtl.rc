@@ -1,0 +1,157 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""windows.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_VOLUME_PARAMS DIALOGEX 0, 0, 217, 84
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Absorption:",IDC_LABEL_VOLUME_ABSORTION,7,6,48,8
+    CONTROL         "Absorption Color",IDC_VOLUME_ABSORTION,"ColorSwatch",WS_TABSTOP,81,6,30,10
+    LTEXT           "Absorption Multiplier:",IDC_LABEL_VOLUME_ABSORTION_MULTIPLIER,7,18,67,8
+    CONTROL         "Absorption Multiplier Edit",IDC_EDIT_VOLUME_ABSORTION_MULTIPLIER,
+                    "CustEdit",WS_TABSTOP,81,18,30,10
+    CONTROL         "Absorption Multiplier Slider",IDC_SLIDER_VOLUME_ABSORTION_MULTIPLIER,
+                    "SliderControl",WS_TABSTOP,113,18,97,13
+    LTEXT           "Scattering:",IDC_LABEL_VOLUME_SCATTERING,7,30,48,8
+    CONTROL         "Scattering Color",IDC_VOLUME_SCATTERING,"ColorSwatch",WS_TABSTOP,81,30,30,10
+    LTEXT           "Scattering Multiplier:",IDC_LABEL_VOLUME_SCATTERING_MULTIPLIER,7,42,67,8
+    CONTROL         "Scattering Multiplier Edit",IDC_EDIT_VOLUME_SCATTERING_MULTIPLIER,
+                    "CustEdit",WS_TABSTOP,81,42,30,10
+    CONTROL         "Scattering Multiplier Slider",IDC_SPINNER_VOLUME_SCATTERING_MULTIPLIER,
+                    "SliderControl",WS_TABSTOP,113,42,97,13
+    LTEXT           "Average Cosine:",IDC_LABEL_VOLUME_AVERAGE_COSINE,7,54,55,8
+    CONTROL         "Average Cosine Edit",IDC_EDIT_VOLUME_AVERAGE_COSINE,
+                    "CustEdit",WS_TABSTOP,81,54,30,10
+    CONTROL         "Average Cosine Slider",IDC_SPINNER_VOLUME_AVERAGE_COSINE,
+                    "SliderControl",WS_TABSTOP,113,54,97,13
+    LTEXT           "Phase Function Model:",IDC_LABEL_VOLUME_PHASE_FUNCTION_MODEL,7,66,75,8
+    COMBOBOX        IDC_COMBO_VOLUME_PHASE_FUNCTION_MODEL,81,66,129,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_VOLUME_PARAMS, DIALOG
+    BEGIN
+        VERTGUIDE, 74
+        VERTGUIDE, 198
+        VERTGUIDE, 210
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_VOLUME_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_VOLUME_PARAMS_TITLE "Volume Parameters"
+    IDS_VOLUME_ABSORTION    "Absorption"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_VOLUME_SCATTERING   "Scattering"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_VOLUME_ABSORTION_MULTIPLIER "Absorption Multiplier"
+    IDS_VOLUME_SCATTERING_MULTIPLIER "Scattering Multiplier"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_VOLUME_AVERAGE_COSINE "Average Cosine"
+    IDS_VOLUME_HENYEY_MODEL "Henyey-Greenstein"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_VOLUME_ISOTROPIC_MODEL "Isotropic"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
