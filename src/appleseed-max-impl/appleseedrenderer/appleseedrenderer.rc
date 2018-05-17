@@ -136,7 +136,7 @@ BEGIN
     CONTROL         "CPU Cores",IDC_TEXT_RENDERINGTHREADS,"CustEdit",WS_TABSTOP,39,5,30,10
     CONTROL         "CPU Cores",IDC_SPINNER_RENDERINGTHREADS,"SpinnerControl",WS_TABSTOP,71,5,6,10
     CONTROL         "Low Priority Mode",IDC_CHECK_LOW_PRIORITY_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,58,73,10
-    CONTROL         "Use Max Procedural Maps (non-compatible mode)",IDC_CHECK_USE_MAX_PROCEDURAL_MAPS,
+    CONTROL         "Use Max Procedural Maps (disables scene export)",IDC_CHECK_USE_MAX_PROCEDURAL_MAPS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,48,197,10
     COMBOBOX        IDC_COMBO_LOG,39,20,65,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Open Log:",IDC_STATIC_LOG,0,23,34,8
