@@ -683,8 +683,11 @@ asf::auto_release_ptr<asr::Material> AppleseedPlasticMtl::create_osl_material(
 
     shader_group->add_shader("surface", "as_max_plastic_material", name, 
         asr::ParamArray()
+            .insert("SpecularColor", fmt_osl_expr(to_color3f(m_specular)))
             .insert("SpecularWeight", fmt_osl_expr(m_specular_weight / 100.0f))
+            .insert("DiffuseColor", fmt_osl_expr(to_color3f(m_diffuse)))
             .insert("DiffuseWeight", fmt_osl_expr(m_diffuse_weight / 100.0f))
+            .insert("Roughness", fmt_osl_expr(m_roughness / 100.0f))
             .insert("Spread", fmt_osl_expr(m_highlight_falloff / 100.0f))
             .insert("Scattering", fmt_osl_expr(m_scattering / 100.0f))
             .insert("IOR", fmt_osl_expr(m_ior)));
