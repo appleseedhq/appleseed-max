@@ -34,8 +34,8 @@
 // Standard headers.
 #include <cstddef>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 typedef std::vector<std::string> StringVec;
 typedef foundation::LogMessage::Category MessageType;
@@ -73,9 +73,9 @@ class DialogLogTarget
     explicit DialogLogTarget(
         const OpenMode          open_mode);
 
-    virtual void release() override;
+    void release() override;
 
-    virtual void write(
+    void write(
         const MessageType       category,
         const char*             file,
         const size_t            line,

@@ -48,11 +48,11 @@ class AppleseedRendererParamDlg
         RendererSettings&   settings,
         AppleseedRenderer*  renderer);
 
-    ~AppleseedRendererParamDlg();
+    ~AppleseedRendererParamDlg() override;
 
-    virtual void DeleteThis() override;
+    void DeleteThis() override;
 
-    virtual void AcceptParams() override;
+    void AcceptParams() override;
 
   private:
     struct Impl;

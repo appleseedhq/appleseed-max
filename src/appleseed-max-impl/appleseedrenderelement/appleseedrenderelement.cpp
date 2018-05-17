@@ -105,7 +105,7 @@ namespace
                 reinterpret_cast<LPARAM>(utf8_to_wide(name).c_str()));
         }
 
-        int output_index = param_map->GetParamBlock()->GetInt(ParamIdAOVIndex, 0);
+        int output_index = param_map->GetParamBlock()->GetInt(ParamIdAOVIndex, 0, FOREVER);
         DbgAssert(output_index >= 1);
         output_index -= 1;
         if (output_index < static_cast<int>(aov_names.size()))

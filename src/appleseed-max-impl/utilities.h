@@ -70,10 +70,6 @@ class Texmap;
 
 Matrix3 transpose(const Matrix3& matrix);
 
-#if MAX_RELEASE == MAX_RELEASE_R17
-bool operator!=(const Matrix3& lhs, const Matrix3& rhs);
-#endif
-
 
 //
 // Type conversion functions.
@@ -133,15 +129,6 @@ IOResult read(ILoad* iload, T* object);
 //
 // Parameter blocks functions.
 //
-
-template <typename T>
-BOOL get_paramblock_value_by_name(
-    IParamBlock2*           param_block,
-    const MCHAR* const      param_name,
-    const TimeValue         t,
-    T&                      value,
-    Interval&               validity,
-    const int               tab_index = 0);
 
 void update_map_buttons(IParamMap2* param_map);
 
@@ -234,13 +221,6 @@ inline Matrix3 transpose(const Matrix3& matrix)
         Point3(c2[0], c2[1], c2[2]),    // third row
         Point3(0.0f, 0.0f, 0.0f));      // fourth row
 }
-
-#if MAX_RELEASE == MAX_RELEASE_R17
-inline bool operator!=(const Matrix3& lhs, const Matrix3& rhs)
-{
-    return !(lhs == rhs);
-}
-#endif
 
 inline foundation::Color3f to_color3f(const Color& c)
 {
@@ -336,27 +316,6 @@ inline IOResult read(ILoad* iload, MSTR* s)
     if (result == IO_OK)
         *s = buf;
     return result;
-}
-
-template <typename T>
-BOOL get_paramblock_value_by_name(
-    IParamBlock2*           param_block,
-    const MCHAR* const      param_name,
-    const TimeValue         t,
-    T&                      value,
-    Interval&               validity,
-    const int               tab_index)
-{
-    ParamBlockDesc2* const pb_desc = param_block->GetDesc();
-    DbgAssert(pb_desc != nullptr);
-
-    const int param_index = pb_desc->NameToIndex(param_name);
-    DbgAssert(param_index >= 0);
-
-    const ParamID param_id = pb_desc->IndextoID(param_index);
-    DbgAssert(param_id >= 0);
-
-    return param_block->GetValue(param_id, t, value, validity, tab_index);
 }
 
 template <typename EntityContainer>

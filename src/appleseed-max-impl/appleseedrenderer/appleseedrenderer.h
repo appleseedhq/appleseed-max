@@ -62,47 +62,47 @@ class AppleseedRenderer
 
     const RendererSettings& get_renderer_settings();
 
-    virtual Class_ID ClassID() override;
+    Class_ID ClassID() override;
 
-    virtual void GetClassName(MSTR& s) override;
+    void GetClassName(MSTR& s) override;
 
-    virtual void DeleteThis() override;
+    void DeleteThis() override;
 
     // Animatable.
-    virtual void* GetInterface(ULONG id) override;
-    virtual BaseInterface* GetInterface(Interface_ID id) override;
+    void* GetInterface(ULONG id) override;
+    BaseInterface* GetInterface(Interface_ID id) override;
 
 #if MAX_RELEASE > 18000
 
-    virtual bool IsStopSupported() const override;
-    virtual void StopRendering() override;
+    bool IsStopSupported() const override;
+    void StopRendering() override;
 
-    virtual PauseSupport IsPauseSupported() const override;
-    virtual void PauseRendering() override;
-    virtual void ResumeRendering() override;
+    PauseSupport IsPauseSupported() const override;
+    void PauseRendering() override;
+    void ResumeRendering() override;
 
-    virtual bool HasRequirement(Requirement requirement) override;
+    bool HasRequirement(Requirement requirement) override;
 
-    virtual bool CompatibleWithAnyRenderElement() const override;
-    virtual bool CompatibleWithRenderElement(IRenderElement& pIRenderElement) const override;
+    bool CompatibleWithAnyRenderElement() const override;
+    bool CompatibleWithRenderElement(IRenderElement& pIRenderElement) const override;
 
-    virtual IInteractiveRender* GetIInteractiveRender() override;
+    IInteractiveRender* GetIInteractiveRender() override;
 
-    virtual void GetVendorInformation(MSTR& info) const override;
-    virtual void GetPlatformInformation(MSTR& info) const override;
+    void GetVendorInformation(MSTR& info) const override;
+    void GetPlatformInformation(MSTR& info) const override;
 
 #endif
 
-    virtual RefTargetHandle Clone(RemapDir& remap) override;
+    RefTargetHandle Clone(RemapDir& remap) override;
 
-    virtual RefResult NotifyRefChanged(
+    RefResult NotifyRefChanged(
         const Interval&         changeInt,
         RefTargetHandle         hTarget,
         PartID&                 partID,
         RefMessage              message,
         BOOL                    propagate) override;
 
-    virtual int Open(
+    int Open(
         INode*                  scene,
         INode*                  view_node,
         ViewParams*             view_params,
@@ -112,7 +112,7 @@ class AppleseedRenderer
         int                     default_light_count,
         RendProgressCallback*   progress_cb) override;
 
-    virtual int Render(
+    int Render(
         TimeValue               time,
         Bitmap*                 bitmap,
         FrameRendParams&        frame_rend_params,
@@ -120,24 +120,24 @@ class AppleseedRenderer
         RendProgressCallback*   progress_cb,
         ViewParams*             view_params) override;
 
-    virtual void Close(
+    void Close(
         HWND                    hwnd,
         RendProgressCallback*   progress_cb) override;
 
-    virtual RendParamDlg* CreateParamDialog(
+    RendParamDlg* CreateParamDialog(
         IRendParams*            rend_params,
         BOOL                    in_progress) override;
 
-    virtual void ResetParams() override;
+    void ResetParams() override;
 
-    virtual IOResult Save(ISave* isave) override;
-    virtual IOResult Load(ILoad* iload) override;
+    IOResult Save(ISave* isave) override;
+    IOResult Load(ILoad* iload) override;
 
     // ITabDialog.
-    virtual void AddTabToDialog(
+    void AddTabToDialog(
         ITabbedDialog*          dialog,
         ITabDialogPluginTab*    tab) override;
-    virtual int AcceptTab(
+    int AcceptTab(
         ITabDialogPluginTab*    tab) override;
 
     void show_last_session_log();
@@ -166,13 +166,13 @@ class AppleseedRendererClassDesc
   : public ClassDesc2
 {
   public:
-    virtual int IsPublic() override;
-    virtual void* Create(BOOL loading) override;
-    virtual const MCHAR* ClassName() override;
-    virtual SClass_ID SuperClassID() override;
-    virtual Class_ID ClassID() override;
-    virtual const MCHAR* Category() override;
-    virtual const MCHAR* InternalName() override;
+    int IsPublic() override;
+    void* Create(BOOL loading) override;
+    const MCHAR* ClassName() override;
+    SClass_ID SuperClassID() override;
+    Class_ID ClassID() override;
+    const MCHAR* Category() override;
+    const MCHAR* InternalName() override;
 };
 
 extern AppleseedRendererClassDesc g_appleseed_renderer_classdesc;

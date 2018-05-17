@@ -38,7 +38,7 @@
 #include <modstack.h>
 #include <paramtype.h>
 
-#if MAX_RELEASE == MAX_RELEASE_R17 || MAX_RELEASE == MAX_RELEASE_R18
+#if MAX_RELEASE == MAX_RELEASE_R18
 #define TYPE_SINGLECHECKBOX TYPE_SINGLECHEKBOX
 #endif
 
@@ -315,31 +315,31 @@ asr::VisibilityFlags::Type AppleseedObjPropsMod::get_visibility_flags(const Time
 {
     asr::VisibilityFlags::Type flags = 0;
 
-    if (m_pblock->GetInt(ParamIdVisibilityCamera, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityCamera, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::CameraRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityLight, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityLight, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::LightRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityShadow, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityShadow, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::ShadowRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityTransparency, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityTransparency, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::TransparencyRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityProbe, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityProbe, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::ProbeRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityDiffuse, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityDiffuse, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::DiffuseRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilityGlossy, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilityGlossy, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::GlossyRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilitySpecular, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilitySpecular, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::SpecularRay;
 
-    if (m_pblock->GetInt(ParamIdVisibilitySSS, t) != 0)
+    if (m_pblock->GetInt(ParamIdVisibilitySSS, t, FOREVER) != 0)
         flags |= asr::VisibilityFlags::SubsurfaceRay;
 
     return flags;

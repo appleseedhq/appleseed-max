@@ -120,7 +120,7 @@ class OSLTexture
     std::vector<std::string> get_output_names() const;
 
   protected:
-    virtual void SetReference(int i, RefTargetHandle rtarg) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
   private:
     OSLPluginClassDesc*     m_class_desc;

@@ -66,7 +66,7 @@ class CameraObjectUpdateAction
     {
     }
 
-    virtual void update() override
+    void update() override
     {
         m_project.get_scene()->cameras().clear();
         m_project.get_scene()->cameras().insert(m_camera);
@@ -83,8 +83,8 @@ class InteractiveRendererController
   public:
     InteractiveRendererController();
 
-    virtual void on_rendering_begin() override;
-    virtual Status get_status() const override;
+    void on_rendering_begin() override;
+    Status get_status() const override;
 
     void set_status(const Status status);
 
