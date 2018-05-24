@@ -38,6 +38,8 @@
 #include "appleseedrenderer/projectbuilder.h"
 #include "appleseedrenderer/renderercontroller.h"
 #include "appleseedrenderer/tilecallback.h"
+#include "main.h"
+#include "resource.h"
 #include "utilities.h"
 #include "version.h"
 
@@ -57,6 +59,7 @@
 #include <assert1.h>
 #include <bitmap.h>
 #include <interactiverender.h>
+#include <iparamm2.h>
 #include <notify.h>
 #include <pbbitmap.h>
 #include <renderelements.h>
@@ -74,6 +77,308 @@ namespace
     const Class_ID AppleseedRendererClassId(0x72651b24, 0x5da32e1d);
     const Class_ID AppleseedRendererTabClassId(0x6155c0c, 0xed6475b);
     const wchar_t* AppleseedRendererClassName = L"appleseed Renderer";
+
+    enum ParamMapId
+    {
+        ParamMapIdOutput,
+        ParamMapIdImageSampling,
+        ParamMapIdLighting,
+        ParamMapIdSystem
+    };
+
+    enum ParamId
+    {
+        ParamIdOuputMode                = 0,
+        ParamIdProjectPath              = 1,
+        ParamIdScaleMultiplier          = 2,
+        
+        ParamIdPixelSamples             = 3,
+        ParamIdTileSize                 = 4,
+        ParamIdPasses                   = 5,
+        ParamIdFilterSize               = 6,
+        ParamIdFilterType               = 7,
+        
+        ParamIdEnableGI                 = 8,
+        ParamIdGIBounces                = 9,
+        ParamIdEnagleCaustics           = 10,
+        ParamIdEnableMaxRay             = 11,
+        ParamIdMaxRayValue              = 12,
+        ParamIdForceDefaultLightsOff    = 13,
+        ParamIdEnableBackgroundLight    = 14,
+        ParamIdBackgroundAlphaValue     = 15,
+
+        ParamIdCPUCores                 = 16,
+        ParamIdOpenLogMode              = 17,
+        ParamIdLogMaterialRendering     = 18,
+        ParamIdUseMaxProcedurals        = 19,
+        ParamIdEnableLowPriority        = 20,
+        ParamIdEnableRenderStamp        = 21,
+        ParamIdRenderStampFormat        = 22,
+    };
+
+    MCHAR* GetString(int id)
+    {
+        static wchar_t buf[256];
+
+        if (g_module)
+            return LoadString(g_module, id, buf, _countof(buf)) ? buf : NULL;
+        return NULL;
+    }
+}
+
+//
+// AppleseedRendererPBlockAccessor class implementation.
+//
+
+void AppleseedRendererPBlockAccessor::Get(
+    PB2Value&       v,
+    ReferenceMaker* owner,
+    ParamID         id,
+    int             tab_index,
+    TimeValue       t,
+    Interval        &valid)
+{
+    AppleseedRenderer* const renderer = dynamic_cast<AppleseedRenderer*>(owner);
+    RendererSettings& settings = renderer->m_settings;
+
+    switch (id)
+    {
+      case ParamIdOuputMode:
+        v.i = static_cast<int>(settings.m_output_mode);
+        break;
+
+      case ParamIdProjectPath:
+        v.s = settings.m_project_file_path;
+        break;
+
+      case ParamIdScaleMultiplier:
+        v.f = settings.m_scale_multiplier;
+        break;
+        
+    //
+    // Image Sampling.
+    //
+
+      case ParamIdPixelSamples:
+        v.i = settings.m_pixel_samples;
+        break;
+
+      case ParamIdTileSize:
+        v.i = settings.m_tile_size;
+        break;
+
+      case ParamIdPasses:
+        v.i = settings.m_passes;
+        break;
+
+    //
+    // Pixel Filtering.
+    //
+
+      case ParamIdFilterType:
+        v.i = settings.m_pixel_filter;
+        break;
+
+      case ParamIdFilterSize:
+        v.f = settings.m_pixel_filter_size;
+        break;
+
+    //
+    // Lighting.
+    //
+
+      case ParamIdEnableGI:
+        v.i = static_cast<int>(settings.m_gi);
+        break;
+            
+      case ParamIdEnagleCaustics:
+        v.i = static_cast<int>(settings.m_caustics);
+        break;
+            
+      case ParamIdEnableMaxRay:
+        v.i = static_cast<int>(settings.m_max_ray_intensity_set);
+        break;
+
+      case ParamIdEnableBackgroundLight:
+        v.i = static_cast<int>(settings.m_background_emits_light);
+        break;
+
+      case ParamIdForceDefaultLightsOff:
+          v.i = static_cast<int>(settings.m_force_off_default_lights);
+        break;
+
+      case ParamIdGIBounces:
+        v.i = settings.m_bounces;
+        break;
+
+      case ParamIdMaxRayValue:
+        v.f = settings.m_max_ray_intensity;
+        break;
+
+      case ParamIdBackgroundAlphaValue:
+        v.f = settings.m_background_alpha;
+        break;
+
+    //
+    // System.
+    //
+
+      case ParamIdCPUCores:
+        v.i = settings.m_rendering_threads;
+        break;
+
+      case ParamIdUseMaxProcedurals:
+        v.i = static_cast<int>(settings.m_use_max_procedural_maps);
+        break;
+
+      case ParamIdEnableLowPriority:
+        v.i = static_cast<int>(settings.m_low_priority_mode);
+        break;
+            
+      case ParamIdEnableRenderStamp:
+        v.i = static_cast<int>(settings.m_enable_render_stamp);
+        break;
+
+      case ParamIdRenderStampFormat:
+        v.s = settings.m_render_stamp_format;
+        break;
+
+      case ParamIdLogMaterialRendering:
+        v.i = static_cast<int>(settings.m_log_material_editor_messages);
+        break;
+
+      case ParamIdOpenLogMode:
+        v.i = static_cast<int>(settings.m_log_open_mode);
+        break;
+
+      default:
+        break;
+    }
+}
+
+void AppleseedRendererPBlockAccessor::Set(
+    PB2Value&       v,
+    ReferenceMaker* owner,
+    ParamID         id,
+    int             tab_index,
+    TimeValue       t)
+{
+    AppleseedRenderer* const renderer = dynamic_cast<AppleseedRenderer*>(owner);
+    RendererSettings& settings = renderer->m_settings;
+
+    switch (id)
+    {
+      case ParamIdOuputMode:
+        settings.m_output_mode = static_cast<RendererSettings::OutputMode>(v.i);
+        break;
+
+      case ParamIdProjectPath:
+        settings.m_project_file_path = v.s;
+        break;
+
+      case ParamIdScaleMultiplier:
+        settings.m_scale_multiplier = v.f;
+        break;
+        
+    //
+    // Image Sampling.
+    //
+
+      case ParamIdPixelSamples:
+        settings.m_pixel_samples = v.i;
+        break;
+
+      case ParamIdTileSize:
+        settings.m_tile_size = v.i;
+        break;
+
+      case ParamIdPasses:
+        settings.m_passes = v.i;
+        break;
+
+    //
+    // Pixel Filtering.
+    //
+
+      case ParamIdFilterType:
+        settings.m_pixel_filter = v.i;
+        break;
+
+      case ParamIdFilterSize:
+        settings.m_pixel_filter_size = v.f;
+        break;
+
+    //
+    // Lighting.
+    //
+
+      case ParamIdEnableGI:
+        settings.m_gi = v.i > 0;
+        break;
+            
+      case ParamIdEnagleCaustics:
+        settings.m_caustics = v.i > 0;
+        break;
+            
+      case ParamIdEnableMaxRay:
+        settings.m_max_ray_intensity_set = v.i > 0;
+        break;
+
+      case ParamIdEnableBackgroundLight:
+        settings.m_background_emits_light = v.i > 0;
+        break;
+
+      case ParamIdForceDefaultLightsOff:
+        settings.m_force_off_default_lights = v.i > 0;
+        break;
+
+      case ParamIdGIBounces:
+        settings.m_bounces = v.i;
+        break;
+
+      case ParamIdMaxRayValue:
+        settings.m_max_ray_intensity = v.f;
+        break;
+
+      case ParamIdBackgroundAlphaValue:
+        settings.m_background_alpha = v.f;
+        break;
+
+    //
+    // System.
+    //
+
+      case ParamIdCPUCores:
+        settings.m_rendering_threads = v.i;
+        break;
+
+      case ParamIdUseMaxProcedurals:
+        settings.m_use_max_procedural_maps = v.i > 0;
+        break;
+
+      case ParamIdEnableLowPriority:
+        settings.m_low_priority_mode = v.i > 0;
+        break;
+            
+      case ParamIdEnableRenderStamp:
+        settings.m_enable_render_stamp = v.i > 0;
+        break;
+
+      case ParamIdRenderStampFormat:
+        settings.m_render_stamp_format = v.s;
+        break;
+
+      case ParamIdLogMaterialRendering:
+        settings.m_log_material_editor_messages = v.i > 0;
+        break;
+
+      case ParamIdOpenLogMode:
+        settings.m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(v.i);
+        break;
+
+      default:
+        break;
+    }
 }
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
@@ -81,6 +386,218 @@ asf::auto_release_ptr<DialogLogTarget> g_dialog_log_target;
 #if MAX_RELEASE < 19000
 AppleseedRECompatible g_appleseed_renderelement_compatible;
 #endif
+AppleseedRendererPBlockAccessor g_pblock_accessor;
+
+ParamBlockDesc2 g_param_block_desc(
+    // --- Required arguments ---
+    0,                                          // parameter block's ID
+    L"appleseed render parameters",             // internal parameter block's name
+    0,                                          // ID of the localized name string
+    &g_appleseed_renderer_classdesc,            // class descriptor
+    P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_VERSION,  // block flags
+
+    1,                                          // --- P_VERSION arguments ---
+
+                                                // --- P_AUTO_CONSTRUCT arguments ---
+    0,                                          // parameter block's reference number
+
+                                                // --- P_MULTIMAP arguments ---
+    4,
+
+    // --- P_AUTO_UI arguments for Parameters rollup ---
+
+    ParamMapIdOutput,
+    IDD_FORMVIEW_RENDERERPARAMS_OUTPUT,         // ID of the dialog template
+    0,                                          // ID of the dialog's title string
+    0,                                          // IParamMap2 creation/deletion flag mask
+    0,                                          // rollup creation flag
+    nullptr,
+
+    ParamMapIdImageSampling,
+    IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING,  // ID of the dialog template
+    0,                                          // ID of the dialog's title string
+    0,                                          // IParamMap2 creation/deletion flag mask
+    0,                                          // rollup creation flag
+    nullptr,
+
+    ParamMapIdLighting,
+    IDD_FORMVIEW_RENDERERPARAMS_LIGHTING,       // ID of the dialog template
+    0,                                          // ID of the dialog's title string
+    0,                                          // IParamMap2 creation/deletion flag mask
+    0,                                          // rollup creation flag
+    nullptr,
+
+    ParamMapIdSystem,
+    IDD_FORMVIEW_RENDERERPARAMS_SYSTEM,         // ID of the dialog template
+    0,                                          // ID of the dialog's title string
+    0,                                          // IParamMap2 creation/deletion flag mask
+    0,                                          // rollup creation flag
+    nullptr,
+
+    // --- Parameters specifications for Output rollup ---
+
+    ParamIdOuputMode, L"output_mode", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdOutput, TYPE_RADIO, 3, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT, IDC_RADIO_SAVEPROJECT_AND_RENDER,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdProjectPath, L"project_path", TYPE_STRING, 0, 0,
+        p_ui, ParamMapIdOutput, TYPE_EDITBOX, IDC_TEXT_PROJECT_FILEPATH,
+    p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdScaleMultiplier, L"scale_multiplier", TYPE_FLOAT, 0, 0,
+        p_ui, ParamMapIdOutput, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SCALE_MULTIPLIER, IDC_SPINNER_SCALE_MULTIPLIER, SPIN_AUTOSCALE,
+        p_default, 1.0f,
+        p_range, 1.0e-6f, 1.0e6f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    // --- Parameters specifications for Image Sampling rollup ---
+
+    ParamIdPixelSamples, L"pixel_samples", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_PIXEL_SAMPLES, IDC_SPINNER_PIXEL_SAMPLES, SPIN_AUTOSCALE,
+        p_default, 16,
+        p_range, 1, 1000000,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdTileSize, L"tile_size", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_TILE_SIZE, IDC_SPINNER_TILE_SIZE, SPIN_AUTOSCALE,
+        p_default, 64,
+        p_range, 1, 4096,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdPasses, L"passes", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_PASSES, IDC_SPINNER_PASSES, SPIN_AUTOSCALE,
+        p_default, 1,
+        p_range, 1, 1000000,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdFilterSize, L"filter_size", TYPE_FLOAT, 0, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_FILTER_SIZE, IDC_SPINNER_FILTER_SIZE, SPIN_AUTOSCALE,
+        p_default, 1.5f,
+        p_range, 1.0f, 20.0f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdFilterType, L"filter_type", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_INT_COMBOBOX, IDC_COMBO_FILTER,
+        8, IDS_RENDERERPARAMS_FILTER_TYPE_1, IDS_RENDERERPARAMS_FILTER_TYPE_2,
+        IDS_RENDERERPARAMS_FILTER_TYPE_3, IDS_RENDERERPARAMS_FILTER_TYPE_4,
+        IDS_RENDERERPARAMS_FILTER_TYPE_5, IDS_RENDERERPARAMS_FILTER_TYPE_6,
+        IDS_RENDERERPARAMS_FILTER_TYPE_7, IDS_RENDERERPARAMS_FILTER_TYPE_8,
+        p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    // --- Parameters specifications for Lighting rollup ---
+
+    ParamIdEnableGI, L"enable_global_illumination", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_GI,
+        p_default, TRUE,
+        p_enable_ctrls, 1, ParamIdGIBounces,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdGIBounces, L"global_illumination_bounces", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_BOUNCES, IDC_SPINNER_BOUNCES, SPIN_AUTOSCALE,
+        p_default, 3,
+        p_range, 0, 100,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnagleCaustics, L"enable_caustics", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_CAUSTICS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableMaxRay, L"enable_max_ray", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_MAX_RAY_INTENSITY,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdMaxRayValue,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdMaxRayValue, L"max_ray_value", TYPE_FLOAT, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_MAX_RAY_INTENSITY, IDC_SPINNER_MAX_RAY_INTENSITY, SPIN_AUTOSCALE,
+        p_default, 1.0f,
+        p_range, 0.0f, 1000.0f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdForceDefaultLightsOff, L"force_default_lights_off", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableBackgroundLight, L"enable_background_light", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
+        p_default, TRUE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdBackgroundAlphaValue, L"background_alpha", TYPE_FLOAT, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
+        p_default, 0.0f,
+        p_range, 0.0f, 1.0f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    // --- Parameters specifications for System rollup ---
+
+    ParamIdCPUCores, L"cpu_cores", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RENDERINGTHREADS, IDC_SPINNER_RENDERINGTHREADS, SPIN_AUTOSCALE,
+        p_default, 0,
+        p_range, -255, 256,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdOpenLogMode, L"log_open_mode", TYPE_INT, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_INT_COMBOBOX, IDC_COMBO_LOG,
+        3, IDS_RENDERERPARAMS_LOG_OPEN_MODE_1, IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,
+        IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,
+        p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdLogMaterialRendering, L"log_material_editor_rendering", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_LOG_MATERIAL_EDITOR,
+        p_default, TRUE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdUseMaxProcedurals, L"use_max_procedural_maps", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+    
+    ParamIdEnableLowPriority, L"low_priority_mode", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_LOW_PRIORITY_MODE,
+        p_default, TRUE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableRenderStamp, L"enable_render_stamp", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_RENDER_STAMP,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdRenderStampFormat,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdRenderStampFormat, L"render_stamp_format", TYPE_STRING, 0, 0,
+        p_ui, ParamMapIdSystem, TYPE_EDITBOX, IDC_TEXT_RENDER_STAMP,
+        p_default, L"appleseed {lib-version} | Time: {render-time}",
+        p_accessor, &g_pblock_accessor,
+    p_end,
+    
+    p_end
+);
 
 //
 // AppleseedRenderer class implementation.
@@ -94,7 +611,9 @@ Class_ID AppleseedRenderer::get_class_id()
 AppleseedRenderer::AppleseedRenderer()
   : m_settings(RendererSettings::defaults())
   , m_interactive_renderer(nullptr)
+  , m_param_block(nullptr)
 {
+    g_appleseed_renderer_classdesc.MakeAutoParamBlocks(this);
     clear();
 }
 
@@ -103,6 +622,36 @@ const RendererSettings& AppleseedRenderer::get_renderer_settings()
     return m_settings;
 }
 
+int AppleseedRenderer::NumRefs()
+{
+    return 1;
+}
+
+RefTargetHandle AppleseedRenderer::GetReference(int i)
+{
+    switch (i)
+    {
+      case 0:
+        return m_param_block;
+      default:
+        DbgAssert(false);
+        return nullptr;
+    }
+}
+
+
+void AppleseedRenderer::SetReference(int i, RefTargetHandle rtarg)
+{
+    switch (i)
+    {
+      case 0:
+        m_param_block = dynamic_cast<IParamBlock2*>(rtarg);
+        break;
+      default:
+        DbgAssert(false);
+        break;
+    }
+}
 Class_ID AppleseedRenderer::ClassID()
 {
     return AppleseedRendererClassId;
@@ -119,6 +668,33 @@ void AppleseedRenderer::DeleteThis()
     delete this;
 }
 
+int AppleseedRenderer::NumParamBlocks()
+{
+    return 1;
+}
+
+IParamBlock2* AppleseedRenderer::GetParamBlock(int i)
+{
+    switch (i)
+    {
+      case 0:
+        return m_param_block;
+      default:
+        DbgAssert(false);
+        return nullptr;
+    }
+}
+
+IParamBlock2* AppleseedRenderer::GetParamBlockByID(BlockID id)
+{
+    switch (id)
+    {
+      case 0:
+        return m_param_block;
+      default:
+        return nullptr;
+    }
+}
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
 #if MAX_RELEASE < 19000
@@ -727,4 +1303,9 @@ const MCHAR* AppleseedRendererClassDesc::InternalName()
 {
     // Parsable name used by MAXScript.
     return L"appleseedRenderer";
+}
+
+const MCHAR* AppleseedRendererClassDesc::GetRsrcString(INT_PTR id)
+{
+    return GetString(static_cast<int>(id));
 }

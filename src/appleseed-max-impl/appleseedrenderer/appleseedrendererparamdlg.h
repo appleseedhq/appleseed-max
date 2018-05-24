@@ -57,4 +57,10 @@ class AppleseedRendererParamDlg
   private:
     struct Impl;
     Impl* impl;
+
+    AppleseedRenderer*  m_renderer;
+    IParamMap2*         m_pmap_output;
+    IParamMap2*         m_pmap_image_sampling;
+    IParamMap2*         m_pmap_lighting;
+    IParamMap2*         m_pmap_system;
 };

@@ -44,6 +44,7 @@
 // 3ds Max headers.
 #include <3dsmaxdlport.h>
 #include <assert1.h>
+#include <iparamm2.h>
 
 // Windows headers.
 #include <shellapi.h>
@@ -264,471 +265,68 @@ namespace
     };
 
     // ------------------------------------------------------------------------------------------------
-    // Image Sampling panel.
-    // ------------------------------------------------------------------------------------------------
-
-    struct ImageSamplingPanel
-      : public PanelBase
-    {
-        IRendParams*            m_rend_params;
-        RendererSettings&       m_settings;
-        HWND                    m_rollup;
-        ICustEdit*              m_text_pixel_samples;
-        ISpinnerControl*        m_spinner_pixel_samples;
-        ICustEdit*              m_text_passes;
-        ISpinnerControl*        m_spinner_passes;
-        ICustEdit*              m_text_tile_size;
-        ISpinnerControl*        m_spinner_tile_size;
-        ICustEdit*              m_text_filter_size;
-        ISpinnerControl*        m_spinner_filter_size;
-
-        ImageSamplingPanel(
-            IRendParams*        rend_params,
-            RendererSettings&   settings)
-          : m_rend_params(rend_params)
-          , m_settings(settings)
-        {
-            m_rollup =
-                rend_params->AddRollupPage(
-                    g_module,
-                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
-                    &dialog_proc_entry,
-                    L"Image Sampling",
-                    reinterpret_cast<LPARAM>(this));
-        }
-
-        ~ImageSamplingPanel() override
-        {
-            ReleaseISpinner(m_spinner_tile_size);
-            ReleaseICustEdit(m_text_tile_size);
-            ReleaseICustEdit(m_text_filter_size);
-            ReleaseISpinner(m_spinner_filter_size);
-            ReleaseISpinner(m_spinner_passes);
-            ReleaseICustEdit(m_text_passes);
-            ReleaseISpinner(m_spinner_pixel_samples);
-            ReleaseICustEdit(m_text_pixel_samples);
-            m_rend_params->DeleteRollupPage(m_rollup);
-        }
-
-        void init(HWND hwnd) override
-        {
-            // Pixel Samples.
-            m_text_pixel_samples = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PIXEL_SAMPLES));
-            m_spinner_pixel_samples = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PIXEL_SAMPLES));
-            m_spinner_pixel_samples->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PIXEL_SAMPLES), EDITTYPE_INT);
-            m_spinner_pixel_samples->SetLimits(1, 1000000, FALSE);
-            m_spinner_pixel_samples->SetResetValue(RendererSettings::defaults().m_pixel_samples);
-            m_spinner_pixel_samples->SetValue(m_settings.m_pixel_samples, FALSE);
-
-            // Passes.
-            m_text_passes = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PASSES));
-            m_spinner_passes = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_PASSES));
-            m_spinner_passes->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_PASSES), EDITTYPE_INT);
-            m_spinner_passes->SetLimits(1, 1000000, FALSE);
-            m_spinner_passes->SetResetValue(RendererSettings::defaults().m_passes);
-            m_spinner_passes->SetValue(m_settings.m_passes, FALSE);
-
-            // Tile size.
-            m_text_tile_size = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_TILE_SIZE));
-            m_spinner_tile_size = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_TILE_SIZE));
-            m_spinner_tile_size->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_TILE_SIZE), EDITTYPE_INT);
-            m_spinner_tile_size->SetLimits(1, 4096, FALSE);
-            m_spinner_tile_size->SetResetValue(RendererSettings::defaults().m_tile_size);
-            m_spinner_tile_size->SetValue(m_settings.m_tile_size, FALSE);
-
-            // Pixel Filtering.
-            static const wchar_t* FilterComboItems[] =
-            {
-                L"Blackman-Harris",
-                L"Box",
-                L"Catmull-Rom Spline",
-                L"Cubic B-spline",
-                L"Gaussian",
-                L"Lanczos",
-                L"Mitchell-Netravali",
-                L"Triangle"
-            };
-
-            for (size_t i = 0; i < 8; i++)
-                SendMessage(GetDlgItem(hwnd, IDC_COMBO_FILTER), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(FilterComboItems[i]));
-            SendMessage(GetDlgItem(hwnd, IDC_COMBO_FILTER), CB_SETCURSEL, static_cast<int>(m_settings.m_pixel_filter), 0);
-
-            m_text_filter_size = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_FILTER_SIZE));
-            m_spinner_filter_size = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_FILTER_SIZE));
-            m_spinner_filter_size->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_FILTER_SIZE), EDITTYPE_FLOAT);
-            m_spinner_filter_size->SetLimits(1, 20, FALSE);
-            m_spinner_filter_size->SetResetValue(RendererSettings::defaults().m_pixel_filter_size);
-            m_spinner_filter_size->SetValue(m_settings.m_pixel_filter_size, FALSE);
-        }
-
-        INT_PTR CALLBACK dialog_proc(
-            HWND                hwnd,
-            UINT                umsg,
-            WPARAM              wparam,
-            LPARAM              lparam) override
-        {
-            switch (umsg)
-            {
-              case CC_SPINNER_CHANGE:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_SPINNER_PIXEL_SAMPLES:
-                    m_settings.m_pixel_samples = m_spinner_pixel_samples->GetIVal();
-                    return TRUE;
-
-                  case IDC_SPINNER_PASSES:
-                    m_settings.m_passes = m_spinner_passes->GetIVal();
-                    return TRUE;
-
-                  case IDC_SPINNER_TILE_SIZE:
-                    m_settings.m_tile_size = m_spinner_tile_size->GetIVal();
-                    return TRUE;
-
-                  case IDC_SPINNER_FILTER_SIZE:
-                    m_settings.m_pixel_filter_size = m_spinner_filter_size->GetFVal();
-                    return TRUE;
-
-                  default:
-                    return FALSE;
-                }
-
-              case WM_COMMAND:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_COMBO_FILTER:
-                    if (HIWORD(wparam) == CBN_SELCHANGE)
-                    {
-                        LRESULT sel_mode = SendDlgItemMessage(hwnd, IDC_COMBO_FILTER, CB_GETCURSEL, 0, 0);
-                        if (sel_mode != CB_ERR)
-                        {
-                            m_settings.m_pixel_filter = static_cast<int>(sel_mode);
-                        }
-                    }
-                    break;
-
-                  default:
-                    return FALSE;
-                }
-
-              default:
-                return FALSE;
-            }
-        }
-    };
-
-    // ------------------------------------------------------------------------------------------------
-    // Lighting panel.
-    // ------------------------------------------------------------------------------------------------
-
-    struct LightingPanel
-      : public PanelBase
-    {
-        IRendParams*            m_rend_params;
-        RendererSettings&       m_settings;
-        HWND                    m_rollup;
-        HWND                    m_static_bounces;
-        ICustEdit*              m_text_bounces;
-        ISpinnerControl*        m_spinner_bounces;
-        HWND                    m_check_caustics;
-        HWND                    m_check_max_ray_intensity;
-        ICustEdit*              m_text_max_ray_intensity;
-        ISpinnerControl*        m_spinner_max_ray_intensity;
-        ICustEdit*              m_text_background_alpha;
-        ISpinnerControl*        m_spinner_background_alpha;
-
-        LightingPanel(
-            IRendParams*        rend_params,
-            RendererSettings&   settings)
-          : m_rend_params(rend_params)
-          , m_settings(settings)
-        {
-            m_rollup =
-                rend_params->AddRollupPage(
-                    g_module,
-                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
-                    &dialog_proc_entry,
-                    L"Lighting",
-                    reinterpret_cast<LPARAM>(this));
-        }
-
-        ~LightingPanel() override
-        {
-            ReleaseISpinner(m_spinner_background_alpha);
-            ReleaseICustEdit(m_text_background_alpha);
-            ReleaseISpinner(m_spinner_bounces);
-            ReleaseICustEdit(m_text_bounces);
-            m_rend_params->DeleteRollupPage(m_rollup);
-        }
-
-        void init(HWND hwnd) override
-        {
-            m_static_bounces = GetDlgItem(hwnd, IDC_STATIC_BOUNCES);
-            m_text_bounces = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES));
-            m_spinner_bounces = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_BOUNCES));
-            m_spinner_bounces->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BOUNCES), EDITTYPE_POS_INT);
-            m_spinner_bounces->SetLimits(0, 100, FALSE);
-            m_spinner_bounces->SetResetValue(RendererSettings::defaults().m_bounces);
-            m_spinner_bounces->SetValue(m_settings.m_bounces, FALSE);
-
-            CheckDlgButton(hwnd, IDC_CHECK_GI, m_settings.m_gi ? BST_CHECKED : BST_UNCHECKED);
-
-            m_check_caustics = GetDlgItem(hwnd, IDC_CHECK_CAUSTICS);
-            CheckDlgButton(hwnd, IDC_CHECK_CAUSTICS, m_settings.m_caustics ? BST_CHECKED : BST_UNCHECKED);
-
-            m_check_max_ray_intensity = GetDlgItem(hwnd, IDC_CHECK_MAX_RAY_INTENSITY);
-            CheckDlgButton(hwnd, IDC_CHECK_MAX_RAY_INTENSITY,
-                m_settings.m_max_ray_intensity_set ? BST_CHECKED : BST_UNCHECKED);
-            m_text_max_ray_intensity = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_MAX_RAY_INTENSITY));
-            m_spinner_max_ray_intensity = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_MAX_RAY_INTENSITY));
-            m_spinner_max_ray_intensity->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_MAX_RAY_INTENSITY), EDITTYPE_POS_FLOAT);
-            m_spinner_max_ray_intensity->SetLimits(0.0f, 1000.0f, FALSE);
-            m_spinner_max_ray_intensity->SetResetValue(RendererSettings::defaults().m_max_ray_intensity);
-            m_spinner_max_ray_intensity->SetValue(m_settings.m_max_ray_intensity, FALSE);
-
-            CheckDlgButton(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
-                m_settings.m_background_emits_light ? BST_CHECKED : BST_UNCHECKED);
-
-            m_text_background_alpha = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_BACKGROUND_ALPHA));
-            m_spinner_background_alpha = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_BACKGROUND_ALPHA));
-            m_spinner_background_alpha->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_BACKGROUND_ALPHA), EDITTYPE_POS_FLOAT);
-            m_spinner_background_alpha->SetLimits(0.0f, 1.0f, FALSE);
-            m_spinner_background_alpha->SetResetValue(RendererSettings::defaults().m_background_alpha);
-            m_spinner_background_alpha->SetValue(m_settings.m_background_alpha, FALSE);
-
-            CheckDlgButton(hwnd, IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
-                m_settings.m_force_off_default_lights ? BST_CHECKED : BST_UNCHECKED);
-
-            enable_disable_controls();
-        }
-
-        void enable_disable_controls()
-        {
-            EnableWindow(m_check_caustics, m_settings.m_gi ? TRUE : FALSE);
-
-            EnableWindow(m_check_max_ray_intensity, m_settings.m_gi ? TRUE : FALSE);
-            m_text_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
-            m_spinner_max_ray_intensity->Enable(m_settings.m_gi && m_settings.m_max_ray_intensity_set);
-
-            // Fix wrong background color on label when it becomes enabled.
-            RedrawWindow(m_static_bounces, nullptr, nullptr, RDW_INVALIDATE);
-        }
-
-        INT_PTR CALLBACK dialog_proc(
-            HWND                hwnd,
-            UINT                umsg,
-            WPARAM              wparam,
-            LPARAM              lparam) override
-        {
-            switch (umsg)
-            {
-              case WM_COMMAND:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_CHECK_GI:
-                    m_settings.m_gi = IsDlgButtonChecked(hwnd, IDC_CHECK_GI) == BST_CHECKED;
-                    enable_disable_controls();
-                    return TRUE;
-
-                  case IDC_CHECK_CAUSTICS:
-                    m_settings.m_caustics = IsDlgButtonChecked(hwnd, IDC_CHECK_CAUSTICS) == BST_CHECKED;
-                    return TRUE;
-
-                  case IDC_CHECK_MAX_RAY_INTENSITY:
-                    m_settings.m_max_ray_intensity_set =
-                        IsDlgButtonChecked(hwnd, IDC_CHECK_MAX_RAY_INTENSITY) == BST_CHECKED;
-                    enable_disable_controls();
-                    return TRUE;
-
-                  case IDC_CHECK_BACKGROUND_EMITS_LIGHT:
-                    m_settings.m_background_emits_light =
-                        IsDlgButtonChecked(hwnd, IDC_CHECK_BACKGROUND_EMITS_LIGHT) == BST_CHECKED;
-                    return TRUE;
-
-                  case IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT:
-                    m_settings.m_force_off_default_lights =
-                        IsDlgButtonChecked(hwnd, IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT) == BST_CHECKED;
-                    return TRUE;
-
-                  default:
-                    return FALSE;
-                }
-
-              case CC_SPINNER_CHANGE:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_SPINNER_BOUNCES:
-                    m_settings.m_bounces = m_spinner_bounces->GetIVal();
-                    return TRUE;
-
-                  case IDC_SPINNER_MAX_RAY_INTENSITY:
-                    m_settings.m_max_ray_intensity = m_spinner_max_ray_intensity->GetFVal();
-                    return TRUE;
-
-                  case IDC_SPINNER_BACKGROUND_ALPHA:
-                    m_settings.m_background_alpha = m_spinner_background_alpha->GetFVal();
-                    return TRUE;
-
-                  default:
-                    return FALSE;
-                }
-
-              default:
-                return FALSE;
-            }
-        }
-    };
-
-    // ------------------------------------------------------------------------------------------------
     // Output panel.
     // ------------------------------------------------------------------------------------------------
 
-    struct OutputPanel
-      : public PanelBase
+    class OutputParamMapDlgProc
+      : public ParamMap2UserDlgProc
     {
-        IRendParams*            m_rend_params;
-        RendererSettings&       m_settings;
-        HWND                    m_rollup;
-        HWND                    m_radio_render_only;
-        HWND                    m_radio_save_only;
-        HWND                    m_radio_save_and_render;
-        HWND                    m_static_project_filepath;
-        ICustEdit*              m_text_project_filepath;
-        ICustButton*            m_button_browse;
-        ICustEdit*              m_text_scale_multiplier;
-        ISpinnerControl*        m_spinner_scale_multiplier;
-
-        OutputPanel(
-            IRendParams*        rend_params,
-            RendererSettings&   settings)
-          : m_rend_params(rend_params)
-          , m_settings(settings)
+      public:
+        explicit OutputParamMapDlgProc(IParamBlock2* pblock)
+          : m_pblock(pblock)
         {
-            m_rollup =
-                rend_params->AddRollupPage(
-                    g_module,
-                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
-                    &dialog_proc_entry,
-                    L"Output",
-                    reinterpret_cast<LPARAM>(this));
         }
 
-        ~OutputPanel() override
+        void DeleteThis() override
         {
-            ReleaseISpinner(m_spinner_scale_multiplier);
-            ReleaseICustEdit(m_text_scale_multiplier);
             ReleaseICustButton(m_button_browse);
             ReleaseICustEdit(m_text_project_filepath);
-            m_rend_params->DeleteRollupPage(m_rollup);
+            delete this;
         }
 
-        void init(HWND hwnd) override
-        {
-            m_radio_render_only = GetDlgItem(hwnd, IDC_RADIO_RENDER);
-            m_radio_save_only = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT);
-            m_radio_save_and_render = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT_AND_RENDER);
-            m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
-            m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
-            m_text_project_filepath->SetText(m_settings.m_project_file_path);
-            m_button_browse = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_BROWSE));
-
-            CheckRadioButton(
-                hwnd,
-                IDC_RADIO_RENDER,
-                IDC_RADIO_SAVEPROJECT_AND_RENDER,
-                m_settings.m_output_mode == RendererSettings::OutputMode::RenderOnly ? IDC_RADIO_RENDER :
-                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ? IDC_RADIO_SAVEPROJECT :
-                IDC_RADIO_SAVEPROJECT_AND_RENDER);
-
-            // Scale multiplier.
-            m_text_scale_multiplier = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_SCALE_MULTIPLIER));
-            m_spinner_scale_multiplier = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_SCALE_MULTIPLIER));
-            m_spinner_scale_multiplier->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_SCALE_MULTIPLIER), EDITTYPE_POS_FLOAT);
-            m_spinner_scale_multiplier->SetLimits(1.0e-6f, 1.0e6f, FALSE);
-            m_spinner_scale_multiplier->SetResetValue(RendererSettings::defaults().m_scale_multiplier);
-            m_spinner_scale_multiplier->SetValue(m_settings.m_scale_multiplier, FALSE);
-
-            enable_disable_controls(false);
-        }
-
-        void enable_disable_controls(const bool use_max_procedural_maps)
-        {
-            const bool save_project =
-                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly ||
-                m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender;
-
-            EnableWindow(m_radio_render_only, use_max_procedural_maps ? FALSE : TRUE);
-            EnableWindow(m_radio_save_only, use_max_procedural_maps ? FALSE : TRUE);
-            EnableWindow(m_radio_save_and_render, use_max_procedural_maps ? FALSE : TRUE);
-
-            EnableWindow(m_static_project_filepath, save_project && !use_max_procedural_maps ? TRUE : FALSE);
-            m_text_project_filepath->Enable(save_project && !use_max_procedural_maps);
-            m_button_browse->Enable(save_project && !use_max_procedural_maps);
-
-            // Fix wrong background color on label when it becomes enabled.
-            RedrawWindow(m_static_project_filepath, nullptr, nullptr, RDW_INVALIDATE);
-        }
-
-        INT_PTR CALLBACK dialog_proc(
-            HWND                hwnd,
-            UINT                umsg,
-            WPARAM              wparam,
-            LPARAM              lparam) override
+        INT_PTR DlgProc(
+            TimeValue   t,
+            IParamMap2* map,
+            HWND        hwnd,
+            UINT        umsg,
+            WPARAM      wparam,
+            LPARAM      lparam) override
         {
             switch (umsg)
             {
-              case WM_CUSTEDIT_ENTER:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_TEXT_PROJECT_FILEPATH:
-                    m_text_project_filepath->GetText(m_settings.m_project_file_path);
-                    m_settings.m_project_file_path = replace_extension(m_settings.m_project_file_path, L".appleseed");
-                    m_text_project_filepath->SetText(m_settings.m_project_file_path);
-                    return TRUE;
-
-                  default:
-                    return FALSE;
-                }
+              case WM_INITDIALOG:
+                init(hwnd);
+                enable_disable_controls();
+                return TRUE;
 
               case WM_COMMAND:
                 switch (LOWORD(wparam))
                 {
-                  case IDC_RADIO_RENDER:
-                    m_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
-                    enable_disable_controls(false);
-                    return TRUE;
-
-                  case IDC_RADIO_SAVEPROJECT:
-                    m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectOnly;
-                    enable_disable_controls(false);
-                    return TRUE;
-
-                  case IDC_RADIO_SAVEPROJECT_AND_RENDER:
-                    m_settings.m_output_mode = RendererSettings::OutputMode::SaveProjectAndRender;
-                    enable_disable_controls(false);
-                    return TRUE;
-
                   case IDC_BUTTON_BROWSE:
                     {
                         MSTR filepath;
                         if (get_save_project_filepath(hwnd, filepath))
                         {
-                            m_settings.m_project_file_path = filepath;
-                            m_text_project_filepath->SetText(filepath);
+                            map->GetParamBlock()->SetValueByName(L"project_path", filepath, 0);
+                            ICustEdit* project_path = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
+                            project_path->SetText(filepath);
+                            ReleaseICustEdit(project_path);
                         }
                         return TRUE;
                     }
 
-                  default:
-                    return FALSE;
-                }
-
-              case CC_SPINNER_CHANGE:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_SPINNER_SCALE_MULTIPLIER:
-                    m_settings.m_scale_multiplier = m_spinner_scale_multiplier->GetFVal();
+                  case IDC_RADIO_RENDER:
+                    enable_disable_controls();
                     return TRUE;
 
+                  case IDC_RADIO_SAVEPROJECT:
+                    enable_disable_controls();
+                    return TRUE;
+
+                  case IDC_RADIO_SAVEPROJECT_AND_RENDER:
+                    enable_disable_controls();
+                    return TRUE;
+                  
                   default:
                     return FALSE;
                 }
@@ -737,149 +335,89 @@ namespace
                 return FALSE;
             }
         }
+
+        void init(HWND hwnd)
+        {
+            m_radio_render_only = GetDlgItem(hwnd, IDC_RADIO_RENDER);
+            m_radio_save_only = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT);
+            m_radio_save_and_render = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT_AND_RENDER);
+            m_static_project_filepath = GetDlgItem(hwnd, IDC_STATIC_PROJECT_FILEPATH);
+            m_button_browse = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_BROWSE));
+            m_text_project_filepath = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
+        }
+
+        void enable_disable_controls()
+        {
+            DbgAssert(m_pblock != nullptr);
+            
+            int temp_use_max_procedural_maps;
+            int output_mode;
+            m_pblock->GetValueByName(L"use_max_procedural_maps", 0, temp_use_max_procedural_maps, FOREVER);
+            m_pblock->GetValueByName(L"output_mode", 0, output_mode, FOREVER);
+            bool use_max_procedural_maps = temp_use_max_procedural_maps > 0;
+            const bool save_project =
+                output_mode == static_cast<int>(RendererSettings::OutputMode::SaveProjectOnly) ||
+                output_mode == static_cast<int>(RendererSettings::OutputMode::SaveProjectAndRender);
+
+            m_text_project_filepath->Enable(save_project && !use_max_procedural_maps);
+            EnableWindow(m_radio_render_only, use_max_procedural_maps ? FALSE : TRUE);
+            EnableWindow(m_radio_save_only, use_max_procedural_maps ? FALSE : TRUE);
+            EnableWindow(m_radio_save_and_render, use_max_procedural_maps ? FALSE : TRUE);
+
+            EnableWindow(m_static_project_filepath, save_project && !use_max_procedural_maps ? TRUE : FALSE);
+            m_button_browse->Enable(save_project && !use_max_procedural_maps);
+        }
+
+      private:
+        HWND            m_radio_render_only;
+        HWND            m_radio_save_only;
+        HWND            m_radio_save_and_render;
+        HWND            m_static_project_filepath;
+        ICustButton*    m_button_browse;
+        ICustEdit*      m_text_project_filepath;
+        IParamBlock2*   m_pblock;
     };
 
     // ------------------------------------------------------------------------------------------------
     // System panel.
     // ------------------------------------------------------------------------------------------------
 
-    struct SystemPanel
-      : public PanelBase
+    class SystemParamMapDlgProc
+      : public ParamMap2UserDlgProc
     {
-        IRendParams*            m_rend_params;
-        RendererSettings&       m_settings;
-        HWND                    m_rollup;
-        ICustEdit*              m_text_renderingthreads;
-        ISpinnerControl*        m_spinner_renderingthreads;
-        ICustEdit*              m_text_render_stamp;
-        AppleseedRenderer*      m_renderer;
-        OutputPanel*            m_output_panel;
-
-        SystemPanel(
-            IRendParams*        rend_params,
-            RendererSettings&   settings,
-            AppleseedRenderer*  renderer,
-            OutputPanel*        output_panel)
-          : m_rend_params(rend_params)
-          , m_settings(settings)
-          , m_renderer(renderer)
-          , m_output_panel(output_panel)
+      public:
+        SystemParamMapDlgProc(AppleseedRenderer* renderer)
+          : m_renderer(renderer)
         {
-            m_rollup =
-                rend_params->AddRollupPage(
-                    g_module,
-                    MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
-                    &dialog_proc_entry,
-                    L"System",
-                    reinterpret_cast<LPARAM>(this));
         }
 
-        ~SystemPanel() override
+        void DeleteThis() override
         {
-            ReleaseISpinner(m_spinner_renderingthreads);
-            ReleaseICustEdit(m_text_renderingthreads);
-            ReleaseICustEdit(m_text_render_stamp);
-            m_rend_params->DeleteRollupPage(m_rollup);
+            delete this;
         }
 
-        void init(HWND hwnd) override
-        {
-            m_text_renderingthreads = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS));
-            m_spinner_renderingthreads = GetISpinner(GetDlgItem(hwnd, IDC_SPINNER_RENDERINGTHREADS));
-            m_spinner_renderingthreads->LinkToEdit(GetDlgItem(hwnd, IDC_TEXT_RENDERINGTHREADS), EDITTYPE_INT);
-            m_spinner_renderingthreads->SetLimits(-255, 256, FALSE);
-            m_spinner_renderingthreads->SetResetValue(RendererSettings::defaults().m_rendering_threads);
-            m_spinner_renderingthreads->SetValue(m_settings.m_rendering_threads, FALSE);
-
-            static const wchar_t* LogComboItems[] = { L"Always", L"Never", L"On Error" };
-            for (size_t i = 0; i < 3; i++)
-                SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(LogComboItems[i]));
-            SendMessage(GetDlgItem(hwnd, IDC_COMBO_LOG), CB_SETCURSEL, static_cast<int>(m_settings.m_log_open_mode), 0);
-
-            CheckDlgButton(hwnd, IDC_CHECK_LOW_PRIORITY_MODE, m_settings.m_low_priority_mode ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS, m_settings.m_use_max_procedural_maps ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR, m_settings.m_log_material_editor_messages ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hwnd, IDC_CHECK_RENDER_STAMP, m_settings.m_enable_render_stamp? BST_CHECKED : BST_UNCHECKED);
-
-            m_text_render_stamp = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_RENDER_STAMP));
-            m_text_render_stamp->SetText(m_settings.m_render_stamp_format);
-
-            enable_disable_controls();
-        }
-
-        void enable_disable_controls()
-        {
-            m_text_render_stamp->Enable(m_settings.m_enable_render_stamp);
-            m_output_panel->enable_disable_controls(m_settings.m_use_max_procedural_maps);
-        }
-
-        INT_PTR CALLBACK dialog_proc(
-            HWND                hwnd,
-            UINT                umsg,
-            WPARAM              wparam,
-            LPARAM              lparam) override
+        INT_PTR DlgProc(
+            TimeValue   t,
+            IParamMap2* map,
+            HWND        hwnd,
+            UINT        umsg,
+            WPARAM      wparam,
+            LPARAM      lparam) override
         {
             switch (umsg)
             {
-              case WM_CUSTEDIT_ENTER:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_TEXT_RENDER_STAMP:
-                    m_text_render_stamp->GetText(m_settings.m_render_stamp_format);
-                    return TRUE;
-
-                  default:
-                    return FALSE;
-                }
-
               case WM_COMMAND:
                 switch (LOWORD(wparam))
                 {
-                  case IDC_CHECK_LOW_PRIORITY_MODE:
-                    m_settings.m_low_priority_mode = IsDlgButtonChecked(hwnd, IDC_CHECK_LOW_PRIORITY_MODE) == BST_CHECKED;
-                    return TRUE;
-
-                  case IDC_CHECK_USE_MAX_PROCEDURAL_MAPS:
-                    m_settings.m_use_max_procedural_maps = IsDlgButtonChecked(hwnd, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS) == BST_CHECKED;
-                    m_output_panel->enable_disable_controls(m_settings.m_use_max_procedural_maps);
-                    return TRUE;
-
-                  case IDC_CHECK_LOG_MATERIAL_EDITOR:
-                    m_settings.m_log_material_editor_messages = IsDlgButtonChecked(hwnd, IDC_CHECK_LOG_MATERIAL_EDITOR) == BST_CHECKED;
-                    save_system_setting(L"LogMaterialEditorMessages", m_settings.m_log_material_editor_messages);
-                    return TRUE;
-
                   case IDC_BUTTON_LOG:
                     m_renderer->show_last_session_log();
-                    return TRUE;
-                  
-                  case IDC_COMBO_LOG:
-                    if (HIWORD(wparam) == CBN_SELCHANGE)
+
+                  case IDC_CHECK_USE_MAX_PROCEDURAL_MAPS:
                     {
-                        LRESULT sel_mode = SendDlgItemMessage(hwnd, IDC_COMBO_LOG, CB_GETCURSEL, 0, 0);
-                        if (sel_mode != CB_ERR)
-                        {
-                            m_settings.m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(sel_mode);
-                            save_system_setting(L"LogOpenMode", static_cast<int>(m_settings.m_log_open_mode));
-                        }
+                        auto* dlg_proc = map->GetParamBlock()->GetMap(0)->GetUserDlgProc();
+                        static_cast<OutputParamMapDlgProc*>(dlg_proc)->enable_disable_controls();
                     }
                     break;
-                  
-                  case IDC_CHECK_RENDER_STAMP:
-                    m_settings.m_enable_render_stamp = IsDlgButtonChecked(hwnd, IDC_CHECK_RENDER_STAMP) == BST_CHECKED;
-                    enable_disable_controls();
-                    return TRUE;
-
-                  default:
-                    return FALSE;
-                }
-
-              case CC_SPINNER_CHANGE:
-                switch (LOWORD(wparam))
-                {
-                  case IDC_SPINNER_RENDERINGTHREADS:
-                    m_settings.m_rendering_threads = m_spinner_renderingthreads->GetIVal();
-                    return TRUE;
 
                   default:
                     return FALSE;
@@ -889,35 +427,28 @@ namespace
                 return FALSE;
             }
         }
+
+      private:
+        AppleseedRenderer*      m_renderer;
     };
 }
 
 struct AppleseedRendererParamDlg::Impl
 {
-    RendererSettings                    m_temp_settings;    // settings the dialog will modify
-    RendererSettings&                   m_settings;         // output (accepted) settings
+    RendererSettings&           m_settings;         // output (accepted) settings
 
-    std::auto_ptr<AboutPanel>           m_about_panel;
-    std::auto_ptr<ImageSamplingPanel>   m_image_sampling_panel;
-    std::auto_ptr<LightingPanel>        m_lighting_panel;
-    std::auto_ptr<OutputPanel>          m_output_panel;
-    std::auto_ptr<SystemPanel>          m_system_panel;
+    std::auto_ptr<AboutPanel>   m_about_panel;
 
     Impl(
         IRendParams*        rend_params,
         BOOL                in_progress,
         RendererSettings&   settings,
         AppleseedRenderer*  renderer)
-      : m_temp_settings(settings)
-      , m_settings(settings)
+      : m_settings(settings)
     {
         if (!in_progress)
         {
             m_about_panel.reset(new AboutPanel(rend_params));
-            m_image_sampling_panel.reset(new ImageSamplingPanel(rend_params, m_temp_settings));
-            m_lighting_panel.reset(new LightingPanel(rend_params, m_temp_settings));
-            m_output_panel.reset(new OutputPanel(rend_params, m_temp_settings));
-            m_system_panel.reset(new SystemPanel(rend_params, m_temp_settings, renderer, m_output_panel.get()));
         }
     }
 };
@@ -928,7 +459,49 @@ AppleseedRendererParamDlg::AppleseedRendererParamDlg(
     RendererSettings&       settings,
     AppleseedRenderer*      renderer)
   : impl(new Impl(rend_params, in_progress, settings, renderer))
+  , m_renderer(renderer)
+  , m_pmap_output(nullptr)
+  , m_pmap_image_sampling(nullptr)
+  , m_pmap_lighting(nullptr)
+  , m_pmap_system(nullptr)
 {
+   m_pmap_output = CreateRParamMap2(
+        0,
+        renderer->GetParamBlock(0),
+        rend_params,
+        g_module,
+        MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
+        L"Output",
+        0,
+        new OutputParamMapDlgProc(renderer->GetParamBlock(0)));
+
+   m_pmap_image_sampling = CreateRParamMap2(
+        1,
+        renderer->GetParamBlock(0),
+        rend_params,
+        g_module,
+        MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
+        L"Image Sampling",
+        0);
+
+   m_pmap_lighting = CreateRParamMap2(
+       2,
+       renderer->GetParamBlock(0),
+       rend_params,
+       g_module,
+       MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
+       L"Lighting",
+       0); 
+   
+   m_pmap_system = CreateRParamMap2(
+       3,
+       renderer->GetParamBlock(0),
+       rend_params,
+       g_module,
+       MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
+       L"System",
+       0,
+       new SystemParamMapDlgProc(renderer));
 }
 
 AppleseedRendererParamDlg::~AppleseedRendererParamDlg()
@@ -938,10 +511,26 @@ AppleseedRendererParamDlg::~AppleseedRendererParamDlg()
 
 void AppleseedRendererParamDlg::DeleteThis()
 {
+    if (m_pmap_output != nullptr)
+        DestroyRParamMap2(m_pmap_output);
+
+    if (m_pmap_image_sampling != nullptr)
+        DestroyRParamMap2(m_pmap_image_sampling);
+    
+    if (m_pmap_lighting != nullptr)
+        DestroyRParamMap2(m_pmap_lighting);
+    
+    if (m_pmap_system != nullptr)
+        DestroyRParamMap2(m_pmap_system);
+
+    m_pmap_output = nullptr;
+    m_pmap_image_sampling = nullptr;
+    m_pmap_lighting = nullptr;
+    m_pmap_system = nullptr;
+
     delete this;
 }
 
 void AppleseedRendererParamDlg::AcceptParams()
 {
-    impl->m_settings = impl->m_temp_settings;
 }
