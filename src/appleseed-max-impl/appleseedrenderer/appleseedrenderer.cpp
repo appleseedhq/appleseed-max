@@ -100,9 +100,9 @@ namespace
         
         ParamIdEnableGI                 = 8,
         ParamIdGIBounces                = 9,
-        ParamIdEnagleCaustics           = 10,
-        ParamIdEnableMaxRay             = 11,
-        ParamIdMaxRayValue              = 12,
+        ParamIdEnableCaustics           = 10,
+        ParamIdEnableMaxRayIntensity    = 11,
+        ParamIdMaxRayIntensity          = 12,
         ParamIdForceDefaultLightsOff    = 13,
         ParamIdEnableBackgroundLight    = 14,
         ParamIdBackgroundAlphaValue     = 15,
@@ -121,8 +121,8 @@ namespace
         static wchar_t buf[256];
 
         if (g_module)
-            return LoadString(g_module, id, buf, _countof(buf)) ? buf : NULL;
-        return NULL;
+            return LoadString(g_module, id, buf, _countof(buf)) ? buf : nullptr;
+        return nullptr;
     }
 }
 
@@ -138,7 +138,7 @@ void AppleseedRendererPBlockAccessor::Get(
     TimeValue       t,
     Interval        &valid)
 {
-    AppleseedRenderer* const renderer = dynamic_cast<AppleseedRenderer*>(owner);
+    AppleseedRenderer* const renderer = static_cast<AppleseedRenderer*>(owner);
     RendererSettings& settings = renderer->m_settings;
 
     switch (id)
@@ -191,11 +191,11 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_gi);
         break;
             
-      case ParamIdEnagleCaustics:
+      case ParamIdEnableCaustics:
         v.i = static_cast<int>(settings.m_caustics);
         break;
             
-      case ParamIdEnableMaxRay:
+      case ParamIdEnableMaxRayIntensity:
         v.i = static_cast<int>(settings.m_max_ray_intensity_set);
         break;
 
@@ -211,7 +211,7 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_bounces;
         break;
 
-      case ParamIdMaxRayValue:
+      case ParamIdMaxRayIntensity:
         v.f = settings.m_max_ray_intensity;
         break;
 
@@ -316,11 +316,11 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_gi = v.i > 0;
         break;
             
-      case ParamIdEnagleCaustics:
+      case ParamIdEnableCaustics:
         settings.m_caustics = v.i > 0;
         break;
             
-      case ParamIdEnableMaxRay:
+      case ParamIdEnableMaxRayIntensity:
         settings.m_max_ray_intensity_set = v.i > 0;
         break;
 
@@ -336,7 +336,7 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_bounces = v.i;
         break;
 
-      case ParamIdMaxRayValue:
+      case ParamIdMaxRayIntensity:
         settings.m_max_ray_intensity = v.f;
         break;
 
@@ -509,20 +509,20 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdEnagleCaustics, L"enable_caustics", TYPE_BOOL, 0, 0,
+    ParamIdEnableCaustics, L"enable_caustics", TYPE_BOOL, 0, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_CAUSTICS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdEnableMaxRay, L"enable_max_ray", TYPE_BOOL, 0, 0,
+    ParamIdEnableMaxRayIntensity, L"enable_max_ray", TYPE_BOOL, 0, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_MAX_RAY_INTENSITY,
         p_default, FALSE,
-        p_enable_ctrls, 1, ParamIdMaxRayValue,
+        p_enable_ctrls, 1, ParamIdMaxRayIntensity,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdMaxRayValue, L"max_ray_value", TYPE_FLOAT, 0, 0,
+    ParamIdMaxRayIntensity, L"max_ray_value", TYPE_FLOAT, 0, 0,
         p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_MAX_RAY_INTENSITY, IDC_SPINNER_MAX_RAY_INTENSITY, SPIN_AUTOSCALE,
         p_default, 1.0f,
         p_range, 0.0f, 1000.0f,

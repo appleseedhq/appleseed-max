@@ -459,7 +459,6 @@ AppleseedRendererParamDlg::AppleseedRendererParamDlg(
     RendererSettings&       settings,
     AppleseedRenderer*      renderer)
   : impl(new Impl(rend_params, in_progress, settings, renderer))
-  , m_renderer(renderer)
   , m_pmap_output(nullptr)
   , m_pmap_image_sampling(nullptr)
   , m_pmap_lighting(nullptr)
@@ -511,22 +510,22 @@ AppleseedRendererParamDlg::~AppleseedRendererParamDlg()
 
 void AppleseedRendererParamDlg::DeleteThis()
 {
-    if (m_pmap_output != nullptr)
-        DestroyRParamMap2(m_pmap_output);
-
-    if (m_pmap_image_sampling != nullptr)
-        DestroyRParamMap2(m_pmap_image_sampling);
-    
-    if (m_pmap_lighting != nullptr)
-        DestroyRParamMap2(m_pmap_lighting);
-    
     if (m_pmap_system != nullptr)
         DestroyRParamMap2(m_pmap_system);
 
-    m_pmap_output = nullptr;
-    m_pmap_image_sampling = nullptr;
-    m_pmap_lighting = nullptr;
+    if (m_pmap_lighting != nullptr)
+        DestroyRParamMap2(m_pmap_lighting);
+    
+    if (m_pmap_image_sampling != nullptr)
+        DestroyRParamMap2(m_pmap_image_sampling);
+    
+    if (m_pmap_output != nullptr)
+        DestroyRParamMap2(m_pmap_output);
+
     m_pmap_system = nullptr;
+    m_pmap_lighting = nullptr;
+    m_pmap_image_sampling = nullptr;
+    m_pmap_output = nullptr;
 
     delete this;
 }

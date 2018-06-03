@@ -74,9 +74,7 @@ class AppleseedRendererPBlockAccessor
 class AppleseedRenderer
   : public Renderer
   , public ITabDialogObject
-{
-    friend AppleseedRendererPBlockAccessor;
-    
+{    
   public:
     static Class_ID get_class_id();
 
@@ -86,7 +84,7 @@ class AppleseedRenderer
 
     // ReferenceMaker methods.
     int NumRefs() override;
-    RefTargetHandle	GetReference(int i) override;
+    RefTargetHandle GetReference(int i) override;
     void SetReference(int i, RefTargetHandle rtarg) override;
     Class_ID ClassID() override;
 
@@ -173,6 +171,8 @@ class AppleseedRenderer
     void create_log_window();
 
   private:
+    friend AppleseedRendererPBlockAccessor;
+
     AppleseedInteractiveRender* m_interactive_renderer;
     RendererSettings            m_settings;
     INode*                      m_scene;
@@ -204,7 +204,6 @@ class AppleseedRendererClassDesc
     const MCHAR* Category() override;
     const MCHAR* InternalName() override;
     const MCHAR* GetRsrcString(INT_PTR id) override;
-
 };
 
 extern AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
