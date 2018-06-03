@@ -238,20 +238,6 @@ END
 // String Table
 //
 
-STRINGTABLE
-BEGIN
-    IDS_RENDERERPARAMS_FILTER_TYPE_1 "Blackman-Harris"
-    IDS_RENDERERPARAMS_FILTER_TYPE_2 "Box"
-    IDS_RENDERERPARAMS_FILTER_TYPE_3 "Catmull-Rom Spline"
-    IDS_RENDERERPARAMS_FILTER_TYPE_4 "Cubic B-spline"
-    IDS_RENDERERPARAMS_FILTER_TYPE_5 "Gaussian"
-    IDS_RENDERERPARAMS_FILTER_TYPE_6 "Lanczos"
-    IDS_RENDERERPARAMS_FILTER_TYPE_7 "Mitchell-Netravali"
-    IDS_RENDERERPARAMS_FILTER_TYPE_8 "Triangle"
-    IDS_RENDERERPARAMS_LOG_OPEN_MODE_1 "Always"
-    IDS_RENDERERPARAMS_LOG_OPEN_MODE_2 "Never"
-    IDS_RENDERERPARAMS_LOG_OPEN_MODE_3 "On Error"
-END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

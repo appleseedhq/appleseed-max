@@ -115,15 +115,21 @@ namespace
         ParamIdEnableRenderStamp        = 21,
         ParamIdRenderStampFormat        = 22,
     };
-
-    MCHAR* GetString(int id)
+    
+    const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
     {
-        static wchar_t buf[256];
-
-        if (g_module)
-            return LoadString(g_module, id, buf, _countof(buf)) ? buf : nullptr;
-        return nullptr;
-    }
+        { IDS_RENDERERPARAMS_FILTER_TYPE_1,     L"Blackman-Harris" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_2,     L"Box" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_3,     L"Catmull-Rom Spline" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_4,     L"Cubic B-spline" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_5,     L"Gaussian" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_6,     L"Lanczos" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_7,     L"Mitchell-Netravali" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_8,     L"Triangle" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_1,   L"Always" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,   L"Never" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,   L"On Error" }
+    };
 }
 
 //
@@ -1307,5 +1313,11 @@ const MCHAR* AppleseedRendererClassDesc::InternalName()
 
 const MCHAR* AppleseedRendererClassDesc::GetRsrcString(INT_PTR id)
 {
-    return GetString(static_cast<int>(id));
+    const asf::KeyValuePair<int, const wchar_t*>* dialog_string_pair =
+        lookup_kvpair_array(
+            g_dialog_strings,
+            11,
+            id);
+
+    return dialog_string_pair->m_value;
 }
