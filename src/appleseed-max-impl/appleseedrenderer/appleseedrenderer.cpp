@@ -161,9 +161,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_scale_multiplier;
         break;
         
-    //
-    // Image Sampling.
-    //
+      //
+      // Image Sampling.
+      //
 
       case ParamIdPixelSamples:
         v.i = settings.m_pixel_samples;
@@ -177,9 +177,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_passes;
         break;
 
-    //
-    // Pixel Filtering.
-    //
+      //
+      // Pixel Filtering.
+      //
 
       case ParamIdFilterType:
         v.i = settings.m_pixel_filter;
@@ -189,9 +189,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_pixel_filter_size;
         break;
 
-    //
-    // Lighting.
-    //
+      //
+      // Lighting.
+      //
 
       case ParamIdEnableGI:
         v.i = static_cast<int>(settings.m_gi);
@@ -225,9 +225,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_background_alpha;
         break;
 
-    //
-    // System.
-    //
+      //
+      // System.
+      //
 
       case ParamIdCPUCores:
         v.i = settings.m_rendering_threads;
@@ -651,7 +651,7 @@ void AppleseedRenderer::SetReference(int i, RefTargetHandle rtarg)
     switch (i)
     {
       case 0:
-        m_param_block = dynamic_cast<IParamBlock2*>(rtarg);
+        m_param_block = static_cast<IParamBlock2*>(rtarg);
         break;
       default:
         DbgAssert(false);
@@ -1314,10 +1314,7 @@ const MCHAR* AppleseedRendererClassDesc::InternalName()
 const MCHAR* AppleseedRendererClassDesc::GetRsrcString(INT_PTR id)
 {
     const asf::KeyValuePair<int, const wchar_t*>* dialog_string_pair =
-        lookup_kvpair_array(
-            g_dialog_strings,
-            11,
-            id);
+        LOOKUP_KVPAIR_ARRAY(g_dialog_strings, id);
 
     return dialog_string_pair->m_value;
 }

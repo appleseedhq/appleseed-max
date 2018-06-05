@@ -326,7 +326,7 @@ namespace
                   case IDC_RADIO_SAVEPROJECT_AND_RENDER:
                     enable_disable_controls();
                     return TRUE;
-                  
+ 
                   default:
                     return FALSE;
                 }
@@ -354,7 +354,7 @@ namespace
             int output_mode;
             m_pblock->GetValueByName(L"use_max_procedural_maps", 0, temp_use_max_procedural_maps, FOREVER);
             m_pblock->GetValueByName(L"output_mode", 0, output_mode, FOREVER);
-            bool use_max_procedural_maps = temp_use_max_procedural_maps > 0;
+            const bool use_max_procedural_maps = temp_use_max_procedural_maps > 0;
             const bool save_project =
                 output_mode == static_cast<int>(RendererSettings::OutputMode::SaveProjectOnly) ||
                 output_mode == static_cast<int>(RendererSettings::OutputMode::SaveProjectAndRender);

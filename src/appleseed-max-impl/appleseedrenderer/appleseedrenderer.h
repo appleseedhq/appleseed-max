@@ -74,7 +74,7 @@ class AppleseedRendererPBlockAccessor
 class AppleseedRenderer
   : public Renderer
   , public ITabDialogObject
-{    
+{
   public:
     static Class_ID get_class_id();
 
