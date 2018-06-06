@@ -400,7 +400,11 @@ ParamBlockDesc2 g_param_block_desc(
     L"appleseed render parameters",             // internal parameter block's name
     0,                                          // ID of the localized name string
     &g_appleseed_renderer_classdesc,            // class descriptor
-    P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_VERSION,  // block flags
+    P_AUTO_CONSTRUCT + 
+    P_AUTO_UI + 
+    P_MULTIMAP + 
+    P_VERSION + 
+    P_CALLSETS_ON_LOAD,                         // block flags
 
     1,                                          // --- P_VERSION arguments ---
 
@@ -442,17 +446,17 @@ ParamBlockDesc2 g_param_block_desc(
 
     // --- Parameters specifications for Output rollup ---
 
-    ParamIdOuputMode, L"output_mode", TYPE_INT, 0, 0,
+    ParamIdOuputMode, L"output_mode", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdOutput, TYPE_RADIO, 3, IDC_RADIO_RENDER, IDC_RADIO_SAVEPROJECT, IDC_RADIO_SAVEPROJECT_AND_RENDER,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdProjectPath, L"project_path", TYPE_STRING, 0, 0,
+    ParamIdProjectPath, L"project_path", TYPE_STRING, P_TRANSIENT, 0,
         p_ui, ParamMapIdOutput, TYPE_EDITBOX, IDC_TEXT_PROJECT_FILEPATH,
     p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdScaleMultiplier, L"scale_multiplier", TYPE_FLOAT, 0, 0,
+    ParamIdScaleMultiplier, L"scale_multiplier", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdOutput, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SCALE_MULTIPLIER, IDC_SPINNER_SCALE_MULTIPLIER, SPIN_AUTOSCALE,
         p_default, 1.0f,
         p_range, 1.0e-6f, 1.0e6f,
@@ -461,35 +465,35 @@ ParamBlockDesc2 g_param_block_desc(
 
     // --- Parameters specifications for Image Sampling rollup ---
 
-    ParamIdPixelSamples, L"pixel_samples", TYPE_INT, 0, 0,
+    ParamIdPixelSamples, L"pixel_samples", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_PIXEL_SAMPLES, IDC_SPINNER_PIXEL_SAMPLES, SPIN_AUTOSCALE,
         p_default, 16,
         p_range, 1, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdTileSize, L"tile_size", TYPE_INT, 0, 0,
+    ParamIdTileSize, L"tile_size", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_TILE_SIZE, IDC_SPINNER_TILE_SIZE, SPIN_AUTOSCALE,
         p_default, 64,
         p_range, 1, 4096,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdPasses, L"passes", TYPE_INT, 0, 0,
+    ParamIdPasses, L"passes", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_PASSES, IDC_SPINNER_PASSES, SPIN_AUTOSCALE,
         p_default, 1,
         p_range, 1, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdFilterSize, L"filter_size", TYPE_FLOAT, 0, 0,
+    ParamIdFilterSize, L"filter_size", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_FILTER_SIZE, IDC_SPINNER_FILTER_SIZE, SPIN_AUTOSCALE,
         p_default, 1.5f,
         p_range, 1.0f, 20.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdFilterType, L"filter_type", TYPE_INT, 0, 0,
+    ParamIdFilterType, L"filter_type", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_INT_COMBOBOX, IDC_COMBO_FILTER,
         8, IDS_RENDERERPARAMS_FILTER_TYPE_1, IDS_RENDERERPARAMS_FILTER_TYPE_2,
         IDS_RENDERERPARAMS_FILTER_TYPE_3, IDS_RENDERERPARAMS_FILTER_TYPE_4,
@@ -501,53 +505,53 @@ ParamBlockDesc2 g_param_block_desc(
 
     // --- Parameters specifications for Lighting rollup ---
 
-    ParamIdEnableGI, L"enable_global_illumination", TYPE_BOOL, 0, 0,
+    ParamIdEnableGI, L"enable_global_illumination", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_GI,
         p_default, TRUE,
         p_enable_ctrls, 1, ParamIdGIBounces,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdGIBounces, L"global_illumination_bounces", TYPE_INT, 0, 0,
+    ParamIdGIBounces, L"global_illumination_bounces", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_BOUNCES, IDC_SPINNER_BOUNCES, SPIN_AUTOSCALE,
         p_default, 3,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdEnableCaustics, L"enable_caustics", TYPE_BOOL, 0, 0,
+    ParamIdEnableCaustics, L"enable_caustics", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_CAUSTICS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdEnableMaxRayIntensity, L"enable_max_ray", TYPE_BOOL, 0, 0,
+    ParamIdEnableMaxRayIntensity, L"enable_max_ray", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_MAX_RAY_INTENSITY,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdMaxRayIntensity,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdMaxRayIntensity, L"max_ray_value", TYPE_FLOAT, 0, 0,
+    ParamIdMaxRayIntensity, L"max_ray_value", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_MAX_RAY_INTENSITY, IDC_SPINNER_MAX_RAY_INTENSITY, SPIN_AUTOSCALE,
         p_default, 1.0f,
         p_range, 0.0f, 1000.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdForceDefaultLightsOff, L"force_default_lights_off", TYPE_BOOL, 0, 0,
+    ParamIdForceDefaultLightsOff, L"force_default_lights_off", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdEnableBackgroundLight, L"enable_background_light", TYPE_BOOL, 0, 0,
+    ParamIdEnableBackgroundLight, L"enable_background_light", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdBackgroundAlphaValue, L"background_alpha", TYPE_FLOAT, 0, 0,
+    ParamIdBackgroundAlphaValue, L"background_alpha", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
         p_default, 0.0f,
         p_range, 0.0f, 1.0f,
@@ -556,14 +560,14 @@ ParamBlockDesc2 g_param_block_desc(
 
     // --- Parameters specifications for System rollup ---
 
-    ParamIdCPUCores, L"cpu_cores", TYPE_INT, 0, 0,
+    ParamIdCPUCores, L"cpu_cores", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RENDERINGTHREADS, IDC_SPINNER_RENDERINGTHREADS, SPIN_AUTOSCALE,
         p_default, 0,
         p_range, -255, 256,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdOpenLogMode, L"log_open_mode", TYPE_INT, 0, 0,
+    ParamIdOpenLogMode, L"log_open_mode", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_INT_COMBOBOX, IDC_COMBO_LOG,
         3, IDS_RENDERERPARAMS_LOG_OPEN_MODE_1, IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,
         IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,
@@ -571,32 +575,32 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdLogMaterialRendering, L"log_material_editor_rendering", TYPE_BOOL, 0, 0,
+    ParamIdLogMaterialRendering, L"log_material_editor_rendering", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_LOG_MATERIAL_EDITOR,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdUseMaxProcedurals, L"use_max_procedural_maps", TYPE_BOOL, 0, 0,
+    ParamIdUseMaxProcedurals, L"use_max_procedural_maps", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_USE_MAX_PROCEDURAL_MAPS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
     
-    ParamIdEnableLowPriority, L"low_priority_mode", TYPE_BOOL, 0, 0,
+    ParamIdEnableLowPriority, L"low_priority_mode", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_LOW_PRIORITY_MODE,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdEnableRenderStamp, L"enable_render_stamp", TYPE_BOOL, 0, 0,
+    ParamIdEnableRenderStamp, L"enable_render_stamp", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_RENDER_STAMP,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdRenderStampFormat,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdRenderStampFormat, L"render_stamp_format", TYPE_STRING, 0, 0,
+    ParamIdRenderStampFormat, L"render_stamp_format", TYPE_STRING, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_EDITBOX, IDC_TEXT_RENDER_STAMP,
         p_default, L"appleseed {lib-version} | Time: {render-time}",
         p_accessor, &g_pblock_accessor,
