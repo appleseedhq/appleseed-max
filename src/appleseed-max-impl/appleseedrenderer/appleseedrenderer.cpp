@@ -783,9 +783,32 @@ void* AppleseedRenderer::GetInterface(ULONG id)
 
 BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
 {
+#if MAX_RELEASE < 19000
+    if (id == IRENDERERREQUIREMENTS_INTERFACE_ID)
+        return static_cast<IRendererRequirements*>(this);
+#endif
     if (id == TAB_DIALOG_OBJECT_INTERFACE_ID)
         return static_cast<ITabDialogObject*>(this);
     else return Renderer::GetInterface(id);
+}
+
+
+bool AppleseedRenderer::HasRequirement(Requirement requirement)
+{
+    switch (requirement)
+    {
+      case kRequirement_NoVFB:
+      case kRequirement_DontSaveRenderOutput:
+        return m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly;
+#if MAX_RELEASE < 19000
+      case kRequirement8_Wants32bitFPOutput: return true;
+#elif
+      case kRequirement_Wants32bitFPOutput: return true;
+      case kRequirement_SupportsConcurrentRendering: return true;
+#endif
+    }
+
+    return false;
 }
 
 #if MAX_RELEASE > 18000
@@ -810,19 +833,6 @@ void AppleseedRenderer::PauseRendering()
 
 void AppleseedRenderer::ResumeRendering()
 {
-}
-
-bool AppleseedRenderer::HasRequirement(Requirement requirement)
-{
-    // todo: specify kRequirement_NoVFB and kRequirement_DontSaveRenderOutput when saving project instead of rendering.
-
-    switch (requirement)
-    {
-      case kRequirement_Wants32bitFPOutput: return true;
-      case kRequirement_SupportsConcurrentRendering: return true;
-    }
-
-    return false;
 }
 
 bool AppleseedRenderer::CompatibleWithAnyRenderElement() const
