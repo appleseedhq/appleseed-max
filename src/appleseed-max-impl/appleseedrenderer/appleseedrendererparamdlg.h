@@ -45,7 +45,6 @@ class AppleseedRendererParamDlg
     AppleseedRendererParamDlg(
         IRendParams*        rend_params,
         BOOL                in_progress,
-        RendererSettings&   settings,
         AppleseedRenderer*  renderer);
 
     ~AppleseedRendererParamDlg() override;
@@ -57,9 +56,4 @@ class AppleseedRendererParamDlg
   private:
     struct Impl;
     Impl* impl;
-
-    IParamMap2*         m_pmap_output;
-    IParamMap2*         m_pmap_image_sampling;
-    IParamMap2*         m_pmap_lighting;
-    IParamMap2*         m_pmap_system;
 };

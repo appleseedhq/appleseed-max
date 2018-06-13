@@ -31,7 +31,6 @@
 
 // appleseed-max headers.
 #include "appleseedrenderer/appleseedrenderer.h"
-#include "appleseedrenderer/renderersettings.h"
 #include "appleseedrenderer/resource.h"
 #include "appleseedrenderer/updatechecker.h"
 #include "main.h"
@@ -435,72 +434,92 @@ namespace
 
 struct AppleseedRendererParamDlg::Impl
 {
-    RendererSettings&           m_settings;         // output (accepted) settings
-
     std::auto_ptr<AboutPanel>   m_about_panel;
+    IParamMap2*                 m_pmap_output;
+    IParamMap2*                 m_pmap_image_sampling;
+    IParamMap2*                 m_pmap_lighting;
+    IParamMap2*                 m_pmap_system;
 
     Impl(
         IRendParams*        rend_params,
         BOOL                in_progress,
-        RendererSettings&   settings,
         AppleseedRenderer*  renderer)
-      : m_settings(settings)
+      : m_pmap_output(nullptr)
+      , m_pmap_image_sampling(nullptr)
+      , m_pmap_lighting(nullptr)
+      , m_pmap_system(nullptr)
     {
         if (!in_progress)
         {
             m_about_panel.reset(new AboutPanel(rend_params));
         }
+
+        m_pmap_output = CreateRParamMap2(
+            0,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
+            L"Output",
+            0,
+            new OutputParamMapDlgProc(renderer->GetParamBlock(0)));
+
+        m_pmap_image_sampling = CreateRParamMap2(
+            1,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
+            L"Image Sampling",
+            0);
+
+        m_pmap_lighting = CreateRParamMap2(
+            2,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
+            L"Lighting",
+            0);
+
+        m_pmap_system = CreateRParamMap2(
+            3,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
+            L"System",
+            0,
+            new SystemParamMapDlgProc(renderer));
+    }
+
+    ~Impl()
+    {
+        if (m_pmap_system != nullptr)
+            DestroyRParamMap2(m_pmap_system);
+
+        if (m_pmap_lighting != nullptr)
+            DestroyRParamMap2(m_pmap_lighting);
+
+        if (m_pmap_image_sampling != nullptr)
+            DestroyRParamMap2(m_pmap_image_sampling);
+
+        if (m_pmap_output != nullptr)
+            DestroyRParamMap2(m_pmap_output);
+
+        m_pmap_system = nullptr;
+        m_pmap_lighting = nullptr;
+        m_pmap_image_sampling = nullptr;
+        m_pmap_output = nullptr;
     }
 };
 
 AppleseedRendererParamDlg::AppleseedRendererParamDlg(
     IRendParams*            rend_params,
     BOOL                    in_progress,
-    RendererSettings&       settings,
     AppleseedRenderer*      renderer)
-  : impl(new Impl(rend_params, in_progress, settings, renderer))
-  , m_pmap_output(nullptr)
-  , m_pmap_image_sampling(nullptr)
-  , m_pmap_lighting(nullptr)
-  , m_pmap_system(nullptr)
+  : impl(new Impl(rend_params, in_progress, renderer))
 {
-   m_pmap_output = CreateRParamMap2(
-        0,
-        renderer->GetParamBlock(0),
-        rend_params,
-        g_module,
-        MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
-        L"Output",
-        0,
-        new OutputParamMapDlgProc(renderer->GetParamBlock(0)));
-
-   m_pmap_image_sampling = CreateRParamMap2(
-        1,
-        renderer->GetParamBlock(0),
-        rend_params,
-        g_module,
-        MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING),
-        L"Image Sampling",
-        0);
-
-   m_pmap_lighting = CreateRParamMap2(
-       2,
-       renderer->GetParamBlock(0),
-       rend_params,
-       g_module,
-       MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
-       L"Lighting",
-       0); 
-   
-   m_pmap_system = CreateRParamMap2(
-       3,
-       renderer->GetParamBlock(0),
-       rend_params,
-       g_module,
-       MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
-       L"System",
-       0,
-       new SystemParamMapDlgProc(renderer));
 }
 
 AppleseedRendererParamDlg::~AppleseedRendererParamDlg()
@@ -510,23 +529,6 @@ AppleseedRendererParamDlg::~AppleseedRendererParamDlg()
 
 void AppleseedRendererParamDlg::DeleteThis()
 {
-    if (m_pmap_system != nullptr)
-        DestroyRParamMap2(m_pmap_system);
-
-    if (m_pmap_lighting != nullptr)
-        DestroyRParamMap2(m_pmap_lighting);
-    
-    if (m_pmap_image_sampling != nullptr)
-        DestroyRParamMap2(m_pmap_image_sampling);
-    
-    if (m_pmap_output != nullptr)
-        DestroyRParamMap2(m_pmap_output);
-
-    m_pmap_system = nullptr;
-    m_pmap_lighting = nullptr;
-    m_pmap_image_sampling = nullptr;
-    m_pmap_output = nullptr;
-
     delete this;
 }
 

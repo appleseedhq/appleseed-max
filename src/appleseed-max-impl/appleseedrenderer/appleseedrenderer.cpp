@@ -54,6 +54,7 @@
 #include "foundation/platform/thread.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/kvpair.h"
 
 // 3ds Max headers.
 #include <assert1.h>
@@ -1160,7 +1161,6 @@ RendParamDlg* AppleseedRenderer::CreateParamDialog(
         new AppleseedRendererParamDlg(
             rend_params,
             in_progress,
-            m_settings,
             this);
 }
 
@@ -1317,8 +1317,7 @@ const MCHAR* AppleseedRendererClassDesc::InternalName()
 
 const MCHAR* AppleseedRendererClassDesc::GetRsrcString(INT_PTR id)
 {
-    const asf::KeyValuePair<int, const wchar_t*>* dialog_string_pair =
-        LOOKUP_KVPAIR_ARRAY(g_dialog_strings, id);
+    const auto* dialog_string_pair = LOOKUP_KVPAIR_ARRAY(g_dialog_strings, id);
 
     return dialog_string_pair->m_value;
 }
