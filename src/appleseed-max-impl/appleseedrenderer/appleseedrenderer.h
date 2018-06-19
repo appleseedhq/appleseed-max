@@ -51,6 +51,26 @@
 // Forward declarations.
 class AppleseedInteractiveRender;
 
+class AppleseedRendererPBlockAccessor
+  : public PBAccessor
+{
+  public:
+    void Get(
+        PB2Value&       v,
+        ReferenceMaker* owner,
+        ParamID         id,
+        int             tab_index,
+        TimeValue       t,
+        Interval        &valid) override;
+
+    void Set(
+        PB2Value&       v,
+        ReferenceMaker* owner,
+        ParamID         id,
+        int             tab_index,
+        TimeValue       t) override;
+};
+
 class AppleseedRenderer
   : public Renderer
   , public ITabDialogObject
@@ -62,11 +82,18 @@ class AppleseedRenderer
 
     const RendererSettings& get_renderer_settings();
 
+    // ReferenceMaker methods.
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
     Class_ID ClassID() override;
 
     void GetClassName(MSTR& s) override;
 
     void DeleteThis() override;
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
     // Animatable.
     void* GetInterface(ULONG id) override;
@@ -144,6 +171,8 @@ class AppleseedRenderer
     void create_log_window();
 
   private:
+    friend AppleseedRendererPBlockAccessor;
+
     AppleseedInteractiveRender* m_interactive_renderer;
     RendererSettings            m_settings;
     INode*                      m_scene;
@@ -153,6 +182,7 @@ class AppleseedRenderer
     std::vector<DefaultLight>   m_default_lights;
     TimeValue                   m_time;
     MaxSceneEntities            m_entities;
+    IParamBlock2*               m_param_block;
 
     void clear();
 };
@@ -173,6 +203,7 @@ class AppleseedRendererClassDesc
     Class_ID ClassID() override;
     const MCHAR* Category() override;
     const MCHAR* InternalName() override;
+    const MCHAR* GetRsrcString(INT_PTR id) override;
 };
 
 extern AppleseedRendererClassDesc g_appleseed_renderer_classdesc;

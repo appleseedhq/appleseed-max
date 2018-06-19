@@ -18,6 +18,14 @@
 #define IDC_COMBO_FILTER                            207
 #define IDC_TEXT_FILTER_SIZE                        208
 #define IDC_SPINNER_FILTER_SIZE                     209
+#define IDS_RENDERERPARAMS_FILTER_TYPE_1            210
+#define IDS_RENDERERPARAMS_FILTER_TYPE_2            211
+#define IDS_RENDERERPARAMS_FILTER_TYPE_3            212
+#define IDS_RENDERERPARAMS_FILTER_TYPE_4            213
+#define IDS_RENDERERPARAMS_FILTER_TYPE_5            214
+#define IDS_RENDERERPARAMS_FILTER_TYPE_6            215
+#define IDS_RENDERERPARAMS_FILTER_TYPE_7            216
+#define IDS_RENDERERPARAMS_FILTER_TYPE_8            217
 
 #define IDD_FORMVIEW_RENDERERPARAMS_LIGHTING        300
 #define IDC_CHECK_GI                                301
@@ -59,14 +67,17 @@
 #define IDC_EDIT_LOG                                604
 #define IDC_CHECK_RENDER_STAMP                      605
 #define IDC_TEXT_RENDER_STAMP                       606
+#define IDS_RENDERERPARAMS_LOG_OPEN_MODE_1          607
+#define IDS_RENDERERPARAMS_LOG_OPEN_MODE_2          608
+#define IDS_RENDERERPARAMS_LOG_OPEN_MODE_3          609
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        110
-#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_COMMAND_VALUE         40001
+#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

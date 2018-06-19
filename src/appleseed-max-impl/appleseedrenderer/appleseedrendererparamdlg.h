@@ -45,7 +45,6 @@ class AppleseedRendererParamDlg
     AppleseedRendererParamDlg(
         IRendParams*        rend_params,
         BOOL                in_progress,
-        RendererSettings&   settings,
         AppleseedRenderer*  renderer);
 
     ~AppleseedRendererParamDlg() override;
