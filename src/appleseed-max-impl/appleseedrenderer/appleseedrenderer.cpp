@@ -131,6 +131,59 @@ namespace
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,   L"Never" },
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,   L"On Error" }
     };
+
+    class AppleseedRenderContext
+        : public RenderGlobalContext
+    {
+    public:
+        AppleseedRenderContext(
+            Renderer*           renderer,
+            Bitmap*             bitmap,
+            const RendParams&   rend_params,
+            const ViewParams&   view_params,
+            const TimeValue     time)
+        {
+            this->time = time;
+            this->inMtlEdit = rend_params.inMtlEdit;
+            IRenderElementMgr* current_re_manager = GetCOREInterface()->GetCurRenderElementMgr();
+            if (current_re_manager != nullptr)
+                this->SetRenderElementMgr(current_re_manager);
+
+            this->renderer = renderer;
+            this->projType = view_params.projType;
+
+            if (bitmap != nullptr)
+            {
+                this->devWidth = bitmap->Width();
+                this->devHeight = bitmap->Height();
+                this->devAspect = bitmap->Aspect();
+
+                this->xc = this->devWidth * 0.5f;
+                this->yc = this->devHeight * 0.5f;
+
+                if (this->projType == PROJ_PERSPECTIVE)
+                {
+                    const float fac = -(1.0f / tanf(0.5f * view_params.fov));
+                    this->xscale = fac * this->xc;
+                }
+                else
+                {
+                    this->xscale = this->devWidth / view_params.fov;
+                }
+
+                this->yscale = -this->devAspect * this->xscale;
+            }
+            this->antialias = false;
+            this->nearRange = 0.0f;
+            this->farRange = 0.0f;
+            this->envMap = nullptr;
+            this->globalLightLevel = Color(0.0f, 0.0f, 0.0f);
+            this->atmos = nullptr;
+            this->wireMode = false;
+            this->wire_thick = 0;
+            this->first_field = true;
+        }
+    };
 }
 
 //
@@ -1102,10 +1155,13 @@ int AppleseedRenderer::Render(
             m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectAndRender)
         {
 
-            RenderGlobalContext render_context;
-            render_context.time = eval_time;
-            render_context.inMtlEdit = m_rend_params.inMtlEdit;
-            render_context.SetRenderElementMgr(m_rend_params.GetRenderElementMgr());
+            AppleseedRenderContext render_context(
+                static_cast<Renderer*>(this),
+                bitmap,
+                m_rend_params,
+                m_view_params,
+                time);
+
             BroadcastNotification(NOTIFY_PRE_RENDERFRAME, &render_context);
 
             auto render_status = asr::IRendererController::Status::ContinueRendering;
