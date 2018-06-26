@@ -133,9 +133,9 @@ namespace
     };
 
     class AppleseedRenderContext
-        : public RenderGlobalContext
+      : public RenderGlobalContext
     {
-    public:
+      public:
         AppleseedRenderContext(
             Renderer*           renderer,
             Bitmap*             bitmap,
@@ -802,7 +802,7 @@ bool AppleseedRenderer::HasRequirement(Requirement requirement)
         return m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly;
 #if MAX_RELEASE < 19000
       case kRequirement8_Wants32bitFPOutput: return true;
-#elif
+#else
       case kRequirement_Wants32bitFPOutput: return true;
       case kRequirement_SupportsConcurrentRendering: return true;
 #endif
