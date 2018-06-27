@@ -45,6 +45,7 @@
 namespace renderer  { class Project; }
 class ILoad;
 class ISave;
+class Mtl;
 
 class RendererSettings
 {
@@ -143,6 +144,11 @@ class RendererSettings
     float                       m_sppm_view_photons_radius;
     bool                        m_sppm_max_ray_intensity_set;
     float                       m_sppm_max_ray_intensity;
+
+    bool                        m_enable_override_material;
+    bool                        m_override_material_exclude_lights;
+    bool                        m_override_material_exclude_glass;
+    Mtl*                        m_override_material;
 
     //
     // Output.

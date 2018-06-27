@@ -44,6 +44,7 @@
 #include <3dsmaxdlport.h>
 #include <assert1.h>
 #include <iparamm2.h>
+#include <custcont.h>
 
 // Windows headers.
 #include <shellapi.h>
@@ -446,6 +447,112 @@ namespace
       private:
         AppleseedRenderer*      m_renderer;
     };
+
+    // ------------------------------------------------------------------------------------------------
+    // Light panel.
+    // ------------------------------------------------------------------------------------------------
+
+    class LightParamMapDlgProc
+        : public ParamMap2UserDlgProc
+        , public DADMgr
+    {
+      public:
+        void DeleteThis() override
+        {
+            delete this;
+        }
+
+        INT_PTR DlgProc(
+            TimeValue           t,
+            IParamMap2*         map,
+            HWND                hwnd,
+            UINT                umsg,
+            WPARAM              wparam,
+            LPARAM              lparam) override
+        {
+            switch (umsg)
+            {
+              case WM_INITDIALOG:
+                {
+                    m_map = map;
+                    ICustButton* material_button = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_OVERRIDE_MATERIAL));
+                    material_button->SetDADMgr(this);
+                    ReleaseICustButton(material_button);
+                }
+
+              default:
+                return FALSE;
+            }
+        }
+
+        // DADMgr methods.
+
+        SClass_ID GetDragType(
+            HWND                hwnd, 
+            POINT               p) override
+        {
+            return MATERIAL_CLASS_ID;
+        }
+
+        BOOL OkToDrop(
+            ReferenceTarget*    drop_this,
+            HWND                hwnd_from,
+            HWND                hwnd_to,
+            POINT               p,
+            SClass_ID           type,
+            BOOL                is_new) override
+        {
+            if (hwnd_from == hwnd_to)
+                return FALSE;
+
+            if (hwnd_to == GetDlgItem(m_map->GetHWnd(), IDC_BUTTON_OVERRIDE_MATERIAL))
+                return type == MATERIAL_CLASS_ID;
+
+            return FALSE;
+        }
+
+        ReferenceTarget* GetInstance(
+            HWND                hwnd, 
+            POINT               p, 
+            SClass_ID           type) override
+        {
+            if (hwnd == GetDlgItem(m_map->GetHWnd(), IDC_BUTTON_OVERRIDE_MATERIAL))
+            {
+                ReferenceTarget* ref_target;
+                m_map->GetParamBlock()->GetValueByName(L"override_material", 0, ref_target, FOREVER);
+                return ref_target;
+            }
+            return nullptr;
+        }
+
+        void Drop(
+            ReferenceTarget*    drop_this, 
+            HWND                hwnd, 
+            POINT               p, 
+            SClass_ID           type, 
+            DADMgr*             src_mgr = nullptr,
+            BOOL                src_clone = FALSE) override
+        {
+            if (hwnd == GetDlgItem(m_map->GetHWnd(), IDC_BUTTON_OVERRIDE_MATERIAL))
+            {
+                m_map->GetParamBlock()->SetValueByName(L"override_material", drop_this, 0);
+                ICustButton* material_button = GetICustButton(hwnd);
+                if (material_button != nullptr)
+                {
+                    material_button->SetText(drop_this == nullptr ? L"None" : static_cast<MtlBase*>(drop_this)->GetFullName());
+                    ReleaseICustButton(material_button);
+                }
+            }
+        }
+
+        BOOL AutoTooltip() override
+        {
+            return TRUE;
+        }
+
+      private:
+        IParamMap2*             m_map;
+    };
 }
 
 struct AppleseedRendererParamDlg::Impl
@@ -503,7 +610,8 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
             L"Lighting",
-            0);
+            0,
+            new LightParamMapDlgProc());
 
         m_pmap_pathtracer = CreateRParamMap2(
             3,

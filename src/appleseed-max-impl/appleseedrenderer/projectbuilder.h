@@ -46,6 +46,7 @@ namespace renderer { class Project; }
 class Bitmap;
 class FrameRendParams;
 class MaxSceneEntities;
+class Mtl;
 class RendererSettings;
 class RendParams;
 class ViewParams;

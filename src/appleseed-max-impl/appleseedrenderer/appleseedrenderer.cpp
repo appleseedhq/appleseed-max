@@ -177,7 +177,12 @@ namespace
         ParamIdUseMaxProcedurals                        = 19,
         ParamIdEnableLowPriority                        = 20,
         ParamIdEnableEmbree                             = 24,
-        ParamIdTextureCacheSize                         = 53
+        ParamIdTextureCacheSize                         = 53,
+        
+        ParamIdEnableOverrideMaterial                   = 80,
+        ParamIdOverrideMaterial                         = 81,
+        ParamIdExcludeLightMaterial                     = 82,
+        ParamIdExcludeGlassMaterial                     = 83
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -860,6 +865,22 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_rr_min_path_length = v.i;
         break;
 
+      case ParamIdEnableOverrideMaterial:
+        settings.m_enable_override_material = v.i > 0;
+        break;
+
+      case ParamIdOverrideMaterial:
+        settings.m_override_material = static_cast<Mtl*>(v.r);
+        break;
+
+      case ParamIdExcludeGlassMaterial:
+        settings.m_override_material_exclude_glass = v.i > 0;
+        break;
+
+      case ParamIdExcludeLightMaterial:
+        settings.m_override_material_exclude_lights = v.i > 0;
+        break;
+
       //
       // Stochastic Progressive Photon Mapping.
       //
@@ -1258,6 +1279,30 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
      p_end,
 
+    ParamIdOverrideMaterial, L"override_material", TYPE_MTL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_MTLBUTTON, IDC_BUTTON_OVERRIDE_MATERIAL,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableOverrideMaterial, L"enable_override_material", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+        p_enable_ctrls, 3, ParamIdOverrideMaterial, ParamIdExcludeLightMaterial, ParamIdExcludeGlassMaterial,
+    p_end,
+
+    ParamIdExcludeLightMaterial, L"exclude_light_material", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdExcludeGlassMaterial, L"exclude_glass_material", TYPE_BOOL, 0, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
     // --- Parameters specifications for Path Tracer rollup ---
 
     ParamIdEnableGI, L"enable_global_illumination", TYPE_BOOL, P_TRANSIENT, 0,
@@ -1456,77 +1501,77 @@ ParamBlockDesc2 g_param_block_desc(
         p_default, 6,
         p_range, 1, 100,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMPhotonTracingLightPhotons, L"light_photons", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdSPPMPhotonTracingLightPhotons, L"light_photons", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_PT_LIGHT_PHOTONS, IDC_SPINNER_SPPM_PT_LIGHT_PHOTONS, SPIN_AUTOSCALE,
         p_default, 1000000,
         p_range, 0, 1000000000,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMPhotonTracingEnvironmentPhotons, L"environment_photons", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdSPPMPhotonTracingEnvironmentPhotons, L"environment_photons", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_PT_ENVIRONMENT_PHOTONS, IDC_SPINNER_SPPM_PT_ENVIRONMENT_PHOTONS, SPIN_AUTOSCALE,
         p_default, 1000000,
         p_range, 0, 1000000000,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMRadianceEstimationMaxBounces, L"radiance_estimation_max_bounces", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdSPPMRadianceEstimationMaxBounces, L"radiance_estimation_max_bounces", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SPPM_RADIANCE_BOUNCES, IDC_SPINNER_SPPM_RADIANCE_BOUNCES, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMRadianceEstimationEnableBounceLimit, L"enable_radiance_estimation_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+    ParamIdSPPMRadianceEstimationEnableBounceLimit, L"enable_radiance_estimation_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_RADIANCE_BOUNCES,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdSPPMRadianceEstimationMaxBounces,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMRadianceEstimationRRMinPathLength, L"russian_roulette_start_bounce", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdSPPMRadianceEstimationRRMinPathLength, L"russian_roulette_start_bounce", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_RADIANCE_RR_MIN_PATH_LENGTH, IDC_SPINNER_SPPM_RADIANCE_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
         p_default, 6,
         p_range, 1, 100,
         p_accessor, &g_pblock_accessor,
-      p_end,
+    p_end,
 
-     ParamIdSPPMRadianceEstimationInitialRadius, L"initial_radius", TYPE_FLOAT, P_TRANSIENT, 0,
+    ParamIdSPPMRadianceEstimationInitialRadius, L"initial_radius", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_RADIANCE_INITIAL_RADIUS, IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS, SPIN_AUTOSCALE,
         p_default, 0.1f,
         p_range, 0.001f, 100.0f,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMRadianceEstimationMaxPhotons, L"max_photons_per_estimate", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdSPPMRadianceEstimationMaxPhotons, L"max_photons_per_estimate", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_RADIANCE_MAX_PHOTONS, IDC_SPINNER_SPPM_RADIANCE_MAX_PHOTONS, SPIN_AUTOSCALE,
         p_default, 100,
         p_range, 8, 1000000000,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMRadianceEstimationAlpha, L"alpha", TYPE_FLOAT, P_TRANSIENT, 0,
+    ParamIdSPPMRadianceEstimationAlpha, L"alpha", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_RADIANCE_ALPHA, IDC_SPINNER_SPPM_RADIANCE_ALPHA, SPIN_AUTOSCALE,
         p_default, 0.7f,
         p_range, 0.0f, 1.0f,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMViewPhotons, L"enable_view_photons", TYPE_BOOL, P_TRANSIENT, 0,
+    ParamIdSPPMViewPhotons, L"enable_view_photons", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_VIEW_PHOTONS,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdSPPMViewPhotonsRadius,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
-     ParamIdSPPMViewPhotonsRadius, L"view_photon_radius", TYPE_FLOAT, P_TRANSIENT, 0,
+    ParamIdSPPMViewPhotonsRadius, L"view_photon_radius", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS, IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS, SPIN_AUTOSCALE,
         p_default, 0.05f,
         p_range, 0.001f, 100.0f,
         p_accessor, &g_pblock_accessor,
-     p_end,
+    p_end,
 
     ParamIdSPPMEnableMaxRayIntensity, L"enable_max_ray_intensity", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_MAX_RAY_INTENSITY,
@@ -1583,24 +1628,24 @@ ParamBlockDesc2 g_param_block_desc(
     p_end,
 
     ParamIdSpikeThreshold, L"spike_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPIKE_THRESHOLD, IDC_SPINNER_SPIKE_THRESHOLD, SPIN_AUTOSCALE,
-       p_default, 2.0f,
-       p_range, 0.1f, 4.0f,
-       p_accessor, &g_pblock_accessor,
+        p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPIKE_THRESHOLD, IDC_SPINNER_SPIKE_THRESHOLD, SPIN_AUTOSCALE,
+        p_default, 2.0f,
+        p_range, 0.1f, 4.0f,
+        p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdPatchDistance, L"patch_distance_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_PATCH_DISTANCE, IDC_SPINNER_PATCH_DISTANCE, SPIN_AUTOSCALE,
-       p_default, 1.0f,
-       p_range, 0.5f, 3.0f,
-       p_accessor, &g_pblock_accessor,
+        p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_PATCH_DISTANCE, IDC_SPINNER_PATCH_DISTANCE, SPIN_AUTOSCALE,
+        p_default, 1.0f,
+        p_range, 0.5f, 3.0f,
+        p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdDenoiseScales, L"denoise_scales", TYPE_INT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DENOISE_SCALES, IDC_SPINNER_DENOISE_SCALES, SPIN_AUTOSCALE,
-       p_default, 3,
-       p_range, 1, 10,
-       p_accessor, &g_pblock_accessor,
+        p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DENOISE_SCALES, IDC_SPINNER_DENOISE_SCALES, SPIN_AUTOSCALE,
+        p_default, 3,
+        p_range, 1, 10,
+        p_accessor, &g_pblock_accessor,
     p_end,
 
     // --- Parameters specifications for System rollup ---

@@ -31,6 +31,7 @@
 
 // appleseed-max headers.
 #include "appleseedenvmap/appleseedenvmap.h"
+#include "appleseedglassmtl/appleseedglassmtl.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/maxsceneentities.h"
@@ -532,6 +533,62 @@ namespace
         return false;
     }
 
+    bool is_light_emitting_material(Mtl* mtl)
+    {
+        IAppleseedMtl* appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl != nullptr && appleseed_mtl->can_emit_light())
+            return true;
+        else
+        {
+            const int submtl_count = mtl->NumSubMtls();
+            for (int i = 0; i < submtl_count; ++i)
+            {
+                Mtl* sub_mtl = mtl->GetSubMtl(i);
+                if (sub_mtl != nullptr)
+                {
+                    if (is_light_emitting_material(sub_mtl))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool is_glass_material(Mtl* mtl)
+    {
+        return mtl != nullptr && mtl->ClassID() == AppleseedGlassMtl::get_class_id();
+    }
+
+    Mtl* override_material(Mtl* mtl, const RendererSettings& settings)
+    {
+        if (mtl == nullptr)
+            return settings.m_override_material;
+
+        if (settings.m_enable_override_material &&
+            settings.m_override_material != nullptr)
+        {
+            if (is_light_emitting_material(mtl))
+            {
+                if (settings.m_override_material_exclude_lights)
+                    return mtl;
+                else
+                    return settings.m_override_material;
+            }
+
+            if (is_glass_material(mtl))
+            {
+                if (settings.m_override_material_exclude_glass)
+                    return mtl;
+                else
+                    return settings.m_override_material;
+            }
+
+            return settings.m_override_material;
+        }
+        return mtl;
+    }
+
     enum class RenderType
     {
         Default,
@@ -544,7 +601,7 @@ namespace
         const asf::Transformd&  transform,
         const ObjectInfo&       object_info,
         const RenderType        type,
-        const bool              use_max_proc_maps,
+        const RendererSettings& settings,
         const TimeValue         time,
         MaterialMap&            material_map)
     {
@@ -573,6 +630,10 @@ namespace
                 for (int i = 0; i < submtlcount; ++i)
                 {
                     Mtl* submtl = mtl->GetSubMtl(i);
+
+                    if (type == RenderType::MaterialPreview)
+                        submtl = override_material(submtl, settings);
+
                     if (submtl != nullptr)
                     {
                         const auto material_info =
@@ -581,7 +642,7 @@ namespace
                                 instance_name,
                                 submtl,
                                 material_map,
-                                use_max_proc_maps,
+                                settings.m_use_max_procedural_maps,
                                 time);
 
                         const auto entry = object_info.m_mtlid_to_slot.find(i);
@@ -602,6 +663,9 @@ namespace
             {
                 // It's a single material.
 
+                if (type != RenderType::MaterialPreview)
+                    mtl = override_material(mtl, settings);
+
                 // Create the appleseed material.
                 const auto material_info =
                     get_or_create_material(
@@ -609,7 +673,7 @@ namespace
                         instance_name,
                         mtl,
                         material_map,
-                        use_max_proc_maps,
+                        settings.m_use_max_procedural_maps,
                         time);
 
                 // Assign it to all material slots.
@@ -628,6 +692,9 @@ namespace
         else
         {
             // The instance does not have a material.
+
+            if (type != RenderType::MaterialPreview)
+                mtl = override_material(mtl, settings);
 
             // Create a new default material.
             const std::string material_name =
@@ -682,7 +749,7 @@ namespace
         asr::Assembly&          assembly,
         INode*                  node,
         const RenderType        type,
-        const bool              use_max_proc_maps,
+        const RendererSettings& settings,
         const TimeValue         time,
         ObjectMap&              object_map,
         MaterialMap&            material_map,
@@ -719,7 +786,7 @@ namespace
                         asf::Transformd::identity(),
                         object_info,
                         type,
-                        use_max_proc_maps,
+                        settings,
                         time,
                         material_map);
                 }
@@ -766,7 +833,7 @@ namespace
                         transform,
                         object_info,
                         type,
-                        use_max_proc_maps,
+                        settings,
                         time,
                         material_map);
                 }
@@ -782,7 +849,7 @@ namespace
                         transform,
                         object_info,
                         type,
-                        use_max_proc_maps,
+                        settings,
                         time,
                         material_map);
                 }
@@ -794,7 +861,7 @@ namespace
         asr::Assembly&          assembly,
         const MaxSceneEntities& entities,
         const RenderType        type,
-        const bool              use_max_proc_maps,
+        const RendererSettings& settings,
         const TimeValue         time,
         ObjectMap&              object_map,
         MaterialMap&            material_map,
@@ -808,7 +875,7 @@ namespace
                 assembly,
                 object,
                 type,
-                use_max_proc_maps,
+                settings,
                 time,
                 object_map,
                 material_map,
@@ -1090,26 +1157,6 @@ namespace
         }
     }
 
-    bool is_light_emitting_material(Mtl* mtl)
-    {
-        IAppleseedMtl* appleseed_mtl =
-            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-        if (appleseed_mtl != nullptr && appleseed_mtl->can_emit_light())
-            return true;
-
-        for (int i = 0, e = mtl->NumSubMtls(); i < e; ++i)
-        {
-            Mtl* sub_mtl = mtl->GetSubMtl(i);
-            if (sub_mtl != nullptr)
-            {
-                if (is_light_emitting_material(sub_mtl))
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
     bool has_light_emitting_materials(const MaterialMap& material_map)
     {
         for (const auto& entry : material_map)
@@ -1141,7 +1188,7 @@ namespace
             assembly,
             entities,
             type,
-            settings.m_use_max_procedural_maps,
+            settings,
             time,
             object_map,
             material_map,
