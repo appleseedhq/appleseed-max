@@ -506,11 +506,6 @@ struct AppleseedRendererParamDlg::Impl
 
         if (m_pmap_output != nullptr)
             DestroyRParamMap2(m_pmap_output);
-
-        m_pmap_system = nullptr;
-        m_pmap_lighting = nullptr;
-        m_pmap_image_sampling = nullptr;
-        m_pmap_output = nullptr;
     }
 };
 
