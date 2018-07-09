@@ -539,7 +539,7 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
         m_shader_info);
 
     const auto closure_2_surface_name = asf::format("{0}_closure_2_surface_name", name);
-    shader_group.ref().add_shader("shader", "as_max_closure2Surface", closure_2_surface_name.c_str(), asr::ParamArray());
+    shader_group.ref().add_shader("shader", "as_max_closure2surface", closure_2_surface_name.c_str(), asr::ParamArray());
 
     const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id);
     shader_group.ref().add_connection(
