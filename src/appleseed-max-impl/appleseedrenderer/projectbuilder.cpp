@@ -50,6 +50,7 @@
 #include "renderer/api/light.h"
 #include "renderer/api/material.h"
 #include "renderer/api/object.h"
+#include "renderer/api/postprocessing.h"
 #include "renderer/api/project.h"
 #include "renderer/api/scene.h"
 #include "renderer/api/texture.h"
@@ -1463,9 +1464,7 @@ namespace
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
                         .insert("filter", get_filter_type(settings.m_pixel_filter))
-                        .insert("filter_size", settings.m_pixel_filter_size)
-                        .insert("enable_render_stamp", settings.m_enable_render_stamp)
-                        .insert("render_stamp_format", wide_to_utf8(settings.m_render_stamp_format)),
+                        .insert("filter_size", settings.m_pixel_filter_size),
                     aovs));
 
             if (rend_params.rendType == RENDTYPE_REGION)
@@ -1474,6 +1473,16 @@ namespace
                     asf::AABB2u(
                         asf::Vector2u(frame_rend_params.regxmin, frame_rend_params.regymin),
                         asf::Vector2u(frame_rend_params.regxmax, frame_rend_params.regymax)));
+            }
+
+            if (settings.m_enable_render_stamp)
+            {
+                frame->post_processing_stages().insert(
+                    asr::RenderStampPostProcessingStageFactory().create(
+                        "render_stamp",
+                        asr::ParamArray()
+                            .insert("order", 0)
+                            .insert("format_string", wide_to_utf8(settings.m_render_stamp_format))));
             }
 
             return frame;
