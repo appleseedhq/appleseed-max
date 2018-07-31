@@ -1377,5 +1377,8 @@ const MCHAR* AppleseedRendererClassDesc::GetRsrcString(INT_PTR id)
 {
     const auto* dialog_string_pair = LOOKUP_KVPAIR_ARRAY(g_dialog_strings, id);
 
-    return dialog_string_pair->m_value;
+    if (dialog_string_pair != nullptr)
+        return dialog_string_pair->m_value;
+    else
+        return nullptr;
 }
