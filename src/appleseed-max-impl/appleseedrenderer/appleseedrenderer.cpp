@@ -207,10 +207,6 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_output_mode);
         break;
 
-      case ParamIdProjectPath:
-        v.s = settings.m_project_file_path;
-        break;
-
       case ParamIdScaleMultiplier:
         v.f = settings.m_scale_multiplier;
         break;
@@ -297,10 +293,6 @@ void AppleseedRendererPBlockAccessor::Get(
             
       case ParamIdEnableRenderStamp:
         v.i = static_cast<int>(settings.m_enable_render_stamp);
-        break;
-
-      case ParamIdRenderStampFormat:
-        v.s = settings.m_render_stamp_format;
         break;
 
       case ParamIdLogMaterialRendering:
