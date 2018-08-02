@@ -410,6 +410,7 @@ namespace
                 {
                   case IDC_BUTTON_LOG:
                     m_renderer->show_last_session_log();
+                    break;
 
                   case IDC_CHECK_USE_MAX_PROCEDURAL_MAPS:
                     {
