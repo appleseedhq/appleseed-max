@@ -126,7 +126,7 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
     asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
 
     params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
-    params.insert_path("generic_frame_renderer.passes", m_passes);
+    params.insert_path("passes", m_passes);
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
 
     params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);
