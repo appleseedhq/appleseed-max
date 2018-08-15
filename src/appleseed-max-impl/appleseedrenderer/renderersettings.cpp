@@ -69,6 +69,7 @@ namespace
             m_scale_multiplier = 1.0f;
 
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
+			m_use_embree = true;
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
 
@@ -110,7 +111,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
-
+	params.insert_path("use_embree", m_use_embree);
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
 

@@ -99,6 +99,7 @@ class RendererSettings
     //
 
     int                         m_rendering_threads;
+	bool						m_use_embree;
     bool                        m_low_priority_mode;
     bool                        m_use_max_procedural_maps;
     DialogLogTarget::OpenMode   m_log_open_mode;
