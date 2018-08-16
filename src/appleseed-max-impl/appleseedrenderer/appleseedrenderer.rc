@@ -87,7 +87,7 @@ BEGIN
                     "SpinnerControl",WS_TABSTOP,82,65,6,10
 END
 
-IDD_FORMVIEW_RENDERERPARAMS_LIGHTING DIALOGEX 0, 0, 200, 95
+IDD_FORMVIEW_RENDERERPARAMS_LIGHTING DIALOGEX 0, 0, 200, 109
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -97,17 +97,18 @@ BEGIN
     CONTROL         "Global Illumination",IDC_CHECK_GI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,5,73,10
     CONTROL         "Caustics",IDC_CHECK_CAUSTICS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,20,73,10
     CONTROL         "Max Ray Intensity:",IDC_CHECK_MAX_RAY_INTENSITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,35,67,10
-    CONTROL         "Max Ray Intensity",IDC_TEXT_MAX_RAY_INTENSITY,"CustEdit",WS_TABSTOP,68,35,30,10
+    CONTROL         "Max Ray Intensity",IDC_TEXT_MAX_RAY_INTENSITY,"CustEdit",WS_TABSTOP,73,35,30,10
     CONTROL         "Max Ray Intensity",IDC_SPINNER_MAX_RAY_INTENSITY,
-                    "SpinnerControl",WS_TABSTOP,100,35,6,10
+                    "SpinnerControl",WS_TABSTOP,105,35,6,10
     CONTROL         "Force Default Lights Off",IDC_CHECK_FORCE_OFF_DEFAULT_LIGHT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,50,106,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,66,106,10
     CONTROL         "Background Emits Light",IDC_CHECK_BACKGROUND_EMITS_LIGHT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,64,89,10
-    LTEXT           "Background Alpha:",IDC_STATIC_BACKGROUND_ALPHA,0,80,60,8
-    CONTROL         "Background Alpha",IDC_TEXT_BACKGROUND_ALPHA,"CustEdit",WS_TABSTOP,61,79,30,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,80,89,10
+    LTEXT           "Background Alpha:",IDC_STATIC_BACKGROUND_ALPHA,0,96,70,8
+    CONTROL         "Background Alpha",IDC_TEXT_BACKGROUND_ALPHA,"CustEdit",WS_TABSTOP,73,95,30,10
     CONTROL         "Background Alpha",IDC_SPINNER_BACKGROUND_ALPHA,
-                    "SpinnerControl",WS_TABSTOP,93,79,6,10
+                    "SpinnerControl",WS_TABSTOP,105,95,6,10
+    CONTROL         "Roughness Clamping",IDC_CHECK_ROUGHNESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,51,84,10
 END
 
 IDD_FORMVIEW_RENDERERPARAMS_OUTPUT DIALOGEX 0, 0, 200, 95
@@ -145,6 +146,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,38,197,10
     CONTROL         "Render Stamp",IDC_CHECK_RENDER_STAMP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,73,59,10
     CONTROL         "Render Stamp Format",IDC_TEXT_RENDER_STAMP,"CustEdit",WS_TABSTOP,61,73,137,10
+    CONTROL         "Use Embree",IDC_CHECK_ENABLE_EMBREE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,112,5,53,10
 END
 
 IDD_DIALOG_LOG DIALOGEX 150, 150, 364, 197
@@ -175,6 +177,7 @@ BEGIN
 
     IDD_FORMVIEW_RENDERERPARAMS_LIGHTING, DIALOG
     BEGIN
+        BOTTOMMARGIN, 95
     END
 
     IDD_FORMVIEW_RENDERERPARAMS_OUTPUT, DIALOG
@@ -217,6 +220,11 @@ BEGIN
     0
 END
 
+IDD_FORMVIEW_RENDERERPARAMS_LIGHTING AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -231,13 +239,6 @@ BEGIN
 0x4f20, 0x6570, 0x206e, 0x6e4f, 0x4520, 0x7272, 0x726f, 0x0073, 
     0
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

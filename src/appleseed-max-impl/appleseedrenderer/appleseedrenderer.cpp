@@ -107,6 +107,7 @@ namespace
         ParamIdForceDefaultLightsOff    = 13,
         ParamIdEnableBackgroundLight    = 14,
         ParamIdBackgroundAlphaValue     = 15,
+		ParamIdRoughnessClamping		= 23,
 
         ParamIdCPUCores                 = 16,
         ParamIdOpenLogMode              = 17,
@@ -115,6 +116,7 @@ namespace
         ParamIdEnableLowPriority        = 20,
         ParamIdEnableRenderStamp        = 21,
         ParamIdRenderStampFormat        = 22,
+		ParamIdEnableEmbree				= 24,
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -207,10 +209,6 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_output_mode);
         break;
 
-      case ParamIdProjectPath:
-        v.s = settings.m_project_file_path;
-        break;
-
       case ParamIdScaleMultiplier:
         v.f = settings.m_scale_multiplier;
         break;
@@ -279,6 +277,10 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_background_alpha;
         break;
 
+	  case ParamIdRoughnessClamping:
+		  v.i = static_cast<int>(settings.m_clamp_roughness);
+		  break;
+
       //
       // System.
       //
@@ -299,10 +301,6 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_enable_render_stamp);
         break;
 
-      case ParamIdRenderStampFormat:
-        v.s = settings.m_render_stamp_format;
-        break;
-
       case ParamIdLogMaterialRendering:
         v.i = static_cast<int>(settings.m_log_material_editor_messages);
         break;
@@ -310,6 +308,10 @@ void AppleseedRendererPBlockAccessor::Get(
       case ParamIdOpenLogMode:
         v.i = static_cast<int>(settings.m_log_open_mode);
         break;
+
+	  case ParamIdEnableEmbree:
+		v.i = static_cast<int>(settings.m_use_embree);
+		break;
 
       default:
         break;
@@ -404,6 +406,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_background_alpha = v.f;
         break;
 
+	  case ParamIdRoughnessClamping:
+		  settings.m_clamp_roughness = v.i > 0;
+		  break;
     //
     // System.
     //
@@ -435,6 +440,10 @@ void AppleseedRendererPBlockAccessor::Set(
       case ParamIdOpenLogMode:
         settings.m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(v.i);
         break;
+
+	  case ParamIdEnableEmbree:
+		  settings.m_use_embree = v.i > 0;
+		  break;
 
       default:
         break;
@@ -579,6 +588,12 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
+	ParamIdRoughnessClamping, L"roughness_clamping", TYPE_BOOL, P_TRANSIENT, 0,
+		p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ROUGHNESS,
+		p_default, TRUE,
+		p_accessor, &g_pblock_accessor,
+	p_end,
+
     ParamIdEnableMaxRayIntensity, L"enable_max_ray", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_MAX_RAY_INTENSITY,
         p_default, FALSE,
@@ -660,6 +675,13 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
     
+	ParamIdEnableEmbree, L"enable_embree", TYPE_BOOL, P_TRANSIENT, 0,
+		p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_EMBREE,
+		p_default, FALSE,
+		p_accessor, &g_pblock_accessor,
+	p_end,
+
+
     p_end
 );
 
@@ -1385,5 +1407,8 @@ const MCHAR* AppleseedRendererClassDesc::GetRsrcString(INT_PTR id)
 {
     const auto* dialog_string_pair = LOOKUP_KVPAIR_ARRAY(g_dialog_strings, id);
 
-    return dialog_string_pair->m_value;
+    if (dialog_string_pair != nullptr)
+        return dialog_string_pair->m_value;
+    else
+        return nullptr;
 }

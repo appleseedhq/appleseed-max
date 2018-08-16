@@ -65,7 +65,7 @@ namespace
             m_background_alpha = 0.0f;
             m_force_off_default_lights = false;
 			m_clamp_roughness = true;
-			
+
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
 
@@ -114,6 +114,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
 	params.insert_path("use_embree", m_use_embree);
+
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
 
@@ -129,7 +130,7 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
     asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
 
     params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
-    params.insert_path("generic_frame_renderer.passes", m_passes);
+    params.insert_path("passes", m_passes);
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
 
     params.insert_path("uniform_pixel_renderer.samples", m_pixel_samples);

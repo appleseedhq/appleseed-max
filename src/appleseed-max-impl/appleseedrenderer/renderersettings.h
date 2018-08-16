@@ -79,7 +79,7 @@ class RendererSettings
     float       m_background_alpha;
     bool        m_force_off_default_lights;
 	bool		m_clamp_roughness;
-	
+
     //
     // Output.
     //
