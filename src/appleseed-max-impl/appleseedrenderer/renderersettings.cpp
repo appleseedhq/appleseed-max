@@ -64,7 +64,8 @@ namespace
             m_background_emits_light = true;
             m_background_alpha = 0.0f;
             m_force_off_default_lights = false;
-
+			m_clamp_roughness = true;
+			
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
 
@@ -108,6 +109,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
         params.insert_path("pt.max_diffuse_bounces", 0);
 
     params.insert_path("pt.max_bounces", m_bounces);
+	params.insert_path("pt.clamp_roughness", m_clamp_roughness);
 
     params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
