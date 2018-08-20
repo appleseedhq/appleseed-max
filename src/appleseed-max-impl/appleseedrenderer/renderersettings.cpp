@@ -58,19 +58,31 @@ namespace
 
             m_gi = true;
             m_caustics = false;
-            m_bounces = 3;
+            m_bounces = 8;
+            m_dbounces = 3;
+            m_dbounces_set = false;
+            m_gbounces = 8;
+            m_gbounces_set = false;
+            m_sbounces = 8;
+            m_sbounces_set = false;
+            m_vbounces = 8;
+            m_vbounces_set = false;
+            m_dl_light_samples = 1;
+            m_dl_low_light_threshold = 0.0f;
+            m_ibl_env_samples = 1;
+
             m_max_ray_intensity_set = false;
             m_max_ray_intensity = 1.0f;
+            m_clamp_roughness = false;
             m_background_emits_light = true;
             m_background_alpha = 0.0f;
             m_force_off_default_lights = false;
-			m_clamp_roughness = true;
 
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
 
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
-			m_use_embree = true;
+            m_use_embree = false;
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
 
@@ -109,11 +121,33 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
         params.insert_path("pt.max_diffuse_bounces", 0);
 
     params.insert_path("pt.max_bounces", m_bounces);
-	params.insert_path("pt.clamp_roughness", m_clamp_roughness);
 
+    if (m_dbounces_set)
+        params.insert_path("pt.max_diffuse_bounces", -1);
+
+    params.insert_path("pt.max_diffuse_bounces", m_dbounces);
+
+    if (m_gbounces_set)
+        params.insert_path("pt.max_glossy_bounces", -1);
+
+    params.insert_path("pt.max_glossy_bounces", m_gbounces);
+
+    if (m_sbounces_set)
+        params.insert_path("pt.max_specular_bounces", -1);
+
+    params.insert_path("pt.max_specular_bounces", m_sbounces);
+
+    if (m_vbounces_set)
+        params.insert_path("pt.max_volume_bounces", -1);
+
+    params.insert_path("pt.max_volume_bounces", m_vbounces);
+    params.insert_path("pt.dl_light_samples", m_dl_light_samples);
+    params.insert_path("pt.dl_low_light_threshold", m_dl_low_light_threshold);
+    params.insert_path("pt.ibl_env_samples", m_ibl_env_samples);
     params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
-	params.insert_path("use_embree", m_use_embree);
+    params.insert_path("use_embree", m_use_embree);
+    params.insert_path("pt.clamp_roughness", m_clamp_roughness);
 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
