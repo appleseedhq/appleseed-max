@@ -127,6 +127,7 @@ namespace
         ParamIdDirectLightSamples       = 33,
         ParamIdLowLightThreshold        = 34,
         ParamIdEnvLightSamples          = 35,
+        ParamIdRRMinPathLength          = 36,
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -335,6 +336,10 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_ibl_env_samples;
         break;
 
+      case ParamIdRRMinPathLength:
+        v.i = settings.m_rr_min_path_length;
+        break;
+
       //
       // System.
       //
@@ -506,6 +511,10 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdEnvLightSamples:
         settings.m_ibl_env_samples = v.i;
+        break;
+
+      case ParamIdRRMinPathLength:
+        settings.m_rr_min_path_length = v.i;
         break;
 
     //
@@ -803,6 +812,12 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
+    ParamIdRRMinPathLength, L"russian_roulette_min_path_length", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RR_MIN_PATH_LENGTH, IDC_SPINNER_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_default, 6,
+        p_range, 1, 100,
+        p_accessor, &g_pblock_accessor,
+    p_end,
 
     // --- Parameters specifications for System rollup ---
 

@@ -70,7 +70,7 @@ namespace
             m_dl_light_samples = 1;
             m_dl_low_light_threshold = 0.0f;
             m_ibl_env_samples = 1;
-
+            m_rr_min_path_length = 6;
             m_max_ray_intensity_set = false;
             m_max_ray_intensity = 1.0f;
             m_clamp_roughness = false;
@@ -146,11 +146,14 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("pt.ibl_env_samples", m_ibl_env_samples);
     params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
-    params.insert_path("use_embree", m_use_embree);
+    params.insert_path("pt.rr_min_path_length", m_rr_min_path_length);
+
     params.insert_path("pt.clamp_roughness", m_clamp_roughness);
 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
+
+    params.insert_path("use_embree", m_use_embree);
 
     if (m_rendering_threads == 0)
         params.insert_path("rendering_threads", "auto");

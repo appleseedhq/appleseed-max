@@ -90,6 +90,7 @@ class RendererSettings
     int         m_dl_light_samples;
     float       m_dl_low_light_threshold;
     int         m_ibl_env_samples;
+    int         m_rr_min_path_length;
 
     //
     // Output.
