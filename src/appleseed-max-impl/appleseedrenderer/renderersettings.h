@@ -73,11 +73,27 @@ class RendererSettings
     bool        m_gi;
     bool        m_caustics;
     int         m_bounces;
+    int         m_dbounces;
+    bool        m_dbounces_set;
+    int         m_gbounces;
+    bool        m_gbounces_set;
+    int         m_sbounces;
+    bool        m_sbounces_set;
+    int         m_vbounces;
+    bool        m_vbounces_set;
+    bool        m_clamp_roughness;
     bool        m_max_ray_intensity_set;
     float       m_max_ray_intensity;
     bool        m_background_emits_light;
     float       m_background_alpha;
     bool        m_force_off_default_lights;
+    bool        m_dl_enable_dl;
+    int         m_dl_light_samples;
+    float       m_dl_low_light_threshold;
+    int         m_ibl_env_samples;
+    int         m_rr_min_path_length;
+    int         m_volume_distance_samples;
+    bool        m_optimize_for_lights_outside_volumes;
 
     //
     // Output.
@@ -99,6 +115,7 @@ class RendererSettings
     //
 
     int                         m_rendering_threads;
+    bool                        m_use_embree;
     bool                        m_low_priority_mode;
     bool                        m_use_max_procedural_maps;
     DialogLogTarget::OpenMode   m_log_open_mode;

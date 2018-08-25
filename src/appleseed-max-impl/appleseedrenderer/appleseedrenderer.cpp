@@ -107,7 +107,15 @@ namespace
         ParamIdForceDefaultLightsOff    = 13,
         ParamIdEnableBackgroundLight    = 14,
         ParamIdBackgroundAlphaValue     = 15,
-
+        ParamIdRoughnessClamping        = 23,
+        ParamIdEnableDiffBounceLimit    = 25,
+        ParamIdDiffBounceLimit          = 26,
+        ParamIdEnableGlossBounceLimit   = 27,
+        ParamIdGlossBounceLimit         = 28,
+        ParamIdEnableSpecBounceLimit    = 29,
+        ParamIdSpecBounceLimit          = 30,
+        ParamIdEnableVolBounceLimit     = 31,
+        ParamIdVolBounceLimit           = 32,
         ParamIdCPUCores                 = 16,
         ParamIdOpenLogMode              = 17,
         ParamIdLogMaterialRendering     = 18,
@@ -115,6 +123,14 @@ namespace
         ParamIdEnableLowPriority        = 20,
         ParamIdEnableRenderStamp        = 21,
         ParamIdRenderStampFormat        = 22,
+        ParamIdEnableEmbree             = 24,
+        ParamIdDirectLightSamples       = 33,
+        ParamIdLowLightThreshold        = 34,
+        ParamIdEnvLightSamples          = 35,
+        ParamIdRRMinPathLength          = 36,
+        ParamIdEnableDirectLighting     = 37,
+        ParamIdVolumeDistanceSamples    = 38,
+        ParamIdOptLightOutsideVolumes   = 39,
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -247,6 +263,10 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_gi);
         break;
             
+      case ParamIdEnableDirectLighting:
+        v.i = static_cast<int>(settings.m_dl_enable_dl);
+        break;
+     
       case ParamIdEnableCaustics:
         v.i = static_cast<int>(settings.m_caustics);
         break;
@@ -260,7 +280,31 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdForceDefaultLightsOff:
-          v.i = static_cast<int>(settings.m_force_off_default_lights);
+        v.i = static_cast<int>(settings.m_force_off_default_lights);
+        break;
+
+      case ParamIdRoughnessClamping:
+        v.i = static_cast<int>(settings.m_clamp_roughness);
+        break;
+
+      case ParamIdEnableDiffBounceLimit:
+        v.i = static_cast<int>(settings.m_dbounces_set);
+        break;
+
+      case ParamIdEnableGlossBounceLimit:
+        v.i = static_cast<int>(settings.m_gbounces_set);
+        break;
+
+      case ParamIdEnableSpecBounceLimit:
+        v.i = static_cast<int>(settings.m_sbounces_set);
+        break;
+
+      case ParamIdEnableVolBounceLimit:
+        v.i = static_cast<int>(settings.m_vbounces_set);
+        break;
+
+      case ParamIdOptLightOutsideVolumes:
+        v.i = static_cast<int>(settings.m_optimize_for_lights_outside_volumes);
         break;
 
       case ParamIdGIBounces:
@@ -273,6 +317,42 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdBackgroundAlphaValue:
         v.f = settings.m_background_alpha;
+        break;
+
+      case ParamIdDiffBounceLimit:
+        v.i = settings.m_dbounces;
+        break;
+
+      case ParamIdGlossBounceLimit:
+        v.i = settings.m_gbounces;
+        break;
+
+      case ParamIdSpecBounceLimit:
+        v.i = settings.m_sbounces;
+        break;
+
+      case ParamIdVolBounceLimit:
+        v.i = settings.m_vbounces;
+        break;
+
+      case ParamIdVolumeDistanceSamples:
+        v.i = settings.m_volume_distance_samples;
+        break;
+
+      case ParamIdDirectLightSamples:
+        v.i = settings.m_dl_light_samples;
+        break;
+
+      case ParamIdLowLightThreshold:
+        v.f = settings.m_dl_low_light_threshold;
+        break;
+
+      case ParamIdEnvLightSamples:
+        v.i = settings.m_ibl_env_samples;
+        break;
+
+      case ParamIdRRMinPathLength:
+        v.i = settings.m_rr_min_path_length;
         break;
 
       //
@@ -301,6 +381,10 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdOpenLogMode:
         v.i = static_cast<int>(settings.m_log_open_mode);
+        break;
+
+      case ParamIdEnableEmbree:
+        v.i = static_cast<int>(settings.m_use_embree);
         break;
 
       default:
@@ -368,6 +452,10 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_gi = v.i > 0;
         break;
             
+      case ParamIdEnableDirectLighting:
+        settings.m_dl_enable_dl = v.i > 0;
+        break;
+
       case ParamIdEnableCaustics:
         settings.m_caustics = v.i > 0;
         break;
@@ -384,8 +472,28 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_force_off_default_lights = v.i > 0;
         break;
 
+      case ParamIdEnableDiffBounceLimit:
+        settings.m_dbounces_set = v.i > 0;
+        break;
+
+      case ParamIdEnableGlossBounceLimit:
+        settings.m_gbounces_set = v.i > 0;
+        break;
+
+      case ParamIdEnableSpecBounceLimit:
+        settings.m_sbounces_set = v.i > 0;
+        break;
+
+      case ParamIdEnableVolBounceLimit:
+        settings.m_vbounces_set = v.i > 0;
+        break;
+
       case ParamIdGIBounces:
         settings.m_bounces = v.i;
+        break;
+
+      case ParamIdRoughnessClamping:
+        settings.m_clamp_roughness = v.i > 0;
         break;
 
       case ParamIdMaxRayIntensity:
@@ -394,6 +502,46 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdBackgroundAlphaValue:
         settings.m_background_alpha = v.f;
+        break;
+
+      case ParamIdDiffBounceLimit:
+        settings.m_dbounces = v.i;
+        break;
+
+      case ParamIdGlossBounceLimit:
+        settings.m_gbounces = v.i;
+        break;
+
+      case ParamIdSpecBounceLimit:
+        settings.m_sbounces = v.i;
+        break;
+
+      case ParamIdVolBounceLimit:
+        settings.m_vbounces = v.i;
+        break;
+
+      case ParamIdVolumeDistanceSamples:
+        settings.m_volume_distance_samples = v.i;
+        break;
+
+      case ParamIdOptLightOutsideVolumes:
+        settings.m_optimize_for_lights_outside_volumes = v.i > 0;
+        break;
+
+      case ParamIdDirectLightSamples:
+        settings.m_dl_light_samples = v.i;
+        break;
+
+      case ParamIdLowLightThreshold:
+        settings.m_dl_low_light_threshold = v.f;
+        break;
+
+      case ParamIdEnvLightSamples:
+        settings.m_ibl_env_samples = v.i;
+        break;
+
+      case ParamIdRRMinPathLength:
+        settings.m_rr_min_path_length = v.i;
         break;
 
     //
@@ -426,6 +574,10 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdOpenLogMode:
         settings.m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(v.i);
+        break;
+
+      case ParamIdEnableEmbree:
+        settings.m_use_embree = v.i > 0;
         break;
 
       default:
@@ -565,8 +717,20 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
+    ParamIdEnableDirectLighting, L"enable_direct_lighting", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_DL,
+        p_default, TRUE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
     ParamIdEnableCaustics, L"enable_caustics", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_CAUSTICS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdRoughnessClamping, L"roughness_clamping", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ROUGHNESS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
@@ -601,6 +765,103 @@ ParamBlockDesc2 g_param_block_desc(
         p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
         p_default, 0.0f,
         p_range, 0.0f, 1.0f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableDiffBounceLimit, L"enable_diffuse_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_DBOUNCE,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdDiffBounceLimit,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdDiffBounceLimit, L"diffuse_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DBOUNCES, IDC_SPINNER_DBOUNCES, SPIN_AUTOSCALE,
+        p_default, 3,
+        p_range, 0, 200,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableGlossBounceLimit, L"enable_glossy_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_GBOUNCE,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdGlossBounceLimit,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdGlossBounceLimit, L"glossy_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_GBOUNCES, IDC_SPINNER_GBOUNCES, SPIN_AUTOSCALE,
+        p_default, 8,
+        p_range, 0, 200,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableSpecBounceLimit, L"enable_specular_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_SBOUNCE,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdSpecBounceLimit,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSpecBounceLimit, L"specular_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SBOUNCES, IDC_SPINNER_SBOUNCES, SPIN_AUTOSCALE,
+        p_default, 8,
+        p_range, 0, 200,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableVolBounceLimit, L"enable_volume_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_VBOUNCE,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdVolBounceLimit,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdVolBounceLimit, L"volume_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_VBOUNCES, IDC_SPINNER_VBOUNCES, SPIN_AUTOSCALE,
+        p_default, 8,
+        p_range, 0, 200,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdVolumeDistanceSamples, L"volume_distance_samples", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_VOL_DISTANCE_SAMPLES, IDC_SPINNER_VOL_DISTANCE_SAMPLES, SPIN_AUTOSCALE,
+        p_default, 2,
+        p_range, 0, 100,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdOptLightOutsideVolumes, L"optimize_for_lights_outside_volumes", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_LIGHT_OUTSIDE_VOLUMES,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdDirectLightSamples, L"direct_light_samples", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DL_SAMPLES, IDC_SPINNER_DL_SAMPLES, SPIN_AUTOSCALE,
+        p_default, 1,
+        p_range, 1, 20,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdLowLightThreshold, L"low_light_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_DL_LOW_LIGHT_THRESHOLD, IDC_SPINNER_DL_LOW_LIGHT_THRESHOLD, SPIN_AUTOSCALE,
+        p_default, 0.00f,
+        p_range, 0.00f, 100.00f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnvLightSamples, L"environment_light_samples", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_ENV_SAMPLES, IDC_SPINNER_ENV_SAMPLES, SPIN_AUTOSCALE,
+        p_default, 1,
+        p_range, 1, 20,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdRRMinPathLength, L"russian_roulette_min_path_length", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RR_MIN_PATH_LENGTH, IDC_SPINNER_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_default, 6,
+        p_range, 1, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
@@ -652,6 +913,13 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
     
+    ParamIdEnableEmbree, L"enable_embree", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSystem, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_EMBREE,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+
     p_end
 );
 
