@@ -288,19 +288,19 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdEnableDiffBounceLimit:
-        v.i = static_cast<int>(settings.m_dbounces_set);
+        v.i = static_cast<int>(settings.m_diffuse_bounces_enabled);
         break;
 
       case ParamIdEnableGlossBounceLimit:
-        v.i = static_cast<int>(settings.m_gbounces_set);
+        v.i = static_cast<int>(settings.m_glossy_bounces_enabled);
         break;
 
       case ParamIdEnableSpecBounceLimit:
-        v.i = static_cast<int>(settings.m_sbounces_set);
+        v.i = static_cast<int>(settings.m_specular_bounces_enabled);
         break;
 
       case ParamIdEnableVolBounceLimit:
-        v.i = static_cast<int>(settings.m_vbounces_set);
+        v.i = static_cast<int>(settings.m_volume_bounces_enabled);
         break;
 
       case ParamIdOptLightOutsideVolumes:
@@ -308,7 +308,7 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdGIBounces:
-        v.i = settings.m_bounces;
+        v.i = settings.m_global_bounces;
         break;
 
       case ParamIdMaxRayIntensity:
@@ -320,19 +320,19 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdDiffBounceLimit:
-        v.i = settings.m_dbounces;
+        v.i = settings.m_diffuse_bounces;
         break;
 
       case ParamIdGlossBounceLimit:
-        v.i = settings.m_gbounces;
+        v.i = settings.m_glossy_bounces;
         break;
 
       case ParamIdSpecBounceLimit:
-        v.i = settings.m_sbounces;
+        v.i = settings.m_specular_bounces;
         break;
 
       case ParamIdVolBounceLimit:
-        v.i = settings.m_vbounces;
+        v.i = settings.m_volume_bounces;
         break;
 
       case ParamIdVolumeDistanceSamples:
@@ -384,7 +384,7 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdEnableEmbree:
-        v.i = static_cast<int>(settings.m_use_embree);
+        v.i = static_cast<int>(settings.m_enable_embree);
         break;
 
       default:
@@ -473,23 +473,23 @@ void AppleseedRendererPBlockAccessor::Set(
         break;
 
       case ParamIdEnableDiffBounceLimit:
-        settings.m_dbounces_set = v.i > 0;
+        settings.m_diffuse_bounces_enabled = v.i > 0;
         break;
 
       case ParamIdEnableGlossBounceLimit:
-        settings.m_gbounces_set = v.i > 0;
+        settings.m_glossy_bounces_enabled = v.i > 0;
         break;
 
       case ParamIdEnableSpecBounceLimit:
-        settings.m_sbounces_set = v.i > 0;
+        settings.m_specular_bounces_enabled = v.i > 0;
         break;
 
       case ParamIdEnableVolBounceLimit:
-        settings.m_vbounces_set = v.i > 0;
+        settings.m_volume_bounces_enabled = v.i > 0;
         break;
 
       case ParamIdGIBounces:
-        settings.m_bounces = v.i;
+        settings.m_global_bounces = v.i;
         break;
 
       case ParamIdRoughnessClamping:
@@ -505,19 +505,19 @@ void AppleseedRendererPBlockAccessor::Set(
         break;
 
       case ParamIdDiffBounceLimit:
-        settings.m_dbounces = v.i;
+        settings.m_diffuse_bounces = v.i;
         break;
 
       case ParamIdGlossBounceLimit:
-        settings.m_gbounces = v.i;
+        settings.m_glossy_bounces = v.i;
         break;
 
       case ParamIdSpecBounceLimit:
-        settings.m_sbounces = v.i;
+        settings.m_specular_bounces = v.i;
         break;
 
       case ParamIdVolBounceLimit:
-        settings.m_vbounces = v.i;
+        settings.m_volume_bounces = v.i;
         break;
 
       case ParamIdVolumeDistanceSamples:
@@ -577,7 +577,7 @@ void AppleseedRendererPBlockAccessor::Set(
         break;
 
       case ParamIdEnableEmbree:
-        settings.m_use_embree = v.i > 0;
+        settings.m_enable_embree = v.i > 0;
         break;
 
       default:
