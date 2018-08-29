@@ -70,7 +70,7 @@ class RendererSettings
     // Lighting.
     //
 
-    bool        m_gi;
+    bool        m_enable_gi;
     bool        m_caustics;
     int         m_global_bounces;
     int         m_diffuse_bounces;

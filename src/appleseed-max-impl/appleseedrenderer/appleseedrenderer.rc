@@ -92,8 +92,8 @@ STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Max Global Bounces:",IDC_STATIC_BOUNCES,0,35,68,8
-    CONTROL         "Max. Bounces",IDC_TEXT_BOUNCES,"CustEdit",WS_TABSTOP,105,34,16,10
-    CONTROL         "Bounces",IDC_SPINNER_BOUNCES,"SpinnerControl",WS_TABSTOP,124,34,6,10
+    CONTROL         "Max Global Bounces",IDC_TEXT_BOUNCES,"CustEdit",WS_TABSTOP,105,34,16,10
+    CONTROL         "Max Global Bounces",IDC_SPINNER_BOUNCES,"SpinnerControl",WS_TABSTOP,124,34,6,10
     CONTROL         "Global Illumination",IDC_CHECK_GI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,2,73,10
     CONTROL         "Caustics",IDC_CHECK_CAUSTICS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,105,2,40,10
     CONTROL         "Max Ray Intensity:",IDC_CHECK_MAX_RAY_INTENSITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,166,71,10
@@ -113,36 +113,39 @@ BEGIN
     CONTROL         "Max Glossy Bounces:",IDC_CHECK_ENABLE_GBOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,66,84,10
     CONTROL         "Max Specular Bounces:",IDC_CHECK_ENABLE_SBOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,82,91,10
     CONTROL         "Max Volume Bounces:",IDC_CHECK_ENABLE_VBOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,98,87,10
-    CONTROL         "Max. Bounces",IDC_TEXT_DBOUNCES,"CustEdit",WS_TABSTOP,105,50,16,10
-    CONTROL         "Bounces",IDC_SPINNER_DBOUNCES,"SpinnerControl",WS_TABSTOP,124,50,6,10
-    CONTROL         "Max. Bounces",IDC_TEXT_GBOUNCES,"CustEdit",WS_TABSTOP,105,66,16,10
-    CONTROL         "Bounces",IDC_SPINNER_GBOUNCES,"SpinnerControl",WS_TABSTOP,124,66,6,10
-    CONTROL         "Max. Bounces",IDC_TEXT_SBOUNCES,"CustEdit",WS_TABSTOP,105,82,16,10
-    CONTROL         "Bounces",IDC_SPINNER_SBOUNCES,"SpinnerControl",WS_TABSTOP,124,82,6,10
-    CONTROL         "Max. Bounces",IDC_TEXT_VBOUNCES,"CustEdit",WS_TABSTOP,105,98,16,10
-    CONTROL         "Bounces",IDC_SPINNER_VBOUNCES,"SpinnerControl",WS_TABSTOP,124,98,6,10
+    CONTROL         "Max Diffuse Bounces",IDC_TEXT_DBOUNCES,"CustEdit",WS_TABSTOP,105,50,16,10
+    CONTROL         "Max Diffuse Bounces",IDC_SPINNER_DBOUNCES,
+                    "SpinnerControl",WS_TABSTOP,124,50,6,10
+    CONTROL         "Max Glossy Bounces",IDC_TEXT_GBOUNCES,"CustEdit",WS_TABSTOP,105,66,16,10
+    CONTROL         "Max Glossy Bounces",IDC_SPINNER_GBOUNCES,"SpinnerControl",WS_TABSTOP,124,66,6,10
+    CONTROL         "Max Specular Bounces",IDC_TEXT_SBOUNCES,"CustEdit",WS_TABSTOP,105,82,16,10
+    CONTROL         "Max Specular Bounces",IDC_SPINNER_SBOUNCES,
+                    "SpinnerControl",WS_TABSTOP,124,82,6,10
+    CONTROL         "Max Volume Bounces",IDC_TEXT_VBOUNCES,"CustEdit",WS_TABSTOP,105,98,16,10
+    CONTROL         "Max Volume Bounces",IDC_SPINNER_VBOUNCES,"SpinnerControl",WS_TABSTOP,124,98,6,10
     LTEXT           "Direct Light Samples:",IDC_STATIC_DL_SAMPLES,0,183,69,8
     CONTROL         "Direct Light Samples",IDC_TEXT_DL_SAMPLES,"CustEdit",WS_TABSTOP,72,182,16,10
-    CONTROL         "Background Alpha",IDC_SPINNER_DL_SAMPLES,"SpinnerControl",WS_TABSTOP,90,182,6,10
+    CONTROL         "Direct Light Samples",IDC_SPINNER_DL_SAMPLES,
+                    "SpinnerControl",WS_TABSTOP,90,182,6,10
     LTEXT           "Low Light Threshold:",IDC_STATIC_DL_LOW_LIGHT_THRESHOLD,105,183,66,8
     CONTROL         "Low Light Threshold",IDC_TEXT_DL_LOW_LIGHT_THRESHOLD,
                     "CustEdit",WS_TABSTOP,172,182,19,10
-    CONTROL         "Background Alpha",IDC_SPINNER_DL_LOW_LIGHT_THRESHOLD,
+    CONTROL         "Low Light Threshold",IDC_SPINNER_DL_LOW_LIGHT_THRESHOLD,
                     "SpinnerControl",WS_TABSTOP,193,182,6,10
     LTEXT           "Environment Samples:",IDC_STATIC_ENV_SAMPLES,0,198,73,8
-    CONTROL         "Direct Light Samples",IDC_TEXT_ENV_SAMPLES,"CustEdit",WS_TABSTOP,72,198,16,10
-    CONTROL         "Background Alpha",IDC_SPINNER_ENV_SAMPLES,
+    CONTROL         "Environment Samples",IDC_TEXT_ENV_SAMPLES,"CustEdit",WS_TABSTOP,72,198,16,10
+    CONTROL         "Environment Samples",IDC_SPINNER_ENV_SAMPLES,
                     "SpinnerControl",WS_TABSTOP,90,198,6,10
     LTEXT           "Russian Roulette Start Bounce:",IDC_STATIC_RR_MIN_PATH_LENGTH,0,149,104,8
-    CONTROL         "Direct Light Samples",IDC_TEXT_RR_MIN_PATH_LENGTH,
+    CONTROL         "Russian Roulette Start Bounce",IDC_TEXT_RR_MIN_PATH_LENGTH,
                     "CustEdit",WS_TABSTOP,105,149,16,10
-    CONTROL         "Background Alpha",IDC_SPINNER_RR_MIN_PATH_LENGTH,
+    CONTROL         "Russian Roulette Start Bounce",IDC_SPINNER_RR_MIN_PATH_LENGTH,
                     "SpinnerControl",WS_TABSTOP,124,149,6,10
     CONTROL         "Direct Lighting",IDC_CHECK_DL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,18,61,10
     LTEXT           "Volume Distance Samples:",IDC_STATIC_VOL_DISTANCE_SAMPLES,0,115,104,8
     CONTROL         "Volume Distance Samples",IDC_TEXT_VOL_DISTANCE_SAMPLES,
                     "CustEdit",WS_TABSTOP,105,115,16,10
-    CONTROL         "Background Alpha",IDC_SPINNER_VOL_DISTANCE_SAMPLES,
+    CONTROL         "Volume Distance Samples",IDC_SPINNER_VOL_DISTANCE_SAMPLES,
                     "SpinnerControl",WS_TABSTOP,124,115,6,10
     CONTROL         "Optimize For Lights Outside Volumes",IDC_CHECK_LIGHT_OUTSIDE_VOLUMES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,132,130,10

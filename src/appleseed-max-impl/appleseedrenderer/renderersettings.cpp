@@ -56,7 +56,7 @@ namespace
             m_pixel_filter = 0;
             m_pixel_filter_size = 1.5f;
 
-            m_gi = true;
+            m_enable_gi = true;
             m_caustics = false;
             m_global_bounces = 8;
             m_diffuse_bounces = 3;
@@ -125,26 +125,20 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     if (m_diffuse_bounces_enabled)
         params.insert_path("pt.max_diffuse_bounces", m_diffuse_bounces);
 
-
-    if (!m_gi)
+    if (!m_enable_gi)
         params.insert_path("pt.max_diffuse_bounces", 0);
-
 
     if (m_glossy_bounces_enabled)
         params.insert_path("pt.max_glossy_bounces", m_glossy_bounces);
 
-
     if (m_specular_bounces_enabled)
         params.insert_path("pt.max_specular_bounces", m_specular_bounces);
-
 
     if (m_volume_bounces_enabled)
         params.insert_path("pt.max_volume_bounces", m_volume_bounces);
 
-
     if (!m_dl_enable_dl)
         params.insert_path("pt.enable_dl", false);
-
 
     params.insert_path("pt.dl_light_samples", m_dl_light_samples);
     params.insert_path("pt.dl_low_light_threshold", m_dl_low_light_threshold);
@@ -230,7 +224,7 @@ bool RendererSettings::save(ISave* isave) const
     isave->BeginChunk(ChunkSettingsLighting);
 
         isave->BeginChunk(ChunkSettingsLightingGI);
-        success &= write<bool>(isave, m_gi);
+        success &= write<bool>(isave, m_enable_gi);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingRRMinPathLength);
@@ -241,7 +235,7 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<bool>(isave, m_caustics);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingBounces);
+        isave->BeginChunk(ChunkSettingsLightingGlobalBounces);
         success &= write<int>(isave, m_global_bounces);
         isave->EndChunk();
 
@@ -496,7 +490,7 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
         switch (iload->CurChunkID())
         {
           case ChunkSettingsLightingGI:
-            result = read<bool>(iload, &m_gi);
+            result = read<bool>(iload, &m_enable_gi);
             break;
 
           case ChunkSettingsLightingRRMinPathLength:
@@ -507,7 +501,7 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
             result = read<bool>(iload, &m_caustics);
             break;
 
-          case ChunkSettingsLightingBounces:
+          case ChunkSettingsLightingGlobalBounces:
             result = read<int>(iload, &m_global_bounces);
             break;
 
