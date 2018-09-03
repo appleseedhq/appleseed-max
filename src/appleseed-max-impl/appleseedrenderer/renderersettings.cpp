@@ -56,11 +56,27 @@ namespace
             m_pixel_filter = 0;
             m_pixel_filter_size = 1.5f;
 
-            m_gi = true;
+            m_enable_gi = true;
             m_caustics = false;
-            m_bounces = 3;
+            m_global_bounces = 8;
+            m_diffuse_bounces = 3;
+            m_diffuse_bounces_enabled = false;
+            m_glossy_bounces = 8;
+            m_glossy_bounces_enabled = false;
+            m_specular_bounces = 8;
+            m_specular_bounces_enabled = false;
+            m_volume_bounces = 8;
+            m_volume_bounces_enabled = false;
+            m_volume_distance_samples = 2;
+            m_optimize_for_lights_outside_volumes = false;
+            m_dl_enable_dl = true;
+            m_dl_light_samples = 1;
+            m_dl_low_light_threshold = 0.0f;
+            m_ibl_env_samples = 1;
+            m_rr_min_path_length = 6;
             m_max_ray_intensity_set = false;
             m_max_ray_intensity = 1.0f;
+            m_clamp_roughness = false;
             m_background_emits_light = true;
             m_background_alpha = 0.0f;
             m_force_off_default_lights = false;
@@ -69,6 +85,7 @@ namespace
             m_scale_multiplier = 1.0f;
 
             m_rendering_threads = 0;    // 0 = as many as there are logical cores
+            m_enable_embree = false;
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
 
@@ -103,16 +120,40 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("sampling_mode", "qmc");
 
-    if (!m_gi)
+    params.insert_path("pt.max_bounces", m_global_bounces);
+
+    if (m_diffuse_bounces_enabled)
+        params.insert_path("pt.max_diffuse_bounces", m_diffuse_bounces);
+
+    if (!m_enable_gi)
         params.insert_path("pt.max_diffuse_bounces", 0);
 
-    params.insert_path("pt.max_bounces", m_bounces);
+    if (m_glossy_bounces_enabled)
+        params.insert_path("pt.max_glossy_bounces", m_glossy_bounces);
 
+    if (m_specular_bounces_enabled)
+        params.insert_path("pt.max_specular_bounces", m_specular_bounces);
+
+    if (m_volume_bounces_enabled)
+        params.insert_path("pt.max_volume_bounces", m_volume_bounces);
+
+    if (!m_dl_enable_dl)
+        params.insert_path("pt.enable_dl", false);
+
+    params.insert_path("pt.dl_light_samples", m_dl_light_samples);
+    params.insert_path("pt.dl_low_light_threshold", m_dl_low_light_threshold);
+    params.insert_path("pt.ibl_env_samples", m_ibl_env_samples);
     params.insert_path("pt.enable_ibl", m_background_emits_light);
     params.insert_path("pt.enable_caustics", m_caustics);
+    params.insert_path("pt.rr_min_path_length", m_rr_min_path_length);
+    params.insert_path("pt.volume_distance_samples", m_volume_distance_samples);
+    params.insert_path("pt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
+    params.insert_path("pt.clamp_roughness", m_clamp_roughness); 
 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
+
+    params.insert_path("use_embree", m_enable_embree);
 
     if (m_rendering_threads == 0)
         params.insert_path("rendering_threads", "auto");
@@ -183,15 +224,55 @@ bool RendererSettings::save(ISave* isave) const
     isave->BeginChunk(ChunkSettingsLighting);
 
         isave->BeginChunk(ChunkSettingsLightingGI);
-        success &= write<bool>(isave, m_gi);
+        success &= write<bool>(isave, m_enable_gi);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingRRMinPathLength);
+        success &= write<int>(isave, m_rr_min_path_length);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingCaustics);
         success &= write<bool>(isave, m_caustics);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingBounces);
-        success &= write<int>(isave, m_bounces);
+        isave->BeginChunk(ChunkSettingsLightingGlobalBounces);
+        success &= write<int>(isave, m_global_bounces);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingDiffuseBouncesEnabled);
+        success &= write<bool>(isave, m_diffuse_bounces_enabled);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingDiffuseBounces);
+        success &= write<int>(isave, m_diffuse_bounces);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingGlossyBouncesEnabled);
+        success &= write<bool>(isave, m_glossy_bounces_enabled);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingGlossyBounces);
+        success &= write<int>(isave, m_glossy_bounces);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingSpecularBouncesEnabled);
+        success &= write<bool>(isave, m_specular_bounces_enabled);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingSpecularBounces);
+        success &= write<int>(isave, m_specular_bounces);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingVolumeBouncesEnabled);
+        success &= write<bool>(isave, m_volume_bounces_enabled);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingVolumeBounces);
+        success &= write<int>(isave, m_volume_bounces);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingVolumeDistanceSamples);
+        success &= write<int>(isave, m_volume_distance_samples);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingMaxRayIntensitySet);
@@ -202,8 +283,28 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<float>(isave, m_max_ray_intensity);
         isave->EndChunk();
 
+        isave->BeginChunk(ChunkSettingsLightingClampRougness);
+        success &= write<bool>(isave, m_clamp_roughness);
+        isave->EndChunk();
+
         isave->BeginChunk(ChunkSettingsLightingBackgroundEmitsLight);
         success &= write<bool>(isave, m_background_emits_light);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingDirectLightingEnabled);
+        success &= write<bool>(isave, m_dl_enable_dl);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingDirectLightingSamples);
+        success &= write<int>(isave, m_dl_light_samples);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingDirectLightingLowLightThreshold);
+        success &= write<float>(isave, m_dl_low_light_threshold);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingImageBasedLightingSamples);
+        success &= write<int>(isave, m_ibl_env_samples);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingBackgroundAlpha);
@@ -212,6 +313,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsLightingForceOffDefaultLights);
         success &= write<bool>(isave, m_force_off_default_lights);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightingOptimizeLightsOutsideVolumes);
+        success &= write<bool>(isave, m_optimize_for_lights_outside_volumes);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -271,6 +376,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsSystemRenderStampString);
         success &= write(isave, m_render_stamp_format);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSystemEnableEmbree);
+        success &= write<bool>(isave, m_enable_embree);
         isave->EndChunk();
         
     isave->EndChunk();
@@ -381,15 +490,55 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
         switch (iload->CurChunkID())
         {
           case ChunkSettingsLightingGI:
-            result = read<bool>(iload, &m_gi);
+            result = read<bool>(iload, &m_enable_gi);
+            break;
+
+          case ChunkSettingsLightingRRMinPathLength:
+            result = read<int>(iload, &m_rr_min_path_length);
             break;
 
           case ChunkSettingsLightingCaustics:
             result = read<bool>(iload, &m_caustics);
             break;
 
-          case ChunkSettingsLightingBounces:
-            result = read<int>(iload, &m_bounces);
+          case ChunkSettingsLightingGlobalBounces:
+            result = read<int>(iload, &m_global_bounces);
+            break;
+
+          case ChunkSettingsLightingDiffuseBouncesEnabled:
+            result = read<bool>(iload, &m_diffuse_bounces_enabled);
+            break;
+
+          case ChunkSettingsLightingDiffuseBounces:
+            result = read<int>(iload, &m_diffuse_bounces);
+            break;
+
+          case ChunkSettingsLightingGlossyBouncesEnabled:
+            result = read<bool>(iload, &m_glossy_bounces_enabled);
+            break;
+
+          case ChunkSettingsLightingGlossyBounces:
+            result = read<int>(iload, &m_glossy_bounces);
+            break;
+
+          case ChunkSettingsLightingSpecularBouncesEnabled:
+            result = read<bool>(iload, &m_specular_bounces_enabled);
+            break;
+
+          case ChunkSettingsLightingSpecularBounces:
+            result = read<int>(iload, &m_specular_bounces);
+            break;
+
+          case ChunkSettingsLightingVolumeBouncesEnabled:
+            result = read<bool>(iload, &m_volume_bounces_enabled);
+            break;
+
+          case ChunkSettingsLightingVolumeBounces:
+            result = read<int>(iload, &m_volume_bounces);
+            break;
+
+          case ChunkSettingsLightingVolumeDistanceSamples:
+            result = read<int>(iload, &m_volume_distance_samples);
             break;
 
           case ChunkSettingsLightingMaxRayIntensitySet:
@@ -400,8 +549,28 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
             result = read<float>(iload, &m_max_ray_intensity);
             break;
 
+          case ChunkSettingsLightingClampRougness:
+            result = read<bool>(iload, &m_clamp_roughness);
+            break;
+
           case ChunkSettingsLightingBackgroundEmitsLight:
             result = read<bool>(iload, &m_background_emits_light);
+            break;
+
+          case ChunkSettingsLightingDirectLightingEnabled:
+            result = read<bool>(iload, &m_dl_enable_dl);
+            break;
+
+          case ChunkSettingsLightingDirectLightingSamples:
+            result = read<int>(iload, &m_dl_light_samples);
+            break;
+
+          case ChunkSettingsLightingDirectLightingLowLightThreshold:
+            result = read<float>(iload, &m_dl_low_light_threshold);
+            break;
+
+          case ChunkSettingsLightingImageBasedLightingSamples:
+            result = read<int>(iload, &m_ibl_env_samples);
             break;
 
           case ChunkSettingsLightingBackgroundAlpha:
@@ -410,6 +579,10 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
           case ChunkSettingsLightingForceOffDefaultLights:
             result = read<bool>(iload, &m_force_off_default_lights);
+            break;
+
+          case ChunkSettingsLightingOptimizeLightsOutsideVolumes:
+            result = read<bool>(iload, &m_optimize_for_lights_outside_volumes);
             break;
         }
 
@@ -516,6 +689,11 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
           case ChunkSettingsSystemRenderStampString:
             result = read(iload, &m_render_stamp_format);
             break;
+
+          case ChunkSettingsSystemEnableEmbree:
+            result = read<bool>(iload, &m_enable_embree);
+            break;
+
         }
 
         if (result != IO_OK)
