@@ -92,11 +92,13 @@ namespace
         ParamIdOuputMode                    = 0,
         ParamIdProjectPath                  = 1,
         ParamIdScaleMultiplier              = 2,
+
         ParamIdPixelSamples                 = 3,
         ParamIdTileSize                     = 4,
         ParamIdPasses                       = 5,
         ParamIdFilterSize                   = 6,
         ParamIdFilterType                   = 7,
+
         ParamIdEnableGI                     = 8,
         ParamIdEnableCaustics               = 10,
         ParamIdEnableMaxRayIntensity        = 11,
@@ -121,6 +123,7 @@ namespace
         ParamIdEnableDirectLighting         = 37,
         ParamIdVolumeDistanceSamples        = 38,
         ParamIdOptLightOutsideVolumes       = 39,
+
         ParamIdCPUCores                     = 16,
         ParamIdOpenLogMode                  = 17,
         ParamIdLogMaterialRendering         = 18,
@@ -129,7 +132,6 @@ namespace
         ParamIdEnableRenderStamp            = 21,
         ParamIdRenderStampFormat            = 22,
         ParamIdEnableEmbree                 = 24,
-
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
