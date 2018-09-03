@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\appleseedrendererparamdlg.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\maxsceneentities.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\projectbuilder.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\renderercontroller.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\renderersettings.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\tilecallback.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\updatechecker.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="iappleseedmtl.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="version.cpp" />
+    <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedsssmtl\appleseedsssmtl.cpp">
+      <Filter>appleseedsssmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp">
+      <Filter>appleseedglassmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp">
+      <Filter>appleseedlightmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="logtarget.cpp" />
+    <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp">
+      <Filter>appleseedenvmap</Filter>
+    </ClCompile>
+    <ClCompile Include="seexprutils.cpp" />
+    <ClCompile Include="oslutils.cpp" />
+    <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactivesession.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp">
+      <Filter>appleseedinteractive</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp">
+      <Filter>appleseedblendmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp">
+      <Filter>appleseedrenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedoslplugin\oslclassdesc.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedoslplugin\oslmaterial.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedoslplugin\oslparamdlg.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedoslplugin\oslshadermetadata.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedoslplugin\oslshaderregistry.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedoslplugin\osltexture.cpp">
+      <Filter>appleseedoslplugin</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClCompile>
+    <ClCompile Include="builtinmapsupport.cpp" />
+    <ClCompile Include="osloutputselectormap\osloutputselector.cpp">
+      <Filter>osloutputselectormap</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp">
+      <Filter>appleseedrenderelement</Filter>
+    </ClCompile>
+    <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClCompile>   
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\appleseedrendererparamdlg.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\datachunks.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\maxsceneentities.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\projectbuilder.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\renderercontroller.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\renderersettings.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\resource.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\tilecallback.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\updatechecker.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="iappleseedmtl.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="appleseeddisneymtl\appleseeddisneymtl.h">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseeddisneymtl\datachunks.h">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseeddisneymtl\resource.h">
+      <Filter>appleseeddisneymtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h">
+      <Filter>appleseedsssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedsssmtl\datachunks.h">
+      <Filter>appleseedsssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedsssmtl\resource.h">
+      <Filter>appleseedsssmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedglassmtl\appleseedglassmtl.h">
+      <Filter>appleseedglassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedglassmtl\datachunks.h">
+      <Filter>appleseedglassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedglassmtl\resource.h">
+      <Filter>appleseedglassmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedlightmtl\appleseedlightmtl.h">
+      <Filter>appleseedlightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedlightmtl\datachunks.h">
+      <Filter>appleseedlightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedlightmtl\resource.h">
+      <Filter>appleseedlightmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="logtarget.h" />
+    <ClInclude Include="bump\resource.h">
+      <Filter>bump</Filter>
+    </ClInclude>
+    <ClInclude Include="bump\bumpparammapdlgproc.h">
+      <Filter>bump</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedobjpropsmod\resource.h">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedenvmap\appleseedenvmap.h">
+      <Filter>appleseedenvmap</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedenvmap\datachunks.h">
+      <Filter>appleseedenvmap</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedenvmap\resource.h">
+      <Filter>appleseedenvmap</Filter>
+    </ClInclude>
+    <ClInclude Include="seexprutils.h" />
+    <ClInclude Include="oslutils.h" />
+    <ClInclude Include="appleseedinteractive\appleseedinteractive.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedinteractive\interactiverenderercontroller.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedinteractive\interactivesession.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedinteractive\interactivetilecallback.h">
+      <Filter>appleseedinteractive</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedblendmtl\appleseedblendmtl.h">
+      <Filter>appleseedblendmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedblendmtl\datachunks.h">
+      <Filter>appleseedblendmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedblendmtl\resource.h">
+      <Filter>appleseedblendmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderer\dialoglogtarget.h">
+      <Filter>appleseedrenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedoslplugin\templategenerator.h" />
+    <ClInclude Include="appleseedoslplugin\oslclassdesc.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedoslplugin\oslmaterial.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedoslplugin\oslparamdlg.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedoslplugin\oslshadermetadata.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedoslplugin\oslshaderregistry.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedoslplugin\osltexture.h">
+      <Filter>appleseedoslplugin</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\datachunks.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\datachunks.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedplasticmtl\resource.h">
+      <Filter>appleseedplasticmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedmetalmtl\resource.h">
+      <Filter>appleseedmetalmtl</Filter>
+    </ClInclude>
+    <ClInclude Include="builtinmapsupport.h" />
+    <ClInclude Include="osloutputselectormap\datachunks.h">
+      <Filter>osloutputselectormap</Filter>
+    </ClInclude>
+    <ClInclude Include="osloutputselectormap\osloutputselector.h">
+      <Filter>osloutputselectormap</Filter>
+    </ClInclude>
+    <ClInclude Include="osloutputselectormap\resource.h">
+      <Filter>osloutputselectormap</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderelement\appleseedrenderelement.h">
+      <Filter>appleseedrenderelement</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedrenderelement\resource.h">
+      <Filter>appleseedrenderelement</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedvolumemtl\appleseedvolumemtl.h">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedvolumemtl\datachunks.h">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClInclude>
+    <ClInclude Include="appleseedvolumemtl\resource.h">
+      <Filter>appleseedvolumemtl</Filter>
+    </ClInclude>  
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
+      <Filter>appleseedrenderer</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc">
+      <Filter>appleseeddisneymtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedsssmtl\appleseedsssmtl.rc">
+      <Filter>appleseedsssmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedglassmtl\appleseedglassmtl.rc">
+      <Filter>appleseedglassmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedlightmtl\appleseedlightmtl.rc">
+      <Filter>appleseedlightmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="bump\bump.rc">
+      <Filter>bump</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc">
+      <Filter>appleseedobjpropsmod</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc">
+      <Filter>appleseedenvmap</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc">
+      <Filter>appleseedblendmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc">
+      <Filter>appleseedmetalmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc">
+      <Filter>appleseedplasticmtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc">
+      <Filter>osloutputselectormap</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc">
+      <Filter>appleseedrenderelement</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="appleseedvolumemtl\appleseedvolumemtl.rc">
+      <Filter>appleseedvolumemtl</Filter>
+    </ResourceCompile>    
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="bump">
+      <UniqueIdentifier>{28dbdbb6-9693-4bb5-bedf-e5f0e52c57ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedobjpropsmod">
+      <UniqueIdentifier>{de4af110-ea41-4ea2-a8be-f22563cd66aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedlightmtl">
+      <UniqueIdentifier>{f7d6f5af-25a2-427e-bf28-a4e46d2ddaf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedglassmtl">
+      <UniqueIdentifier>{666a1c7e-ebcb-42b1-b62e-a57419733d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseeddisneymtl">
+      <UniqueIdentifier>{0f63c39e-3c84-4009-a32b-ae9dfec1dc15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedrenderer">
+      <UniqueIdentifier>{3b53d01d-35e2-4c3e-a0a4-6d9921c729a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedsssmtl">
+      <UniqueIdentifier>{4e79312e-d35e-43b5-bc53-f2bd6ad9d984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedenvmap">
+      <UniqueIdentifier>{41c47cf2-0141-4542-8ceb-f7dd8cd6da1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedinteractive">
+      <UniqueIdentifier>{738b8ba2-d1ad-4c0e-b3f6-6f374cd418ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedblendmtl">
+      <UniqueIdentifier>{d115203b-d27f-49e3-9aee-6676110ffc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedoslplugin">
+      <UniqueIdentifier>{a83159d6-f9c3-48db-a640-3631607e2b3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedmetalmtl">
+      <UniqueIdentifier>{da72b6d2-5882-474f-99fd-1c886bc53188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedplasticmtl">
+      <UniqueIdentifier>{209beda5-1f93-4d87-87ff-e3db75f8b79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="osloutputselectormap">
+      <UniqueIdentifier>{318596f7-e094-4f52-95b8-a84b79e03602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedrenderelement">
+      <UniqueIdentifier>{eb4fdb58-b637-4d91-a7e6-7b1455b4c6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appleseedvolumemtl">
+      <UniqueIdentifier>{d40f57d8-69cf-46e7-9c2b-34744338b501}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="appleseedrenderelement\appleseedrenderelement.aps">
+      <Filter>appleseedrenderelement</Filter>
+    </None>
+  </ItemGroup>
+</Project>
