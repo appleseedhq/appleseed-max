@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Ship|x64">
+      <Configuration>Ship</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{62C41566-DBCB-49D3-943A-4DD53222269E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>appleseedmax</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-max2019-impl</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-max2019-impl</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>appleseed-max2019-impl</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;DEBUG;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_55_0;$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current" 2&gt;nul
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\*.oso" 2&gt;nul
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\boost_1_55_0;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc142\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current" 2&gt;nul
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\*.oso" 2&gt;nul
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\boost_1_55_0;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc142\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current" 2&gt;nul
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2019\Current\"
+
+mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\" 2&gt;nul
+
+del /Q "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\*.oso" 2&gt;nul
+del /Q "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\*.oso" 2&gt;nul
+
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\shaders\appleseed\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2019\Current\shaders\max\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2019\Current\shaders\appleseed\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="appleseedblendmtl\appleseedblendmtl.cpp" />
+    <ClCompile Include="appleseedenvmap\appleseedenvmap.cpp" />
+    <ClCompile Include="appleseedinteractive\appleseedinteractive.cpp" />
+    <ClCompile Include="appleseedinteractive\interactiverenderercontroller.cpp" />
+    <ClCompile Include="appleseedinteractive\interactivesession.cpp" />
+    <ClCompile Include="appleseedinteractive\interactivetilecallback.cpp" />
+    <ClCompile Include="appleseedmetalmtl\appleseedmetalmtl.cpp" />
+    <ClCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.cpp" />
+    <ClCompile Include="appleseedoslplugin\osltexture.cpp" />
+    <ClCompile Include="appleseedoslplugin\oslclassdesc.cpp" />
+    <ClCompile Include="appleseedoslplugin\oslmaterial.cpp" />
+    <ClCompile Include="appleseedoslplugin\oslshadermetadata.cpp" />
+    <ClCompile Include="appleseedoslplugin\oslshaderregistry.cpp" />
+    <ClCompile Include="appleseedoslplugin\oslparamdlg.cpp" />
+    <ClCompile Include="appleseedplasticmtl\appleseedplasticmtl.cpp" />
+    <ClCompile Include="appleseeddisneymtl\appleseeddisneymtl.cpp" />
+    <ClCompile Include="appleseedglassmtl\appleseedglassmtl.cpp" />
+    <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp" />
+    <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp" />
+    <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp" />
+    <ClCompile Include="builtinmapsupport.cpp" />
+    <ClCompile Include="iappleseedmtl.cpp" />
+    <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
+    <ClCompile Include="logtarget.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="osloutputselectormap\osloutputselector.cpp" />
+    <ClCompile Include="oslutils.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="appleseedrenderer\appleseedrenderer.cpp" />
+    <ClCompile Include="appleseedrenderer\appleseedrendererparamdlg.cpp" />
+    <ClCompile Include="appleseedrenderer\maxsceneentities.cpp" />
+    <ClCompile Include="appleseedrenderer\projectbuilder.cpp" />
+    <ClCompile Include="appleseedrenderer\renderercontroller.cpp" />
+    <ClCompile Include="appleseedrenderer\renderersettings.cpp" />
+    <ClCompile Include="appleseedrenderer\tilecallback.cpp" />
+    <ClCompile Include="appleseedrenderer\updatechecker.cpp" />
+    <ClCompile Include="appleseedsssmtl\appleseedsssmtl.cpp" />
+    <ClCompile Include="seexprutils.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="version.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="appleseedblendmtl\appleseedblendmtl.h" />
+    <ClInclude Include="appleseedblendmtl\datachunks.h" />
+    <ClInclude Include="appleseedblendmtl\resource.h" />
+    <ClInclude Include="appleseedenvmap\appleseedenvmap.h" />
+    <ClInclude Include="appleseedenvmap\datachunks.h" />
+    <ClInclude Include="appleseedenvmap\resource.h" />
+    <ClInclude Include="appleseedinteractive\appleseedinteractive.h" />
+    <ClInclude Include="appleseedinteractive\interactiverenderercontroller.h" />
+    <ClInclude Include="appleseedinteractive\interactivesession.h" />
+    <ClInclude Include="appleseedinteractive\interactivetilecallback.h" />
+    <ClInclude Include="appleseedmetalmtl\appleseedmetalmtl.h" />
+    <ClInclude Include="appleseedmetalmtl\datachunks.h" />
+    <ClInclude Include="appleseedmetalmtl\resource.h" />
+    <ClInclude Include="appleseedobjpropsmod\appleseedobjpropsmod.h" />
+    <ClInclude Include="appleseedobjpropsmod\resource.h" />
+    <ClInclude Include="appleseedoslplugin\osltexture.h" />
+    <ClInclude Include="appleseedoslplugin\oslclassdesc.h" />
+    <ClInclude Include="appleseedoslplugin\oslmaterial.h" />
+    <ClInclude Include="appleseedoslplugin\oslshadermetadata.h" />
+    <ClInclude Include="appleseedoslplugin\oslshaderregistry.h" />
+    <ClInclude Include="appleseedoslplugin\oslparamdlg.h" />
+    <ClInclude Include="appleseedoslplugin\templategenerator.h" />
+    <ClInclude Include="appleseedplasticmtl\appleseedplasticmtl.h" />
+    <ClInclude Include="appleseedplasticmtl\datachunks.h" />
+    <ClInclude Include="appleseedplasticmtl\resource.h" />
+    <ClInclude Include="appleseedrenderelement\appleseedrenderelement.h" />
+    <ClInclude Include="appleseedrenderelement\resource.h" />
+    <ClInclude Include="appleseedrenderer\dialoglogtarget.h" />
+    <ClInclude Include="appleseedvolumemtl\appleseedvolumemtl.h" />
+    <ClInclude Include="appleseedvolumemtl\datachunks.h" />
+    <ClInclude Include="appleseedvolumemtl\resource.h" />    
+    <ClInclude Include="builtinmapsupport.h" />
+    <ClInclude Include="bump\bumpparammapdlgproc.h" />
+    <ClInclude Include="bump\resource.h" />
+    <ClInclude Include="appleseeddisneymtl\appleseeddisneymtl.h" />
+    <ClInclude Include="appleseeddisneymtl\datachunks.h" />
+    <ClInclude Include="appleseeddisneymtl\resource.h" />
+    <ClInclude Include="appleseedglassmtl\appleseedglassmtl.h" />
+    <ClInclude Include="appleseedglassmtl\datachunks.h" />
+    <ClInclude Include="appleseedglassmtl\resource.h" />
+    <ClInclude Include="iappleseedmtl.h" />
+    <ClInclude Include="appleseedlightmtl\appleseedlightmtl.h" />
+    <ClInclude Include="appleseedlightmtl\datachunks.h" />
+    <ClInclude Include="appleseedlightmtl\resource.h" />
+    <ClInclude Include="logtarget.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="appleseedrenderer\appleseedrenderer.h" />
+    <ClInclude Include="appleseedrenderer\appleseedrendererparamdlg.h" />
+    <ClInclude Include="appleseedrenderer\datachunks.h" />
+    <ClInclude Include="appleseedrenderer\maxsceneentities.h" />
+    <ClInclude Include="appleseedrenderer\projectbuilder.h" />
+    <ClInclude Include="appleseedrenderer\renderercontroller.h" />
+    <ClInclude Include="appleseedrenderer\renderersettings.h" />
+    <ClInclude Include="appleseedrenderer\resource.h" />
+    <ClInclude Include="appleseedrenderer\tilecallback.h" />
+    <ClInclude Include="appleseedrenderer\updatechecker.h" />
+    <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h" />
+    <ClInclude Include="appleseedsssmtl\datachunks.h" />
+    <ClInclude Include="appleseedsssmtl\resource.h" />
+    <ClInclude Include="osloutputselectormap\datachunks.h" />
+    <ClInclude Include="osloutputselectormap\osloutputselector.h" />
+    <ClInclude Include="osloutputselectormap\resource.h" />
+    <ClInclude Include="oslutils.h" />
+    <ClInclude Include="seexprutils.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc" />
+    <ResourceCompile Include="appleseedenvmap\appleseedenvmap.rc" />
+    <ResourceCompile Include="appleseedmetalmtl\appleseedmetalmtl.rc" />
+    <ResourceCompile Include="appleseedobjpropsmod\appleseedobjpropsmod.rc" />
+    <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc" />
+    <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc" />
+    <ResourceCompile Include="appleseedvolumemtl\appleseedvolumemtl.rc" />    
+    <ResourceCompile Include="bump\bump.rc" />
+    <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc" />
+    <ResourceCompile Include="appleseedglassmtl\appleseedglassmtl.rc" />
+    <ResourceCompile Include="appleseedlightmtl\appleseedlightmtl.rc" />
+    <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc" />
+    <ResourceCompile Include="appleseedsssmtl\appleseedsssmtl.rc" />
+    <ResourceCompile Include="osloutputselectormap\osloutputselector.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="appleseedrenderelement\appleseedrenderelement.aps" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
