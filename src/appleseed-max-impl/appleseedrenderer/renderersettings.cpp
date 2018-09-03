@@ -57,7 +57,7 @@ namespace
             m_pixel_filter_size = 1.5f;
 
             m_enable_gi = true;
-            m_caustics = false;
+            m_enable_caustics = false;
             m_global_bounces = 8;
             m_diffuse_bounces = 3;
             m_diffuse_bounces_enabled = false;
@@ -144,7 +144,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("pt.dl_low_light_threshold", m_dl_low_light_threshold);
     params.insert_path("pt.ibl_env_samples", m_ibl_env_samples);
     params.insert_path("pt.enable_ibl", m_background_emits_light);
-    params.insert_path("pt.enable_caustics", m_caustics);
+    params.insert_path("pt.enable_caustics", m_enable_caustics);
     params.insert_path("pt.rr_min_path_length", m_rr_min_path_length);
     params.insert_path("pt.volume_distance_samples", m_volume_distance_samples);
     params.insert_path("pt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
@@ -232,7 +232,7 @@ bool RendererSettings::save(ISave* isave) const
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingCaustics);
-        success &= write<bool>(isave, m_caustics);
+        success &= write<bool>(isave, m_enable_caustics);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsLightingGlobalBounces);
@@ -498,7 +498,7 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
             break;
 
           case ChunkSettingsLightingCaustics:
-            result = read<bool>(iload, &m_caustics);
+            result = read<bool>(iload, &m_enable_caustics);
             break;
 
           case ChunkSettingsLightingGlobalBounces:

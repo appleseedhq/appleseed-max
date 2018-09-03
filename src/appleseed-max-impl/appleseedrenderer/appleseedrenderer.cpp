@@ -92,13 +92,13 @@ namespace
         ParamIdOuputMode                    = 0,
         ParamIdProjectPath                  = 1,
         ParamIdScaleMultiplier              = 2,
-        
+
         ParamIdPixelSamples                 = 3,
         ParamIdTileSize                     = 4,
         ParamIdPasses                       = 5,
         ParamIdFilterSize                   = 6,
         ParamIdFilterType                   = 7,
-        
+
         ParamIdEnableGI                     = 8,
         ParamIdEnableCaustics               = 10,
         ParamIdEnableMaxRayIntensity        = 11,
@@ -132,7 +132,6 @@ namespace
         ParamIdEnableRenderStamp            = 21,
         ParamIdRenderStampFormat            = 22,
         ParamIdEnableEmbree                 = 24,
-
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -270,7 +269,7 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
      
       case ParamIdEnableCaustics:
-        v.i = static_cast<int>(settings.m_caustics);
+        v.i = static_cast<int>(settings.m_enable_caustics);
         break;
             
       case ParamIdEnableMaxRayIntensity:
@@ -459,7 +458,7 @@ void AppleseedRendererPBlockAccessor::Set(
         break;
 
       case ParamIdEnableCaustics:
-        settings.m_caustics = v.i > 0;
+        settings.m_enable_caustics = v.i > 0;
         break;
             
       case ParamIdEnableMaxRayIntensity:
