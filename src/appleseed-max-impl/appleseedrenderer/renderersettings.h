@@ -71,7 +71,7 @@ class RendererSettings
     //
 
     bool        m_enable_gi;
-    bool        m_caustics;
+    bool        m_enable_caustics;
     int         m_global_bounces;
     int         m_diffuse_bounces;
     bool        m_diffuse_bounces_enabled;
