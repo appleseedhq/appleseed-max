@@ -148,7 +148,7 @@ namespace
         p_end,
         paramIdNestedmediumPriority, L"nested_medium_priority", TYPE_INT, P_TRANSIENT, 0,
             p_ui, ParamMapIdVisibility, TYPE_SPINNER, EDITTYPE_INT, IDS_TEXT_Nested_Medium_Priority, IDS_SPINNER_Nested_Medium_Priority, SPIN_AUTOSCALE,
-            p_default, 0, p_range, 0, 100,
+            p_default, 0, p_range, -128, 127,
         p_end,
         // --- The end ---
         p_end);
