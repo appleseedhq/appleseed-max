@@ -470,6 +470,25 @@ namespace
         return std::string();
     }
 
+    int get_medium_priority(Object* object, const TimeValue time)
+    {
+        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+        {
+            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
+            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
+            {
+                Modifier* modifier = derived_object->GetModifier(i);
+                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
+                {
+                    const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+                    return obj_props_mod->get_medium_priority(time);
+                }
+            }
+        }
+
+        return 0;
+    }
+
     bool should_optimize_for_instancing(Object* object, const TimeValue time)
     {
         if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
@@ -610,7 +629,10 @@ namespace
                     get_visibility_flags(instance_node->GetObjectRef(), time)))
             .insert(
                 "sss_set_id",
-                get_sss_set(instance_node->GetObjectRef(), time));
+                get_sss_set(instance_node->GetObjectRef(), time))
+            .insert(
+                "medium_priority",
+                get_medium_priority(instance_node->GetObjectRef(), time));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 

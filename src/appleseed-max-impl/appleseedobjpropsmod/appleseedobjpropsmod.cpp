@@ -75,7 +75,8 @@ namespace
         ParamIdVisibilitySpecular       = 7,
         ParamIdVisibilitySSS            = 8,
         ParamIdSSSSet                   = 9,
-        ParamIdOptimizeForInstancing    = 10
+        ParamIdOptimizeForInstancing    = 10,
+        ParamIdMediumPriority           = 11
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -144,6 +145,10 @@ namespace
         p_end,
         ParamIdSSSSet, L"sss_set", TYPE_STRING, 0, IDS_SSS_SET,
             p_ui, ParamMapIdVisibility, TYPE_EDITBOX, IDC_SSS_SET,
+        p_end,
+        ParamIdMediumPriority, L"medium_priority", TYPE_INT, P_TRANSIENT, 0,
+            p_ui, ParamMapIdVisibility, TYPE_SPINNER, EDITTYPE_INT, IDS_TEXT_MEDIUM_PRIORITY, IDS_SPINNER_MEDIUM_PRIORITY, SPIN_AUTOSCALE,
+            p_default, 0, p_range, -128, 127,
         p_end,
 
         // --- The end ---
@@ -350,6 +355,11 @@ std::string AppleseedObjPropsMod::get_sss_set(const TimeValue t) const
     const MCHAR* str_value;
     m_pblock->GetValue(ParamIdSSSSet, t, str_value, FOREVER);
     return str_value != nullptr ? wide_to_utf8(str_value) : std::string();
+}
+
+int AppleseedObjPropsMod::get_medium_priority(const TimeValue t) const
+{
+   return m_pblock->GetInt(ParamIdMediumPriority, t, FOREVER);
 }
 
 
