@@ -6,23 +6,14 @@ set zipcmd=%~dp0\tools\7z\7z.exe
 pushd %~dp0
 
 echo ============ Cleaning up ============
-rmdir /S /Q appleseed-max2015 2>nul
 rmdir /S /Q appleseed-max2016 2>nul
 rmdir /S /Q appleseed-max2017 2>nul
 rmdir /S /Q appleseed-max2018 2>nul
 rmdir /S /Q appleseed-max2019 2>nul
-del appleseed-max2015-x.x.x-yyyy.zip 2>nul
 del appleseed-max2016-x.x.x-yyyy.zip 2>nul
 del appleseed-max2017-x.x.x-yyyy.zip 2>nul
 del appleseed-max2018-x.x.x-yyyy.zip 2>nul
 del appleseed-max2019-x.x.x-yyyy.zip 2>nul
-echo.
-
-echo ============ Creating 3ds Max 2015 archive ============
-mkdir appleseed-max2015
-xcopy /S ..\sandbox\max2015\%config%\*.* appleseed-max2015
-%zipcmd% a -r -mx=9 appleseed-max2015-x.x.x-yyyy.zip appleseed-max2015
-rmdir /S /Q appleseed-max2015
 echo.
 
 echo ============ Creating 3ds Max 2016 archive ============
