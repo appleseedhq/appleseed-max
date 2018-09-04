@@ -28,9 +28,9 @@
 #define IDC_SSS_SET_LABEL                   7094
 #define IDC_BUTTON_OPTIMIZE_FOR_INSTANCING  7101
 #define IDS_OPTIMIZE_FOR_INSTANCING         7102
-#define IDS_STATIC_Nested_Medium_Priority   7200
-#define IDS_TEXT_Nested_Medium_Priority     7201
-#define IDS_SPINNER_Nested_Medium_Priority  7202
+#define IDS_STATIC_MEDIUM_PRIORITY          7200
+#define IDS_TEXT_MEDIUM_PRIORITY            7201
+#define IDS_SPINNER_MEDIUM_PRIORITY         7202
 
 // Next default values for new objects
 // 

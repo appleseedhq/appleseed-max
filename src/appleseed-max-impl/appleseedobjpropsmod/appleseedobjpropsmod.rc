@@ -67,10 +67,10 @@ BEGIN
     LTEXT           "SSS Set Id:",IDC_SSS_SET_LABEL,5,131,38,8
     CONTROL         "Optimize for Instancing",IDC_BUTTON_OPTIMIZE_FOR_INSTANCING,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,104,94,10
-    LTEXT           "Medium Priority:",IDS_STATIC_Nested_Medium_Priority,5,117,50,8
-    CONTROL         "Nested Medium Priority",IDS_TEXT_Nested_Medium_Priority,
+    LTEXT           "Medium Priority:",IDS_STATIC_MEDIUM_PRIORITY,5,117,50,8
+    CONTROL         "Medium Priority",IDS_TEXT_MEDIUM_PRIORITY,
                     "CustEdit",WS_TABSTOP,57,117,29,10
-    CONTROL         "Nested Medium Priority",IDS_SPINNER_Nested_Medium_Priority,
+    CONTROL         "Medium Priority",IDS_SPINNER_MEDIUM_PRIORITY,
                     "SpinnerControl",WS_TABSTOP,89,117,6,10
 END
 

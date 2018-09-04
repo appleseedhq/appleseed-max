@@ -76,7 +76,7 @@ namespace
         ParamIdVisibilitySSS            = 8,
         ParamIdSSSSet                   = 9,
         ParamIdOptimizeForInstancing    = 10,
-        paramIdNestedmediumPriority     = 11
+        ParamIdMediumPriority           = 11
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -146,10 +146,11 @@ namespace
         ParamIdSSSSet, L"sss_set", TYPE_STRING, 0, IDS_SSS_SET,
             p_ui, ParamMapIdVisibility, TYPE_EDITBOX, IDC_SSS_SET,
         p_end,
-        paramIdNestedmediumPriority, L"nested_medium_priority", TYPE_INT, P_TRANSIENT, 0,
-            p_ui, ParamMapIdVisibility, TYPE_SPINNER, EDITTYPE_INT, IDS_TEXT_Nested_Medium_Priority, IDS_SPINNER_Nested_Medium_Priority, SPIN_AUTOSCALE,
+        ParamIdMediumPriority, L"medium_priority", TYPE_INT, P_TRANSIENT, 0,
+            p_ui, ParamMapIdVisibility, TYPE_SPINNER, EDITTYPE_INT, IDS_TEXT_MEDIUM_PRIORITY, IDS_SPINNER_MEDIUM_PRIORITY, SPIN_AUTOSCALE,
             p_default, 0, p_range, -128, 127,
         p_end,
+
         // --- The end ---
         p_end);
 }
@@ -358,11 +359,8 @@ std::string AppleseedObjPropsMod::get_sss_set(const TimeValue t) const
 
 int AppleseedObjPropsMod::get_medium_priority(const TimeValue t) const
 {
-   int int_value = 0;
-   int_value = m_pblock->GetInt(paramIdNestedmediumPriority, t, FOREVER);
-   return int_value;
+   return m_pblock->GetInt(ParamIdMediumPriority, t, FOREVER);
 }
-
 
 
 //
