@@ -50,7 +50,7 @@ END
 // Dialog
 //
 
-IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 108, 133
+IDD_FORMVIEW_PARAMS DIALOGEX 0, 0, 108, 147
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -63,9 +63,15 @@ BEGIN
     CONTROL         "Glossy",IDC_BUTTON_VISIBILITY_GLOSSY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,71,94,10
     CONTROL         "Specular",IDC_BUTTON_VISIBILITY_SPECULAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,82,94,10
     CONTROL         "SSS",IDC_BUTTON_VISIBILITY_SSS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,93,94,10
-    CONTROL         "SSS Set",IDC_SSS_SET,"CustEdit",WS_TABSTOP,43,116,58,10
-    LTEXT           "SSS Set Id:",IDC_SSS_SET_LABEL,5,116,38,8
-    CONTROL         "Optimize for Instancing",IDC_BUTTON_OPTIMIZE_FOR_INSTANCING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,104,94,10
+    CONTROL         "SSS Set",IDC_SSS_SET,"CustEdit",WS_TABSTOP,43,130,54,10
+    LTEXT           "SSS Set Id:",IDC_SSS_SET_LABEL,5,131,38,8
+    CONTROL         "Optimize for Instancing",IDC_BUTTON_OPTIMIZE_FOR_INSTANCING,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,104,94,10
+    LTEXT           "Medium Priority:",IDS_STATIC_Nested_Medium_Priority,5,117,50,8
+    CONTROL         "Nested Medium Priority",IDS_TEXT_Nested_Medium_Priority,
+                    "CustEdit",WS_TABSTOP,57,117,29,10
+    CONTROL         "Nested Medium Priority",IDS_SPINNER_Nested_Medium_Priority,
+                    "SpinnerControl",WS_TABSTOP,89,117,6,10
 END
 
 
@@ -79,7 +85,7 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_FORMVIEW_PARAMS, DIALOG
     BEGIN
-        BOTTOMMARGIN, 126
+        BOTTOMMARGIN, 140
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -108,8 +114,8 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_VISIBILITY_SSS          "SSS"
-    IDS_SSS_SET                 "SSSSet"
+    IDS_VISIBILITY_SSS      "SSS"
+    IDS_SSS_SET             "SSSSet"
     IDS_OPTIMIZE_FOR_INSTANCING "Optimize for Instansing"
 END
 
