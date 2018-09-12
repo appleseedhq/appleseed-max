@@ -65,26 +65,46 @@ BEGIN
     LTEXT           "Checking for updates...",IDC_STATIC_NEW_VERSION,0,37,144,8
 END
 
-IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING DIALOGEX 0, 0, 200, 85
+IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING DIALOGEX 0, 0, 200, 148
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "Pixel Samples:",IDC_STATIC,0,6,48,8
-    CONTROL         "Pixel Samples",IDC_TEXT_PIXEL_SAMPLES,"CustEdit",WS_TABSTOP,50,5,30,10
-    CONTROL         "Pixel Samples",IDC_SPINNER_PIXEL_SAMPLES,"SpinnerControl",WS_TABSTOP,82,5,6,10
-    LTEXT           "Passes:",IDC_STATIC,107,6,27,8
-    CONTROL         "Passes",IDC_TEXT_PASSES,"CustEdit",WS_TABSTOP,136,5,30,10
-    CONTROL         "Passes",IDC_SPINNER_PASSES,"SpinnerControl",WS_TABSTOP,168,5,6,10
-    LTEXT           "Tile Size:",IDC_STATIC,0,20,48,8
-    CONTROL         "Tile Size",IDC_TEXT_TILE_SIZE,"CustEdit",WS_TABSTOP,50,19,30,10
-    CONTROL         "Tile Size",IDC_SPINNER_TILE_SIZE,"SpinnerControl",WS_TABSTOP,82,19,6,10
-    GROUPBOX        "Pixel Filtering",IDC_STATIC,0,35,200,45
-    LTEXT           "Filter:",IDC_STATIC,5,50,27,8
-    COMBOBOX        IDC_COMBO_FILTER,50,50,124,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Filter Size:",IDC_STATIC,5,65,37,8
-    CONTROL         "Filter Size Edit",IDC_TEXT_FILTER_SIZE,"CustEdit",WS_TABSTOP,50,65,30,10
+    LTEXT           "Pixel Samples:",IDC_STATIC,0,39,48,8
+    CONTROL         "Pixel Samples",IDC_TEXT_PIXEL_SAMPLES,"CustEdit",WS_TABSTOP,50,38,30,10
+    CONTROL         "Pixel Samples",IDC_SPINNER_PIXEL_SAMPLES,"SpinnerControl",WS_TABSTOP,82,38,6,10
+    LTEXT           "Passes:",IDC_STATIC,101,6,27,8
+    CONTROL         "Passes",IDC_TEXT_PASSES,"CustEdit",WS_TABSTOP,157,5,30,10
+    CONTROL         "Passes",IDC_SPINNER_PASSES,"SpinnerControl",WS_TABSTOP,189,5,6,10
+    LTEXT           "Tile Size:",IDC_STATIC,0,7,48,8
+    CONTROL         "Tile Size",IDC_TEXT_TILE_SIZE,"CustEdit",WS_TABSTOP,50,5,30,10
+    CONTROL         "Tile Size",IDC_SPINNER_TILE_SIZE,"SpinnerControl",WS_TABSTOP,82,5,6,10
+    GROUPBOX        "Pixel Filtering",IDC_STATIC,0,100,200,45
+    LTEXT           "Filter:",IDC_STATIC,5,114,27,8
+    COMBOBOX        IDC_COMBO_FILTER,50,112,124,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Filter Size:",IDC_STATIC,5,130,37,8
+    CONTROL         "Filter Size Edit",IDC_TEXT_FILTER_SIZE,"CustEdit",WS_TABSTOP,50,130,30,10
     CONTROL         "Filter Size Spinner",IDC_SPINNER_FILTER_SIZE,
-                    "SpinnerControl",WS_TABSTOP,82,65,6,10
+                    "SpinnerControl",WS_TABSTOP,82,130,6,10
+    COMBOBOX        IDC_COMBO_SAMPLER_TYPE,50,20,124,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Sampler:",IDC_STATIC,0,21,44,8
+    LTEXT           "Batch Size:",IDC_STATIC,5,66,48,8
+    CONTROL         "Batch Size",IDC_TEXT_ADAPTIVE_BATCH_SIZE,"CustEdit",WS_TABSTOP,50,66,30,10
+    CONTROL         "Batch Size",IDC_SPINNER_ADAPTIVE_BATCH_SIZE,
+                    "SpinnerControl",WS_TABSTOP,82,66,6,10
+    LTEXT           "Noise Threshold:",IDC_STATIC,101,67,60,8
+    CONTROL         "Noise Threshold",IDC_TEXT_ADAPTIVE_NOISE_THRESHOLD,
+                    "CustEdit",WS_TABSTOP,157,66,30,10
+    CONTROL         "Noise Threshold",IDC_SPINNER_ADAPTIVE_NOISE_THRESHOLD,
+                    "SpinnerControl",WS_TABSTOP,189,66,6,10
+    LTEXT           "Min Samples:",IDC_STATIC,5,81,48,8
+    CONTROL         "Min Samples",IDC_TEXT_MIN_ADAPTIVE_SAMPLES,"CustEdit",WS_TABSTOP,50,81,30,10
+    CONTROL         "Min Samples",IDC_SPINNER_MIN_ADAPTIVE_SAMPLES,
+                    "SpinnerControl",WS_TABSTOP,82,81,6,10
+    LTEXT           "Max Samples:",IDC_STATIC,101,82,48,8
+    CONTROL         "Max Samples",IDC_TEXT_MAX_ADAPTIVE_SAMPLES,"CustEdit",WS_TABSTOP,157,82,30,10
+    CONTROL         "Max Samples",IDC_SPINNER_MAX_ADAPTIVE_SAMPLES,
+                    "SpinnerControl",WS_TABSTOP,189,82,6,10
+    GROUPBOX        "Adaptive Tile Sampler",IDC_STATIC,0,52,199,45
 END
 
 IDD_FORMVIEW_RENDERERPARAMS_LIGHTING DIALOGEX 0, 0, 200, 229
@@ -214,6 +234,7 @@ BEGIN
 
     IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING, DIALOG
     BEGIN
+        BOTTOMMARGIN, 145
     END
 
     IDD_FORMVIEW_RENDERERPARAMS_LIGHTING, DIALOG

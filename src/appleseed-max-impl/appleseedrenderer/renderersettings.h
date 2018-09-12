@@ -55,9 +55,19 @@ class RendererSettings
     // Image Sampling.
     //
 
-    int         m_pixel_samples;
+    int         m_uniform_pixel_samples;
     int         m_passes;
     int         m_tile_size;
+    int         m_sampler_type;
+
+    //
+    // Adaptive Tile Sampler.
+    //
+
+    int         m_adaptive_batch_size;
+    int         m_adaptive_min_samples;
+    int         m_adaptive_max_samples;
+    float       m_adaptive_noise_threshold;
 
     //
     // Pixel Filtering.
