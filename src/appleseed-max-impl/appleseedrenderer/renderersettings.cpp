@@ -185,14 +185,12 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
     }
     else
     {
-        params.insert_path("pixel_renderer", "");
         params.insert_path("tile_renderer", "adaptive");
         params.insert_path("adaptive_tile_renderer.batch_size", m_adaptive_batch_size);
         params.insert_path("adaptive_tile_renderer.min_samples", m_adaptive_min_samples);
         params.insert_path("adaptive_tile_renderer.max_samples", m_adaptive_max_samples);
         params.insert_path("adaptive_tile_renderer.noise_threshold", m_adaptive_noise_threshold);
     }
-
 }
 
 void RendererSettings::apply_settings_to_interactive_config(asr::Project& project) const
@@ -239,19 +237,19 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<int>(isave, m_sampler_type);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsAdaptiveBatchSize);
+        isave->BeginChunk(ChunkSettingsAdaptiveTileBatchSize);
         success &= write<int>(isave, m_adaptive_batch_size);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsAdaptiveMinSamples);
+        isave->BeginChunk(ChunkSettingsAdaptiveTileMinSamples);
         success &= write<int>(isave, m_adaptive_min_samples);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsAdaptiveMaxSamples);
+        isave->BeginChunk(ChunkSettingsAdaptiveTileMaxSamples);
         success &= write<int>(isave, m_adaptive_max_samples);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsAdaptiveNoiseThreshold);
+        isave->BeginChunk(ChunkSettingsAdaptiveTileNoiseThreshold);
         success &= write<float>(isave, m_adaptive_noise_threshold);
         isave->EndChunk();
 
@@ -507,19 +505,19 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
             result = read<int>(iload, &m_sampler_type);
             break;
 
-          case ChunkSettingsAdaptiveBatchSize:
+          case ChunkSettingsAdaptiveTileBatchSize:
             result = read<int>(iload, &m_adaptive_batch_size);
             break;
 
-          case ChunkSettingsAdaptiveMinSamples:
+          case ChunkSettingsAdaptiveTileMinSamples:
             result = read<int>(iload, &m_adaptive_min_samples);
             break;
 
-          case ChunkSettingsAdaptiveMaxSamples:
+          case ChunkSettingsAdaptiveTileMaxSamples:
             result = read<int>(iload, &m_adaptive_max_samples);
             break;
 
-          case ChunkSettingsAdaptiveNoiseThreshold:
+          case ChunkSettingsAdaptiveTileNoiseThreshold:
             result = read<float>(iload, &m_adaptive_noise_threshold);
             break;
         }

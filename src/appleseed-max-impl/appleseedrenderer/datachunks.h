@@ -47,10 +47,10 @@ const USHORT ChunkSettingsImageSamplingTileSize                     = 0x1130;
 const USHORT ChunkSettingsPixelFilter                               = 0x1140;
 const USHORT ChunkSettingsPixelFilterSize                           = 0x1150;
 const USHORT ChunkSettingsImageSamplerType                          = 0x1160;
-const USHORT ChunkSettingsAdaptiveBatchSize                         = 0x1161;
-const USHORT ChunkSettingsAdaptiveMinSamples                        = 0x1162;
-const USHORT ChunkSettingsAdaptiveMaxSamples                        = 0x1163;
-const USHORT ChunkSettingsAdaptiveNoiseThreshold                    = 0x1164;
+const USHORT ChunkSettingsAdaptiveTileBatchSize                     = 0x1161;
+const USHORT ChunkSettingsAdaptiveTileMinSamples                    = 0x1162;
+const USHORT ChunkSettingsAdaptiveTileMaxSamples                    = 0x1163;
+const USHORT ChunkSettingsAdaptiveTileNoiseThreshold                = 0x1164;
 
 const USHORT ChunkSettingsLighting                                  = 0x1200;
 const USHORT ChunkSettingsLightingGI                                = 0x1210;

@@ -98,11 +98,11 @@ namespace
         ParamIdPasses                       = 5,
         ParamIdFilterSize                   = 6,
         ParamIdFilterType                   = 7,
-        ParamIdSamplerType                  = 40,
-        ParamIdAdaptiveBatchSize            = 41,
-        ParamIdAdaptiveMinSamples           = 42,
-        ParamIdAdaptiveMaxSamples           = 43,
-        ParamIdAdaptiveNoiseThreshold       = 44,
+        ParamIdImageSamplerType             = 40,
+        ParamIdAdaptiveTileBatchSize        = 41,
+        ParamIdAdaptiveTileMinSamples       = 42,
+        ParamIdAdaptiveTileMaxSamples       = 43,
+        ParamIdAdaptiveTileNoiseThreshold   = 44,
         ParamIdEnableGI                     = 8,
         ParamIdEnableCaustics               = 10,
         ParamIdEnableMaxRayIntensity        = 11,
@@ -250,7 +250,7 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_passes;
         break;
 
-      case ParamIdSamplerType:
+      case ParamIdImageSamplerType:
         v.i = settings.m_sampler_type;
         break;
 
@@ -258,19 +258,19 @@ void AppleseedRendererPBlockAccessor::Get(
       // Adaptive Tile Renderer.
       //
 
-      case ParamIdAdaptiveBatchSize:
+      case ParamIdAdaptiveTileBatchSize:
         v.i = settings.m_adaptive_batch_size;
         break;
 
-      case ParamIdAdaptiveMinSamples:
+      case ParamIdAdaptiveTileMinSamples:
         v.i = settings.m_adaptive_min_samples;
         break;
 
-      case ParamIdAdaptiveMaxSamples:
+      case ParamIdAdaptiveTileMaxSamples:
         v.i = settings.m_adaptive_max_samples;
         break;
 
-      case ParamIdAdaptiveNoiseThreshold:
+      case ParamIdAdaptiveTileNoiseThreshold:
         v.f = settings.m_adaptive_noise_threshold;
         break;
 
@@ -463,7 +463,7 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_passes = v.i;
         break;
 
-      case ParamIdSamplerType:
+      case ParamIdImageSamplerType:
         settings.m_sampler_type = v.i;
         break;
 
@@ -471,19 +471,19 @@ void AppleseedRendererPBlockAccessor::Set(
       // Adaptive Tile Renderer.
       //
 
-      case ParamIdAdaptiveBatchSize:
+      case ParamIdAdaptiveTileBatchSize:
         settings.m_adaptive_batch_size = v.i;
         break;
 
-      case ParamIdAdaptiveMinSamples:
+      case ParamIdAdaptiveTileMinSamples:
         settings.m_adaptive_min_samples = v.i;
         break;
 
-      case ParamIdAdaptiveMaxSamples:
+      case ParamIdAdaptiveTileMaxSamples:
         settings.m_adaptive_max_samples = v.i;
         break;
 
-      case ParamIdAdaptiveNoiseThreshold:
+      case ParamIdAdaptiveTileNoiseThreshold:
         settings.m_adaptive_noise_threshold = v.f;
         break;
 
@@ -756,35 +756,35 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdSamplerType, L"image_sampler_type", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdImageSamplerType, L"image_sampler_type", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_INT_COMBOBOX, IDC_COMBO_SAMPLER_TYPE,
         2, IDS_RENDERERPARAMS_SAMPLER_TYPE_1, IDS_RENDERERPARAMS_SAMPLER_TYPE_2,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdAdaptiveBatchSize, L"batch_size", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdAdaptiveTileBatchSize, L"batch_size", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_ADAPTIVE_BATCH_SIZE, IDC_SPINNER_ADAPTIVE_BATCH_SIZE, SPIN_AUTOSCALE,
         p_default, 16,
         p_range, 1, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdAdaptiveMinSamples, L"minimum_samples", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdAdaptiveTileMinSamples, L"minimum_samples", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_MIN_ADAPTIVE_SAMPLES, IDC_SPINNER_MIN_ADAPTIVE_SAMPLES, SPIN_AUTOSCALE,
         p_default, 0,
         p_range, 0, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdAdaptiveMaxSamples, L"maximum_samples", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdAdaptiveTileMaxSamples, L"maximum_samples", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_MAX_ADAPTIVE_SAMPLES, IDC_SPINNER_MAX_ADAPTIVE_SAMPLES, SPIN_AUTOSCALE,
         p_default, 256,
         p_range, 0, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdAdaptiveNoiseThreshold, L"noise_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
+    ParamIdAdaptiveTileNoiseThreshold, L"noise_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ADAPTIVE_NOISE_THRESHOLD, IDC_SPINNER_ADAPTIVE_NOISE_THRESHOLD, SPIN_AUTOSCALE,
         p_default, 1.0f,
         p_range, 0.0f, 25.0f,
