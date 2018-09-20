@@ -93,12 +93,16 @@ namespace
         ParamIdProjectPath                  = 1,
         ParamIdScaleMultiplier              = 2,
 
-        ParamIdPixelSamples                 = 3,
+        ParamIdUniformPixelSamples          = 3,
         ParamIdTileSize                     = 4,
         ParamIdPasses                       = 5,
         ParamIdFilterSize                   = 6,
         ParamIdFilterType                   = 7,
-
+        ParamIdImageSamplerType             = 40,
+        ParamIdAdaptiveTileBatchSize        = 41,
+        ParamIdAdaptiveTileMinSamples       = 42,
+        ParamIdAdaptiveTileMaxSamples       = 43,
+        ParamIdAdaptiveTileNoiseThreshold   = 44,
         ParamIdEnableGI                     = 8,
         ParamIdEnableCaustics               = 10,
         ParamIdEnableMaxRayIntensity        = 11,
@@ -146,7 +150,9 @@ namespace
         { IDS_RENDERERPARAMS_FILTER_TYPE_8,     L"Triangle" },
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_1,   L"Always" },
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,   L"Never" },
-        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,   L"On Error" }
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,   L"On Error" },
+        { IDS_RENDERERPARAMS_SAMPLER_TYPE_1,    L"Uniform Sampler" },
+        { IDS_RENDERERPARAMS_SAMPLER_TYPE_2,    L"Adaptive Tile Sampler" }
     };
 
     class AppleseedRenderContext
@@ -232,8 +238,8 @@ void AppleseedRendererPBlockAccessor::Get(
       // Image Sampling.
       //
 
-      case ParamIdPixelSamples:
-        v.i = settings.m_pixel_samples;
+      case ParamIdUniformPixelSamples:
+        v.i = settings.m_uniform_pixel_samples;
         break;
 
       case ParamIdTileSize:
@@ -242,6 +248,30 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdPasses:
         v.i = settings.m_passes;
+        break;
+
+      case ParamIdImageSamplerType:
+        v.i = settings.m_sampler_type;
+        break;
+
+      //
+      // Adaptive Tile Renderer.
+      //
+
+      case ParamIdAdaptiveTileBatchSize:
+        v.i = settings.m_adaptive_batch_size;
+        break;
+
+      case ParamIdAdaptiveTileMinSamples:
+        v.i = settings.m_adaptive_min_samples;
+        break;
+
+      case ParamIdAdaptiveTileMaxSamples:
+        v.i = settings.m_adaptive_max_samples;
+        break;
+
+      case ParamIdAdaptiveTileNoiseThreshold:
+        v.f = settings.m_adaptive_noise_threshold;
         break;
 
       //
@@ -421,8 +451,8 @@ void AppleseedRendererPBlockAccessor::Set(
     // Image Sampling.
     //
 
-      case ParamIdPixelSamples:
-        settings.m_pixel_samples = v.i;
+      case ParamIdUniformPixelSamples:
+        settings.m_uniform_pixel_samples = v.i;
         break;
 
       case ParamIdTileSize:
@@ -431,6 +461,30 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdPasses:
         settings.m_passes = v.i;
+        break;
+
+      case ParamIdImageSamplerType:
+        settings.m_sampler_type = v.i;
+        break;
+
+      //
+      // Adaptive Tile Renderer.
+      //
+
+      case ParamIdAdaptiveTileBatchSize:
+        settings.m_adaptive_batch_size = v.i;
+        break;
+
+      case ParamIdAdaptiveTileMinSamples:
+        settings.m_adaptive_min_samples = v.i;
+        break;
+
+      case ParamIdAdaptiveTileMaxSamples:
+        settings.m_adaptive_max_samples = v.i;
+        break;
+
+      case ParamIdAdaptiveTileNoiseThreshold:
+        settings.m_adaptive_noise_threshold = v.f;
         break;
 
     //
@@ -664,7 +718,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     // --- Parameters specifications for Image Sampling rollup ---
 
-    ParamIdPixelSamples, L"pixel_samples", TYPE_INT, P_TRANSIENT, 0,
+    ParamIdUniformPixelSamples, L"pixel_samples", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_PIXEL_SAMPLES, IDC_SPINNER_PIXEL_SAMPLES, SPIN_AUTOSCALE,
         p_default, 16,
         p_range, 1, 1000000,
@@ -699,6 +753,41 @@ ParamBlockDesc2 g_param_block_desc(
         IDS_RENDERERPARAMS_FILTER_TYPE_5, IDS_RENDERERPARAMS_FILTER_TYPE_6,
         IDS_RENDERERPARAMS_FILTER_TYPE_7, IDS_RENDERERPARAMS_FILTER_TYPE_8,
         p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdImageSamplerType, L"image_sampler_type", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_INT_COMBOBOX, IDC_COMBO_SAMPLER_TYPE,
+        2, IDS_RENDERERPARAMS_SAMPLER_TYPE_1, IDS_RENDERERPARAMS_SAMPLER_TYPE_2,
+        p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdAdaptiveTileBatchSize, L"batch_size", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_ADAPTIVE_BATCH_SIZE, IDC_SPINNER_ADAPTIVE_BATCH_SIZE, SPIN_AUTOSCALE,
+        p_default, 16,
+        p_range, 1, 1000000,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdAdaptiveTileMinSamples, L"minimum_samples", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_MIN_ADAPTIVE_SAMPLES, IDC_SPINNER_MIN_ADAPTIVE_SAMPLES, SPIN_AUTOSCALE,
+        p_default, 0,
+        p_range, 0, 1000000,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdAdaptiveTileMaxSamples, L"maximum_samples", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_MAX_ADAPTIVE_SAMPLES, IDC_SPINNER_MAX_ADAPTIVE_SAMPLES, SPIN_AUTOSCALE,
+        p_default, 256,
+        p_range, 0, 1000000,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdAdaptiveTileNoiseThreshold, L"noise_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ADAPTIVE_NOISE_THRESHOLD, IDC_SPINNER_ADAPTIVE_NOISE_THRESHOLD, SPIN_AUTOSCALE,
+        p_default, 1.0f,
+        p_range, 0.0f, 25.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
@@ -1357,7 +1446,7 @@ int AppleseedRenderer::Render(
     RendererSettings renderer_settings = m_settings;
     if (m_rend_params.inMtlEdit)
     {
-        renderer_settings.m_pixel_samples = m_rend_params.mtlEditAA ? 32 : 4;
+        renderer_settings.m_uniform_pixel_samples = m_rend_params.mtlEditAA ? 32 : 4;
         renderer_settings.m_passes = 1;
         renderer_settings.m_enable_gi = true;
         renderer_settings.m_background_emits_light = false;
