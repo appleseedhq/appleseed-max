@@ -1418,6 +1418,21 @@ namespace
         }
     }
 
+    const char* get_denoise_mode(const int denoise_mode)
+    {
+        switch (denoise_mode)
+        {
+        case 0:
+            return "off";
+        case 1:
+            return "on";
+        case 2:
+            return "write_outputs";
+        default:
+            return "off";
+        }
+    }
+
     asf::auto_release_ptr<asr::Frame> build_frame(
         const RendParams&       rend_params,
         const FrameRendParams&  frame_rend_params,
@@ -1486,8 +1501,15 @@ namespace
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
                         .insert("color_space", "linear_rgb")
                         .insert("filter", get_filter_type(settings.m_pixel_filter))
-                        .insert("filter_size", settings.m_pixel_filter_size),
-                    aovs));
+                        .insert("filter_size", settings.m_pixel_filter_size)
+                        .insert("denoiser", get_denoise_mode(settings.m_denoise_mode))
+                        .insert("skip_denoised", settings.m_enable_skip_denoised)
+                        .insert("prefilter_spikes", settings.m_enable_prefilter_spikes)
+                        .insert("random_pixel_order", settings.m_enable_random_pixel_order)
+                        .insert("patch_distance_threshold", settings.m_patch_distance_threshold)
+                        .insert("spike_threshold", settings.m_spike_threshold)
+                        .insert("denoise_scales", settings.m_denoise_scales),
+                        aovs));
 
             if (rend_params.rendType == RENDTYPE_REGION)
             {

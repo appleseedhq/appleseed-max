@@ -75,14 +75,22 @@ class RendererSettings
     float       m_adaptive_noise_threshold;
 
     //
-    // Pixel Filtering.
+    // Pixel Filtering and Background Alpha.
     //
 
     int         m_pixel_filter;
     float       m_pixel_filter_size;
+    float       m_background_alpha;
 
     //
     // Lighting.
+    //
+
+    int         m_lighting_algorithm;
+    bool        m_force_off_default_lights;
+
+    //
+    // Pathtracer.
     //
 
     bool        m_enable_gi;
@@ -100,11 +108,9 @@ class RendererSettings
     bool        m_clamp_roughness;
     bool        m_max_ray_intensity_set;
     float       m_max_ray_intensity;
-    bool        m_background_emits_light;
-    float       m_background_alpha;
-    bool        m_force_off_default_lights;
     bool        m_dl_enable_dl;
     int         m_dl_light_samples;
+    bool        m_background_emits_light;
     float       m_dl_low_light_threshold;
     int         m_ibl_env_samples;
     int         m_rr_min_path_length;
@@ -124,6 +130,21 @@ class RendererSettings
     OutputMode  m_output_mode;
     MSTR        m_project_file_path;
     float       m_scale_multiplier;
+    int         m_shader_override;
+
+    //
+    // Postprocessing.
+    //
+
+    bool                        m_enable_render_stamp;
+    MSTR                        m_render_stamp_format;
+    int                         m_denoise_mode;
+    bool                        m_enable_skip_denoised;
+    bool                        m_enable_random_pixel_order;
+    bool                        m_enable_prefilter_spikes;
+    float                       m_spike_threshold;
+    float                       m_patch_distance_threshold;
+    int                         m_denoise_scales;
 
     //
     // System.
@@ -135,8 +156,7 @@ class RendererSettings
     bool                        m_use_max_procedural_maps;
     DialogLogTarget::OpenMode   m_log_open_mode;
     bool                        m_log_material_editor_messages;
-    bool                        m_enable_render_stamp;
-    MSTR                        m_render_stamp_format;
+    long long                   m_texture_cache_size;
 
     // Apply these settings to a given project.
     void apply(renderer::Project& project) const;
@@ -150,8 +170,10 @@ class RendererSettings
   private:
     IOResult load_image_sampling_settings(ILoad* iload);
     IOResult load_lighting_settings(ILoad* iload);
+    IOResult load_pathtracer_settings(ILoad* iload);
     IOResult load_output_settings(ILoad* iload);
     IOResult load_system_settings(ILoad* iload);
+    IOResult load_postprocessing_settings(ILoad* iload);
 
     void apply_common_settings(renderer::Project& project, const char* config_name) const;
     void apply_settings_to_final_config(renderer::Project& project) const;

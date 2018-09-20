@@ -49,18 +49,23 @@ namespace
     {
         DefaultRendererSettings()
         {
-            m_uniform_pixel_samples = 16;
             m_passes = 1;
             m_tile_size = 64;
             m_sampler_type = 0;
+
+            m_uniform_pixel_samples = 16;
 
             m_adaptive_batch_size = 16;
             m_adaptive_min_samples = 0;
             m_adaptive_max_samples = 256;
             m_adaptive_noise_threshold = 1.0f;
-            
+
             m_pixel_filter = 0;
             m_pixel_filter_size = 1.5f;
+            m_background_alpha = 0.0f;
+
+            m_lighting_algorithm = 0;
+            m_force_off_default_lights = false;
 
             m_enable_gi = true;
             m_enable_caustics = false;
@@ -76,6 +81,7 @@ namespace
             m_volume_distance_samples = 2;
             m_optimize_for_lights_outside_volumes = false;
             m_dl_enable_dl = true;
+            m_background_emits_light = true;
             m_dl_light_samples = 1;
             m_dl_low_light_threshold = 0.0f;
             m_ibl_env_samples = 1;
@@ -83,17 +89,16 @@ namespace
             m_max_ray_intensity_set = false;
             m_max_ray_intensity = 1.0f;
             m_clamp_roughness = false;
-            m_background_emits_light = true;
-            m_background_alpha = 0.0f;
-            m_force_off_default_lights = false;
 
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
+            m_shader_override = 0;
 
-            m_rendering_threads = 0;    // 0 = as many as there are logical cores
+            m_rendering_threads = 0;        // 0 = as many as there are logical cores
             m_enable_embree = false;
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
+            m_texture_cache_size = 1024;    // value in MB
 
             const int log_open_mode = load_system_setting(L"LogOpenMode", static_cast<int>(DialogLogTarget::OpenMode::Errors));
             m_log_open_mode = static_cast<DialogLogTarget::OpenMode>(log_open_mode);
@@ -101,8 +106,70 @@ namespace
 
             m_enable_render_stamp = false;
             m_render_stamp_format = L"appleseed {lib-version} | Time: {render-time}";
+            m_denoise_mode = 0;
+            m_enable_skip_denoised = true;
+            m_enable_random_pixel_order = true;
+            m_enable_prefilter_spikes = true;
+            m_spike_threshold = 2.0f;
+            m_patch_distance_threshold = 1.0f;
+            m_denoise_scales = 3;
         }
     };
+}
+
+const char* get_shader_override_type(const int shader_override_type)
+{
+    switch (shader_override_type)
+    {
+    case 0:
+        return "no_override";
+    case 1:
+        return "albedo";
+    case 2:
+        return "ambient_occlusion";
+    case 3:
+        return "assembly_instances";
+    case 4:
+        return "barycentric";
+    case 5:
+        return "bitangent";
+    case 6:
+        return "coverage";
+    case 7:
+        return "depth";
+    case 8:
+        return "facing_ratio";
+    case 9:
+        return "geometric_normal";
+    case 10:
+        return "materials";
+    case 11:
+        return "object_instances";
+    case 12:
+        return "original_shading_normal";
+    case 13:
+        return "primitives";
+    case 14:
+        return "ray_spread";
+    case 15:
+        return "regions";
+    case 16:
+        return "screen_space_wireframe";
+    case 17:
+        return "shading_normal";
+    case 18:
+        return "sides";
+    case 19:
+        return "tangent";
+    case 20:
+        return "uv";
+    case 21:
+        return "world_space_position";
+    case 22:
+        return "world_space_wireframe";
+    default:
+        return "coverage";
+    }
 }
 
 const RendererSettings& RendererSettings::defaults()
@@ -160,12 +227,15 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
 
     params.insert_path("use_embree", m_enable_embree);
+    params.insert_path("texture_store.max_size", m_texture_cache_size * 1024 * 1024);
 
     if (m_rendering_threads == 0)
         params.insert_path("rendering_threads", "auto");
     else params.insert_path("rendering_threads", m_rendering_threads);
 
-    //params.insert_path("shading_engine.override_shading.mode", "shading_normal");
+    if (m_shader_override > 0)
+       params.insert_path("shading_engine.override_shading.mode", get_shader_override_type(m_shader_override));
+    
 }
 
 void RendererSettings::apply_settings_to_final_config(asr::Project& project) const
@@ -200,7 +270,6 @@ void RendererSettings::apply_settings_to_interactive_config(asr::Project& projec
     params.insert_path("frame_renderer", "progressive");
     params.insert_path("sample_generator", "generic");
     params.insert_path("sample_renderer", "generic");
-
 }
 
 bool RendererSettings::save(ISave* isave) const
@@ -261,91 +330,103 @@ bool RendererSettings::save(ISave* isave) const
 
     isave->BeginChunk(ChunkSettingsLighting);
 
-        isave->BeginChunk(ChunkSettingsLightingGI);
+        isave->BeginChunk(ChunkSettingsLightingAlgorithm);
+        success &= write<int>(isave, m_lighting_algorithm);
+        isave->EndChunk();
+
+    isave->EndChunk();
+
+    //
+    // Pathtracer settings.
+    //
+
+    isave->BeginChunk(ChunkSettingsPathtracer);
+
+        isave->BeginChunk(ChunkSettingsPathtracerGI);
         success &= write<bool>(isave, m_enable_gi);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingRRMinPathLength);
+        isave->BeginChunk(ChunkSettingsPathtracerRRMinPathLength);
         success &= write<int>(isave, m_rr_min_path_length);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingCaustics);
+        isave->BeginChunk(ChunkSettingsPathtracerCaustics);
         success &= write<bool>(isave, m_enable_caustics);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingGlobalBounces);
+        isave->BeginChunk(ChunkSettingsPathtracerGlobalBounces);
         success &= write<int>(isave, m_global_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingDiffuseBouncesEnabled);
+        isave->BeginChunk(ChunkSettingsPathtracerDiffuseBouncesEnabled);
         success &= write<bool>(isave, m_diffuse_bounces_enabled);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingDiffuseBounces);
+        isave->BeginChunk(ChunkSettingsPathtracerDiffuseBounces);
         success &= write<int>(isave, m_diffuse_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingGlossyBouncesEnabled);
+        isave->BeginChunk(ChunkSettingsPathtracerGlossyBouncesEnabled);
         success &= write<bool>(isave, m_glossy_bounces_enabled);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingGlossyBounces);
+        isave->BeginChunk(ChunkSettingsPathtracerGlossyBounces);
         success &= write<int>(isave, m_glossy_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingSpecularBouncesEnabled);
+        isave->BeginChunk(ChunkSettingsPathtracerSpecularBouncesEnabled);
         success &= write<bool>(isave, m_specular_bounces_enabled);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingSpecularBounces);
+        isave->BeginChunk(ChunkSettingsPathtracerSpecularBounces);
         success &= write<int>(isave, m_specular_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingVolumeBouncesEnabled);
+        isave->BeginChunk(ChunkSettingsPathtracerVolumeBouncesEnabled);
         success &= write<bool>(isave, m_volume_bounces_enabled);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingVolumeBounces);
+        isave->BeginChunk(ChunkSettingsPathtracerVolumeBounces);
         success &= write<int>(isave, m_volume_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingVolumeDistanceSamples);
+        isave->BeginChunk(ChunkSettingsPathtracerVolumeDistanceSamples);
         success &= write<int>(isave, m_volume_distance_samples);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingMaxRayIntensitySet);
+        isave->BeginChunk(ChunkSettingsPathtracerMaxRayIntensitySet);
         success &= write<bool>(isave, m_max_ray_intensity_set);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingMaxRayIntensity);
+        isave->BeginChunk(ChunkSettingsPathtracerMaxRayIntensity);
         success &= write<float>(isave, m_max_ray_intensity);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingClampRougness);
+        isave->BeginChunk(ChunkSettingsPathtracerClampRougness);
         success &= write<bool>(isave, m_clamp_roughness);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingBackgroundEmitsLight);
+        isave->BeginChunk(ChunkSettingsPathtracerBackgroundEmitsLight);
         success &= write<bool>(isave, m_background_emits_light);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingDirectLightingEnabled);
+        isave->BeginChunk(ChunkSettingsPathtracerDirectLightingEnabled);
         success &= write<bool>(isave, m_dl_enable_dl);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingDirectLightingSamples);
+        isave->BeginChunk(ChunkSettingsPathtracerDirectLightingSamples);
         success &= write<int>(isave, m_dl_light_samples);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingDirectLightingLowLightThreshold);
+        isave->BeginChunk(ChunkSettingsPathtracerDirectLightingLowLightThreshold);
         success &= write<float>(isave, m_dl_low_light_threshold);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingImageBasedLightingSamples);
+        isave->BeginChunk(ChunkSettingsPathtracerImageBasedLightingSamples);
         success &= write<int>(isave, m_ibl_env_samples);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingBackgroundAlpha);
+        isave->BeginChunk(ChunkSettingsPixelBackgroundAlpha);
         success &= write<float>(isave, m_background_alpha);
         isave->EndChunk();
 
@@ -353,7 +434,7 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<bool>(isave, m_force_off_default_lights);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsLightingOptimizeLightsOutsideVolumes);
+        isave->BeginChunk(ChunkSettingsPathtracerOptimizeLightsOutsideVolumes);
         success &= write<bool>(isave, m_optimize_for_lights_outside_volumes);
         isave->EndChunk();
 
@@ -388,6 +469,46 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<float>(isave, m_scale_multiplier);
         isave->EndChunk();
 
+        isave->BeginChunk(ChunkSettingsOutputShaderOverride);
+        success &= write<int>(isave, m_shader_override);
+        isave->EndChunk();
+
+    isave->EndChunk();
+
+    //
+    // Postprocessing settings.
+    //
+
+    isave->BeginChunk(ChunkSettingsPostprocessing);
+
+        isave->BeginChunk(ChunkSettingsPostprocessingDenoiseMode);
+        success &= write<int>(isave, m_denoise_mode);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPostprocessingEnableSkipDenoised);
+        success &= write<bool>(isave, m_enable_skip_denoised);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPostprocessingEnableRandomPixelOrder);
+        success &= write<bool>(isave, m_enable_random_pixel_order);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPostprocessingEnablePrefilterSpikes);
+        success &= write<bool>(isave, m_enable_prefilter_spikes);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPostprocessingSpikeThreshold);
+        success &= write<float>(isave, m_spike_threshold);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPostprocessingPatchDistanceThreshold);
+        success &= write<float>(isave, m_patch_distance_threshold);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsPostprocessingDenoiseScales);
+        success &= write<int>(isave, m_denoise_scales);
+        isave->EndChunk();
+
     isave->EndChunk();
 
     //
@@ -419,6 +540,10 @@ bool RendererSettings::save(ISave* isave) const
         isave->BeginChunk(ChunkSettingsSystemEnableEmbree);
         success &= write<bool>(isave, m_enable_embree);
         isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSystemTextureCacheSize);
+        success &= write<long long>(isave, m_texture_cache_size);
+        isave->EndChunk();
         
     isave->EndChunk();
 
@@ -447,12 +572,20 @@ IOResult RendererSettings::load(ILoad* iload)
             result = load_lighting_settings(iload);
             break;
 
+          case ChunkSettingsPathtracer:
+            result = load_pathtracer_settings(iload);
+            break;
+
           case ChunkSettingsOutput:
             result = load_output_settings(iload);
             break;
 
           case ChunkSettingsSystem:
             result = load_system_settings(iload);
+            break;
+
+          case ChunkSettingsPostprocessing:
+            result = load_postprocessing_settings(iload);
             break;
         }
 
@@ -533,7 +666,7 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
     return result;
 }
 
-IOResult RendererSettings::load_lighting_settings(ILoad* iload)
+IOResult RendererSettings::load_pathtracer_settings(ILoad* iload)
 {
     IOResult result = IO_OK;
 
@@ -547,91 +680,91 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-          case ChunkSettingsLightingGI:
+          case ChunkSettingsPathtracerGI:
             result = read<bool>(iload, &m_enable_gi);
             break;
 
-          case ChunkSettingsLightingRRMinPathLength:
+          case ChunkSettingsPathtracerRRMinPathLength:
             result = read<int>(iload, &m_rr_min_path_length);
             break;
 
-          case ChunkSettingsLightingCaustics:
+          case ChunkSettingsPathtracerCaustics:
             result = read<bool>(iload, &m_enable_caustics);
             break;
 
-          case ChunkSettingsLightingGlobalBounces:
+          case ChunkSettingsPathtracerGlobalBounces:
             result = read<int>(iload, &m_global_bounces);
             break;
 
-          case ChunkSettingsLightingDiffuseBouncesEnabled:
+          case ChunkSettingsPathtracerDiffuseBouncesEnabled:
             result = read<bool>(iload, &m_diffuse_bounces_enabled);
             break;
 
-          case ChunkSettingsLightingDiffuseBounces:
+          case ChunkSettingsPathtracerDiffuseBounces:
             result = read<int>(iload, &m_diffuse_bounces);
             break;
 
-          case ChunkSettingsLightingGlossyBouncesEnabled:
+          case ChunkSettingsPathtracerGlossyBouncesEnabled:
             result = read<bool>(iload, &m_glossy_bounces_enabled);
             break;
 
-          case ChunkSettingsLightingGlossyBounces:
+          case ChunkSettingsPathtracerGlossyBounces:
             result = read<int>(iload, &m_glossy_bounces);
             break;
 
-          case ChunkSettingsLightingSpecularBouncesEnabled:
+          case ChunkSettingsPathtracerSpecularBouncesEnabled:
             result = read<bool>(iload, &m_specular_bounces_enabled);
             break;
 
-          case ChunkSettingsLightingSpecularBounces:
+          case ChunkSettingsPathtracerSpecularBounces:
             result = read<int>(iload, &m_specular_bounces);
             break;
 
-          case ChunkSettingsLightingVolumeBouncesEnabled:
+          case ChunkSettingsPathtracerVolumeBouncesEnabled:
             result = read<bool>(iload, &m_volume_bounces_enabled);
             break;
 
-          case ChunkSettingsLightingVolumeBounces:
+          case ChunkSettingsPathtracerVolumeBounces:
             result = read<int>(iload, &m_volume_bounces);
             break;
 
-          case ChunkSettingsLightingVolumeDistanceSamples:
+          case ChunkSettingsPathtracerVolumeDistanceSamples:
             result = read<int>(iload, &m_volume_distance_samples);
             break;
 
-          case ChunkSettingsLightingMaxRayIntensitySet:
+          case ChunkSettingsPathtracerMaxRayIntensitySet:
             result = read<bool>(iload, &m_max_ray_intensity_set);
             break;
 
-          case ChunkSettingsLightingMaxRayIntensity:
+          case ChunkSettingsPathtracerMaxRayIntensity:
             result = read<float>(iload, &m_max_ray_intensity);
             break;
 
-          case ChunkSettingsLightingClampRougness:
+          case ChunkSettingsPathtracerClampRougness:
             result = read<bool>(iload, &m_clamp_roughness);
             break;
 
-          case ChunkSettingsLightingBackgroundEmitsLight:
+          case ChunkSettingsPathtracerBackgroundEmitsLight:
             result = read<bool>(iload, &m_background_emits_light);
             break;
 
-          case ChunkSettingsLightingDirectLightingEnabled:
+          case ChunkSettingsPathtracerDirectLightingEnabled:
             result = read<bool>(iload, &m_dl_enable_dl);
             break;
 
-          case ChunkSettingsLightingDirectLightingSamples:
+          case ChunkSettingsPathtracerDirectLightingSamples:
             result = read<int>(iload, &m_dl_light_samples);
             break;
 
-          case ChunkSettingsLightingDirectLightingLowLightThreshold:
+          case ChunkSettingsPathtracerDirectLightingLowLightThreshold:
             result = read<float>(iload, &m_dl_low_light_threshold);
             break;
 
-          case ChunkSettingsLightingImageBasedLightingSamples:
+          case ChunkSettingsPathtracerImageBasedLightingSamples:
             result = read<int>(iload, &m_ibl_env_samples);
             break;
 
-          case ChunkSettingsLightingBackgroundAlpha:
+          case ChunkSettingsPixelBackgroundAlpha:
             result = read<float>(iload, &m_background_alpha);
             break;
 
@@ -639,7 +772,7 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
             result = read<bool>(iload, &m_force_off_default_lights);
             break;
 
-          case ChunkSettingsLightingOptimizeLightsOutsideVolumes:
+          case ChunkSettingsPathtracerOptimizeLightsOutsideVolumes:
             result = read<bool>(iload, &m_optimize_for_lights_outside_volumes);
             break;
         }
@@ -701,6 +834,10 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
           case ChunkSettingsOutputScaleMultiplier:
             result = read(iload, &m_scale_multiplier);
             break;
+
+          case ChunkSettingsOutputShaderOverride:
+            result = read(iload, &m_shader_override);
+            break;
         }
 
         if (result != IO_OK)
@@ -752,6 +889,9 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
             result = read<bool>(iload, &m_enable_embree);
             break;
 
+          case ChunkSettingsSystemTextureCacheSize:
+            result = read<long long>(iload, &m_texture_cache_size);
+            break;
         }
 
         if (result != IO_OK)
@@ -764,3 +904,88 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
 
     return result;
 }
+
+IOResult RendererSettings::load_postprocessing_settings(ILoad* iload)
+{
+    IOResult result = IO_OK;
+
+    while (true)
+    {
+        result = iload->OpenChunk();
+        if (result == IO_END)
+            return IO_OK;
+        if (result != IO_OK)
+            break;
+
+        switch (iload->CurChunkID())
+        {
+        case ChunkSettingsPostprocessingDenoiseMode:
+          result = read<int>(iload, &m_denoise_mode);
+          break;
+
+        case ChunkSettingsPostprocessingEnableSkipDenoised:
+          result = read<bool>(iload, &m_enable_skip_denoised);
+          break;
+
+        case ChunkSettingsPostprocessingEnableRandomPixelOrder:
+          result = read<bool>(iload, &m_enable_random_pixel_order);
+          break;
+
+        case ChunkSettingsPostprocessingEnablePrefilterSpikes:
+          result = read<bool>(iload, &m_enable_prefilter_spikes);
+          break;
+
+        case ChunkSettingsPostprocessingSpikeThreshold:
+          result = read<float>(iload, &m_spike_threshold);
+          break;
+
+        case ChunkSettingsPostprocessingPatchDistanceThreshold:
+          result = read<float>(iload, &m_patch_distance_threshold);
+          break;
+
+        case ChunkSettingsPostprocessingDenoiseScales:
+          result = read<int>(iload, &m_denoise_scales);
+          break;
+        }
+
+        if (result != IO_OK)
+            break;
+
+        result = iload->CloseChunk();
+        if (result != IO_OK)
+            break;
+    }
+
+    return result;
+}
+
+IOResult RendererSettings::load_lighting_settings(ILoad* iload)
+{
+    IOResult result = IO_OK;
+
+    while (true)
+    {
+        result = iload->OpenChunk();
+        if (result == IO_END)
+            return IO_OK;
+        if (result != IO_OK)
+            break;
+
+        switch (iload->CurChunkID())
+        {
+        case ChunkSettingsLightingAlgorithm:
+            result = read<int>(iload, &m_lighting_algorithm);
+            break;
+        }
+
+        if (result != IO_OK)
+            break;
+
+        result = iload->CloseChunk();
+        if (result != IO_OK)
+            break;
+    }
+
+    return result;
+}
+
