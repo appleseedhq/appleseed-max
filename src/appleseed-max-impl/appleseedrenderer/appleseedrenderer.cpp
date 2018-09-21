@@ -507,7 +507,7 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdTextureCacheSize:
-        v.i = settings.m_texture_cache_size;
+        v.i = static_cast<int>(settings.m_texture_cache_size);
         break;
 
       default:
