@@ -439,6 +439,8 @@ struct AppleseedRendererParamDlg::Impl
     IParamMap2*                 m_pmap_output;
     IParamMap2*                 m_pmap_image_sampling;
     IParamMap2*                 m_pmap_lighting;
+    IParamMap2*                 m_pmap_pathtracer;
+    IParamMap2*                 m_pmap_postprocessing;
     IParamMap2*                 m_pmap_system;
 
     Impl(
@@ -448,7 +450,10 @@ struct AppleseedRendererParamDlg::Impl
       : m_pmap_output(nullptr)
       , m_pmap_image_sampling(nullptr)
       , m_pmap_lighting(nullptr)
+      , m_pmap_pathtracer(nullptr)
+      , m_pmap_postprocessing(nullptr)
       , m_pmap_system(nullptr)
+
     {
         if (!in_progress)
         {
@@ -483,8 +488,26 @@ struct AppleseedRendererParamDlg::Impl
             L"Lighting",
             0);
 
-        m_pmap_system = CreateRParamMap2(
+        m_pmap_pathtracer = CreateRParamMap2(
             3,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING),
+            L"Path-Tracing",
+            0);
+
+        m_pmap_postprocessing = CreateRParamMap2(
+            4,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_POSTPROCESSING),
+            L"Post-Processing",
+            0);
+
+        m_pmap_system = CreateRParamMap2(
+            5,
             renderer->GetParamBlock(0),
             rend_params,
             g_module,
@@ -504,6 +527,12 @@ struct AppleseedRendererParamDlg::Impl
 
         if (m_pmap_image_sampling != nullptr)
             DestroyRParamMap2(m_pmap_image_sampling);
+
+        if (m_pmap_postprocessing != nullptr)
+            DestroyRParamMap2(m_pmap_pathtracer);
+
+        if (m_pmap_postprocessing != nullptr)
+            DestroyRParamMap2(m_pmap_postprocessing);
 
         if (m_pmap_output != nullptr)
             DestroyRParamMap2(m_pmap_output);
