@@ -93,6 +93,7 @@ namespace
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
             m_shader_override = 0;
+            m_material_preview_quality = 4; // number of uniform pixel samples
 
             m_rendering_threads = 0;        // 0 = as many as there are logical cores
             m_enable_embree = false;
@@ -472,6 +473,10 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<int>(isave, m_shader_override);
         isave->EndChunk();
 
+        isave->BeginChunk(ChunkSettingsOutputMaterialPreviewQuality);
+        success &= write<int>(isave, m_material_preview_quality);
+        isave->EndChunk();
+
     isave->EndChunk();
 
     //
@@ -836,6 +841,10 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
 
           case ChunkSettingsOutputShaderOverride:
             result = read(iload, &m_shader_override);
+            break;
+
+          case ChunkSettingsOutputMaterialPreviewQuality:
+            result = read(iload, &m_material_preview_quality);
             break;
         }
 
