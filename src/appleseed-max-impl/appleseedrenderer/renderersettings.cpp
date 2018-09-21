@@ -121,53 +121,53 @@ const char* get_shader_override_type(const int shader_override_type)
 {
     switch (shader_override_type)
     {
-    case 0:
+      case 0:
         return "no_override";
-    case 1:
+      case 1:
         return "albedo";
-    case 2:
+      case 2:
         return "ambient_occlusion";
-    case 3:
+      case 3:
         return "assembly_instances";
-    case 4:
+      case 4:
         return "barycentric";
-    case 5:
+      case 5:
         return "bitangent";
-    case 6:
+      case 6:
         return "coverage";
-    case 7:
+      case 7:
         return "depth";
-    case 8:
+      case 8:
         return "facing_ratio";
-    case 9:
+      case 9:
         return "geometric_normal";
-    case 10:
+      case 10:
         return "materials";
-    case 11:
+      case 11:
         return "object_instances";
-    case 12:
+      case 12:
         return "original_shading_normal";
-    case 13:
+      case 13:
         return "primitives";
-    case 14:
+      case 14:
         return "ray_spread";
-    case 15:
+      case 15:
         return "regions";
-    case 16:
+      case 16:
         return "screen_space_wireframe";
-    case 17:
+      case 17:
         return "shading_normal";
-    case 18:
+      case 18:
         return "sides";
-    case 19:
+      case 19:
         return "tangent";
-    case 20:
+      case 20:
         return "uv";
-    case 21:
+      case 21:
         return "world_space_position";
-    case 22:
+      case 22:
         return "world_space_wireframe";
-    default:
+      default:
         return "coverage";
     }
 }
@@ -234,8 +234,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     else params.insert_path("rendering_threads", m_rendering_threads);
 
     if (m_shader_override > 0)
-       params.insert_path("shading_engine.override_shading.mode", get_shader_override_type(m_shader_override));
-    
+       params.insert_path("shading_engine.override_shading.mode", get_shader_override_type(m_shader_override));  
 }
 
 void RendererSettings::apply_settings_to_final_config(asr::Project& project) const
@@ -337,7 +336,7 @@ bool RendererSettings::save(ISave* isave) const
     isave->EndChunk();
 
     //
-    // Pathtracer settings.
+    // Path-Tracer settings.
     //
 
     isave->BeginChunk(ChunkSettingsPathtracer);
@@ -476,7 +475,7 @@ bool RendererSettings::save(ISave* isave) const
     isave->EndChunk();
 
     //
-    // Postprocessing settings.
+    // Post-processing settings.
     //
 
     isave->BeginChunk(ChunkSettingsPostprocessing);
@@ -542,7 +541,7 @@ bool RendererSettings::save(ISave* isave) const
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsSystemTextureCacheSize);
-        success &= write<long long>(isave, m_texture_cache_size);
+        success &= write<foundation::uint64>(isave, m_texture_cache_size);
         isave->EndChunk();
         
     isave->EndChunk();
@@ -890,7 +889,7 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
             break;
 
           case ChunkSettingsSystemTextureCacheSize:
-            result = read<long long>(iload, &m_texture_cache_size);
+            result = read<foundation::uint64>(iload, &m_texture_cache_size);
             break;
         }
 
@@ -919,33 +918,33 @@ IOResult RendererSettings::load_postprocessing_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-        case ChunkSettingsPostprocessingDenoiseMode:
-          result = read<int>(iload, &m_denoise_mode);
-          break;
+          case ChunkSettingsPostprocessingDenoiseMode:
+            result = read<int>(iload, &m_denoise_mode);
+            break;
 
-        case ChunkSettingsPostprocessingEnableSkipDenoised:
-          result = read<bool>(iload, &m_enable_skip_denoised);
-          break;
+          case ChunkSettingsPostprocessingEnableSkipDenoised:
+            result = read<bool>(iload, &m_enable_skip_denoised);
+            break;
 
-        case ChunkSettingsPostprocessingEnableRandomPixelOrder:
-          result = read<bool>(iload, &m_enable_random_pixel_order);
-          break;
+          case ChunkSettingsPostprocessingEnableRandomPixelOrder:
+            result = read<bool>(iload, &m_enable_random_pixel_order);
+            break;
 
-        case ChunkSettingsPostprocessingEnablePrefilterSpikes:
-          result = read<bool>(iload, &m_enable_prefilter_spikes);
-          break;
+          case ChunkSettingsPostprocessingEnablePrefilterSpikes:
+            result = read<bool>(iload, &m_enable_prefilter_spikes);
+            break;
 
-        case ChunkSettingsPostprocessingSpikeThreshold:
-          result = read<float>(iload, &m_spike_threshold);
-          break;
+          case ChunkSettingsPostprocessingSpikeThreshold:
+            result = read<float>(iload, &m_spike_threshold);
+            break;
 
-        case ChunkSettingsPostprocessingPatchDistanceThreshold:
-          result = read<float>(iload, &m_patch_distance_threshold);
-          break;
+          case ChunkSettingsPostprocessingPatchDistanceThreshold:
+            result = read<float>(iload, &m_patch_distance_threshold);
+            break;
 
-        case ChunkSettingsPostprocessingDenoiseScales:
-          result = read<int>(iload, &m_denoise_scales);
-          break;
+          case ChunkSettingsPostprocessingDenoiseScales:
+            result = read<int>(iload, &m_denoise_scales);
+            break;
         }
 
         if (result != IO_OK)
@@ -973,7 +972,7 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
 
         switch (iload->CurChunkID())
         {
-        case ChunkSettingsLightingAlgorithm:
+          case ChunkSettingsLightingAlgorithm:
             result = read<int>(iload, &m_lighting_algorithm);
             break;
         }

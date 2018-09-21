@@ -494,7 +494,7 @@ struct AppleseedRendererParamDlg::Impl
             rend_params,
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING),
-            L"Path Tracing",
+            L"Path-Tracing",
             0);
 
         m_pmap_postprocessing = CreateRParamMap2(
@@ -503,7 +503,7 @@ struct AppleseedRendererParamDlg::Impl
             rend_params,
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_POSTPROCESSING),
-            L"Postprocessing",
+            L"Post-Processing",
             0);
 
         m_pmap_system = CreateRParamMap2(

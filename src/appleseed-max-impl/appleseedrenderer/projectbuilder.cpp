@@ -1422,13 +1422,13 @@ namespace
     {
         switch (denoise_mode)
         {
-        case 0:
+          case 0:
             return "off";
-        case 1:
+          case 1:
             return "on";
-        case 2:
+          case 2:
             return "write_outputs";
-        default:
+          default:
             return "off";
         }
     }

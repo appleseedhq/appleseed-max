@@ -84,8 +84,8 @@ namespace
         ParamMapIdOutput,
         ParamMapIdImageSampling,
         ParamMapIdLighting,
-        ParamMapIdPathtracer,
-        ParamMapIdPostprocessing,
+        ParamMapIdPathTracer,
+        ParamMapIdPostProcessing,
         ParamMapIdSystem
     };
 
@@ -186,7 +186,7 @@ namespace
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_10,    L"Geometric Normals" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_11,    L"Materials" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_12,    L"Object Instances" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_13,    L"Original Shading Normal" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_13,    L"Original Shading Normals" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_14,    L"Primitives" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_15,    L"Ray Spread" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_16,    L"Regions" },
@@ -282,9 +282,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_shader_override;
         break;
         
-    //
-    // Image Sampling.
-    //
+      //
+      // Image Sampling.
+      //
 
       case ParamIdUniformPixelSamples:
         v.i = settings.m_uniform_pixel_samples;
@@ -302,9 +302,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_sampler_type;
         break;
 
-    //
-    // Adaptive Tile Renderer.
-    //
+      //
+      // Adaptive Tile Renderer.
+      //
 
       case ParamIdAdaptiveTileBatchSize:
         v.i = settings.m_adaptive_batch_size;
@@ -322,9 +322,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_adaptive_noise_threshold;
         break;
 
-    //
-    // Pixel Filtering and Background Alpha.
-    //
+      //
+      // Pixel Filtering and Background Alpha.
+      //
 
       case ParamIdFilterType:
         v.i = settings.m_pixel_filter;
@@ -338,9 +338,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_background_alpha;
         break;
 
-    //
-    // Lighting.
-    //
+      //
+      // Lighting.
+      //
 
       case ParamIdLightingAlgorithm:
         v.i = settings.m_lighting_algorithm;
@@ -350,9 +350,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_force_off_default_lights);
         break;
 
-    //
-    // Pathtracer.
-    //
+      //
+      // Path-Tracer.
+      //
 
       case ParamIdEnableGI:
         v.i = static_cast<int>(settings.m_enable_gi);
@@ -442,9 +442,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_rr_min_path_length;
         break;
 
-     //
-     // Postprocessing.
-     //
+      //
+      // Post-Processing.
+      //
 
       case ParamIdEnableRenderStamp:
         v.i = static_cast<int>(settings.m_enable_render_stamp);
@@ -478,9 +478,9 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_denoise_scales;
         break;
 
-    //
-    // System.
-    //
+      //
+      // System.
+      //
 
       case ParamIdCPUCores:
         v.i = settings.m_rendering_threads;
@@ -543,9 +543,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_shader_override = v.i;
         break;
         
-    //
-    // Image Sampling.
-    //
+     //
+     // Image Sampling.
+     //
 
       case ParamIdUniformPixelSamples:
         settings.m_uniform_pixel_samples = v.i;
@@ -830,14 +830,14 @@ ParamBlockDesc2 g_param_block_desc(
     0,                                          // rollup creation flag
     nullptr,
 
-    ParamMapIdPathtracer,
+    ParamMapIdPathTracer,
     IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING,   // ID of the dialog template
     0,                                          // ID of the dialog's title string
     0,                                          // IParamMap2 creation/deletion flag mask
     0,                                          // rollup creation flag
     nullptr,
 
-    ParamMapIdPostprocessing,
+    ParamMapIdPostProcessing,
     IDD_FORMVIEW_RENDERERPARAMS_POSTPROCESSING, // ID of the dialog template
     0,                                          // ID of the dialog's title string
     0,                                          // IParamMap2 creation/deletion flag mask
@@ -981,118 +981,118 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    // --- Parameters specifications for Pathtracer rollup ---
+    // --- Parameters specifications for Path-Tracer rollup ---
 
     ParamIdEnableGI, L"enable_global_illumination", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GI,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GI,
         p_default, TRUE,
         p_enable_ctrls, 1, ParamIdGlobalBounceLimit,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdGlobalBounceLimit, L"global_illumination_bounces", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_BOUNCES, IDC_SPINNER_BOUNCES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_BOUNCES, IDC_SPINNER_BOUNCES, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableDirectLighting, L"enable_direct_lighting", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_DL,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_DL,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableCaustics, L"enable_caustics", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_CAUSTICS,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_CAUSTICS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableRoughnessClamping, L"roughness_clamping", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ROUGHNESS,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ROUGHNESS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableMaxRayIntensity, L"enable_max_ray", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_MAX_RAY_INTENSITY,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_MAX_RAY_INTENSITY,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdMaxRayIntensity,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdMaxRayIntensity, L"max_ray_value", TYPE_FLOAT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_MAX_RAY_INTENSITY, IDC_SPINNER_MAX_RAY_INTENSITY, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_MAX_RAY_INTENSITY, IDC_SPINNER_MAX_RAY_INTENSITY, SPIN_AUTOSCALE,
         p_default, 1.0f,
         p_range, 0.0f, 1000.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableBackgroundLight, L"enable_background_light", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_BACKGROUND_EMITS_LIGHT,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableDiffuseBounceLimit, L"enable_diffuse_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_DBOUNCE,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_DBOUNCE,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdDiffuseBounceLimit,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdDiffuseBounceLimit, L"diffuse_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DBOUNCES, IDC_SPINNER_DBOUNCES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DBOUNCES, IDC_SPINNER_DBOUNCES, SPIN_AUTOSCALE,
         p_default, 3,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableGlossyBounceLimit, L"enable_glossy_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_GBOUNCE,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_GBOUNCE,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdGlossyBounceLimit,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdGlossyBounceLimit, L"glossy_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_GBOUNCES, IDC_SPINNER_GBOUNCES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_GBOUNCES, IDC_SPINNER_GBOUNCES, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableSpecularBounceLimit, L"enable_specular_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_SBOUNCE,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_SBOUNCE,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdSpecularBounceLimit,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdSpecularBounceLimit, L"specular_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SBOUNCES, IDC_SPINNER_SBOUNCES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SBOUNCES, IDC_SPINNER_SBOUNCES, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableVolumeBounceLimit, L"enable_volume_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_VBOUNCE,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_VBOUNCE,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdVolumeBounceLimit,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdVolumeBounceLimit, L"volume_bounce_limit", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_VBOUNCES, IDC_SPINNER_VBOUNCES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_VBOUNCES, IDC_SPINNER_VBOUNCES, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdVolumeDistanceSamples, L"volume_distance_samples", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_VOL_DISTANCE_SAMPLES, IDC_SPINNER_VOL_DISTANCE_SAMPLES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_VOL_DISTANCE_SAMPLES, IDC_SPINNER_VOL_DISTANCE_SAMPLES, SPIN_AUTOSCALE,
         p_default, 2,
         p_range, 1, 1000,
         p_accessor, &g_pblock_accessor,
@@ -1105,89 +1105,89 @@ ParamBlockDesc2 g_param_block_desc(
     p_end,
 
     ParamIdDirectLightSamples, L"direct_light_samples", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DL_SAMPLES, IDC_SPINNER_DL_SAMPLES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DL_SAMPLES, IDC_SPINNER_DL_SAMPLES, SPIN_AUTOSCALE,
         p_default, 1,
         p_range, 0, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdLowLightThreshold, L"low_light_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_DL_LOW_LIGHT_THRESHOLD, IDC_SPINNER_DL_LOW_LIGHT_THRESHOLD, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_DL_LOW_LIGHT_THRESHOLD, IDC_SPINNER_DL_LOW_LIGHT_THRESHOLD, SPIN_AUTOSCALE,
         p_default, 0.0f,
         p_range, 0.0f, 1000.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnvLightSamples, L"environment_light_samples", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_ENV_SAMPLES, IDC_SPINNER_ENV_SAMPLES, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_ENV_SAMPLES, IDC_SPINNER_ENV_SAMPLES, SPIN_AUTOSCALE,
         p_default, 1,
         p_range, 0, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdRussianRouletteMinPathLength, L"russian_roulette_min_path_length", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPathtracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RR_MIN_PATH_LENGTH, IDC_SPINNER_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RR_MIN_PATH_LENGTH, IDC_SPINNER_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
         p_default, 6,
         p_range, 1, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-     // --- Parameters specifications for Postprocessing rollup ---
+     // --- Parameters specifications for Post-Processing rollup ---
 
     ParamIdDenoiseMode, L"denoiser_mode", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPostprocessing, TYPE_INT_COMBOBOX, IDC_COMBO_DENOISE_MODE,
+        p_ui, ParamMapIdPostProcessing, TYPE_INT_COMBOBOX, IDC_COMBO_DENOISE_MODE,
         3, IDS_RENDERERPARAMS_DENOISE_MODE_1, IDS_RENDERERPARAMS_DENOISE_MODE_2, IDS_RENDERERPARAMS_DENOISE_MODE_3,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableRenderStamp, L"enable_render_stamp", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPostprocessing, TYPE_SINGLECHEKBOX, IDC_CHECK_RENDER_STAMP,
+        p_ui, ParamMapIdPostProcessing, TYPE_SINGLECHEKBOX, IDC_CHECK_RENDER_STAMP,
         p_default, FALSE,
         p_enable_ctrls, 1, ParamIdRenderStampFormat,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdRenderStampFormat, L"render_stamp_format", TYPE_STRING, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPostprocessing, TYPE_EDITBOX, IDC_TEXT_RENDER_STAMP,
+        p_ui, ParamMapIdPostProcessing, TYPE_EDITBOX, IDC_TEXT_RENDER_STAMP,
         p_default, L"appleseed {lib-version} | Time: {render-time}",
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableSkipDenoisedPixel, L"skip_denoised_pixels", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPostprocessing, TYPE_SINGLECHEKBOX, IDC_CHECK_SKIP_DENOISED_PIXELS,
+        p_ui, ParamMapIdPostProcessing, TYPE_SINGLECHEKBOX, IDC_CHECK_SKIP_DENOISED_PIXELS,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnableRandomPixelOrder, L"enable_random_pixel_order", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPostprocessing, TYPE_SINGLECHEKBOX, IDC_CHECK_RANDOM_PIXEL_ORDER,
+        p_ui, ParamMapIdPostProcessing, TYPE_SINGLECHEKBOX, IDC_CHECK_RANDOM_PIXEL_ORDER,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdEnablePrefilterSpikes, L"enable_spike_prefiltering", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdPostprocessing, TYPE_SINGLECHEKBOX, IDC_CHECK_PREFILTER_SPIKES,
+        p_ui, ParamMapIdPostProcessing, TYPE_SINGLECHEKBOX, IDC_CHECK_PREFILTER_SPIKES,
         p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdSpikeThreshold, L"spike_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdPostprocessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPIKE_THRESHOLD, IDC_SPINNER_SPIKE_THRESHOLD, SPIN_AUTOSCALE,
+       p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_SPIKE_THRESHOLD, IDC_SPINNER_SPIKE_THRESHOLD, SPIN_AUTOSCALE,
        p_default, 2.0f,
        p_range, 0.1f, 4.0f,
        p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdPatchDistance, L"patch_distance_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdPostprocessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_PATCH_DISTANCE, IDC_SPINNER_PATCH_DISTANCE, SPIN_AUTOSCALE,
+       p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_PATCH_DISTANCE, IDC_SPINNER_PATCH_DISTANCE, SPIN_AUTOSCALE,
        p_default, 1.0f,
        p_range, 0.5f, 3.0f,
        p_accessor, &g_pblock_accessor,
     p_end,
 
     ParamIdDenoiseScales, L"denoise_scales", TYPE_INT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdPostprocessing, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DENOISE_SCALES, IDC_SPINNER_DENOISE_SCALES, SPIN_AUTOSCALE,
+       p_ui, ParamMapIdPostProcessing, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_DENOISE_SCALES, IDC_SPINNER_DENOISE_SCALES, SPIN_AUTOSCALE,
        p_default, 3,
        p_range, 1, 10,
        p_accessor, &g_pblock_accessor,
@@ -1237,7 +1237,7 @@ ParamBlockDesc2 g_param_block_desc(
     ParamIdTextureCacheSize, L"texture_cache_size", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_TEXTURE_CACHE_SIZE, IDC_SPINNER_TEXTURE_CACHE_SIZE, SPIN_AUTOSCALE,
         p_default, 1024,
-        p_range, 1, 1000000,
+        p_range, 1, 1024*1024,
         p_accessor, &g_pblock_accessor,
     p_end,
 
