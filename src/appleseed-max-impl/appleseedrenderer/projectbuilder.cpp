@@ -1536,7 +1536,7 @@ namespace
 
 #if MAX_RELEASE >= 18000
 
-void set_camera_dof_params(
+void set_camera_film_params(
     asr::ParamArray&            params,
     MaxSDK::IPhysicalCamera*    camera_node,
     Bitmap*                     bitmap,
@@ -1547,6 +1547,16 @@ void set_camera_dof_params(
     const float film_width = camera_node->GetFilmWidth(time, FOREVER);
     const float film_height = film_width * aspect;
     params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
+}
+
+void set_camera_dof_params(
+    asr::ParamArray&            params,
+    MaxSDK::IPhysicalCamera*    camera_node,
+    Bitmap*                     bitmap,
+    const TimeValue             time)
+{
+    // Film dimensions.
+    set_camera_film_params(params, camera_node, bitmap, time);
 
     // DOF settings.
     params.insert("f_stop", camera_node->GetLensApertureFNumber(time, FOREVER));
@@ -1563,7 +1573,6 @@ void set_camera_dof_params(
         break;
     }
 }
-
 #endif
 
 asf::auto_release_ptr<asr::Camera> build_camera(
@@ -1612,18 +1621,22 @@ asf::auto_release_ptr<asr::Camera> build_camera(
 
         if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
         {
+            // Film dimensions.
             set_camera_dof_params(params, phys_camera, bitmap, time);
-            
             // Create camera.
             camera = asr::ThinLensCameraFactory().create("camera", params);
         }
-        else
-#endif
+        else if (phys_camera)   // physical camera, DOF disabled
         {
             // Film dimensions.
-            // todo: using dummy values for now, can we and should we do better?
+            set_camera_film_params(params, phys_camera, bitmap, time);
+            // Create camera.
+            camera = asr::ThinLensCameraFactory().create("camera", params);
+        }
+        else                    // standard pinhole camera
+#endif
+        {
             params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
-
             // Create camera.
             camera = asr::PinholeCameraFactory().create("camera", params);
         }
