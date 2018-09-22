@@ -1555,10 +1555,6 @@ void set_camera_dof_params(
     Bitmap*                     bitmap,
     const TimeValue             time)
 {
-    // Film dimensions.
-    set_camera_film_params(params, camera_node, bitmap, time);
-
-    // DOF settings.
     params.insert("f_stop", camera_node->GetLensApertureFNumber(time, FOREVER));
     params.insert("autofocus_enabled", false);
     params.insert("focal_distance", camera_node->GetFocusDistance(time, FOREVER));
@@ -1621,8 +1617,10 @@ asf::auto_release_ptr<asr::Camera> build_camera(
 
         if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
         {
-            // Film dimensions.
+            // DOF parameter.
             set_camera_dof_params(params, phys_camera, bitmap, time);
+            // Film dimensions.
+            set_camera_film_params(params, phys_camera, bitmap, time);
             // Create camera.
             camera = asr::ThinLensCameraFactory().create("camera", params);
         }
