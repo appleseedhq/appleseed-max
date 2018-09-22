@@ -95,6 +95,7 @@ namespace
         ParamIdProjectPath                  = 1,
         ParamIdScaleMultiplier              = 2,
         ParamIdShaderOverrideType           = 54,
+        ParamIdMaterialPreviewQuality       = 55,
 
         ParamIdUniformPixelSamples          = 3,
         ParamIdTileSize                     = 4,
@@ -280,6 +281,10 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdShaderOverrideType:
         v.i = settings.m_shader_override;
+        break;
+
+      case ParamIdMaterialPreviewQuality:
+        v.i = settings.m_material_preview_quality;
         break;
         
       //
@@ -541,6 +546,10 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdShaderOverrideType:
         settings.m_shader_override = v.i;
+        break;
+
+      case ParamIdMaterialPreviewQuality:
+        settings.m_material_preview_quality = v.i;
         break;
         
      //
@@ -871,17 +880,24 @@ ParamBlockDesc2 g_param_block_desc(
     p_end,
 
     ParamIdShaderOverrideType, L"shader_override_type", TYPE_INT, P_TRANSIENT, 0,
-       p_ui, ParamMapIdOutput, TYPE_INT_COMBOBOX, IDC_COMBO_DIAGNOSTIC_SHADER_MODE,
-       23, IDS_RENDERERPARAMS_SHADER_OVERRIDE_1, IDS_RENDERERPARAMS_SHADER_OVERRIDE_2, IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_4, IDS_RENDERERPARAMS_SHADER_OVERRIDE_5, IDS_RENDERERPARAMS_SHADER_OVERRIDE_6,
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_7, IDS_RENDERERPARAMS_SHADER_OVERRIDE_8, IDS_RENDERERPARAMS_SHADER_OVERRIDE_9,
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_10, IDS_RENDERERPARAMS_SHADER_OVERRIDE_11, IDS_RENDERERPARAMS_SHADER_OVERRIDE_12,
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_13, IDS_RENDERERPARAMS_SHADER_OVERRIDE_14, IDS_RENDERERPARAMS_SHADER_OVERRIDE_15,
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_16, IDS_RENDERERPARAMS_SHADER_OVERRIDE_17, IDS_RENDERERPARAMS_SHADER_OVERRIDE_18,
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_19, IDS_RENDERERPARAMS_SHADER_OVERRIDE_20, IDS_RENDERERPARAMS_SHADER_OVERRIDE_21, 
-       IDS_RENDERERPARAMS_SHADER_OVERRIDE_22, IDS_RENDERERPARAMS_SHADER_OVERRIDE_23,
-       p_default, 0,
-       p_accessor, &g_pblock_accessor,
+        p_ui, ParamMapIdOutput, TYPE_INT_COMBOBOX, IDC_COMBO_DIAGNOSTIC_SHADER_MODE,
+        23, IDS_RENDERERPARAMS_SHADER_OVERRIDE_1, IDS_RENDERERPARAMS_SHADER_OVERRIDE_2, IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_4, IDS_RENDERERPARAMS_SHADER_OVERRIDE_5, IDS_RENDERERPARAMS_SHADER_OVERRIDE_6,
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_7, IDS_RENDERERPARAMS_SHADER_OVERRIDE_8, IDS_RENDERERPARAMS_SHADER_OVERRIDE_9,
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_10, IDS_RENDERERPARAMS_SHADER_OVERRIDE_11, IDS_RENDERERPARAMS_SHADER_OVERRIDE_12,
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_13, IDS_RENDERERPARAMS_SHADER_OVERRIDE_14, IDS_RENDERERPARAMS_SHADER_OVERRIDE_15,
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_16, IDS_RENDERERPARAMS_SHADER_OVERRIDE_17, IDS_RENDERERPARAMS_SHADER_OVERRIDE_18,
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_19, IDS_RENDERERPARAMS_SHADER_OVERRIDE_20, IDS_RENDERERPARAMS_SHADER_OVERRIDE_21, 
+        IDS_RENDERERPARAMS_SHADER_OVERRIDE_22, IDS_RENDERERPARAMS_SHADER_OVERRIDE_23,
+        p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdMaterialPreviewQuality, L"material_preview_samples", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdOutput, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_MATERIAL_PREVIEW_QUALITY, IDC_SPINNER_MATERIAL_PREVIEW_QUALITY, SPIN_AUTOSCALE,
+        p_default, 4,
+        p_range, 1, 64,
+        p_accessor, &g_pblock_accessor,
     p_end,
 
     // --- Parameters specifications for Image Sampling rollup ---
@@ -1676,11 +1692,20 @@ int AppleseedRenderer::Render(
     // Retrieve and tweak renderer settings.
     RendererSettings renderer_settings = m_settings;
     if (m_rend_params.inMtlEdit)
-    {
-        renderer_settings.m_uniform_pixel_samples = m_rend_params.mtlEditAA ? 32 : 4;
+    {   
+        renderer_settings.m_lighting_algorithm = 0;
+        renderer_settings.m_sampler_type = 0;
+        renderer_settings.m_shader_override = 0;
+        renderer_settings.m_denoise_mode = 0;
+        renderer_settings.m_uniform_pixel_samples = renderer_settings.m_material_preview_quality;
+        // renderer_settings.m_uniform_pixel_samples = m_rend_params.mtlEditAA ? 32 : 4;
         renderer_settings.m_passes = 1;
         renderer_settings.m_enable_gi = true;
+        renderer_settings.m_dl_enable_dl = true;
         renderer_settings.m_background_emits_light = false;
+        renderer_settings.m_dl_light_samples = 1;
+        renderer_settings.m_dl_low_light_threshold = 0.0f;
+        renderer_settings.m_ibl_env_samples = 1;
     }
 
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
