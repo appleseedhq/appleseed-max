@@ -27,4 +27,24 @@ REM OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 REM THE SOFTWARE.
 REM
 
-call impl-make-all-packages-for-config.bat Release
+set config=%1
+set maxversion=%2
+
+set zipcmd=%~dp0\tools\7z\7z.exe
+
+echo ============ Creating 3ds Max %maxversion% Archive ============
+echo.
+
+rmdir /S /Q appleseed-max%maxversion% 2>nul
+del appleseed-max%maxversion%-x.x.x-yyyy.zip 2>nul
+
+if exist ..\sandbox\max%maxversion%\%config%\ (
+    mkdir appleseed-max%maxversion%
+    xcopy /S ..\sandbox\max%maxversion%\%config%\*.* appleseed-max%maxversion%
+    %zipcmd% a -r -mx=9 appleseed-max%maxversion%-x.x.x-yyyy.zip appleseed-max%maxversion%
+    rmdir /S /Q appleseed-max%maxversion%
+) else (
+    echo Warning: No 3ds Max %maxversion% build in config %config% found.
+)
+
+echo.

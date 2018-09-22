@@ -27,4 +27,15 @@ REM OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 REM THE SOFTWARE.
 REM
 
-call impl-make-all-packages-for-config.bat Release
+set config=%1
+
+pushd %~dp0
+
+call impl-make-single-package.bat %config% 2016
+call impl-make-single-package.bat %config% 2017
+call impl-make-single-package.bat %config% 2018
+call impl-make-single-package.bat %config% 2019
+
+popd
+
+pause
