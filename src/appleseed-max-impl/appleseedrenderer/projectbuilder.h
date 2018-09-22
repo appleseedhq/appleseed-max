@@ -35,9 +35,6 @@
 // 3ds Max headers.
 #include <maxtypes.h>
 #include <render.h>
-#if MAX_RELEASE >= 18000
-#include <Scene/IPhysicalCamera.h>
-#endif
 
 // Standard headers.
 #include <vector>
@@ -65,16 +62,6 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     Bitmap*                             bitmap,
     const TimeValue                     time,
     RendProgressCallback*               progress_cb);
-
-#if MAX_RELEASE >= 18000
-
-void set_camera_dof_params(
-    renderer::ParamArray&               params,
-    MaxSDK::IPhysicalCamera*            camera_node,
-    Bitmap*                             bitmap,
-    const TimeValue                     time);
-
-#endif
 
 foundation::auto_release_ptr<renderer::Camera> build_camera(
     INode*                              view_node,
