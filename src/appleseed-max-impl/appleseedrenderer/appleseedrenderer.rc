@@ -189,7 +189,7 @@ BEGIN
                     "SpinnerControl",WS_TABSTOP,135,60,6,10
     COMBOBOX        IDC_COMBO_DIAGNOSTIC_SHADER_MODE,61,91,138,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Override Shading:",IDC_STATIC,0,93,61,8
-    LTEXT           "Material Preview Quality:",IDC_STATIC_SCALE_MULTIPLIER,0,76,81,8
+    LTEXT           "Material Preview Quality:",IDC_STATIC_MATERIAL_PREVIEW_QUALITY,0,76,81,8
     CONTROL         "Material Preview Quality",IDC_SPINNER_MATERIAL_PREVIEW_QUALITY,
                     "SpinnerControl",WS_TABSTOP,135,76,6,10
     CONTROL         "Scale Multiplier",IDC_TEXT_SCALE_MULTIPLIER,"CustEdit",WS_TABSTOP,104,60,30,10
