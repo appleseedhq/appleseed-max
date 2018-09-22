@@ -80,9 +80,7 @@
 #include <pbbitmap.h>
 #include <renderelements.h>
 #include <RendType.h>
-#if MAX_RELEASE >= 18000
 #include <Scene/IPhysicalCamera.h>
-#endif
 #include <trig.h>
 #include <triobj.h>
 
@@ -1069,19 +1067,17 @@ namespace
             static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
         if (appleseed_mtl != nullptr && appleseed_mtl->can_emit_light())
             return true;
-        else
+
+        for (int i = 0, e = mtl->NumSubMtls(); i < e; ++i)
         {
-            const int submtl_count = mtl->NumSubMtls();
-            for (int i = 0; i < submtl_count; ++i)
+            Mtl* sub_mtl = mtl->GetSubMtl(i);
+            if (sub_mtl != nullptr)
             {
-                Mtl* sub_mtl = mtl->GetSubMtl(i);
-                if (sub_mtl != nullptr)
-                {
-                    if (is_light_emitting_material(sub_mtl))
-                        return true;
-                }
+                if (is_light_emitting_material(sub_mtl))
+                    return true;
             }
         }
+
         return false;
     }
 
@@ -1509,7 +1505,7 @@ namespace
                         .insert("patch_distance_threshold", settings.m_patch_distance_threshold)
                         .insert("spike_threshold", settings.m_spike_threshold)
                         .insert("denoise_scales", settings.m_denoise_scales),
-                        aovs));
+                    aovs));
 
             if (rend_params.rendType == RENDTYPE_REGION)
             {
@@ -1534,15 +1530,12 @@ namespace
     }
 }
 
-#if MAX_RELEASE >= 18000
-
 void set_camera_film_params(
     asr::ParamArray&            params,
     MaxSDK::IPhysicalCamera*    camera_node,
     Bitmap*                     bitmap,
     const TimeValue             time)
 {
-    // Film dimensions.
     const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
     const float film_width = camera_node->GetFilmWidth(time, FOREVER);
     const float film_height = film_width * aspect;
@@ -1558,6 +1551,7 @@ void set_camera_dof_params(
     params.insert("f_stop", camera_node->GetLensApertureFNumber(time, FOREVER));
     params.insert("autofocus_enabled", false);
     params.insert("focal_distance", camera_node->GetFocusDistance(time, FOREVER));
+
     switch (camera_node->GetBokehShape(time, FOREVER))
     {
       case MaxSDK::IPhysicalCamera::BokehShape::Circular:
@@ -1569,7 +1563,6 @@ void set_camera_dof_params(
         break;
     }
 }
-#endif
 
 asf::auto_release_ptr<asr::Camera> build_camera(
     INode*                  view_node,
@@ -1609,32 +1602,27 @@ asf::auto_release_ptr<asr::Camera> build_camera(
         asr::ParamArray params;
         params.insert("horizontal_fov", asf::rad_to_deg(view_params.fov));
 
-#if MAX_RELEASE >= 18000
-        // Look for a physical camera in th scene.
+        // Look for a physical camera in the scene.
         MaxSDK::IPhysicalCamera* phys_camera = nullptr;
         if (view_node)
             phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
 
-        if (phys_camera && phys_camera->GetDOFEnabled(time, FOREVER))
+        if (phys_camera != nullptr)
         {
+            // Film dimensions.
+            set_camera_film_params(params, phys_camera, bitmap, time);
+
             // DOF parameter.
-            set_camera_dof_params(params, phys_camera, bitmap, time);
-            // Film dimensions.
-            set_camera_film_params(params, phys_camera, bitmap, time);
+            if (phys_camera->GetDOFEnabled(time, FOREVER))
+                set_camera_dof_params(params, phys_camera, bitmap, time);
+
             // Create camera.
             camera = asr::ThinLensCameraFactory().create("camera", params);
         }
-        else if (phys_camera)   // physical camera, DOF disabled
-        {
-            // Film dimensions.
-            set_camera_film_params(params, phys_camera, bitmap, time);
-            // Create camera.
-            camera = asr::ThinLensCameraFactory().create("camera", params);
-        }
-        else                    // standard pinhole camera
-#endif
+        else    // standard pinhole camera
         {
             params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
+
             // Create camera.
             camera = asr::PinholeCameraFactory().create("camera", params);
         }
