@@ -1609,19 +1609,24 @@ asf::auto_release_ptr<asr::Camera> build_camera(
         {
             // Film dimensions.
             set_camera_film_params(params, phys_camera, bitmap, time);
-            // Create camera.
-            camera = asr::PinholeCameraFactory().create("camera", params);
-            // DOF parameter.
+
             if (phys_camera->GetDOFEnabled(time, FOREVER))
             {   
                 set_camera_dof_params(params, phys_camera, bitmap, time); 
-                // Create camera.
+
+                // Create camera - DOF enabled.
                 camera = asr::ThinLensCameraFactory().create("camera", params);
+            }
+            else
+            {
+                // Create camera - DOF disabled.
+                camera = asr::PinholeCameraFactory().create("camera", params);
             }
         }
         else
         {
             params.insert("film_dimensions", asf::Vector2i(bitmap->Width(), bitmap->Height()));
+
             // Create camera.
             camera = asr::PinholeCameraFactory().create("camera", params);
         }
