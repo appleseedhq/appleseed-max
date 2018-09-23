@@ -1444,7 +1444,6 @@ namespace
                         .insert("camera", "camera")
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(8, 8))
-                        .insert("color_space", "linear_rgb")
                         .insert("filter", "box")
                         .insert("filter_size", 0.5));
         }
@@ -1495,7 +1494,6 @@ namespace
                         .insert("camera", "camera")
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(settings.m_tile_size))
-                        .insert("color_space", "linear_rgb")
                         .insert("filter", get_filter_type(settings.m_pixel_filter))
                         .insert("filter_size", settings.m_pixel_filter_size)
                         .insert("denoiser", get_denoise_mode(settings.m_denoise_mode))
