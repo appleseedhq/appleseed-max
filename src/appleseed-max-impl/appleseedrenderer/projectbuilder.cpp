@@ -632,20 +632,8 @@ namespace
                 "medium_priority",
                 get_medium_priority(instance_node->GetObjectRef(), time));
         if (type == RenderType::MaterialPreview)
-        {
             params.insert_path("visibility.shadow", false);
-            // Create the instance and insert it into the assembly.
-            assembly.object_instances().insert(
-                asr::ObjectInstanceFactory::create(
-                    instance_name.c_str(),
-                    params,
-                    object_info.m_name.c_str(),
-                    transform,
-                    back_material_mappings,
-                    front_material_mappings));
-        }
-        else
-        {
+
             // Create the instance and insert it into the assembly.
             assembly.object_instances().insert(
                 asr::ObjectInstanceFactory::create(
@@ -655,7 +643,6 @@ namespace
                     transform,
                     front_material_mappings,
                     back_material_mappings));
-        }
     }
 
     typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
@@ -1545,7 +1532,7 @@ void set_camera_film_params(
     asr::ParamArray&            params,
     MaxSDK::IPhysicalCamera*    camera_node,
     Bitmap*                     bitmap,
-    const RendererSettings& settings,
+    const RendererSettings&     settings,
     const TimeValue             time)
 {
     const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
