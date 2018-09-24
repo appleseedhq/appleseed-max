@@ -634,15 +634,15 @@ namespace
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
-            // Create the instance and insert it into the assembly.
-            assembly.object_instances().insert(
-                asr::ObjectInstanceFactory::create(
-                    instance_name.c_str(),
-                    params,
-                    object_info.m_name.c_str(),
-                    transform,
-                    front_material_mappings,
-                    back_material_mappings));
+        // Create the instance and insert it into the assembly.
+        assembly.object_instances().insert(
+            asr::ObjectInstanceFactory::create(
+                instance_name.c_str(),
+                params,
+                object_info.m_name.c_str(),
+                transform,
+                front_material_mappings,
+                back_material_mappings));
     }
 
     typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
