@@ -632,17 +632,30 @@ namespace
                 "medium_priority",
                 get_medium_priority(instance_node->GetObjectRef(), time));
         if (type == RenderType::MaterialPreview)
+        {
             params.insert_path("visibility.shadow", false);
-
-        // Create the instance and insert it into the assembly.
-        assembly.object_instances().insert(
-            asr::ObjectInstanceFactory::create(
-                instance_name.c_str(),
-                params,
-                object_info.m_name.c_str(),
-                transform,
-                front_material_mappings,
-                back_material_mappings));
+            // Create the instance and insert it into the assembly.
+            assembly.object_instances().insert(
+                asr::ObjectInstanceFactory::create(
+                    instance_name.c_str(),
+                    params,
+                    object_info.m_name.c_str(),
+                    transform,
+                    back_material_mappings,
+                    front_material_mappings));
+        }
+        else
+        {
+            // Create the instance and insert it into the assembly.
+            assembly.object_instances().insert(
+                asr::ObjectInstanceFactory::create(
+                    instance_name.c_str(),
+                    params,
+                    object_info.m_name.c_str(),
+                    transform,
+                    front_material_mappings,
+                    back_material_mappings));
+        }
     }
 
     typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
@@ -1532,10 +1545,11 @@ void set_camera_film_params(
     asr::ParamArray&            params,
     MaxSDK::IPhysicalCamera*    camera_node,
     Bitmap*                     bitmap,
+    const RendererSettings& settings,
     const TimeValue             time)
 {
     const float aspect = static_cast<float>(bitmap->Height()) / bitmap->Width();
-    const float film_width = camera_node->GetFilmWidth(time, FOREVER);
+    const float film_width = camera_node->GetFilmWidth(time, FOREVER) * settings.m_scale_multiplier;
     const float film_height = film_width * aspect;
     params.insert("film_dimensions", asf::Vector2f(film_width, film_height));
 }
@@ -1608,7 +1622,7 @@ asf::auto_release_ptr<asr::Camera> build_camera(
         if (phys_camera != nullptr)
         {
             // Film dimensions.
-            set_camera_film_params(params, phys_camera, bitmap, time);
+            set_camera_film_params(params, phys_camera, bitmap, settings, time);
 
             if (phys_camera->GetDOFEnabled(time, FOREVER))
             {   
@@ -1660,8 +1674,8 @@ asf::auto_release_ptr<asr::Project> build_project(
 
     // Initialize search paths.
     project->search_paths().set_root_path(get_root_path());
-    project->search_paths().push_back_explicit_path("shaders\\max");
-    project->search_paths().push_back_explicit_path("shaders\\appleseed");
+    project->search_paths().push_back_explicit_path("shaders/max");
+    project->search_paths().push_back_explicit_path("shaders/appleseed");
 
     // Add default configurations to the project.
     project->add_default_configurations();
