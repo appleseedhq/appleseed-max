@@ -1340,6 +1340,7 @@ IParamBlock2* AppleseedRenderer::GetParamBlock(int i)
     {
       case 0:
         return m_param_block;
+
       default:
         DbgAssert(false);
         return nullptr;
@@ -1352,10 +1353,12 @@ IParamBlock2* AppleseedRenderer::GetParamBlockByID(BlockID id)
     {
       case 0:
         return m_param_block;
+
       default:
         return nullptr;
     }
 }
+
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
 #if MAX_RELEASE < 19000
@@ -1388,7 +1391,6 @@ BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
         return static_cast<ITabDialogObject*>(this);
     else return Renderer::GetInterface(id);
 }
-
 
 bool AppleseedRenderer::HasRequirement(Requirement requirement)
 {
