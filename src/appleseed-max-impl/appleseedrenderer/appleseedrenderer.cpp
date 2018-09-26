@@ -1308,6 +1308,7 @@ void AppleseedRenderer::SetReference(int i, RefTargetHandle rtarg)
       case 0:
         m_param_block = static_cast<IParamBlock2*>(rtarg);
         break;
+
       default:
         DbgAssert(false);
         break;
@@ -1708,6 +1709,15 @@ int AppleseedRenderer::Render(
         renderer_settings.m_dl_light_samples = 1;
         renderer_settings.m_dl_low_light_threshold = 0.0f;
         renderer_settings.m_ibl_env_samples = 1;
+        renderer_settings.m_diffuse_bounces_enabled = true;
+        renderer_settings.m_diffuse_bounces = 2;
+        renderer_settings.m_glossy_bounces_enabled = true;
+        renderer_settings.m_glossy_bounces = 2;
+        renderer_settings.m_specular_bounces_enabled = true;
+        renderer_settings.m_specular_bounces = 2;
+        renderer_settings.m_volume_bounces_enabled = true;
+        renderer_settings.m_volume_bounces = 2;
+        renderer_settings.m_enable_caustics = true;
     }
 
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)

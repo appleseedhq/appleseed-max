@@ -1445,7 +1445,8 @@ namespace
                         .insert("resolution", asf::Vector2i(bitmap->Width(), bitmap->Height()))
                         .insert("tile_size", asf::Vector2i(8, 8))
                         .insert("filter", "box")
-                        .insert("filter_size", 0.5));
+                        .insert("filter_size", 0.5)
+                        .insert("denoiser", "off"));
         }
         else
         {
