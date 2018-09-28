@@ -926,7 +926,7 @@ ParamBlockDesc2 g_param_block_desc(
     ParamIdFilterSize, L"filter_size", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_FILTER_SIZE, IDC_SPINNER_FILTER_SIZE, SPIN_AUTOSCALE,
         p_default, 1.5f,
-        p_range, 1.0f, 20.0f,
+        p_range, 0.5f, 20.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
