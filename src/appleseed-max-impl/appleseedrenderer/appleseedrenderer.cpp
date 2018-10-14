@@ -1939,6 +1939,11 @@ void AppleseedRenderer::create_log_window()
     g_dialog_log_target.reset(new DialogLogTarget(m_settings.m_log_open_mode));
 }
 
+TimeValue AppleseedRenderer::get_time()
+{
+    return m_time;
+}
+
 void AppleseedRenderer::clear()
 {
     m_scene = nullptr;

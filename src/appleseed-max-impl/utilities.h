@@ -206,6 +206,13 @@ const T load_system_setting(const wchar_t* key_name, const T& default_value);
 
 
 //
+// Renderer access functions.
+//
+
+TimeValue get_current_time();
+
+
+//
 // Implementation.
 //
 

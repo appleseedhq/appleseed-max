@@ -50,17 +50,17 @@ void connect_output_selector(
     const char*         material_input_name,
     Texmap*             texmap)
 {
-    const auto t = GetCOREInterface()->GetTime();
+    TimeValue time = get_current_time();
 
     Texmap* input_map = nullptr;
-    texmap->GetParamBlock(0)->GetValueByName(L"source_map", t, input_map, FOREVER);
+    texmap->GetParamBlock(0)->GetValueByName(L"source_map", time, input_map, FOREVER);
     if (input_map != nullptr && is_osl_texture(input_map))
     {
         OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
         auto output_names = osl_texture->get_output_names();
 
         int output_index = 0;
-        texmap->GetParamBlock(0)->GetValueByName(L"output_index", t, output_index, FOREVER);
+        texmap->GetParamBlock(0)->GetValueByName(L"output_index", time, output_index, FOREVER);
         DbgAssert(output_index >= 1);
         output_index -= 1;
         if (output_index < output_names.size())
@@ -81,11 +81,12 @@ void connect_output_map(
     Texmap*             texmap,
     const Color         const_value)
 {
-    const auto t = GetCOREInterface()->GetTime();
+    TimeValue time = get_current_time();
+
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);
 
     Texmap* input_map = nullptr;
-    texmap->GetParamBlock(0)->GetValueByName(L"map1", t, input_map, FOREVER);
+    texmap->GetParamBlock(0)->GetValueByName(L"map1", time, input_map, FOREVER);
 
     connect_color_texture(shader_group, color_balance_layer_name.c_str(), "in_defaultColor", input_map, Color(1.0, 1.0, 1.0));
 
@@ -106,11 +107,11 @@ void connect_output_map(
     Texmap*             texmap,
     const float         const_value)
 {
-    const auto t = GetCOREInterface()->GetTime();
+    const auto time = get_current_time();
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);
 
     Texmap* input_map = nullptr;
-    texmap->GetParamBlock(0)->GetValueByName(L"map1", t, input_map, FOREVER);
+    texmap->GetParamBlock(0)->GetValueByName(L"map1", time, input_map, FOREVER);
 
     connect_float_texture(shader_group, color_balance_layer_name.c_str(), "in_defaultFloat", input_map, 1.0f);
 

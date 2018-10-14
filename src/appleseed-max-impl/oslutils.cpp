@@ -66,7 +66,7 @@ asr::ParamArray get_uv_params(Texmap* texmap)
         return uv_params;
 
     StdUVGen* std_uv = static_cast<StdUVGen*>(uv_gen);
-    const auto time = GetCOREInterface()->GetTime();
+    const TimeValue time = get_current_time();
 
     DbgAssert(texmap->MapSlotType(texmap->GetMapChannel()) == MAPSLOT_TEXTURE);
     DbgAssert(static_cast<StdUVGen*>(uv_gen)->GetUVWSource() == UVWSRC_EXPLICIT);
@@ -177,7 +177,7 @@ asr::ParamArray get_output_params(Texmap* texmap)
     if (std_tex_output == nullptr)
         return output_params;
 
-    const auto time = GetCOREInterface()->GetTime();
+    const TimeValue time = get_current_time();
 
     output_params.insert("in_multiplier", fmt_osl_expr(std_tex_output->GetOutAmt(time)));
     output_params.insert("in_clamp_output", fmt_osl_expr(std_tex_output->GetClamp()));
@@ -561,7 +561,7 @@ void create_osl_shader(
     const OSLShaderInfo*    shader_info)
 {
     asr::ParamArray params;
-    const auto t = GetCOREInterface()->GetTime();
+    const TimeValue time = get_current_time();
 
     for (const auto& param_info : shader_info->m_params)
     {
@@ -571,7 +571,7 @@ void create_osl_shader(
         {
             int texture_param_id = 
                 max_param.m_has_constant ? max_param.m_max_param_id + 1 : max_param.m_max_param_id;
-            param_block->GetValue(texture_param_id, t, texmap, FOREVER);
+            param_block->GetValue(texture_param_id, time, texmap, FOREVER);
 
             if (texmap != nullptr)
             {
@@ -580,7 +580,7 @@ void create_osl_shader(
                   case MaxParam::Float:
                     {
                         const float constant_value = 
-                            max_param.m_has_constant ? param_block->GetFloat(max_param.m_max_param_id, t) : 1.0f;
+                            max_param.m_has_constant ? param_block->GetFloat(max_param.m_max_param_id, time, FOREVER) : 1.0f;
                         connect_float_texture(
                             shader_group,
                             layer_name,
@@ -592,7 +592,7 @@ void create_osl_shader(
                   case MaxParam::Color:
                     {
                         const Color constant_color = 
-                            max_param.m_has_constant ? param_block->GetColor(max_param.m_max_param_id, t) : Color(1.0, 1.0, 1.0);
+                            max_param.m_has_constant ? param_block->GetColor(max_param.m_max_param_id, time, FOREVER) : Color(1.0, 1.0, 1.0);
                         connect_color_texture(
                             shader_group,
                             layer_name,
@@ -620,7 +620,7 @@ void create_osl_shader(
         if (max_param.m_connectable && max_param.m_param_type == MaxParam::Closure)
         {
             Mtl* material = nullptr;
-            param_block->GetValue(max_param.m_max_param_id, t, material, FOREVER);
+            param_block->GetValue(max_param.m_max_param_id, time, material, FOREVER);
             if (material != nullptr && assembly != nullptr)
             {
                 connect_sub_mtl(*assembly, shader_group, layer_name, max_param.m_osl_param_name.c_str(), material);
@@ -633,7 +633,7 @@ void create_osl_shader(
             {
               case MaxParam::Float:
                 {
-                    const float param_value = param_block->GetFloat(max_param.m_max_param_id, t, FOREVER);
+                    const float param_value = param_block->GetFloat(max_param.m_max_param_id, time, FOREVER);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
@@ -642,35 +642,35 @@ void create_osl_shader(
               case MaxParam::IntCheckbox:
               case MaxParam::IntMapper:
                 {
-                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t, FOREVER);
+                    const int param_value = param_block->GetInt(max_param.m_max_param_id, time, FOREVER);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(param_value));
                 }
                 break;
 
               case MaxParam::Color:
                 {
-                    const auto param_value = param_block->GetColor(max_param.m_max_param_id, t);
+                    const auto param_value = param_block->GetColor(max_param.m_max_param_id, time);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_color3f(param_value)));
                 }
                 break;
 
               case MaxParam::VectorParam:
                 {
-                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, t);
+                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, time);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(to_vector3f(param_value)));
                 }
                 break;
 
               case MaxParam::NormalParam:
                 {
-                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, t);
+                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, time);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_normal_expr(to_vector3f(param_value)));
                 }
                 break;
 
               case MaxParam::PointParam:
                 {
-                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, t);
+                    const Point3 param_value = param_block->GetPoint3(max_param.m_max_param_id, time);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_point_expr(to_vector3f(param_value)));
                 }
                 break;
@@ -680,7 +680,7 @@ void create_osl_shader(
                     std::vector<std::string> fields;
                     asf::tokenize(param_info.m_options, "|", fields);
 
-                    const int param_value = param_block->GetInt(max_param.m_max_param_id, t, FOREVER);
+                    const int param_value = param_block->GetInt(max_param.m_max_param_id, time, FOREVER);
                     params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(fields[param_value]));
                 }
                 break;
@@ -688,7 +688,7 @@ void create_osl_shader(
               case MaxParam::String:
                 {
                     const wchar_t* str_value;
-                    param_block->GetValue(max_param.m_max_param_id, t, str_value, FOREVER);
+                    param_block->GetValue(max_param.m_max_param_id, time, str_value, FOREVER);
                     if (str_value != nullptr)
                         params.insert(max_param.m_osl_param_name.c_str(), fmt_osl_expr(wide_to_utf8(str_value)));
                 }

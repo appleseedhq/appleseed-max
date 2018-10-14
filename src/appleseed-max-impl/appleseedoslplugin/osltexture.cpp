@@ -90,8 +90,9 @@ OSLTexture::OSLTexture(Class_ID class_id, OSLPluginClassDesc* class_desc)
         m_shader_info->find_maya_attribute("uvCoord") != nullptr && 
         m_shader_info->find_maya_attribute("uvFilterSize") != nullptr;
     m_has_xyz_coords = m_shader_info->find_maya_attribute("placementMatrix") != nullptr;
+
+    m_params_validity.SetEmpty();
     m_class_desc->MakeAutoParamBlocks(this);
-    Reset();
 }
 
 void OSLTexture::DeleteThis()
@@ -284,26 +285,28 @@ void OSLTexture::Update(TimeValue t, Interval& valid)
 {
     if (!m_params_validity.InInterval(t))
     {
+        m_params_validity.SetInstant(t);
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
-    }
-    m_params_validity.SetInfinite();
     
-    if (m_uv_gen != nullptr)
-        m_uv_gen->Update(t, valid);
+        if (m_uv_gen != nullptr)
+            m_uv_gen->Update(t, m_params_validity);
 
-    for (auto& tex_param : m_texture_id_map)
-    {
-        Texmap* tex_map = nullptr;
-        m_pblock->GetValue(tex_param.first, t, tex_map, valid);
-        if (tex_map)
-            tex_map->Update(t, valid);
+        for (auto& tex_param : m_texture_id_map)
+        {
+            Texmap* tex_map = nullptr;
+            m_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
+            if (tex_map)
+                tex_map->Update(t, valid);
+        }
     }
 
-    valid = m_params_validity;
+    valid &= m_params_validity;
 }
 
 void OSLTexture::Reset()
 {
+    m_class_desc->Reset(this);
+
     if (m_has_uv_coords)
     {
         if (m_uv_gen != nullptr)
@@ -311,7 +314,6 @@ void OSLTexture::Reset()
         else
             ReplaceReference(1, GetNewDefaultUVGen());
     }
-    m_params_validity.SetEmpty();
 }
 
 Interval OSLTexture::Validity(TimeValue t)
@@ -418,6 +420,8 @@ void OSLTexture::create_osl_texture(
     const char*         material_input_name,
     const int           output_slot_index)
 {
+    const TimeValue time = get_current_time();
+
     auto layer_name = asf::format("{0}_{1}", material_node_name, material_input_name);
 
     if (m_has_uv_coords)
@@ -456,7 +460,9 @@ void OSLTexture::create_osl_texture(
     const char*         material_node_name,
     const char*         material_input_name)
 {
-    const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id);
+    const TimeValue time = get_current_time();
+
+    const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id, time, FOREVER);
     create_osl_texture(
         shader_group,
         material_node_name,

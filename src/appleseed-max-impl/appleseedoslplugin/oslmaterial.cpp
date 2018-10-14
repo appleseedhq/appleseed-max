@@ -87,8 +87,8 @@ OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
     m_has_bump_params = m_shader_info->find_maya_attribute("normalCamera") != nullptr;
     m_has_normal_params = m_shader_info->find_param("Tn") != nullptr;
 
+    m_params_validity.SetEmpty();
     class_desc->MakeAutoParamBlocks(this);
-    Reset();
 }
 
 BaseInterface* OSLMaterial::GetInterface(Interface_ID id)
@@ -202,10 +202,11 @@ RefResult OSLMaterial::NotifyRefChanged(
         break;
 
       case REFMSG_CHANGE:
-          if (hTarget == m_pblock)
-              m_class_desc->GetParamBlockDesc(0)->InvalidateUI(m_pblock->LastNotifyParamID());
-          else if (hTarget == m_bump_pblock)
-              m_class_desc->GetParamBlockDesc(1)->InvalidateUI(m_bump_pblock->LastNotifyParamID());
+        m_params_validity.SetEmpty();
+        if (hTarget == m_pblock)
+            m_class_desc->GetParamBlockDesc(0)->InvalidateUI(m_pblock->LastNotifyParamID());
+        else if (hTarget == m_bump_pblock)
+            m_class_desc->GetParamBlockDesc(1)->InvalidateUI(m_bump_pblock->LastNotifyParamID());
         break;
     }
 
@@ -279,30 +280,31 @@ TSTR OSLMaterial::GetSubTexmapSlotName(int i)
 
 void OSLMaterial::Update(TimeValue t, Interval& valid)
 {
+
     if (!m_params_validity.InInterval(t))
     {
+        m_params_validity.SetInstant(t);
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
-    }
-    m_params_validity.SetInfinite();
     
-    for (const auto& tex_param : m_texture_id_map)
-    {
-        Texmap* tex_map = nullptr;
-        if (m_has_bump_params && tex_param == m_texture_id_map.back())
-            m_bump_pblock->GetValue(tex_param.first, t, tex_map, valid);
-        else
-            m_pblock->GetValue(tex_param.first, t, tex_map, valid);
+        for (const auto& tex_param : m_texture_id_map)
+        {
+            Texmap* tex_map = nullptr;
+            if (m_has_bump_params && tex_param == m_texture_id_map.back())
+                m_bump_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
+            else
+                m_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
 
-        if (tex_map)
-            tex_map->Update(t, valid);
+            if (tex_map)
+                tex_map->Update(t, m_params_validity);
+        }
     }
 
-    valid = m_params_validity;
+    valid &= m_params_validity;
 }
 
 void OSLMaterial::Reset()
 {
-    m_params_validity.SetEmpty();
+    m_class_desc->Reset(this);
 }
 
 Interval OSLMaterial::Validity(TimeValue t)
@@ -487,10 +489,10 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     // Shader group.
     //
 
-    const auto t = GetCOREInterface()->GetTime();
-
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
+    
+    const TimeValue time = get_current_time();
 
     if (m_has_bump_params)
     {
@@ -498,15 +500,15 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
         IParamBlock2* bump_param_block = GetParamBlock(1);
         if (bump_param_block != nullptr)
         {
-            bump_param_block->GetValueByName(L"bump_texmap", t, bump_texmap, FOREVER);
+            bump_param_block->GetValueByName(L"bump_texmap", time, bump_texmap, FOREVER);
             if (bump_texmap != nullptr)
             {
                 int bump_method = 0;
                 int bump_up_vector = 0;
                 float bump_amount = 0.0f;
-                bump_param_block->GetValueByName(L"bump_method", t, bump_method, FOREVER);
-                bump_param_block->GetValueByName(L"bump_amount", t, bump_amount, FOREVER);
-                bump_param_block->GetValueByName(L"bump_up_vector", t, bump_up_vector, FOREVER);
+                bump_param_block->GetValueByName(L"bump_method", time, bump_method, FOREVER);
+                bump_param_block->GetValueByName(L"bump_amount", time, bump_amount, FOREVER);
+                bump_param_block->GetValueByName(L"bump_up_vector", time, bump_up_vector, FOREVER);
 
                 const auto* bump_param = m_shader_info->find_maya_attribute("normalCamera");
 

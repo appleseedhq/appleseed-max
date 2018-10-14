@@ -450,7 +450,7 @@ asf::auto_release_ptr<asr::Material> AppleseedVolumeMtl::create_material(
     const bool      use_max_procedural_maps)
 {
     asr::ParamArray material_params;
-    auto time = GetCOREInterface()->GetTime();
+    const TimeValue time = get_current_time();
 
     //
     // Volume.

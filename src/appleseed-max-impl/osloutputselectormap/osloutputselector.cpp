@@ -260,7 +260,7 @@ OSLOutputSelector::OSLOutputSelector()
   : m_pblock(nullptr)
 {
     g_appleseed_outputselector_classdesc.MakeAutoParamBlocks(this);
-    Reset();
+    m_params_validity.SetEmpty();
 }
 
 void OSLOutputSelector::DeleteThis()
@@ -438,22 +438,21 @@ void OSLOutputSelector::Update(TimeValue t, Interval& valid)
 {
     if (!m_params_validity.InInterval(t))
     {
+        m_params_validity.SetInstant(t);
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
+
+        Texmap* source_map;
+        m_pblock->GetValue(ParamIdSourceMap, t, source_map, m_params_validity);
+
+        if (source_map)
+            source_map->Update(t, m_params_validity);
     }
-    m_params_validity.SetInfinite();
-
-    Texmap* source_map;
-    m_pblock->GetValue(ParamIdSourceMap, t, source_map, m_params_validity);
-
-    if (source_map)
-        source_map->Update(t, m_params_validity);
-
     valid = m_params_validity;
 }
 
 void OSLOutputSelector::Reset()
 {
-    m_params_validity.SetEmpty();
+    g_appleseed_outputselector_classdesc.Reset(this);
 }
 
 Interval OSLOutputSelector::Validity(TimeValue t)

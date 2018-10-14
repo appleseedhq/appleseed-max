@@ -554,10 +554,11 @@ asf::auto_release_ptr<asr::EnvironmentEDF> AppleseedEnvMap::create_envmap(const 
 {
     float sun_theta_deg = m_sun_theta;
     float sun_phi_deg = m_sun_phi;
+    const TimeValue time = get_current_time();
 
     if (m_sun_node != nullptr && m_sun_node_on)
     {
-        Matrix3 sun_transform = m_sun_node->GetObjTMAfterWSM(GetCOREInterface()->GetTime());
+        Matrix3 sun_transform = m_sun_node->GetObjTMAfterWSM(time);
         sun_transform.NoTrans();
 
         const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();

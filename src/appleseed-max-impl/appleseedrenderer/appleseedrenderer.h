@@ -172,6 +172,7 @@ class AppleseedRenderer
 
     void show_last_session_log();
     void create_log_window();
+    TimeValue get_time();
 
   private:
     friend AppleseedRendererPBlockAccessor;

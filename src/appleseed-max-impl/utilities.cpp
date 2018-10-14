@@ -31,6 +31,7 @@
 
 // appleseed-max headers.
 #include "appleseedoslplugin/osltexture.h"
+#include "appleseedrenderer/appleseedrenderer.h"
 #include "osloutputselectormap/osloutputselector.h"
 #include "main.h"
 
@@ -371,6 +372,15 @@ std::string insert_bitmap_texture_and_instance(
     return texture_instance_name;
 }
 
+TimeValue get_current_time()
+{
+    TimeValue time(0);
+    AppleseedRenderer* appleseed_renderer = static_cast<AppleseedRenderer*>(GetCOREInterface()->GetCurrentRenderer(false));
+    if (appleseed_renderer != nullptr)
+        time = appleseed_renderer->get_time();
+    return time;
+}
+
 namespace
 {
     class MaxShadeContext
@@ -387,7 +397,7 @@ namespace
             xshadeID = 0;
             // todo: initialize `out`?
 
-            m_cur_time = GetCOREInterface()->GetTime();
+            m_cur_time = get_current_time();
             m_uv.x = source_inputs.m_uv_x;
             m_uv.y = source_inputs.m_uv_y;
         }
@@ -760,7 +770,7 @@ std::string insert_procedural_texture_and_instance(
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    const TimeValue time = GetCOREInterface()->GetTime();
+    const TimeValue time = get_current_time();
     texmap->Update(time, FOREVER);
     load_map_files_recursively(texmap, time);
 

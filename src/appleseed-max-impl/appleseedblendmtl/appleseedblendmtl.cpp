@@ -597,8 +597,8 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 
     connect_sub_mtl(assembly, shader_group.ref(), name, "BaseMtl", mat);
 
-    const TimeValue time = GetCOREInterface()->GetTime();
     
+    const TimeValue time = get_current_time();
     asr::ParamArray shader_params;
     int layer_index = 1;
 
