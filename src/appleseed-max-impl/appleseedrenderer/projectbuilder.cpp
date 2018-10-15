@@ -1393,24 +1393,15 @@ namespace
     {
         switch (filter_type)
         {
-          case 0:
-            return "blackman-harris";
-          case 1:
-            return "box";
-          case 2:
-            return "catmull";
-          case 3:
-            return "bspline";
-          case 4:
-            return "gaussian";
-          case 5:
-            return "lanczos";
-          case 6:
-            return "mitchell";
-          case 7:
-            return "triangle";
-          default:
-            return "box";
+          case 0:  return "blackman-harris";
+          case 1:  return "box";
+          case 2:  return "catmull";
+          case 3:  return "bspline";
+          case 4:  return "gaussian";
+          case 5:  return "lanczos";
+          case 6:  return "mitchell";
+          case 7:  return "triangle";
+          default: return "box";
         }
     }
 
@@ -1418,14 +1409,10 @@ namespace
     {
         switch (denoise_mode)
         {
-          case 0:
-            return "off";
-          case 1:
-            return "on";
-          case 2:
-            return "write_outputs";
-          default:
-            return "off";
+          case 0:  return "off";
+          case 1:  return "on";
+          case 2:  return "write_outputs";
+          default: return "off";
         }
     }
 
