@@ -619,19 +619,21 @@ bool AppleseedMetalMtl::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return
         use_max_procedural_maps
-            ? create_builtin_material(assembly, name)
-            : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name, time)
+            : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     //
     // Shader group.
@@ -640,23 +642,23 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_color_texture(shader_group.ref(), name, "NormalReflectance", m_facing_tint_color_texmap, m_facing_tint_color);
-    connect_color_texture(shader_group.ref(), name, "EdgeTint", m_edge_tint_color_texmap, m_edge_tint_color);
-    connect_float_texture(shader_group.ref(), name, "Reflectance", m_reflectance_texmap, m_reflectance / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy);
+    connect_color_texture(shader_group.ref(), name, "NormalReflectance", m_facing_tint_color_texmap, m_facing_tint_color, time);
+    connect_color_texture(shader_group.ref(), name, "EdgeTint", m_edge_tint_color_texmap, m_edge_tint_color, time);
+    connect_float_texture(shader_group.ref(), name, "Reflectance", m_reflectance_texmap, m_reflectance / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy, time);
 
     if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {
             // Bump mapping.
-            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount, time);
         }
         else
         {
             // Normal mapping.
-            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount);
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount, time);
         }
     }
 
@@ -691,6 +693,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
             assembly,
             m_alpha_texmap,
             false,
+            time,
             asr::ParamArray(),
             asr::ParamArray()
                 .insert("alpha_mode", "detect"));
@@ -702,8 +705,9 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     asr::ParamArray material_params;
     std::string instance_name;
@@ -718,7 +722,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         bsdf_params.insert("mdf", "ggx");
 
         // Normal Reflectance.
-        instance_name = insert_texture_and_instance(assembly, m_facing_tint_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_facing_tint_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("normal_reflectance", instance_name);
         else
@@ -729,7 +733,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         }
 
         // Edge Tint.
-        instance_name = insert_texture_and_instance(assembly, m_edge_tint_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_edge_tint_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("edge_tint", instance_name);
         else
@@ -740,13 +744,13 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         }
 
         // Reflectance.
-        instance_name = insert_texture_and_instance(assembly, m_reflectance_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_reflectance_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("reflectance_multiplier", instance_name);
         else bsdf_params.insert("reflectance_multiplier", m_reflectance / 100.0f);
 
         // Roughness.
-        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("roughness", instance_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
@@ -755,7 +759,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         bsdf_params.insert("energy_compensation", 1.0f);
 
         // Anisotropic.
-        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
@@ -776,6 +780,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         assembly,
         m_alpha_texmap,
         use_max_procedural_maps,
+        time,
         asr::ParamArray(),
         asr::ParamArray()
             .insert("alpha_mode", "detect"));
@@ -788,6 +793,7 @@ asf::auto_release_ptr<asr::Material> AppleseedMetalMtl::create_builtin_material(
         assembly,
         m_bump_texmap,
         use_max_procedural_maps,
+        time,
         asr::ParamArray()
             .insert("color_space", "linear_rgb"));
     if (!instance_name.empty())

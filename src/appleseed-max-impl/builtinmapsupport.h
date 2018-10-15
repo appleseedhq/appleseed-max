@@ -51,20 +51,23 @@ void connect_output_map(
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const Color             const_value);
+    const Color             const_value,
+    const TimeValue         time);
 
 void connect_output_map(
     renderer::ShaderGroup&  shader_group,
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const float             const_value);
+    const float             const_value,
+    const TimeValue         time);
 
 void connect_output_selector(
     renderer::ShaderGroup&  shader_group,
     const char*             material_node_name,
     const char*             material_input_name,
-    Texmap*                 texmap);
+    Texmap*                 texmap,
+    const TimeValue         time);
 
 template <typename T>
 void create_supported_texture(
@@ -72,7 +75,8 @@ void create_supported_texture(
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const T                 const_value)
+    const T                 const_value,
+    const TimeValue         time)
 {
     auto part_a = texmap->ClassID().PartA();
     auto part_b = texmap->ClassID().PartB();
@@ -83,7 +87,8 @@ void create_supported_texture(
             shader_group,
             material_node_name,
             material_input_name,
-            texmap);
+            texmap,
+            time);
         return;
     }
 
@@ -95,7 +100,8 @@ void create_supported_texture(
             material_node_name,
             material_input_name,
             texmap,
-            const_value);
+            const_value,
+            time);
 
       default:
         break;

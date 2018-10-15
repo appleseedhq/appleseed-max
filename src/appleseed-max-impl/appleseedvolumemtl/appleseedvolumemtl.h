@@ -133,7 +133,8 @@ class AppleseedVolumeMtl
     foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,
-        const bool          use_max_procedural_maps) override;
+        const bool          use_max_procedural_maps,
+        const TimeValue     time) override;
 
   private:
     IParamBlock2*   m_pblock;

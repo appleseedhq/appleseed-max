@@ -54,7 +54,7 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
-asr::ParamArray get_uv_params(Texmap* texmap)
+asr::ParamArray get_uv_params(Texmap* texmap, const TimeValue time)
 {
     asr::ParamArray uv_params;
 
@@ -66,7 +66,6 @@ asr::ParamArray get_uv_params(Texmap* texmap)
         return uv_params;
 
     StdUVGen* std_uv = static_cast<StdUVGen*>(uv_gen);
-    const TimeValue time = get_current_time();
 
     DbgAssert(texmap->MapSlotType(texmap->GetMapChannel()) == MAPSLOT_TEXTURE);
     DbgAssert(static_cast<StdUVGen*>(uv_gen)->GetUVWSource() == UVWSRC_EXPLICIT);
@@ -148,7 +147,7 @@ asr::ParamArray get_uv_params(Texmap* texmap)
 }
 
 
-asr::ParamArray get_output_params(Texmap* texmap)
+asr::ParamArray get_output_params(Texmap* texmap, const TimeValue time)
 {
     asr::ParamArray output_params;
     output_params.insert("in_multiplier", fmt_osl_expr(1.0f));
@@ -176,8 +175,6 @@ asr::ParamArray get_output_params(Texmap* texmap)
     }
     if (std_tex_output == nullptr)
         return output_params;
-
-    const TimeValue time = get_current_time();
 
     output_params.insert("in_multiplier", fmt_osl_expr(std_tex_output->GetOutAmt(time)));
     output_params.insert("in_clamp_output", fmt_osl_expr(std_tex_output->GetClamp()));
@@ -241,32 +238,39 @@ void connect_float_texture(
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,
-    const float         const_value)
+    const float         const_value,
+    const TimeValue     time)
 {
     if (is_supported_procedural_texture(texmap, false))
     {
-        create_supported_texture(shader_group, material_node_name, material_input_name, texmap, const_value);
+        create_supported_texture(
+            shader_group,
+            material_node_name,
+            material_input_name,
+            texmap,
+            const_value,
+            time);
         return;
     }
 
     if (is_osl_texture(texmap))
     {
         OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
-        osl_tex->create_osl_texture(shader_group, material_node_name, material_input_name);
+        osl_tex->create_osl_texture(shader_group, material_node_name, material_input_name, time);
         return;
     }
 
     if (is_bitmap_texture(texmap))
     {
         const auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
-        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
+        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap, time));
 
         const auto layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
         shader_group.add_shader("shader", "as_max_float_texture", layer_name.c_str(),
             asr::ParamArray()
                 .insert("Filename", fmt_osl_expr(texmap)));
 
-        asr::ParamArray color_balance_params = get_output_params(texmap)
+        asr::ParamArray color_balance_params = get_output_params(texmap, time)
             .insert("in_constantFloat", fmt_osl_expr(const_value));
 
         const auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -295,25 +299,32 @@ void connect_color_texture(
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,
-    const Color         const_color)
+    const Color         const_color,
+    const TimeValue     time)
 {
     if (is_supported_procedural_texture(texmap, false))
     {
-        create_supported_texture(shader_group, material_node_name, material_input_name, texmap, const_color);
+        create_supported_texture(
+            shader_group,
+            material_node_name,
+            material_input_name,
+            texmap,
+            const_color,
+            time);
         return;
     }
 
     if (is_osl_texture(texmap))
     {
         OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
-        osl_tex->create_osl_texture(shader_group, material_node_name, material_input_name);
+        osl_tex->create_osl_texture(shader_group, material_node_name, material_input_name, time);
         return;
     }
     
     if (is_bitmap_texture(texmap))
     {
         const auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
-        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
+        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap, time));
         if (!is_linear_texture(static_cast<BitmapTex*>(texmap)))
         {
             const auto texture_layer_name = asf::format("{0}_{1}_texture", material_node_name, material_input_name);
@@ -325,7 +336,7 @@ void connect_color_texture(
             shader_group.add_shader("shader", "as_max_srgb_to_linear_rgb", srgb_to_linear_layer_name.c_str(),
                 asr::ParamArray());
 
-            asr::ParamArray color_balance_params = get_output_params(texmap)
+            asr::ParamArray color_balance_params = get_output_params(texmap, time)
                 .insert("in_constantColor", fmt_osl_expr(to_color3f(const_color)));
 
             const auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -358,7 +369,7 @@ void connect_color_texture(
                 asr::ParamArray()
                     .insert("Filename", fmt_osl_expr(texmap)));
 
-            asr::ParamArray color_balance_params = get_output_params(texmap)
+            asr::ParamArray color_balance_params = get_output_params(texmap, time)
                 .insert("in_constantColor", fmt_osl_expr(to_color3f(const_color)));
 
             const auto color_balance_layer_name = asf::format("{0}_{1}_color_balance", material_node_name, material_input_name);
@@ -389,7 +400,8 @@ void connect_bump_map(
     const char*         material_normal_input_name,
     const char*         material_tn_input_name,
     Texmap*             texmap,
-    const float         amount)
+    const float         amount,
+    const TimeValue     time)
 {
     if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
     {
@@ -400,7 +412,8 @@ void connect_bump_map(
             bump_map_layer_name.c_str(),
             "Height",
             texmap,
-            1.0f);
+            1.0f,
+            time);
 
         shader_group.add_shader("shader", "as_max_bump_map", bump_map_layer_name.c_str(),
             asr::ParamArray()
@@ -416,7 +429,7 @@ void connect_bump_map(
     if (is_bitmap_texture(texmap))
     {
         auto uv_transform_layer_name = asf::format("{0}_bump_uv_transform", material_node_name);
-        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
+        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap, time));
 
         auto texture_layer_name = asf::format("{0}_bump_map_texture", material_node_name);
         shader_group.add_shader("shader", "as_max_float_texture", texture_layer_name.c_str(),
@@ -452,7 +465,8 @@ void connect_normal_map(
     const char*         material_tn_input_name,
     Texmap*             texmap,
     const int           up_vector,
-    const float         amount)
+    const float         amount,
+    const TimeValue     time)
 {
     if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
     {
@@ -463,7 +477,8 @@ void connect_normal_map(
             normal_map_layer_name.c_str(),
             "Color",
             texmap,
-            Color(1.0f, 1.0f, 1.0f));
+            Color(1.0f, 1.0f, 1.0f),
+            time);
 
         shader_group.add_shader("shader", "as_max_normal_map", normal_map_layer_name.c_str(),
             asr::ParamArray()
@@ -483,7 +498,7 @@ void connect_normal_map(
     if (is_bitmap_texture(texmap))
     {
         auto uv_transform_layer_name = asf::format("{0}_bump_uv_transform", material_node_name);
-        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap));
+        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(texmap, time));
 
         auto texture_layer_name = asf::format("{0}_normal_map_texture", material_node_name);
         shader_group.add_shader("shader", "as_max_color_texture", texture_layer_name.c_str(),
@@ -521,7 +536,8 @@ void connect_sub_mtl(
     asr::ShaderGroup&       shader_group,
     const char*             shader_name,
     const char*             shader_input,
-    Mtl*                    mat)
+    Mtl*                    mat,
+    const TimeValue         time)
 {
     auto appleseed_mtl = static_cast<IAppleseedMtl*>(mat->GetInterface(IAppleseedMtl::interface_id()));
     if (!appleseed_mtl)
@@ -529,7 +545,11 @@ void connect_sub_mtl(
 
     std::string layer_name =
         make_unique_name(assembly.materials(), asf::format("{0}_{1}_sub_mat", shader_name, mat->GetName()));
-    assembly.materials().insert(appleseed_mtl->create_material(assembly, layer_name.c_str(), false));
+    assembly.materials().insert(appleseed_mtl->create_material(
+        assembly,
+        layer_name.c_str(),
+        false,
+        time));
 
     asr::Material* layer_material = assembly.materials().get_by_name(layer_name.c_str());
     if (!layer_material->get_parameters().exist_path("osl_surface"))
@@ -558,10 +578,10 @@ void create_osl_shader(
     asr::ShaderGroup&       shader_group,
     const char*             layer_name,
     IParamBlock2*           param_block,
-    const OSLShaderInfo*    shader_info)
+    const OSLShaderInfo*    shader_info,
+    const TimeValue         time)
 {
     asr::ParamArray params;
-    const TimeValue time = get_current_time();
 
     for (const auto& param_info : shader_info->m_params)
     {
@@ -586,7 +606,8 @@ void create_osl_shader(
                             layer_name,
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            constant_value);
+                            constant_value,
+                            time);
                     }
                     break;
                   case MaxParam::Color:
@@ -598,7 +619,8 @@ void create_osl_shader(
                             layer_name,
                             max_param.m_osl_param_name.c_str(),
                             texmap,
-                            constant_color);
+                            constant_color,
+                            time);
                     }
                     break;
 
@@ -609,7 +631,11 @@ void create_osl_shader(
                         if (is_osl_texture(texmap))
                         {
                             OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
-                            osl_tex->create_osl_texture(shader_group, layer_name, max_param.m_osl_param_name.c_str());
+                            osl_tex->create_osl_texture(
+                                shader_group,
+                                layer_name,
+                                max_param.m_osl_param_name.c_str(),
+                                time);
                         }
                     }
                     break;
@@ -623,7 +649,13 @@ void create_osl_shader(
             param_block->GetValue(max_param.m_max_param_id, time, material, FOREVER);
             if (material != nullptr && assembly != nullptr)
             {
-                connect_sub_mtl(*assembly, shader_group, layer_name, max_param.m_osl_param_name.c_str(), material);
+                connect_sub_mtl(
+                    *assembly,
+                    shader_group,
+                    layer_name,
+                    max_param.m_osl_param_name.c_str(),
+                    material,
+                    time);
             }
         }
 

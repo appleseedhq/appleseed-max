@@ -280,7 +280,6 @@ TSTR OSLMaterial::GetSubTexmapSlotName(int i)
 
 void OSLMaterial::Update(TimeValue t, Interval& valid)
 {
-
     if (!m_params_validity.InInterval(t))
     {
         m_params_validity.SetInstant(t);
@@ -294,7 +293,7 @@ void OSLMaterial::Update(TimeValue t, Interval& valid)
             else
                 m_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
 
-            if (tex_map)
+            if (tex_map != nullptr)
                 tex_map->Update(t, m_params_validity);
         }
     }
@@ -472,18 +471,20 @@ bool OSLMaterial::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> OSLMaterial::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return use_max_procedural_maps
-        ? create_builtin_material(assembly, name)
-        : create_osl_material(assembly, name);
+        ? create_builtin_material(assembly, name, time)
+        : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     //
     // Shader group.
@@ -492,8 +493,6 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
     
-    const TimeValue time = get_current_time();
-
     if (m_has_bump_params)
     {
         Texmap* bump_texmap = nullptr;
@@ -515,7 +514,14 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                 if (bump_method == 0)
                 {
                     // Bump mapping.
-                    connect_bump_map(shader_group.ref(), name, bump_param->m_param_name.c_str(), "Tn", bump_texmap, bump_amount);
+                    connect_bump_map(
+                        shader_group.ref(),
+                        name,
+                        bump_param->m_param_name.c_str(),
+                        "Tn",
+                        bump_texmap,
+                        bump_amount,
+                        time);
                 }
                 else if (m_has_normal_params)
                 {
@@ -527,7 +533,8 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                         "Tn",
                         bump_texmap,
                         bump_up_vector,
-                        bump_amount);
+                        bump_amount,
+                        time);
                 }
             }
         }
@@ -538,7 +545,8 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
         shader_group.ref(),
         name,
         m_pblock,
-        m_shader_info);
+        m_shader_info,
+        time);
 
     const auto closure_2_surface_name = asf::format("{0}_closure_2_surface_name", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure_2_surface_name.c_str(), asr::ParamArray());
@@ -564,8 +572,9 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> OSLMaterial::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     return asr::GenericMaterialFactory().create(name, asr::ParamArray());
 }

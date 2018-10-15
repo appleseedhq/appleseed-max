@@ -172,6 +172,7 @@ std::string insert_texture_and_instance(
     renderer::BaseGroup&    base_group,
     Texmap*                 texmap,
     const bool              use_max_procedural_maps,
+    const TimeValue         time,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 
@@ -184,6 +185,7 @@ std::string insert_bitmap_texture_and_instance(
 std::string insert_procedural_texture_and_instance(
     renderer::BaseGroup&    base_group,
     Texmap*                 texmap,
+    const TimeValue         time,
     renderer::ParamArray    texture_params = renderer::ParamArray(),
     renderer::ParamArray    texture_instance_params = renderer::ParamArray());
 
@@ -203,13 +205,6 @@ const T load_ini_setting(const wchar_t* category, const wchar_t* key_name, const
 
 template <typename T>
 const T load_system_setting(const wchar_t* key_name, const T& default_value);
-
-
-//
-// Renderer access functions.
-//
-
-TimeValue get_current_time();
 
 
 //

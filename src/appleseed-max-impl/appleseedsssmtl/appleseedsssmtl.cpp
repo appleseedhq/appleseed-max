@@ -656,19 +656,21 @@ bool AppleseedSSSMtl::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return
         use_max_procedural_maps
-            ? create_builtin_material(assembly, name)
-            : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name, time)
+            : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     //
     // Shader group.
@@ -678,26 +680,26 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
     // BSSRDF.
-    connect_color_texture(shader_group.ref(), name, "Radius", m_sss_scattering_color_texmap, m_sss_scattering_color);
-    connect_color_texture(shader_group.ref(), name, "SSSColor", m_sss_color_texmap, m_sss_color);
+    connect_color_texture(shader_group.ref(), name, "Radius", m_sss_scattering_color_texmap, m_sss_scattering_color, time);
+    connect_color_texture(shader_group.ref(), name, "SSSColor", m_sss_color_texmap, m_sss_color, time);
     
     // BRDF.
-    connect_color_texture(shader_group.ref(), name, "SpecularColor", m_specular_color_texmap, m_specular_color);
-    connect_float_texture(shader_group.ref(), name, "SpecularReflectance", m_specular_amount_texmap, m_specular_amount / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Roughness", m_specular_roughness_texmap, m_specular_roughness / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_specular_anisotropy_texmap, m_specular_anisotropy / 100.0f);
+    connect_color_texture(shader_group.ref(), name, "SpecularColor", m_specular_color_texmap, m_specular_color, time);
+    connect_float_texture(shader_group.ref(), name, "SpecularReflectance", m_specular_amount_texmap, m_specular_amount / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_specular_roughness_texmap, m_specular_roughness / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_specular_anisotropy_texmap, m_specular_anisotropy / 100.0f, time);
 
     if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {
             // Bump mapping.
-            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount, time);
         }
         else
         {
             // Normal mapping.
-            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount);
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount, time);
         }
     }
 
@@ -737,8 +739,9 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
 
     asr::ParamArray material_params;
@@ -756,7 +759,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
         bssrdf_params.insert("ior", m_sss_ior);
 
         // Diffuse mean free path.
-        instance_name = insert_texture_and_instance(assembly, m_sss_scattering_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_sss_scattering_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bssrdf_params.insert("mfp", instance_name);
         else
@@ -767,7 +770,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
         }
 
         // Reflectance.
-        instance_name = insert_texture_and_instance(assembly, m_sss_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_sss_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bssrdf_params.insert("reflectance", instance_name);
         else
@@ -794,7 +797,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
         brdf_params.insert("ior", m_sss_ior);
 
         // Reflectance.
-        instance_name = insert_texture_and_instance(assembly, m_specular_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_specular_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             brdf_params.insert("reflectance", instance_name);
         else
@@ -805,19 +808,19 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
         }
 
         // Reflectance multiplier.
-        instance_name = insert_texture_and_instance(assembly, m_specular_amount_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_specular_amount_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             brdf_params.insert("reflectance_multiplier", instance_name);
         else brdf_params.insert("reflectance_multiplier", m_specular_amount / 100.0f);
 
         // Roughness.
-        instance_name = insert_texture_and_instance(assembly, m_specular_roughness_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_specular_roughness_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             brdf_params.insert("roughness", instance_name);
         else brdf_params.insert("roughness", m_specular_roughness / 100.0f);
 
         // Anisotropy.
-        instance_name = insert_texture_and_instance(assembly, m_specular_anisotropy_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_specular_anisotropy_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             brdf_params.insert("anisotropic", instance_name);
         else brdf_params.insert("anisotropic", m_specular_anisotropy);
@@ -838,6 +841,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
         assembly,
         m_bump_texmap,
         use_max_procedural_maps,
+        time,
         asr::ParamArray()
             .insert("color_space", "linear_rgb"));
     if (!instance_name.empty())

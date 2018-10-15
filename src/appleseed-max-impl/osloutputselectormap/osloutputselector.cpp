@@ -444,7 +444,7 @@ void OSLOutputSelector::Update(TimeValue t, Interval& valid)
         Texmap* source_map;
         m_pblock->GetValue(ParamIdSourceMap, t, source_map, m_params_validity);
 
-        if (source_map)
+        if (source_map != nullptr)
             source_map->Update(t, m_params_validity);
     }
     valid = m_params_validity;

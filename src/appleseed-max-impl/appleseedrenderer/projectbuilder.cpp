@@ -394,7 +394,8 @@ namespace
         const std::string&      instance_name,
         Mtl*                    mtl,
         MaterialMap&            material_map,
-        const bool              use_max_procedural_maps)
+        const bool              use_max_procedural_maps,
+        const TimeValue         time)
     {
         MaterialInfo material_info;
 
@@ -410,7 +411,11 @@ namespace
                 material_info.m_name =
                     make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
                 assembly.materials().insert(
-                    appleseed_mtl->create_material(assembly, material_info.m_name.c_str(), use_max_procedural_maps));
+                    appleseed_mtl->create_material(
+                        assembly,
+                        material_info.m_name.c_str(),
+                        use_max_procedural_maps,
+                        time));
                 material_map.insert(std::make_pair(mtl, material_info.m_name));
             }
             else
@@ -556,7 +561,8 @@ namespace
                                 instance_name,
                                 submtl,
                                 material_map,
-                                use_max_proc_maps);
+                                use_max_proc_maps,
+                                time);
 
                         const auto entry = object_info.m_mtlid_to_slot.find(i);
                         if (entry != object_info.m_mtlid_to_slot.end())
@@ -583,7 +589,8 @@ namespace
                         instance_name,
                         mtl,
                         material_map,
-                        use_max_proc_maps);
+                        use_max_proc_maps,
+                        time);
 
                 // Assign it to all material slots.
                 for (const auto& entry : object_info.m_mtlid_to_slot)
@@ -1192,7 +1199,7 @@ namespace
         if (rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
         {
             auto appleseed_envmap = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-            auto env_map = appleseed_envmap->create_envmap("environment_edf");
+            auto env_map = appleseed_envmap->create_envmap("environment_edf", time);
             scene.environment_edfs().insert(env_map);
         }
         else
@@ -1203,7 +1210,8 @@ namespace
                 env_tex_instance_name =
                     insert_procedural_texture_and_instance(
                         scene,
-                        rend_params.envMap);
+                        rend_params.envMap,
+                        time);
             }
             else if (is_bitmap_texture(rend_params.envMap))
             {

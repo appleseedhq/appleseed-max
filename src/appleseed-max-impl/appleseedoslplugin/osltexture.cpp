@@ -295,7 +295,7 @@ void OSLTexture::Update(TimeValue t, Interval& valid)
         {
             Texmap* tex_map = nullptr;
             m_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
-            if (tex_map)
+            if (tex_map != nullptr)
                 tex_map->Update(t, valid);
         }
     }
@@ -418,16 +418,15 @@ void OSLTexture::create_osl_texture(
     asr::ShaderGroup&   shader_group,
     const char*         material_node_name,
     const char*         material_input_name,
-    const int           output_slot_index)
+    const int           output_slot_index,
+    const TimeValue     time)
 {
-    const TimeValue time = get_current_time();
-
     auto layer_name = asf::format("{0}_{1}", material_node_name, material_input_name);
 
     if (m_has_uv_coords)
     {
         auto uv_transform_layer_name = asf::format("{0}_{1}_uv_transform", material_node_name, material_input_name);
-        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(this));
+        shader_group.add_shader("shader", "as_max_uv_transform", uv_transform_layer_name.c_str(), get_uv_params(this, time));
 
         auto* uv_coord_input = m_shader_info->find_maya_attribute("uvCoord");
         auto* uv_filter_input = m_shader_info->find_maya_attribute("uvFilterSize");
@@ -446,7 +445,8 @@ void OSLTexture::create_osl_texture(
         shader_group,
         layer_name.c_str(),
         m_pblock,
-        m_shader_info);
+        m_shader_info,
+        time);
 
     shader_group.add_connection(
         layer_name.c_str(),
@@ -458,16 +458,16 @@ void OSLTexture::create_osl_texture(
 void OSLTexture::create_osl_texture(
     asr::ShaderGroup&   shader_group,
     const char*         material_node_name,
-    const char*         material_input_name)
+    const char*         material_input_name,
+    const TimeValue     time)
 {
-    const TimeValue time = get_current_time();
-
     const int output_slot_index = GetParamBlock(0)->GetInt(m_shader_info->m_output_param.m_max_param_id, time, FOREVER);
     create_osl_texture(
         shader_group,
         material_node_name,
         material_input_name,
-        output_slot_index);
+        output_slot_index,
+        time);
 }
 
 std::vector<std::string> OSLTexture::get_output_names() const

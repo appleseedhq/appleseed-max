@@ -126,7 +126,8 @@ class OSLMaterial
     foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,
-        const bool          use_max_procedural_maps) override;
+        const bool          use_max_procedural_maps,
+        const TimeValue     time) override;
 
   protected:
     void SetReference(int i, RefTargetHandle rtarg) override;
@@ -145,11 +146,13 @@ class OSLMaterial
 
     foundation::auto_release_ptr<renderer::Material> create_osl_material(
         renderer::Assembly& assembly,
-        const char*         name);
+        const char*         name,
+        const TimeValue     time);
 
     foundation::auto_release_ptr<renderer::Material> create_builtin_material(
         renderer::Assembly& assembly,
-        const char*         name);
+        const char*         name,
+        const TimeValue     time);
 
     Color get_viewport_diffuse_color() const;
     Color get_viewport_specular_color() const;

@@ -48,10 +48,9 @@ void connect_output_selector(
     asr::ShaderGroup&   shader_group,
     const char*         material_node_name,
     const char*         material_input_name,
-    Texmap*             texmap)
+    Texmap*             texmap,
+    const TimeValue     time)
 {
-    TimeValue time = get_current_time();
-
     Texmap* input_map = nullptr;
     texmap->GetParamBlock(0)->GetValueByName(L"source_map", time, input_map, FOREVER);
     if (input_map != nullptr && is_osl_texture(input_map))
@@ -79,18 +78,23 @@ void connect_output_map(
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,
-    const Color         const_value)
+    const Color         const_value,
+    const TimeValue     time)
 {
-    TimeValue time = get_current_time();
-
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);
 
     Texmap* input_map = nullptr;
     texmap->GetParamBlock(0)->GetValueByName(L"map1", time, input_map, FOREVER);
 
-    connect_color_texture(shader_group, color_balance_layer_name.c_str(), "in_defaultColor", input_map, Color(1.0, 1.0, 1.0));
+    connect_color_texture(
+        shader_group,
+        color_balance_layer_name.c_str(),
+        "in_defaultColor",
+        input_map,
+        Color(1.0, 1.0, 1.0),
+        time);
 
-    renderer::ParamArray output_params = get_output_params(texmap)
+    renderer::ParamArray output_params = get_output_params(texmap, time)
         .insert("in_constantColor", fmt_osl_expr(to_color3f(const_value)));
 
     shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), output_params);
@@ -105,17 +109,23 @@ void connect_output_map(
     const char*         material_node_name,
     const char*         material_input_name,
     Texmap*             texmap,
-    const float         const_value)
+    const float         const_value,
+    const TimeValue     time)
 {
-    const auto time = get_current_time();
     auto color_balance_layer_name = foundation::format("{0}_{1}_color_balance", material_node_name, material_input_name);
 
     Texmap* input_map = nullptr;
     texmap->GetParamBlock(0)->GetValueByName(L"map1", time, input_map, FOREVER);
 
-    connect_float_texture(shader_group, color_balance_layer_name.c_str(), "in_defaultFloat", input_map, 1.0f);
+    connect_float_texture(
+        shader_group,
+        color_balance_layer_name.c_str(),
+        "in_defaultFloat",
+        input_map,
+        1.0f,
+        time);
 
-    renderer::ParamArray output_params = get_output_params(texmap)
+    renderer::ParamArray output_params = get_output_params(texmap, time)
         .insert("in_constantFloat", fmt_osl_expr(const_value));
 
     shader_group.add_shader("shader", "as_max_color_balance", color_balance_layer_name.c_str(), output_params);
