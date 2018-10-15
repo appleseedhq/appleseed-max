@@ -241,6 +241,7 @@ namespace
 
                 this->yscale = -this->devAspect * this->xscale;
             }
+
             this->antialias = false;
             this->nearRange = 0.0f;
             this->farRange = 0.0f;
@@ -357,7 +358,7 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       //
-      // Path-Tracer.
+      // Path Tracer.
       //
 
       case ParamIdEnableGI:
@@ -998,7 +999,7 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    // --- Parameters specifications for Path-Tracer rollup ---
+    // --- Parameters specifications for Path Tracer rollup ---
 
     ParamIdEnableGI, L"enable_global_illumination", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GI,

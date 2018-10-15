@@ -122,54 +122,30 @@ const char* get_shader_override_type(const int shader_override_type)
 {
     switch (shader_override_type)
     {
-      case 0:
-        return "no_override";
-      case 1:
-        return "albedo";
-      case 2:
-        return "ambient_occlusion";
-      case 3:
-        return "assembly_instances";
-      case 4:
-        return "barycentric";
-      case 5:
-        return "bitangent";
-      case 6:
-        return "coverage";
-      case 7:
-        return "depth";
-      case 8:
-        return "facing_ratio";
-      case 9:
-        return "geometric_normal";
-      case 10:
-        return "materials";
-      case 11:
-        return "object_instances";
-      case 12:
-        return "original_shading_normal";
-      case 13:
-        return "primitives";
-      case 14:
-        return "ray_spread";
-      case 15:
-        return "regions";
-      case 16:
-        return "screen_space_wireframe";
-      case 17:
-        return "shading_normal";
-      case 18:
-        return "sides";
-      case 19:
-        return "tangent";
-      case 20:
-        return "uv";
-      case 21:
-        return "world_space_position";
-      case 22:
-        return "world_space_wireframe";
-      default:
-        return "coverage";
+      case 0:  return "no_override";
+      case 1:  return "albedo";
+      case 2:  return "ambient_occlusion";
+      case 3:  return "assembly_instances";
+      case 4:  return "barycentric";
+      case 5:  return "bitangent";
+      case 6:  return "coverage";
+      case 7:  return "depth";
+      case 8:  return "facing_ratio";
+      case 9:  return "geometric_normal";
+      case 10: return "materials";
+      case 11: return "object_instances";
+      case 12: return "original_shading_normal";
+      case 13: return "primitives";
+      case 14: return "ray_spread";
+      case 15: return "regions";
+      case 16: return "screen_space_wireframe";
+      case 17: return "shading_normal";
+      case 18: return "sides";
+      case 19: return "tangent";
+      case 20: return "uv";
+      case 21: return "world_space_position";
+      case 22: return "world_space_wireframe";
+      default: return "coverage";
     }
 }
 
@@ -337,7 +313,7 @@ bool RendererSettings::save(ISave* isave) const
     isave->EndChunk();
 
     //
-    // Path-Tracer settings.
+    // Path Tracer settings.
     //
 
     isave->BeginChunk(ChunkSettingsPathtracer);
