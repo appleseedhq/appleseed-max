@@ -254,6 +254,7 @@ namespace
     };
 }
 
+
 //
 // AppleseedRendererPBlockAccessor class implementation.
 //

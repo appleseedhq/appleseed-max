@@ -550,14 +550,14 @@ Point3 AppleseedEnvMap::EvalNormalPerturb(ShadeContext& /*sc*/)
     return Point3(0.0f, 0.0f, 0.0f);
 }
 
-asf::auto_release_ptr<asr::EnvironmentEDF> AppleseedEnvMap::create_envmap(const char* name)
+asf::auto_release_ptr<asr::EnvironmentEDF> AppleseedEnvMap::create_envmap(const char* name, const TimeValue time)
 {
     float sun_theta_deg = m_sun_theta;
     float sun_phi_deg = m_sun_phi;
 
     if (m_sun_node != nullptr && m_sun_node_on)
     {
-        Matrix3 sun_transform = m_sun_node->GetObjTMAfterWSM(GetCOREInterface()->GetTime());
+        Matrix3 sun_transform = m_sun_node->GetObjTMAfterWSM(time);
         sun_transform.NoTrans();
 
         const Point3 sun_dir = (Point3::ZAxis * sun_transform).Normalize();

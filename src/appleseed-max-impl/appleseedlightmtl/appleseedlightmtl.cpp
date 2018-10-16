@@ -487,19 +487,21 @@ bool AppleseedLightMtl::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return
         use_max_procedural_maps
-            ? create_builtin_material(assembly, name)
-            : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name, time)
+            : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     //
     // Shader group.
@@ -507,7 +509,7 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_color_texture(shader_group.ref(), name, "Color", m_light_color_texmap, m_light_color);
+    connect_color_texture(shader_group.ref(), name, "Color", m_light_color_texmap, m_light_color, time);
     
     shader_group->add_shader("surface", "as_max_light_material", name, 
         asr::ParamArray()
@@ -536,8 +538,9 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     asr::ParamArray material_params;
     const bool use_max_procedural_maps = true;
@@ -549,7 +552,7 @@ asf::auto_release_ptr<asr::Material> AppleseedLightMtl::create_builtin_material(
     asr::ParamArray edf_params;
 
     // Radiance.
-    std::string instance_name = insert_texture_and_instance(assembly, m_light_color_texmap, use_max_procedural_maps);
+    std::string instance_name = insert_texture_and_instance(assembly, m_light_color_texmap, use_max_procedural_maps, time);
     if (!instance_name.empty())
         edf_params.insert("radiance", instance_name);
     else

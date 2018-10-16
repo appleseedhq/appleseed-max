@@ -87,8 +87,8 @@ OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
     m_has_bump_params = m_shader_info->find_maya_attribute("normalCamera") != nullptr;
     m_has_normal_params = m_shader_info->find_param("Tn") != nullptr;
 
+    m_params_validity.SetEmpty();
     class_desc->MakeAutoParamBlocks(this);
-    Reset();
 }
 
 BaseInterface* OSLMaterial::GetInterface(Interface_ID id)
@@ -202,10 +202,11 @@ RefResult OSLMaterial::NotifyRefChanged(
         break;
 
       case REFMSG_CHANGE:
-          if (hTarget == m_pblock)
-              m_class_desc->GetParamBlockDesc(0)->InvalidateUI(m_pblock->LastNotifyParamID());
-          else if (hTarget == m_bump_pblock)
-              m_class_desc->GetParamBlockDesc(1)->InvalidateUI(m_bump_pblock->LastNotifyParamID());
+        m_params_validity.SetEmpty();
+        if (hTarget == m_pblock)
+            m_class_desc->GetParamBlockDesc(0)->InvalidateUI(m_pblock->LastNotifyParamID());
+        else if (hTarget == m_bump_pblock)
+            m_class_desc->GetParamBlockDesc(1)->InvalidateUI(m_bump_pblock->LastNotifyParamID());
         break;
     }
 
@@ -281,28 +282,28 @@ void OSLMaterial::Update(TimeValue t, Interval& valid)
 {
     if (!m_params_validity.InInterval(t))
     {
+        m_params_validity.SetInstant(t);
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
-    }
-    m_params_validity.SetInfinite();
     
-    for (const auto& tex_param : m_texture_id_map)
-    {
-        Texmap* tex_map = nullptr;
-        if (m_has_bump_params && tex_param == m_texture_id_map.back())
-            m_bump_pblock->GetValue(tex_param.first, t, tex_map, valid);
-        else
-            m_pblock->GetValue(tex_param.first, t, tex_map, valid);
+        for (const auto& tex_param : m_texture_id_map)
+        {
+            Texmap* tex_map = nullptr;
+            if (m_has_bump_params && tex_param == m_texture_id_map.back())
+                m_bump_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
+            else
+                m_pblock->GetValue(tex_param.first, t, tex_map, m_params_validity);
 
-        if (tex_map)
-            tex_map->Update(t, valid);
+            if (tex_map != nullptr)
+                tex_map->Update(t, m_params_validity);
+        }
     }
 
-    valid = m_params_validity;
+    valid &= m_params_validity;
 }
 
 void OSLMaterial::Reset()
 {
-    m_params_validity.SetEmpty();
+    m_class_desc->Reset(this);
 }
 
 Interval OSLMaterial::Validity(TimeValue t)
@@ -470,50 +471,57 @@ bool OSLMaterial::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> OSLMaterial::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return use_max_procedural_maps
-        ? create_builtin_material(assembly, name)
-        : create_osl_material(assembly, name);
+        ? create_builtin_material(assembly, name, time)
+        : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     //
     // Shader group.
     //
 
-    const auto t = GetCOREInterface()->GetTime();
-
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
-
+    
     if (m_has_bump_params)
     {
         Texmap* bump_texmap = nullptr;
         IParamBlock2* bump_param_block = GetParamBlock(1);
         if (bump_param_block != nullptr)
         {
-            bump_param_block->GetValueByName(L"bump_texmap", t, bump_texmap, FOREVER);
+            bump_param_block->GetValueByName(L"bump_texmap", time, bump_texmap, FOREVER);
             if (bump_texmap != nullptr)
             {
                 int bump_method = 0;
                 int bump_up_vector = 0;
                 float bump_amount = 0.0f;
-                bump_param_block->GetValueByName(L"bump_method", t, bump_method, FOREVER);
-                bump_param_block->GetValueByName(L"bump_amount", t, bump_amount, FOREVER);
-                bump_param_block->GetValueByName(L"bump_up_vector", t, bump_up_vector, FOREVER);
+                bump_param_block->GetValueByName(L"bump_method", time, bump_method, FOREVER);
+                bump_param_block->GetValueByName(L"bump_amount", time, bump_amount, FOREVER);
+                bump_param_block->GetValueByName(L"bump_up_vector", time, bump_up_vector, FOREVER);
 
                 const auto* bump_param = m_shader_info->find_maya_attribute("normalCamera");
 
                 if (bump_method == 0)
                 {
                     // Bump mapping.
-                    connect_bump_map(shader_group.ref(), name, bump_param->m_param_name.c_str(), "Tn", bump_texmap, bump_amount);
+                    connect_bump_map(
+                        shader_group.ref(),
+                        name,
+                        bump_param->m_param_name.c_str(),
+                        "Tn",
+                        bump_texmap,
+                        bump_amount,
+                        time);
                 }
                 else if (m_has_normal_params)
                 {
@@ -525,7 +533,8 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
                         "Tn",
                         bump_texmap,
                         bump_up_vector,
-                        bump_amount);
+                        bump_amount,
+                        time);
                 }
             }
         }
@@ -536,7 +545,8 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
         shader_group.ref(),
         name,
         m_pblock,
-        m_shader_info);
+        m_shader_info,
+        time);
 
     const auto closure_2_surface_name = asf::format("{0}_closure_2_surface_name", name);
     shader_group.ref().add_shader("shader", "as_max_closure2surface", closure_2_surface_name.c_str(), asr::ParamArray());
@@ -562,8 +572,9 @@ asf::auto_release_ptr<asr::Material> OSLMaterial::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> OSLMaterial::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     return asr::GenericMaterialFactory().create(name, asr::ParamArray());
 }

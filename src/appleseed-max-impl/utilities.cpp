@@ -306,6 +306,7 @@ std::string insert_texture_and_instance(
     asr::BaseGroup& base_group,
     Texmap*         texmap,
     const bool      use_max_procedural_maps,
+    const TimeValue time,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
@@ -315,6 +316,7 @@ std::string insert_texture_and_instance(
             insert_procedural_texture_and_instance(
                 base_group,
                 texmap,
+                time,
                 texture_params,
                 texture_instance_params);
     }
@@ -377,7 +379,8 @@ namespace
       : public ShadeContext
     {
       public:
-        explicit MaxShadeContext(const asr::SourceInputs& source_inputs)
+        MaxShadeContext(const asr::SourceInputs& source_inputs, const TimeValue time)
+            : m_cur_time(time)
         {
             doMaps = TRUE;
             filterMaps = FALSE;
@@ -387,7 +390,6 @@ namespace
             xshadeID = 0;
             // todo: initialize `out`?
 
-            m_cur_time = GetCOREInterface()->GetTime();
             m_uv.x = source_inputs.m_uv_x;
             m_uv.y = source_inputs.m_uv_y;
         }
@@ -557,9 +559,10 @@ namespace
       : public asr::Source
     {
       public:
-        explicit MaxProceduralTextureSource(Texmap* texmap)
+        MaxProceduralTextureSource(Texmap* texmap, const TimeValue time)
           : asr::Source(false)
           , m_texmap(texmap)
+          , m_time(time)
         {
         }
 
@@ -641,18 +644,19 @@ namespace
         }
 
       private:
-        Texmap* m_texmap;
+        Texmap*         m_texmap;
+        const TimeValue m_time;
 
         float evaluate_float(const asr::SourceInputs& source_inputs) const
         {
-            MaxShadeContext maxsc(source_inputs);
+            MaxShadeContext maxsc(source_inputs, m_time);
 
             return m_texmap->EvalMono(maxsc);
         }
 
         void evaluate_color(const asr::SourceInputs& source_inputs, float& r, float& g, float& b) const
         {
-            MaxShadeContext maxsc(source_inputs);
+            MaxShadeContext maxsc(source_inputs, m_time);
             
             const AColor tex_color = m_texmap->EvalColor(maxsc);
 
@@ -663,7 +667,7 @@ namespace
 
         void evaluate_color(const asr::SourceInputs& source_inputs, float& r, float& g, float& b, asr::Alpha& alpha) const
         {
-            MaxShadeContext maxsc(source_inputs);
+            MaxShadeContext maxsc(source_inputs, m_time);
             
             const AColor tex_color = m_texmap->EvalColor(maxsc);
 
@@ -679,9 +683,10 @@ namespace
       : public asr::Texture
     {
       public:
-        MaxProceduralTexture(const char* name, Texmap* texmap)
+        MaxProceduralTexture(const char* name, Texmap* texmap, const TimeValue time)
           : asr::Texture(name, asr::ParamArray())
           , m_texmap(texmap)
+          , m_time(time)
         {
             // Dummy values.
             m_properties =
@@ -715,7 +720,7 @@ namespace
             const asf::UniqueID         assembly_uid,
             const asr::TextureInstance& texture_instance) override
         {
-            return new MaxProceduralTextureSource(m_texmap);
+            return new MaxProceduralTextureSource(m_texmap, m_time);
         }
 
         asf::Tile* load_tile(
@@ -735,6 +740,7 @@ namespace
       private:
         asf::CanvasProperties   m_properties;
         Texmap*                 m_texmap;
+        TimeValue               m_time;
     };
 
     void load_map_files_recursively(MtlBase* mat_base, TimeValue time)
@@ -757,10 +763,10 @@ namespace
 std::string insert_procedural_texture_and_instance(
     asr::BaseGroup& base_group,
     Texmap*         texmap,
+    const TimeValue time,
     asr::ParamArray texture_params,
     asr::ParamArray texture_instance_params)
 {
-    const TimeValue time = GetCOREInterface()->GetTime();
     texmap->Update(time, FOREVER);
     load_map_files_recursively(texmap, time);
 
@@ -776,7 +782,9 @@ std::string insert_procedural_texture_and_instance(
         base_group.textures().insert(
             asf::auto_release_ptr<asr::Texture>(
                 new MaxProceduralTexture(
-                    texture_name.c_str(), texmap)));
+                    texture_name.c_str(),
+                    texmap,
+                    time)));
     }
 
     const std::string texture_instance_name = texture_name + "_inst";

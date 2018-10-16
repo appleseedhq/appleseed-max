@@ -720,17 +720,19 @@ bool AppleseedDisneyMtl::can_emit_light() const
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_material(
     asr::Assembly&  assembly,
     const char*     name,
-    const bool      use_max_procedural_maps)
+    const bool      use_max_procedural_maps,
+    const TimeValue time)
 {
     return
         use_max_procedural_maps
-            ? create_builtin_material(assembly, name)
-            : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name, time)
+            : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
     asr::Assembly&  assembly,
-    const char*     name)
+    const char*     name,
+    const TimeValue time)
 {
     //
     // Shader group.
@@ -739,28 +741,28 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_color_texture(shader_group.ref(), name, "BaseColor", m_base_color_texmap, m_base_color);
-    connect_float_texture(shader_group.ref(), name, "Metallic", m_metallic_texmap, m_metallic / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Specular", m_specular_texmap, m_specular / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "SpecularTint", m_specular_tint_texmap, m_specular_tint / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Sheen", m_sheen_texmap, m_sheen / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "SheenTint", m_sheen_tint_texmap, m_sheen_tint / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy);
-    connect_float_texture(shader_group.ref(), name, "Clearcoat", m_clearcoat_texmap, m_clearcoat / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "ClearcoatGloss", m_clearcoat_gloss_texmap, m_clearcoat_gloss / 100.0f);
+    connect_color_texture(shader_group.ref(), name, "BaseColor", m_base_color_texmap, m_base_color, time);
+    connect_float_texture(shader_group.ref(), name, "Metallic", m_metallic_texmap, m_metallic / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Specular", m_specular_texmap, m_specular / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "SpecularTint", m_specular_tint_texmap, m_specular_tint / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Sheen", m_sheen_texmap, m_sheen / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "SheenTint", m_sheen_tint_texmap, m_sheen_tint / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy, time);
+    connect_float_texture(shader_group.ref(), name, "Clearcoat", m_clearcoat_texmap, m_clearcoat / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "ClearcoatGloss", m_clearcoat_gloss_texmap, m_clearcoat_gloss / 100.0f, time);
 
     if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {
             // Bump mapping.
-            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount, time);
         }
         else
         {
             // Normal mapping.
-            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount);
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount, time);
         }
     }
 
@@ -800,6 +802,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
             assembly,
             m_alpha_texmap,
             false,
+            time,
             asr::ParamArray(),
             asr::ParamArray()
                 .insert("alpha_mode", "detect"));
@@ -811,8 +814,9 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     asr::ParamArray material_params;
     std::string instance_name;
@@ -826,7 +830,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         asr::ParamArray bsdf_params;
 
         // Base color.
-        instance_name = insert_texture_and_instance(assembly, m_base_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_base_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("base_color", instance_name);
         else
@@ -837,55 +841,55 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         }
 
         // Specular Tint.
-        instance_name = insert_texture_and_instance(assembly, m_specular_tint_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_specular_tint_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("specular_tint", instance_name);
         else bsdf_params.insert("specular_tint", m_specular_tint / 100.0f);
 
         // Sheen.
-        instance_name = insert_texture_and_instance(assembly, m_sheen_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_sheen_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("sheen", instance_name);
         else bsdf_params.insert("sheen", m_sheen / 1000.0f);
 
         // Sheen Tint.
-        instance_name = insert_texture_and_instance(assembly, m_sheen_tint_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_sheen_tint_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("sheen_tint", instance_name);
         else bsdf_params.insert("sheen_tint", m_sheen_tint / 100.0f);
 
         // Clearcoat.
-        instance_name = insert_texture_and_instance(assembly, m_clearcoat_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_clearcoat_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("clearcoat", instance_name);
         else bsdf_params.insert("clearcoat", m_clearcoat / 1000.0f);
 
         // Clearcoat Gloss.
-        instance_name = insert_texture_and_instance(assembly, m_clearcoat_gloss_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_clearcoat_gloss_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("clearcoat", instance_name);
         else bsdf_params.insert("clearcoat", m_clearcoat_gloss / 100.0f);
 
         // Specular.
-        instance_name = insert_texture_and_instance(assembly, m_specular_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_specular_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("specular", instance_name);
         else bsdf_params.insert("specular", m_specular / 100.0f);
 
         // Metallic.
-        instance_name = insert_texture_and_instance(assembly, m_metallic_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_metallic_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("metallic", instance_name);
         else bsdf_params.insert("metallic", m_metallic / 100.0f);
 
         // Roughness.
-        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("roughness", instance_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
         // Anisotropic.
-        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
@@ -906,6 +910,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         assembly,
         m_alpha_texmap,
         use_max_procedural_maps,
+        time,
         asr::ParamArray(),
         asr::ParamArray()
             .insert("alpha_mode", "detect"));
@@ -918,6 +923,7 @@ asf::auto_release_ptr<asr::Material> AppleseedDisneyMtl::create_builtin_material
         assembly,
         m_bump_texmap,
         use_max_procedural_maps,
+        time,
         asr::ParamArray()
             .insert("color_space", "linear_rgb"));
     if (!instance_name.empty())

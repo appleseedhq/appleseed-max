@@ -639,20 +639,22 @@ bool AppleseedGlassMtl::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return
         use_max_procedural_maps
-            ? create_builtin_material(assembly, name)
-            : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name, time)
+            : create_osl_material(assembly, name, time);
 }
 
 
 asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     //
     // Shader group.
@@ -660,24 +662,24 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_color_texture(shader_group.ref(), name, "SurfaceTransmittance", m_surface_color_texmap, m_surface_color);
-    connect_color_texture(shader_group.ref(), name, "ReflectionTint", m_reflection_tint_texmap, m_reflection_tint);
-    connect_color_texture(shader_group.ref(), name, "RefractionTint", m_refraction_tint_texmap, m_refraction_tint);
-    connect_color_texture(shader_group.ref(), name, "VolumeTransmittance", m_volume_color_texmap, m_volume_color);
-    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f);
-    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy / 100.0f);
+    connect_color_texture(shader_group.ref(), name, "SurfaceTransmittance", m_surface_color_texmap, m_surface_color, time);
+    connect_color_texture(shader_group.ref(), name, "ReflectionTint", m_reflection_tint_texmap, m_reflection_tint, time);
+    connect_color_texture(shader_group.ref(), name, "RefractionTint", m_refraction_tint_texmap, m_refraction_tint, time);
+    connect_color_texture(shader_group.ref(), name, "VolumeTransmittance", m_volume_color_texmap, m_volume_color, time);
+    connect_float_texture(shader_group.ref(), name, "Roughness", m_roughness_texmap, m_roughness / 100.0f, time);
+    connect_float_texture(shader_group.ref(), name, "Anisotropic", m_anisotropy_texmap, m_anisotropy / 100.0f, time);
 
     if (m_bump_texmap != nullptr)
     {
         if (m_bump_method == 0)
         {
             // Bump mapping.
-            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount);
+            connect_bump_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_amount, time);
         }
         else
         {
             // Normal mapping.
-            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount);
+            connect_normal_map(shader_group.ref(), name, "Normal", "Tn", m_bump_texmap, m_bump_up_vector, m_bump_amount, time);
         }
     }
 
@@ -715,8 +717,9 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     asr::ParamArray material_params;
     std::string instance_name;
@@ -731,7 +734,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         bsdf_params.insert("mdf", "ggx");
 
         // Surface transmittance.
-        instance_name = insert_texture_and_instance(assembly, m_surface_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_surface_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("surface_transmittance", instance_name);
         else
@@ -742,7 +745,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         }
 
         // Reflection tint.
-        instance_name = insert_texture_and_instance(assembly, m_reflection_tint_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_reflection_tint_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("reflection_tint", instance_name);
         else
@@ -753,7 +756,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         }
 
         // Refraction tint.
-        instance_name = insert_texture_and_instance(assembly, m_refraction_tint_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_refraction_tint_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("refraction_tint", instance_name);
         else
@@ -767,13 +770,13 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         bsdf_params.insert("ior", m_ior);
 
         // Roughness.
-        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_roughness_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("roughness", instance_name);
         else bsdf_params.insert("roughness", m_roughness / 100.0f);
 
         // Anisotropy.
-        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_anisotropy_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("anisotropic", instance_name);
         else bsdf_params.insert("anisotropic", m_anisotropy);
@@ -782,7 +785,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         bsdf_params.insert("volume_parameterization", "transmittance");
 
         // Volume transmittance.
-        instance_name = insert_texture_and_instance(assembly, m_volume_color_texmap, use_max_procedural_maps);
+        instance_name = insert_texture_and_instance(assembly, m_volume_color_texmap, use_max_procedural_maps, time);
         if (!instance_name.empty())
             bsdf_params.insert("volume_transmittance", instance_name);
         else
@@ -811,6 +814,7 @@ asf::auto_release_ptr<asr::Material> AppleseedGlassMtl::create_builtin_material(
         assembly,
         m_bump_texmap,
         use_max_procedural_maps,
+        time,
         asr::ParamArray()
             .insert("color_space", "linear_rgb"));
     if (!instance_name.empty())

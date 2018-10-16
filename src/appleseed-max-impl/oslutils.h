@@ -49,9 +49,9 @@ class Mtl;
 class OSLShaderInfo;
 class Texmap;
 
-renderer::ParamArray get_uv_params(Texmap* texmap);
+renderer::ParamArray get_uv_params(Texmap* texmap, const TimeValue time);
 
-renderer::ParamArray get_output_params(Texmap* texmap);
+renderer::ParamArray get_output_params(Texmap* texmap, const TimeValue time);
 
 std::string fmt_osl_expr(const std::string& s);
 
@@ -74,14 +74,16 @@ void connect_float_texture(
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const float             const_value);
+    const float             const_value,
+    const TimeValue         time);
 
 void connect_color_texture(
     renderer::ShaderGroup&  shader_group,
     const char*             material_node_name,
     const char*             material_input_name,
     Texmap*                 texmap,
-    const Color             const_color);
+    const Color             const_color,
+    const TimeValue         time);
 
 void connect_bump_map(
     renderer::ShaderGroup&  shader_group,
@@ -89,7 +91,8 @@ void connect_bump_map(
     const char*             material_normal_input_name,
     const char*             material_tn_input_name,
     Texmap*                 texmap,
-    const float             amount);
+    const float             amount,
+    const TimeValue         time);
 
 void connect_normal_map(
     renderer::ShaderGroup&  shader_group,
@@ -98,18 +101,21 @@ void connect_normal_map(
     const char*             material_tn_input_name,
     Texmap*                 texmap,
     const int               up_vector,
-    const float             amount);
+    const float             amount,
+    const TimeValue         time);
 
 void connect_sub_mtl(
     renderer::Assembly&     assembly,
     renderer::ShaderGroup&  shader_group,
     const char*             shader_name,
     const char*             shader_input,
-    Mtl*                    mat);
+    Mtl*                    mat,
+    const TimeValue         time);
 
 void create_osl_shader(
     renderer::Assembly*     assembly,
     renderer::ShaderGroup&  shader_group,
     const char*             layer_name,
     IParamBlock2*           param_block,
-    const OSLShaderInfo*    shader_info);
+    const OSLShaderInfo*    shader_info,
+    const TimeValue         time);

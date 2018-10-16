@@ -100,7 +100,7 @@ class AppleseedEnvMap
     RGBA EvalColor(ShadeContext& sc) override;
     Point3 EvalNormalPerturb(ShadeContext& sc) override;
 
-    virtual foundation::auto_release_ptr<renderer::EnvironmentEDF> create_envmap(const char* name);
+    virtual foundation::auto_release_ptr<renderer::EnvironmentEDF> create_envmap(const char* name, const TimeValue time);
 
   protected:
     void SetReference(int i, RefTargetHandle rtarg) override;

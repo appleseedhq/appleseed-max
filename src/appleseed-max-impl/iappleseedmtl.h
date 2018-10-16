@@ -59,5 +59,6 @@ class IAppleseedMtl
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,
-        const bool          use_max_procedural_maps) = 0;
+        const bool          use_max_procedural_maps,
+        const TimeValue     time) = 0;
 };

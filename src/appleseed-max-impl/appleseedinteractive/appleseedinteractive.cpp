@@ -387,8 +387,6 @@ void AppleseedInteractiveRender::update_camera_object(INode* camera)
 
 void AppleseedInteractiveRender::update_render_view()
 {
-    auto time = GetCOREInterface()->GetTime();
-
     ViewExp& view_exp = GetCOREInterface()->GetActiveViewExp();
 
     if (!view_exp.IsAlive())

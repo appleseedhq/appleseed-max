@@ -110,12 +110,14 @@ class OSLTexture
         renderer::ShaderGroup&  shader_group,
         const char*             material_node_name,
         const char*             material_input_name,
-        const int               output_slot_index);
+        const int               output_slot_index,
+        const TimeValue         time);
 
     void create_osl_texture(
         renderer::ShaderGroup&  shader_group,
         const char*             material_node_name,
-        const char*             material_input_name);
+        const char*             material_input_name,
+        const TimeValue         time);
 
     std::vector<std::string> get_output_names() const;
 

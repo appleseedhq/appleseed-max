@@ -445,12 +445,12 @@ bool AppleseedVolumeMtl::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedVolumeMtl::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     asr::ParamArray material_params;
-    auto time = GetCOREInterface()->GetTime();
 
     //
     // Volume.

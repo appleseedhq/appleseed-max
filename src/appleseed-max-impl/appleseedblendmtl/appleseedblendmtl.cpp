@@ -570,19 +570,21 @@ bool AppleseedBlendMtl::can_emit_light() const
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_material(
-    asr::Assembly&  assembly,
-    const char*     name,
-    const bool      use_max_procedural_maps)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const bool          use_max_procedural_maps,
+    const TimeValue     time)
 {
     return
         use_max_procedural_maps
-            ? create_builtin_material(assembly, name)
-            : create_osl_material(assembly, name);
+            ? create_builtin_material(assembly, name, time)
+            : create_osl_material(assembly, name, time);
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     auto blend_material = asr::OSLMaterialFactory().create(name, asr::ParamArray());
 
@@ -595,10 +597,8 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
     auto shader_group_name = make_unique_name(assembly.shader_groups(), std::string(name) + "_shader_group");
     auto shader_group = asr::ShaderGroupFactory::create(shader_group_name.c_str());
 
-    connect_sub_mtl(assembly, shader_group.ref(), name, "BaseMtl", mat);
+    connect_sub_mtl(assembly, shader_group.ref(), name, "BaseMtl", mat, time);
 
-    const TimeValue time = GetCOREInterface()->GetTime();
-    
     asr::ParamArray shader_params;
     int layer_index = 1;
 
@@ -609,7 +609,7 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
         if (mat == nullptr)
             continue;
 
-        connect_sub_mtl(assembly, shader_group.ref(), name, asf::format("LayerMtl_{0}", layer_index).c_str(), mat);
+        connect_sub_mtl(assembly, shader_group.ref(), name, asf::format("LayerMtl_{0}", layer_index).c_str(), mat, time);
 
         Texmap* tex = nullptr;
         m_pblock->GetValue(ParamIdMaskTex, time, tex, FOREVER, i);
@@ -621,7 +621,8 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
                 name,
                 asf::format("MaskColor_{0}", layer_index).c_str(),
                 tex,
-                mask_amount);
+                mask_amount,
+                time);
         }
 
         shader_params.insert(
@@ -653,8 +654,9 @@ asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_osl_material(
 }
 
 asf::auto_release_ptr<asr::Material> AppleseedBlendMtl::create_builtin_material(
-    asr::Assembly&  assembly,
-    const char*     name)
+    asr::Assembly&      assembly,
+    const char*         name,
+    const TimeValue     time)
 {
     return asr::GenericMaterialFactory().create(name, asr::ParamArray());
 }
