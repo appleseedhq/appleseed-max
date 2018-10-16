@@ -379,7 +379,7 @@ namespace
       : public ShadeContext
     {
       public:
-        explicit MaxShadeContext(const asr::SourceInputs& source_inputs, TimeValue time)
+        MaxShadeContext(const asr::SourceInputs& source_inputs, const TimeValue time)
             : m_cur_time(time)
         {
             doMaps = TRUE;
@@ -559,7 +559,7 @@ namespace
       : public asr::Source
     {
       public:
-        explicit MaxProceduralTextureSource(Texmap* texmap, TimeValue time)
+        MaxProceduralTextureSource(Texmap* texmap, const TimeValue time)
           : asr::Source(false)
           , m_texmap(texmap)
           , m_time(time)
@@ -644,8 +644,8 @@ namespace
         }
 
       private:
-        Texmap*     m_texmap;
-        TimeValue   m_time;
+        Texmap*         m_texmap;
+        const TimeValue m_time;
 
         float evaluate_float(const asr::SourceInputs& source_inputs) const
         {
@@ -683,7 +683,7 @@ namespace
       : public asr::Texture
     {
       public:
-        MaxProceduralTexture(const char* name, Texmap* texmap, TimeValue time)
+        MaxProceduralTexture(const char* name, Texmap* texmap, const TimeValue time)
           : asr::Texture(name, asr::ParamArray())
           , m_texmap(texmap)
           , m_time(time)

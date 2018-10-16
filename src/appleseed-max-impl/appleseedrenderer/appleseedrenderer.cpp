@@ -254,6 +254,7 @@ namespace
     };
 }
 
+
 //
 // AppleseedRendererPBlockAccessor class implementation.
 //
@@ -1947,6 +1948,7 @@ void AppleseedRenderer::clear()
     m_time = 0;
     m_entities.clear();
 }
+
 
 //
 // AppleseedRendererClassDesc class implementation.
