@@ -157,8 +157,7 @@ namespace
 
         enum { WM_UPDATE_CHECK_DATA = WM_USER + 101 };
 
-        explicit AboutPanel(
-            IRendParams*        rend_params)
+        explicit AboutPanel(IRendParams* rend_params)
           : m_rend_params(rend_params)
         {
             m_rollup =
@@ -297,6 +296,22 @@ namespace
                 init(hwnd);
                 enable_disable_controls();
                 return TRUE;
+
+              case WM_CUSTEDIT_ENTER:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_TEXT_PROJECT_FILEPATH:
+                    {
+                      MSTR project_file;
+                      m_text_project_filepath->GetText(project_file);
+                      project_file = replace_extension(project_file, L".appleseed");
+                      m_text_project_filepath->SetText(project_file);
+                      return TRUE;
+                    }
+
+                  default:
+                    return FALSE;
+                }
 
               case WM_COMMAND:
                 switch (LOWORD(wparam))
