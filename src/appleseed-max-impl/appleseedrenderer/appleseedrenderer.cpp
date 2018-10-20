@@ -85,73 +85,90 @@ namespace
         ParamMapIdImageSampling,
         ParamMapIdLighting,
         ParamMapIdPathTracer,
+        ParamMapIdSPPM,
         ParamMapIdPostProcessing,
         ParamMapIdSystem
     };
 
     enum ParamId
     {
-        ParamIdOuputMode                    = 0,
-        ParamIdProjectPath                  = 1,
-        ParamIdScaleMultiplier              = 2,
-        ParamIdShaderOverrideType           = 54,
-        ParamIdMaterialPreviewQuality       = 55,
+        ParamIdOuputMode                                = 0,
+        ParamIdProjectPath                              = 1,
+        ParamIdScaleMultiplier                          = 2,
+        ParamIdShaderOverrideType                       = 54,
+        ParamIdMaterialPreviewQuality                   = 55,
 
-        ParamIdUniformPixelSamples          = 3,
-        ParamIdTileSize                     = 4,
-        ParamIdPasses                       = 5,
-        ParamIdFilterSize                   = 6,
-        ParamIdFilterType                   = 7,
-        ParamIdImageSamplerType             = 40,
-        ParamIdAdaptiveTileBatchSize        = 41,
-        ParamIdAdaptiveTileMinSamples       = 42,
-        ParamIdAdaptiveTileMaxSamples       = 43,
-        ParamIdAdaptiveTileNoiseThreshold   = 44,
-        ParamIdBackgroundAlphaValue         = 15,
+        ParamIdUniformPixelSamples                      = 3,
+        ParamIdTileSize                                 = 4,
+        ParamIdPasses                                   = 5,
+        ParamIdFilterSize                               = 6,
+        ParamIdFilterType                               = 7,
+        ParamIdImageSamplerType                         = 40,
+        ParamIdAdaptiveTileBatchSize                    = 41,
+        ParamIdAdaptiveTileMinSamples                   = 42,
+        ParamIdAdaptiveTileMaxSamples                   = 43,
+        ParamIdAdaptiveTileNoiseThreshold               = 44,
+        ParamIdBackgroundAlphaValue                     = 15,
 
-        ParamIdLightingAlgorithm            = 52,
-        ParamIdForceDefaultLightsOff        = 13,
+        ParamIdLightingAlgorithm                        = 52,
+        ParamIdForceDefaultLightsOff                    = 13,
 
-        ParamIdEnableGI                     = 8,
-        ParamIdEnableCaustics               = 10,
-        ParamIdEnableMaxRayIntensity        = 11,
-        ParamIdMaxRayIntensity              = 12,
-        ParamIdEnableBackgroundLight        = 14,
-        ParamIdEnableRoughnessClamping      = 23,
-        ParamIdEnableDiffuseBounceLimit     = 25,
-        ParamIdEnableGlossyBounceLimit      = 27,
-        ParamIdEnableSpecularBounceLimit    = 29,
-        ParamIdEnableVolumeBounceLimit      = 31,
-        ParamIdGlobalBounceLimit            = 9,
-        ParamIdDiffuseBounceLimit           = 26,
-        ParamIdGlossyBounceLimit            = 28,
-        ParamIdSpecularBounceLimit          = 30,
-        ParamIdVolumeBounceLimit            = 32,
-        ParamIdDirectLightSamples           = 33,
-        ParamIdLowLightThreshold            = 34,
-        ParamIdEnvLightSamples              = 35,
-        ParamIdRussianRouletteMinPathLength = 36,
-        ParamIdEnableDirectLighting         = 37,
-        ParamIdVolumeDistanceSamples        = 38,
-        ParamIdOptLightOutsideVolumes       = 39,
+        ParamIdEnableGI                                 = 8,
+        ParamIdEnableCaustics                           = 10,
+        ParamIdEnableMaxRayIntensity                    = 11,
+        ParamIdMaxRayIntensity                          = 12,
+        ParamIdEnableBackgroundLight                    = 14,
+        ParamIdEnableRoughnessClamping                  = 23,
+        ParamIdEnableDiffuseBounceLimit                 = 25,
+        ParamIdEnableGlossyBounceLimit                  = 27,
+        ParamIdEnableSpecularBounceLimit                = 29,
+        ParamIdEnableVolumeBounceLimit                  = 31,
+        ParamIdGlobalBounceLimit                        = 9,
+        ParamIdDiffuseBounceLimit                       = 26,
+        ParamIdGlossyBounceLimit                        = 28,
+        ParamIdSpecularBounceLimit                      = 30,
+        ParamIdVolumeBounceLimit                        = 32,
+        ParamIdDirectLightSamples                       = 33,
+        ParamIdLowLightThreshold                        = 34,
+        ParamIdEnvLightSamples                          = 35,
+        ParamIdRussianRouletteMinPathLength             = 36,
+        ParamIdEnableDirectLighting                     = 37,
+        ParamIdVolumeDistanceSamples                    = 38,
+        ParamIdOptLightOutsideVolumes                   = 39, 
 
-        ParamIdEnableRenderStamp            = 21,
-        ParamIdRenderStampFormat            = 22,
-        ParamIdDenoiseMode                  = 45,
-        ParamIdEnableSkipDenoisedPixel      = 46,
-        ParamIdEnableRandomPixelOrder       = 47,
-        ParamIdEnablePrefilterSpikes        = 48,
-        ParamIdSpikeThreshold               = 49,
-        ParamIdPatchDistance                = 50,
-        ParamIdDenoiseScales                = 51,
+        ParamIdSPPMPhotonType                           = 57,
+        ParamIdSPPMDirectLightingType                   = 58,
+        ParamIdSPPMEnableCaustics                       = 59,
+        ParamIdSPPMEnableImageBasedLighting             = 60,
+        ParamIdSPPMPhotonTracingMaxBounces              = 61,
+        ParamIdSPPMPhotonTracingEnableBounceLimit       = 62,
+        ParamIdSPPMPhotonTracingRRMinPathLength         = 63,
+        ParamIdSPPMPhotonTracingLightPhotons            = 64,
+        ParamIdSPPMPhotonTracingEnvironmentPhotons      = 65,
+        ParamIdSPPMRadianceEstimationMaxBounces         = 66,
+        ParamIdSPPMRadianceEstimationEnableBounceLimit = 67,
+        ParamIdSPPMRadianceEstimationRRMinPathLength    = 68,
+        ParamIdSPPMRadianceEstimationInitialRadius      = 69,
+        ParamIdSPPMRadianceEstimationMaxPhotons         = 70,
+        ParamIdSPPMRadianceEstimationAlpha              = 71,
 
-        ParamIdCPUCores                     = 16,
-        ParamIdOpenLogMode                  = 17,
-        ParamIdLogMaterialRendering         = 18,
-        ParamIdUseMaxProcedurals            = 19,
-        ParamIdEnableLowPriority            = 20,
-        ParamIdEnableEmbree                 = 24,
-        ParamIdTextureCacheSize             = 53,
+        ParamIdEnableRenderStamp                        = 21,
+        ParamIdRenderStampFormat                        = 22,
+        ParamIdDenoiseMode                              = 45,
+        ParamIdEnableSkipDenoisedPixel                  = 46,
+        ParamIdEnableRandomPixelOrder                   = 47,
+        ParamIdEnablePrefilterSpikes                    = 48,
+        ParamIdSpikeThreshold                           = 49,
+        ParamIdPatchDistance                            = 50,
+        ParamIdDenoiseScales                            = 51,
+
+        ParamIdCPUCores                                 = 16,
+        ParamIdOpenLogMode                              = 17,
+        ParamIdLogMaterialRendering                     = 18,
+        ParamIdUseMaxProcedurals                        = 19,
+        ParamIdEnableLowPriority                        = 20,
+        ParamIdEnableEmbree                             = 24,
+        ParamIdTextureCacheSize                         = 53,
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -197,7 +214,12 @@ namespace
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_20,    L"Tangents" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_21,    L"UV Coordinates" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_22,    L"World Space Position" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_23,    L"World Space Wireframe" }
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_23,    L"World Space Wireframe" },
+        { IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_1,    L"Monochromatic" },
+        { IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_2,    L"Polychromatic" },
+        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_1,        L"Ray Traced" },
+        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_2,        L"SPPM" },
+        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_3,        L"Off" }
     };
 
     class AppleseedRenderContext
@@ -447,6 +469,70 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdRussianRouletteMinPathLength:
         v.i = settings.m_rr_min_path_length;
+        break;
+
+      //
+      // Stochastic Progressive Photon Mapping.
+      //
+
+      case ParamIdSPPMPhotonType:
+        v.i = settings.m_sppm_photon_type;
+        break;
+
+      case ParamIdSPPMDirectLightingType:
+        v.i = settings.m_sppm_direct_lighting_mode;
+        break;
+
+      case ParamIdSPPMEnableCaustics:
+        v.i = static_cast<int>(settings.m_sppm_enable_caustics);
+        break;
+
+      case ParamIdSPPMEnableImageBasedLighting:
+        v.i = static_cast<int>(settings.m_sppm_enable_image_based_lighting);
+        break;
+
+      case ParamIdSPPMPhotonTracingMaxBounces:
+        v.i = settings.m_sppm_photon_tracing_max_bounces;
+        break;
+
+      case ParamIdSPPMPhotonTracingEnableBounceLimit:
+        v.i = static_cast<int>(settings.m_sppm_photon_tracing_enable_bounce_limit);
+        break;
+
+      case ParamIdSPPMPhotonTracingRRMinPathLength:
+        v.i = settings.m_sppm_photon_tracing_rr_min_path_length;
+        break;
+
+      case ParamIdSPPMPhotonTracingLightPhotons:
+        v.i = settings.m_sppm_photon_tracing_light_photons;
+        break;
+
+      case ParamIdSPPMPhotonTracingEnvironmentPhotons:
+        v.i = settings.m_sppm_photon_tracing_environment_photons;
+        break;
+
+      case ParamIdSPPMRadianceEstimationMaxBounces:
+        v.i = settings.m_sppm_radiance_estimation_max_bounces;
+        break;
+
+      case ParamIdSPPMRadianceEstimationEnableBounceLimit:
+        v.i = static_cast<int>(settings.m_sppm_radiance_estimation_enable_bounce_limit);
+        break;
+
+      case ParamIdSPPMRadianceEstimationRRMinPathLength:
+        v.i = settings.m_sppm_radiance_estimation_rr_min_path_length;
+        break;
+
+      case ParamIdSPPMRadianceEstimationInitialRadius:
+        v.f = settings.m_sppm_radiance_estimation_initial_radius;
+        break;
+
+      case ParamIdSPPMRadianceEstimationMaxPhotons:
+        v.i = settings.m_sppm_radiance_estimation_max_photons;
+        break;
+
+      case ParamIdSPPMRadianceEstimationAlpha:
+        v.f = settings.m_sppm_radiance_estimation_alpha;
         break;
 
       //
@@ -714,6 +800,70 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_rr_min_path_length = v.i;
         break;
 
+      //
+      // Stochastic Progressive Photon Mapping.
+      //
+
+      case ParamIdSPPMPhotonType:
+        settings.m_sppm_photon_type = v.i;
+        break;
+
+      case ParamIdSPPMDirectLightingType:
+        settings.m_sppm_direct_lighting_mode = v.i;
+        break;
+
+      case ParamIdSPPMEnableCaustics:
+        settings.m_sppm_enable_caustics = v.i > 0;
+        break;
+
+      case ParamIdSPPMEnableImageBasedLighting:
+        settings.m_sppm_enable_image_based_lighting = v.i > 0;
+        break;
+
+      case ParamIdSPPMPhotonTracingMaxBounces:
+        settings.m_sppm_photon_tracing_max_bounces = v.i;
+        break;
+
+      case ParamIdSPPMPhotonTracingEnableBounceLimit:
+        settings.m_sppm_photon_tracing_enable_bounce_limit = v.i > 0;
+        break;
+
+      case ParamIdSPPMPhotonTracingRRMinPathLength:
+        settings.m_sppm_photon_tracing_rr_min_path_length = v.i;
+        break;
+
+      case ParamIdSPPMPhotonTracingLightPhotons:
+        settings.m_sppm_photon_tracing_light_photons = v.i;
+        break;
+
+      case ParamIdSPPMPhotonTracingEnvironmentPhotons:
+        settings.m_sppm_photon_tracing_environment_photons = v.i;
+        break;
+
+      case ParamIdSPPMRadianceEstimationMaxBounces:
+        settings.m_sppm_radiance_estimation_max_bounces = v.i;
+        break;
+
+      case ParamIdSPPMRadianceEstimationEnableBounceLimit:
+        settings.m_sppm_radiance_estimation_enable_bounce_limit = v.i > 0;
+        break;
+
+      case ParamIdSPPMRadianceEstimationRRMinPathLength:
+        settings.m_sppm_radiance_estimation_rr_min_path_length = v.i;
+        break;
+
+      case ParamIdSPPMRadianceEstimationInitialRadius:
+        settings.m_sppm_radiance_estimation_initial_radius = v.f;
+        break;
+
+      case ParamIdSPPMRadianceEstimationMaxPhotons:
+        settings.m_sppm_radiance_estimation_max_photons = v.i;
+        break;
+
+      case ParamIdSPPMRadianceEstimationAlpha:
+        settings.m_sppm_radiance_estimation_alpha = v.f;
+        break;
+
     //
     // Postprocessing.
     //
@@ -816,7 +966,7 @@ ParamBlockDesc2 g_param_block_desc(
     0,                                          // parameter block's reference number
 
                                                 // --- P_MULTIMAP arguments ---
-    6,
+    7,
 
     // --- P_AUTO_UI arguments for Parameters rollup ---
 
@@ -843,6 +993,13 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamMapIdPathTracer,
     IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING,   // ID of the dialog template
+    0,                                          // ID of the dialog's title string
+    0,                                          // IParamMap2 creation/deletion flag mask
+    0,                                          // rollup creation flag
+    nullptr,
+
+    ParamMapIdSPPM,
+    IDD_FORMVIEW_RENDERERPARAMS_SPPM,           // ID of the dialog template
     0,                                          // ID of the dialog's title string
     0,                                          // IParamMap2 creation/deletion flag mask
     0,                                          // rollup creation flag
@@ -988,7 +1145,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdLightingAlgorithm, L"lighting_algorithm", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_INT_COMBOBOX, IDC_COMBO_LIGHTING_ALGORITHM,
-        1, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1,
+        2, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
@@ -1149,6 +1306,111 @@ ParamBlockDesc2 g_param_block_desc(
         p_range, 1, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
+
+     // --- Parameters specifications for SPPM rollup ---
+
+    ParamIdSPPMPhotonType, L"photon_type", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_INT_COMBOBOX, IDC_COMBO_SPPM_PHOTON_TYPE,
+        2, IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_1, IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_2,
+        p_default, 1,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMDirectLightingType, L"direct_lighting_type", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_INT_COMBOBOX, IDC_COMBO_SPPM_DL_TYPE,
+        3, IDS_RENDERERPARAMS_SPPM_DL_TYPE_1, IDS_RENDERERPARAMS_SPPM_DL_TYPE_2, IDS_RENDERERPARAMS_SPPM_DL_TYPE_3,
+        p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMEnableCaustics, L"enable_caustics", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_CAUSTICS,
+        p_default, TRUE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMEnableImageBasedLighting, L"enable_image_based_lighting", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_IMAGE_BASED_LIGHTING,
+        p_default, TRUE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMPhotonTracingMaxBounces, L"photon_tracing_max_bounces", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SPPM_PT_BOUNCES, IDC_SPINNER_SPPM_PT_BOUNCES, SPIN_AUTOSCALE,
+        p_default, -1,
+        p_range, -1, 100,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMPhotonTracingEnableBounceLimit, L"enable_photon_trace_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_PT_BOUNCES,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdSPPMPhotonTracingMaxBounces,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMPhotonTracingRRMinPathLength, L"russian_roulette_start_bounce", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_PT_RR_MIN_PATH_LENGTH, IDC_SPINNER_SPPM_PT_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_default, 6,
+        p_range, 1, 100,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMPhotonTracingLightPhotons, L"light_photons", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_PT_LIGHT_PHOTONS, IDC_SPINNER_SPPM_PT_LIGHT_PHOTONS, SPIN_AUTOSCALE,
+        p_default, 1000000,
+        p_range, 0, 1000000000,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMPhotonTracingEnvironmentPhotons, L"environment_photons", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_PT_ENVIRONMENT_PHOTONS, IDC_SPINNER_SPPM_PT_ENVIRONMENT_PHOTONS, SPIN_AUTOSCALE,
+        p_default, 1000000,
+        p_range, 0, 1000000000,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMRadianceEstimationMaxBounces, L"radiance_estimation_max_bounces", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SPPM_RADIANCE_BOUNCES, IDC_SPINNER_SPPM_RADIANCE_BOUNCES, SPIN_AUTOSCALE,
+        p_default, -1,
+        p_range, -1, 100,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMRadianceEstimationEnableBounceLimit, L"enable_radiance_estimation_bounce_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_RADIANCE_BOUNCES,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdSPPMRadianceEstimationMaxBounces,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMRadianceEstimationRRMinPathLength, L"russian_roulette_start_bounce", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_RADIANCE_RR_MIN_PATH_LENGTH, IDC_SPINNER_SPPM_RADIANCE_RR_MIN_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_default, 6,
+        p_range, 1, 100,
+        p_accessor, &g_pblock_accessor,
+      p_end,
+
+     ParamIdSPPMRadianceEstimationInitialRadius, L"initial_radius", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_RADIANCE_INITIAL_RADIUS, IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS, SPIN_AUTOSCALE,
+        p_default, 0.1f,
+        p_range, 0.001f, 100.0f,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMRadianceEstimationMaxPhotons, L"max_photons_per_estimate", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_RADIANCE_MAX_PHOTONS, IDC_SPINNER_SPPM_RADIANCE_MAX_PHOTONS, SPIN_AUTOSCALE,
+        p_default, 100,
+        p_range, 8, 1000000000,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMRadianceEstimationAlpha, L"alpha", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_RADIANCE_ALPHA, IDC_SPINNER_SPPM_RADIANCE_ALPHA, SPIN_AUTOSCALE,
+        p_default, 0.7f,
+        p_range, 0.0f, 1.0f,
+        p_accessor, &g_pblock_accessor,
+     p_end,
 
      // --- Parameters specifications for Post-Processing rollup ---
 
