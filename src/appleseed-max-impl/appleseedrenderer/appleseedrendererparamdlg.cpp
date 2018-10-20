@@ -308,9 +308,8 @@ namespace
                       m_text_project_filepath->SetText(project_file);
                       return TRUE;
                     }
-
                   default:
-                    return FALSE;
+                  return FALSE;
                 }
 
               case WM_COMMAND:
@@ -318,15 +317,15 @@ namespace
                 {
                   case IDC_BUTTON_BROWSE:
                     {
-                        MSTR filepath;
-                        if (get_save_project_filepath(hwnd, filepath))
-                        {
-                            map->GetParamBlock()->SetValueByName(L"project_path", filepath, 0);
-                            ICustEdit* project_path = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
-                            project_path->SetText(filepath);
-                            ReleaseICustEdit(project_path);
-                        }
-                        return TRUE;
+                      MSTR filepath;
+                      if (get_save_project_filepath(hwnd, filepath))
+                      {
+                          map->GetParamBlock()->SetValueByName(L"project_path", filepath, 0);
+                          ICustEdit* project_path = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
+                          project_path->SetText(filepath);
+                          ReleaseICustEdit(project_path);
+                      }
+                      return TRUE;
                     }
 
                   case IDC_RADIO_RENDER:
@@ -455,6 +454,7 @@ struct AppleseedRendererParamDlg::Impl
     IParamMap2*                 m_pmap_image_sampling;
     IParamMap2*                 m_pmap_lighting;
     IParamMap2*                 m_pmap_pathtracer;
+    IParamMap2*                 m_pmap_sppm;
     IParamMap2*                 m_pmap_postprocessing;
     IParamMap2*                 m_pmap_system;
 
@@ -466,6 +466,7 @@ struct AppleseedRendererParamDlg::Impl
       , m_pmap_image_sampling(nullptr)
       , m_pmap_lighting(nullptr)
       , m_pmap_pathtracer(nullptr)
+      , m_pmap_sppm(nullptr)
       , m_pmap_postprocessing(nullptr)
       , m_pmap_system(nullptr)
 
@@ -512,8 +513,17 @@ struct AppleseedRendererParamDlg::Impl
             L"Path Tracing",
             0);
 
-        m_pmap_postprocessing = CreateRParamMap2(
+        m_pmap_sppm = CreateRParamMap2(
             4,
+            renderer->GetParamBlock(0),
+            rend_params,
+            g_module,
+            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SPPM),
+            L"Stochastic Progressive Photon Mapping",
+            0);
+
+        m_pmap_postprocessing = CreateRParamMap2(
+            5,
             renderer->GetParamBlock(0),
             rend_params,
             g_module,
@@ -522,7 +532,7 @@ struct AppleseedRendererParamDlg::Impl
             0);
 
         m_pmap_system = CreateRParamMap2(
-            5,
+            6,
             renderer->GetParamBlock(0),
             rend_params,
             g_module,
@@ -545,6 +555,9 @@ struct AppleseedRendererParamDlg::Impl
 
         if (m_pmap_pathtracer != nullptr)
             DestroyRParamMap2(m_pmap_pathtracer);
+
+        if (m_pmap_sppm != nullptr)
+            DestroyRParamMap2(m_pmap_sppm);
 
         if (m_pmap_postprocessing != nullptr)
             DestroyRParamMap2(m_pmap_postprocessing);

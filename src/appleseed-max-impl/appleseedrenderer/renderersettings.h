@@ -117,6 +117,26 @@ class RendererSettings
     bool         m_optimize_for_lights_outside_volumes;
 
     //
+    // Stochastic Progressive Photon Mapping.
+    //
+
+    int                 m_sppm_photon_type;
+    int                 m_sppm_direct_lighting_mode;
+    bool                m_sppm_enable_caustics;
+    bool                m_sppm_enable_image_based_lighting;
+    int                 m_sppm_photon_tracing_max_bounces;
+    bool                m_sppm_photon_tracing_enable_bounce_limit;
+    int                 m_sppm_photon_tracing_rr_min_path_length;
+    int                 m_sppm_photon_tracing_light_photons;
+    int                 m_sppm_photon_tracing_environment_photons;
+    int                 m_sppm_radiance_estimation_max_bounces;
+    bool                m_sppm_radiance_estimation_enable_bounce_limit;
+    int                 m_sppm_radiance_estimation_rr_min_path_length;
+    float               m_sppm_radiance_estimation_initial_radius;
+    int                 m_sppm_radiance_estimation_max_photons;
+    float               m_sppm_radiance_estimation_alpha;
+
+    //
     // Output.
     //
 
@@ -172,6 +192,7 @@ class RendererSettings
     IOResult load_image_sampling_settings(ILoad* iload);
     IOResult load_lighting_settings(ILoad* iload);
     IOResult load_pathtracer_settings(ILoad* iload);
+    IOResult load_sppm_settings(ILoad* iload);
     IOResult load_output_settings(ILoad* iload);
     IOResult load_system_settings(ILoad* iload);
     IOResult load_postprocessing_settings(ILoad* iload);
