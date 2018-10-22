@@ -120,21 +120,23 @@ class RendererSettings
     // Stochastic Progressive Photon Mapping.
     //
 
-    int                 m_sppm_photon_type;
-    int                 m_sppm_direct_lighting_mode;
-    bool                m_sppm_enable_caustics;
-    bool                m_sppm_enable_image_based_lighting;
-    int                 m_sppm_photon_tracing_max_bounces;
-    bool                m_sppm_photon_tracing_enable_bounce_limit;
-    int                 m_sppm_photon_tracing_rr_min_path_length;
-    int                 m_sppm_photon_tracing_light_photons;
-    int                 m_sppm_photon_tracing_environment_photons;
-    int                 m_sppm_radiance_estimation_max_bounces;
-    bool                m_sppm_radiance_estimation_enable_bounce_limit;
-    int                 m_sppm_radiance_estimation_rr_min_path_length;
-    float               m_sppm_radiance_estimation_initial_radius;
-    int                 m_sppm_radiance_estimation_max_photons;
-    float               m_sppm_radiance_estimation_alpha;
+    int          m_sppm_photon_type;
+    int          m_sppm_direct_lighting_mode;
+    bool         m_sppm_enable_caustics;
+    bool         m_sppm_enable_image_based_lighting;
+    int          m_sppm_photon_tracing_max_bounces;
+    bool         m_sppm_photon_tracing_enable_bounce_limit;
+    int          m_sppm_photon_tracing_rr_min_path_length;
+    int          m_sppm_photon_tracing_light_photons;
+    int          m_sppm_photon_tracing_environment_photons;
+    int          m_sppm_radiance_estimation_max_bounces;
+    bool         m_sppm_radiance_estimation_enable_bounce_limit;
+    int          m_sppm_radiance_estimation_rr_min_path_length;
+    float        m_sppm_radiance_estimation_initial_radius;
+    int          m_sppm_radiance_estimation_max_photons;
+    float        m_sppm_radiance_estimation_alpha;
+    bool         m_sppm_view_photons;
+    float        m_sppm_view_photons_radius;
 
     //
     // Output.

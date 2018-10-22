@@ -308,8 +308,9 @@ namespace
                       m_text_project_filepath->SetText(project_file);
                       return TRUE;
                     }
+
                   default:
-                  return FALSE;
+                    return FALSE;
                 }
 
               case WM_COMMAND:
