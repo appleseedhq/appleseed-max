@@ -122,3 +122,5 @@ const USHORT ChunkSettingsSPPMRadianceEstimationRRMinPathLength     = 0x1712;
 const USHORT ChunkSettingsSPPMRadianceEstimationInitialRadius       = 0x1713;
 const USHORT ChunkSettingsSPPMRadianceEstimationMaxPhotons          = 0x1714;
 const USHORT ChunkSettingsSPPMRadianceEstimationAlpha               = 0x1715;
+const USHORT ChunkSettingsSPPMViewPhotons                           = 0x1716;
+const USHORT ChunkSettingsSPPMViewPhotonsRadius                     = 0x1717;

@@ -202,7 +202,11 @@
 #define IDC_STATIC_SPPM_RADIANCE_ALPHA                  936
 #define IDC_TEXT_SPPM_RADIANCE_ALPHA                    937
 #define IDC_SPINNER_SPPM_RADIANCE_ALPHA                 938
-#define IDC_SPINNER_SPPM_RADIANCE_MAX_PHOTONS2          938
+#define IDC_CHECK_SPPM_VIEW_PHOTONS                     939
+#define IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS            940
+#define IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS               941
+#define IDC_STATIC_SPPM_VIEW_PHOTONS_RADIUS             942
+#define IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS2       943
 
 // Next default values for new objects
 // 
@@ -210,7 +214,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        111
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1039
+#define _APS_NEXT_CONTROL_VALUE         1040
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

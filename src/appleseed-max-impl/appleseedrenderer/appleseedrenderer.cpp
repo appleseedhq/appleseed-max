@@ -146,11 +146,13 @@ namespace
         ParamIdSPPMPhotonTracingLightPhotons            = 64,
         ParamIdSPPMPhotonTracingEnvironmentPhotons      = 65,
         ParamIdSPPMRadianceEstimationMaxBounces         = 66,
-        ParamIdSPPMRadianceEstimationEnableBounceLimit = 67,
+        ParamIdSPPMRadianceEstimationEnableBounceLimit  = 67,
         ParamIdSPPMRadianceEstimationRRMinPathLength    = 68,
         ParamIdSPPMRadianceEstimationInitialRadius      = 69,
         ParamIdSPPMRadianceEstimationMaxPhotons         = 70,
         ParamIdSPPMRadianceEstimationAlpha              = 71,
+        ParamIdSPPMViewPhotons                          = 72,
+        ParamIdSPPMViewPhotonsRadius                    = 73,
 
         ParamIdEnableRenderStamp                        = 21,
         ParamIdRenderStampFormat                        = 22,
@@ -535,6 +537,14 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_sppm_radiance_estimation_alpha;
         break;
 
+      case ParamIdSPPMViewPhotons:
+        v.i = static_cast<int>(settings.m_sppm_view_photons);
+        break;
+
+      case ParamIdSPPMViewPhotonsRadius:
+        v.f = settings.m_sppm_view_photons_radius;
+        break;
+
       //
       // Post-Processing.
       //
@@ -862,6 +872,14 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdSPPMRadianceEstimationAlpha:
         settings.m_sppm_radiance_estimation_alpha = v.f;
+        break;
+
+      case ParamIdSPPMViewPhotons:
+        settings.m_sppm_view_photons = v.i > 0;
+        break;
+
+      case ParamIdSPPMViewPhotonsRadius:
+        settings.m_sppm_view_photons_radius = v.f;
         break;
 
     //
@@ -1409,6 +1427,20 @@ ParamBlockDesc2 g_param_block_desc(
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_RADIANCE_ALPHA, IDC_SPINNER_SPPM_RADIANCE_ALPHA, SPIN_AUTOSCALE,
         p_default, 0.7f,
         p_range, 0.0f, 1.0f,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMViewPhotons, L"enable_view_photons", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_VIEW_PHOTONS,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdSPPMViewPhotonsRadius,
+        p_accessor, &g_pblock_accessor,
+     p_end,
+
+     ParamIdSPPMViewPhotonsRadius, L"view_photon_radius", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS, IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS, SPIN_AUTOSCALE,
+        p_default, 0.05f,
+        p_range, 0.001f, 100.0f,
         p_accessor, &g_pblock_accessor,
      p_end,
 
