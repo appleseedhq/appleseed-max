@@ -543,7 +543,7 @@ struct AppleseedRendererParamDlg::Impl
         if (m_pmap_image_sampling != nullptr)
             DestroyRParamMap2(m_pmap_image_sampling);
 
-        if (m_pmap_postprocessing != nullptr)
+        if (m_pmap_pathtracer != nullptr)
             DestroyRParamMap2(m_pmap_pathtracer);
 
         if (m_pmap_postprocessing != nullptr)
