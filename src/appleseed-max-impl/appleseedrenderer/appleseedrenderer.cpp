@@ -1117,7 +1117,7 @@ ParamBlockDesc2 g_param_block_desc(
     p_end,
 
     ParamIdOptLightOutsideVolumes, L"optimize_for_lights_outside_volumes", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_LIGHT_OUTSIDE_VOLUMES,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_LIGHT_OUTSIDE_VOLUMES,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
