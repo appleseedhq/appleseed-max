@@ -219,11 +219,11 @@ OSLShaderInfo::OSLShaderInfo(
     if (metadata.exists("as_max_class_id"))
     {
         std::string max_shader_name;
-        metadata.get_value("as_maya_node_name", max_shader_name);
+        metadata.get_value("as_node_name", max_shader_name);
         m_max_shader_name = utf8_to_wide(max_shader_name);
-        
+
         metadata.get_value("as_max_class_id", m_class_id);
-        
+
         std::string plugin_type;
         metadata.get_value("as_max_plugin_type", plugin_type);
         m_is_texture = plugin_type == "texture";
@@ -232,7 +232,7 @@ OSLShaderInfo::OSLShaderInfo(
         for (size_t i = 0, e = q.get_param_count(); i < e; ++i)
         {
             OSLParamInfo osl_param(q.get_param_info(i));
-            
+
             MaxParam& max_param = osl_param.m_max_param;
 
             max_param.m_osl_param_name = osl_param.m_param_name;
@@ -241,8 +241,8 @@ OSLShaderInfo::OSLShaderInfo(
             max_param.m_param_type = MaxParam::Unsupported;
             max_param.m_page_name = osl_param.m_page;
 
-            max_param.m_has_constant = osl_param.m_valid_default && 
-                osl_param.m_lock_geom && 
+            max_param.m_has_constant = osl_param.m_valid_default &&
+                osl_param.m_lock_geom &&
                 osl_param.m_widget != "null";
 
             if (osl_param.m_param_type == "color")
@@ -277,7 +277,7 @@ OSLShaderInfo::OSLShaderInfo(
                 else
                     max_param.m_param_type = MaxParam::String;
             }
-            
+
             if (max_param.m_param_type != MaxParam::Unsupported)
             {
                 if (osl_param.m_is_output)
