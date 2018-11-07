@@ -920,7 +920,6 @@ namespace
         {
             AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
             env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);
             env_map->GetParamBlock(0)->GetValueByName(L"sun_node_on", time, sun_node_on, FOREVER);
             env_map->GetParamBlock(0)->GetValueByName(L"sun_size_multiplier", time, sun_size_mult, FOREVER);
         }
