@@ -1154,7 +1154,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdBackgroundAlphaValue, L"background_alpha", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
-        p_default, 0.0f,
+        p_default, 1.0f,
         p_range, 0.0f, 1.0f,
         p_accessor, &g_pblock_accessor,
     p_end,

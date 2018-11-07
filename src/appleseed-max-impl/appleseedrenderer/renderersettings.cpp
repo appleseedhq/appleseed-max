@@ -62,7 +62,7 @@ namespace
 
             m_pixel_filter = 0;
             m_pixel_filter_size = 1.5f;
-            m_background_alpha = 0.0f;
+            m_background_alpha = 1.0f;
 
             m_lighting_algorithm = 0;
             m_force_off_default_lights = false;
