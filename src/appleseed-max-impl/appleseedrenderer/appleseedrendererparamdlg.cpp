@@ -318,15 +318,15 @@ namespace
                 {
                   case IDC_BUTTON_BROWSE:
                     {
-                      MSTR filepath;
-                      if (get_save_project_filepath(hwnd, filepath))
-                      {
-                          map->GetParamBlock()->SetValueByName(L"project_path", filepath, 0);
-                          ICustEdit* project_path = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
-                          project_path->SetText(filepath);
-                          ReleaseICustEdit(project_path);
-                      }
-                      return TRUE;
+                        MSTR filepath;
+                        if (get_save_project_filepath(hwnd, filepath))
+                        {
+                            map->GetParamBlock()->SetValueByName(L"project_path", filepath, 0);
+                            ICustEdit* project_path = GetICustEdit(GetDlgItem(hwnd, IDC_TEXT_PROJECT_FILEPATH));
+                            project_path->SetText(filepath);
+                            ReleaseICustEdit(project_path);
+                        }
+                        return TRUE;
                     }
 
                   case IDC_RADIO_RENDER:

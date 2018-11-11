@@ -276,7 +276,6 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,53,84,10
     CONTROL         "Caustics",IDC_CHECK_SPPM_CAUSTICS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,105,53,43,10
     GROUPBOX        "Photon Tracing",IDC_STATIC,0,68,199,69
-    LTEXT           "[ -1: Unlimited ]",IDC_STATIC,139,80,48,8
     CONTROL         "Max Bounces:",IDC_CHECK_SPPM_PT_BOUNCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,80,58,10
     CONTROL         "Max Ray Bounces",IDC_TEXT_SPPM_PT_BOUNCES,"CustEdit",WS_TABSTOP,106,79,16,10
     CONTROL         "Max Ray Bounces",IDC_SPINNER_SPPM_PT_BOUNCES,
@@ -296,7 +295,6 @@ BEGIN
     CONTROL         "Environment Photons",IDC_SPINNER_SPPM_PT_ENVIRONMENT_PHOTONS,
                     "SpinnerControl",WS_TABSTOP,145,124,6,10
     CONTROL         "Max Bounces:",IDC_CHECK_SPPM_RADIANCE_BOUNCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,153,58,10
-    LTEXT           "[ -1: Unlimited ]",IDC_STATIC,139,153,48,8
     CONTROL         "Max Ray Bounces",IDC_TEXT_SPPM_RADIANCE_BOUNCES,
                     "CustEdit",WS_TABSTOP,106,152,16,10
     CONTROL         "Max Ray Bounces",IDC_SPINNER_SPPM_RADIANCE_BOUNCES,
@@ -307,9 +305,9 @@ BEGIN
     CONTROL         "Russian Roulette Start Bounce",IDC_SPINNER_SPPM_RADIANCE_RR_MIN_PATH_LENGTH,
                     "SpinnerControl",WS_TABSTOP,125,167,6,10
     LTEXT           "Initial Radius:",IDC_STATIC_SPPM_RADIANCE_INITIAL_RADIUS,4,182,43,8
-    CONTROL         "Initial Radius",IDC_TEXT_SPPM_RADIANCE_INITIAL_RADIUS,
+    CONTROL         "Initial Search Radius",IDC_TEXT_SPPM_RADIANCE_INITIAL_RADIUS,
                     "CustEdit",WS_TABSTOP,106,181,18,10
-    CONTROL         "Initial Radius",IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS,
+    CONTROL         "Initial Search Radius",IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS,
                     "SpinnerControl",WS_TABSTOP,125,181,6,10
     LTEXT           "Max Photons:",IDC_STATIC_SPPM_RADIANCE_MAX_PHOTONS,4,196,44,8
     CONTROL         "Max Photons",IDC_TEXT_SPPM_RADIANCE_MAX_PHOTONS,
@@ -323,9 +321,9 @@ BEGIN
     CONTROL         "Visualize Photons",IDC_CHECK_SPPM_VIEW_PHOTONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,241,71,10
     GROUPBOX        "Debug Options",IDC_STATIC,0,229,199,44
     LTEXT           "Initial View Radius:",IDC_STATIC_SPPM_VIEW_PHOTONS_RADIUS,4,256,60,8
-    CONTROL         "Initial Radius",IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS,
+    CONTROL         "Initial View Radius",IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS,
                     "CustEdit",WS_TABSTOP,106,255,18,10
-    CONTROL         "Initial Radius",IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS,
+    CONTROL         "Initial View Radius",IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS,
                     "SpinnerControl",WS_TABSTOP,125,255,6,10
 END
 

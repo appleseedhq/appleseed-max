@@ -170,7 +170,7 @@ namespace
         ParamIdUseMaxProcedurals                        = 19,
         ParamIdEnableLowPriority                        = 20,
         ParamIdEnableEmbree                             = 24,
-        ParamIdTextureCacheSize                         = 53,
+        ParamIdTextureCacheSize                         = 53
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -490,7 +490,7 @@ void AppleseedRendererPBlockAccessor::Get(
         break;
 
       case ParamIdSPPMEnableImageBasedLighting:
-        v.i = static_cast<int>(settings.m_sppm_enable_image_based_lighting);
+        v.i = static_cast<int>(settings.m_sppm_enable_ibl);
         break;
 
       case ParamIdSPPMPhotonTracingMaxBounces:
@@ -827,7 +827,7 @@ void AppleseedRendererPBlockAccessor::Set(
         break;
 
       case ParamIdSPPMEnableImageBasedLighting:
-        settings.m_sppm_enable_image_based_lighting = v.i > 0;
+        settings.m_sppm_enable_ibl = v.i > 0;
         break;
 
       case ParamIdSPPMPhotonTracingMaxBounces:
@@ -1355,8 +1355,8 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdSPPMPhotonTracingMaxBounces, L"photon_tracing_max_bounces", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SPPM_PT_BOUNCES, IDC_SPINNER_SPPM_PT_BOUNCES, SPIN_AUTOSCALE,
-        p_default, -1,
-        p_range, -1, 100,
+        p_default, 8,
+        p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
     p_end,
 
@@ -1390,8 +1390,8 @@ ParamBlockDesc2 g_param_block_desc(
 
      ParamIdSPPMRadianceEstimationMaxBounces, L"radiance_estimation_max_bounces", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_SPPM_RADIANCE_BOUNCES, IDC_SPINNER_SPPM_RADIANCE_BOUNCES, SPIN_AUTOSCALE,
-        p_default, -1,
-        p_range, -1, 100,
+        p_default, 8,
+        p_range, 0, 100,
         p_accessor, &g_pblock_accessor,
      p_end,
 

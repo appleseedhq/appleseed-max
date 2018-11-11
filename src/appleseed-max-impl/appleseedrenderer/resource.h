@@ -206,7 +206,6 @@
 #define IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS            940
 #define IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS               941
 #define IDC_STATIC_SPPM_VIEW_PHOTONS_RADIUS             942
-#define IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS2       943
 
 // Next default values for new objects
 // 
