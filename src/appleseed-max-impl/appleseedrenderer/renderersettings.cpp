@@ -93,13 +93,13 @@ namespace
             m_sppm_photon_type = 1;
             m_sppm_direct_lighting_mode = 0;
             m_sppm_enable_caustics = true;
-            m_sppm_enable_image_based_lighting = true;
-            m_sppm_photon_tracing_max_bounces = -1;
+            m_sppm_enable_ibl = true;
+            m_sppm_photon_tracing_max_bounces = 8;
             m_sppm_photon_tracing_enable_bounce_limit = false;
             m_sppm_photon_tracing_rr_min_path_length = 6;
             m_sppm_photon_tracing_light_photons = 1000000;
             m_sppm_photon_tracing_environment_photons = 1000000;
-            m_sppm_radiance_estimation_max_bounces = -1;
+            m_sppm_radiance_estimation_max_bounces = 8;
             m_sppm_radiance_estimation_enable_bounce_limit = false;
             m_sppm_radiance_estimation_rr_min_path_length = 6;
             m_sppm_radiance_estimation_initial_radius = 0.1f;
@@ -163,7 +163,9 @@ const char* get_shader_override_type(const int shader_override_type)
       case 20: return "uv";
       case 21: return "world_space_position";
       case 22: return "world_space_wireframe";
-      default: return "coverage";
+      default: 
+        assert(!"Invalid shader override type."); 
+        return "coverage";
     }
 }
 
@@ -173,7 +175,9 @@ const char* get_lighting_engine_type(const int lighting_engine_type)
     {
       case 0:  return "pt";
       case 1:  return "sppm";
-      default: return "pt";
+      default:
+        assert(!"Invalid lighting engine type.");
+        return "pt";
     }
 }
 
@@ -183,7 +187,9 @@ const char* get_sppm_photon_type(const int photon_type)
     {
       case 0:  return "mono";
       case 1:  return "poly";
-      default: return "poly";
+      default: 
+        assert(!"Invalid photon type."); 
+        return "poly";
     }
 }
 
@@ -194,7 +200,9 @@ const char* get_sppm_direct_lighting_mode(const int lighting_mode)
       case 0:  return "rt";
       case 1:  return "sppm";
       case 2:  return "off";
-      default: return "rt";
+      default: 
+        assert(!"Invalid SPPM direct lighting mode."); 
+        return "rt";
     }
 }
 
@@ -218,6 +226,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
 
     params.insert_path("sampling_mode", "qmc");
+    params.insert_path("lighting_engine", get_lighting_engine_type(m_lighting_algorithm));
 
     params.insert_path("pt.max_bounces", m_global_bounces);
 
@@ -252,6 +261,28 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
 
+    params.insert_path("sppm.photon_type", get_sppm_photon_type(m_sppm_photon_type));
+    params.insert_path("sppm.dl_mode", get_sppm_direct_lighting_mode(m_sppm_direct_lighting_mode));
+    params.insert_path("sppm.enable_caustics", m_sppm_enable_caustics);
+    params.insert_path("sppm.enable_ibl", m_sppm_enable_ibl);
+
+    if (!m_sppm_photon_tracing_enable_bounce_limit)
+        params.insert_path("sppm.path_tracing_max_bounces", -1);
+
+    params.insert_path("sppm.path_tracing_rr_min_path_length", m_sppm_photon_tracing_rr_min_path_length);
+    params.insert_path("sppm.light_photons_per_pass", m_sppm_photon_tracing_light_photons);
+    params.insert_path("sppm.env_photons_per_pass", m_sppm_photon_tracing_environment_photons);
+
+    if (!m_sppm_radiance_estimation_enable_bounce_limit)
+        params.insert_path("sppm.photon_tracing_max_bounces", -1);
+
+    params.insert_path("sppm.photon_tracing_rr_min_path_length", m_sppm_radiance_estimation_rr_min_path_length);
+    params.insert_path("sppm.initial_radius", m_sppm_radiance_estimation_initial_radius);
+    params.insert_path("sppm.max_photons_per_estimate", m_sppm_radiance_estimation_max_photons);
+    params.insert_path("sppm.alpha", m_sppm_radiance_estimation_alpha);
+    params.insert_path("sppm.view_photons", m_sppm_view_photons);
+    params.insert_path("sppm.view_photons_radius", m_sppm_view_photons_radius);
+
     params.insert_path("use_embree", m_enable_embree);
     params.insert_path("texture_store.max_size", m_texture_cache_size * 1024 * 1024);
 
@@ -270,26 +301,6 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
     params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
     params.insert_path("passes", m_passes);
     params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
-
-    if (m_lighting_algorithm == 1)
-    {
-        params.insert_path("lighting_engine", get_lighting_engine_type(m_lighting_algorithm));
-        params.insert_path("sppm.photon_type", get_sppm_photon_type(m_sppm_photon_type));
-        params.insert_path("sppm.dl_mode", get_sppm_direct_lighting_mode(m_sppm_direct_lighting_mode));
-        params.insert_path("sppm.enable_caustics", m_sppm_enable_caustics);
-        params.insert_path("sppm.enable_ibl", m_sppm_enable_image_based_lighting);
-        params.insert_path("sppm.path_tracing_max_bounces", m_sppm_photon_tracing_max_bounces);
-        params.insert_path("sppm.path_tracing_rr_min_path_length", m_sppm_photon_tracing_rr_min_path_length);
-        params.insert_path("sppm.light_photons_per_pass", m_sppm_photon_tracing_light_photons);
-        params.insert_path("sppm.env_photons_per_pass", m_sppm_photon_tracing_environment_photons);
-        params.insert_path("sppm.photon_tracing_max_bounces", m_sppm_radiance_estimation_max_bounces);
-        params.insert_path("sppm.photon_tracing_rr_min_path_length", m_sppm_radiance_estimation_rr_min_path_length);
-        params.insert_path("sppm.initial_radius", m_sppm_radiance_estimation_initial_radius);
-        params.insert_path("sppm.max_photons_per_estimate", m_sppm_radiance_estimation_max_photons);
-        params.insert_path("sppm.alpha", m_sppm_radiance_estimation_alpha);
-        params.insert_path("sppm.view_photons", m_sppm_view_photons);
-        params.insert_path("sppm.view_photons_radius", m_sppm_view_photons_radius);
-    }
 
     if (m_sampler_type == 0)
     {
@@ -315,6 +326,11 @@ void RendererSettings::apply_settings_to_interactive_config(asr::Project& projec
     params.insert_path("frame_renderer", "progressive");
     params.insert_path("sample_generator", "generic");
     params.insert_path("sample_renderer", "generic");
+    params.insert_path("lighting_engine", "pt");
+
+    if (m_rendering_threads == 0)
+        params.insert_path("rendering_threads", "-1");
+    else params.insert_path("rendering_threads", m_rendering_threads);
 }
 
 bool RendererSettings::save(ISave* isave) const
@@ -504,14 +520,14 @@ bool RendererSettings::save(ISave* isave) const
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsSPPMEnableImageBasedLighting);
-        success &= write<bool>(isave, m_sppm_enable_image_based_lighting);
+        success &= write<bool>(isave, m_sppm_enable_ibl);
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsSPPMPhotonTracingMaxBounces);
         success &= write<int>(isave, m_sppm_photon_tracing_max_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsSPPMPhotonTracingDisableBounceLimit);
+        isave->BeginChunk(ChunkSettingsSPPMPhotonTracingEnableBounceLimit);
         success &= write<bool>(isave, m_sppm_photon_tracing_enable_bounce_limit);
         isave->EndChunk();
 
@@ -531,7 +547,7 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<int>(isave, m_sppm_radiance_estimation_max_bounces);
         isave->EndChunk();
 
-        isave->BeginChunk(ChunkSettingsSPPMRadianceEstimationDisableBounceLimit);
+        isave->BeginChunk(ChunkSettingsSPPMRadianceEstimationEnableBounceLimit);
         success &= write<bool>(isave, m_sppm_radiance_estimation_enable_bounce_limit);
         isave->EndChunk();
 
@@ -944,14 +960,14 @@ IOResult RendererSettings::load_sppm_settings(ILoad* iload)
             break;
 
           case ChunkSettingsSPPMEnableImageBasedLighting:
-            result = read<bool>(iload, &m_sppm_enable_image_based_lighting);
+            result = read<bool>(iload, &m_sppm_enable_ibl);
             break;
 
           case ChunkSettingsSPPMPhotonTracingMaxBounces:
             result = read<int>(iload, &m_sppm_photon_tracing_max_bounces);
             break;
 
-          case ChunkSettingsSPPMPhotonTracingDisableBounceLimit:
+          case ChunkSettingsSPPMPhotonTracingEnableBounceLimit:
             result = read<bool>(iload, &m_sppm_photon_tracing_enable_bounce_limit);
             break;
 
@@ -971,7 +987,7 @@ IOResult RendererSettings::load_sppm_settings(ILoad* iload)
             result = read<int>(iload, &m_sppm_radiance_estimation_max_bounces);
             break;
 
-          case ChunkSettingsSPPMRadianceEstimationDisableBounceLimit:
+          case ChunkSettingsSPPMRadianceEstimationEnableBounceLimit:
             result = read<bool>(iload, &m_sppm_radiance_estimation_enable_bounce_limit);
             break;
 

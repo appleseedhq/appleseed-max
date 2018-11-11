@@ -123,7 +123,7 @@ class RendererSettings
     int          m_sppm_photon_type;
     int          m_sppm_direct_lighting_mode;
     bool         m_sppm_enable_caustics;
-    bool         m_sppm_enable_image_based_lighting;
+    bool         m_sppm_enable_ibl;
     int          m_sppm_photon_tracing_max_bounces;
     bool         m_sppm_photon_tracing_enable_bounce_limit;
     int          m_sppm_photon_tracing_rr_min_path_length;
