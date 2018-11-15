@@ -124,3 +124,5 @@ const USHORT ChunkSettingsSPPMRadianceEstimationMaxPhotons          = 0x170E;
 const USHORT ChunkSettingsSPPMRadianceEstimationAlpha               = 0x170F;
 const USHORT ChunkSettingsSPPMViewPhotons                           = 0x1710;
 const USHORT ChunkSettingsSPPMViewPhotonsRadius                     = 0x1711;
+const USHORT ChunkSettingsSPPMMaxRayIntensitySet                    = 0x1712;
+const USHORT ChunkSettingsSPPMMaxRayIntensity                       = 0x1713;

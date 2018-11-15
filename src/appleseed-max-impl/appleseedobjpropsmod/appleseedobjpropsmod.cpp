@@ -76,7 +76,8 @@ namespace
         ParamIdVisibilitySSS            = 8,
         ParamIdSSSSet                   = 9,
         ParamIdOptimizeForInstancing    = 10,
-        ParamIdMediumPriority           = 11
+        ParamIdMediumPriority           = 11,
+        ParamIdPhotonTarget             = 12
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -149,6 +150,10 @@ namespace
         ParamIdMediumPriority, L"medium_priority", TYPE_INT, P_TRANSIENT, 0,
             p_ui, ParamMapIdVisibility, TYPE_SPINNER, EDITTYPE_INT, IDS_TEXT_MEDIUM_PRIORITY, IDS_SPINNER_MEDIUM_PRIORITY, SPIN_AUTOSCALE,
             p_default, 0, p_range, -128, 127,
+        p_end,
+        ParamIdPhotonTarget, L"photon_target", TYPE_BOOL, 0, IDS_PHOTON_TARGET,
+            p_default, FALSE,
+            p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_PHOTON_TARGET,
         p_end,
 
         // --- The end ---

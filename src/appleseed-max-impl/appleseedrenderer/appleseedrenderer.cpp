@@ -153,6 +153,8 @@ namespace
         ParamIdSPPMRadianceEstimationAlpha              = 71,
         ParamIdSPPMViewPhotons                          = 72,
         ParamIdSPPMViewPhotonsRadius                    = 73,
+        ParamIdSPPMEnableMaxRayIntensity                = 74,
+        ParamIdSPPMMaxRayIntensity                      = 75,
 
         ParamIdEnableRenderStamp                        = 21,
         ParamIdRenderStampFormat                        = 22,
@@ -545,6 +547,14 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_sppm_view_photons_radius;
         break;
 
+      case ParamIdSPPMEnableMaxRayIntensity:
+        v.i = static_cast<int>(settings.m_sppm_max_ray_intensity_set);
+        break;
+
+      case ParamIdSPPMMaxRayIntensity:
+        v.f = settings.m_sppm_max_ray_intensity;
+        break;
+
       //
       // Post-Processing.
       //
@@ -880,6 +890,14 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdSPPMViewPhotonsRadius:
         settings.m_sppm_view_photons_radius = v.f;
+        break;
+
+      case ParamIdSPPMEnableMaxRayIntensity:
+        settings.m_sppm_max_ray_intensity_set = v.i > 0;
+        break;
+
+      case ParamIdSPPMMaxRayIntensity:
+        settings.m_sppm_max_ray_intensity = v.f;
         break;
 
     //
@@ -1443,6 +1461,20 @@ ParamBlockDesc2 g_param_block_desc(
         p_range, 0.001f, 100.0f,
         p_accessor, &g_pblock_accessor,
      p_end,
+
+    ParamIdSPPMEnableMaxRayIntensity, L"enable_max_ray_intensity", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_MAX_RAY_INTENSITY,
+        p_default, FALSE,
+        p_enable_ctrls, 1, ParamIdSPPMMaxRayIntensity,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMMaxRayIntensity, L"max_ray_intensity", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_FLOAT, IDC_TEXT_SPPM_MAX_RAY_INTENSITY, IDC_SPINNER_SPPM_MAX_RAY_INTENSITY, SPIN_AUTOSCALE,
+        p_default, 1.0f,
+        p_range, 0.0f, 10000.0f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
 
      // --- Parameters specifications for Post-Processing rollup ---
 

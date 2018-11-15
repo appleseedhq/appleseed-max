@@ -512,6 +512,26 @@ namespace
         return false;
     }
 
+    bool get_photon_target(Object* object, const TimeValue time)
+    {
+        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+        {
+            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
+            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
+            {
+                Modifier* modifier = derived_object->GetModifier(i);
+                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
+                {
+                    int photon_target = 0;
+                    modifier->GetParamBlockByID(0)->GetValueByName(L"photon_target", time, photon_target, FOREVER);
+                    return photon_target == TRUE;
+                }
+            }
+        }
+
+        return false;
+    }
+
     enum class RenderType
     {
         Default,
@@ -637,7 +657,10 @@ namespace
                 get_sss_set(instance_node->GetObjectRef(), time))
             .insert(
                 "medium_priority",
-                get_medium_priority(instance_node->GetObjectRef(), time));
+                get_medium_priority(instance_node->GetObjectRef(), time))
+            .insert(
+                "photon_target",
+                get_photon_target(instance_node->GetObjectRef(), time));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 

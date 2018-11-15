@@ -137,6 +137,8 @@ class RendererSettings
     float        m_sppm_radiance_estimation_alpha;
     bool         m_sppm_view_photons;
     float        m_sppm_view_photons_radius;
+    bool         m_sppm_max_ray_intensity_set;
+    float        m_sppm_max_ray_intensity;
 
     //
     // Output.
