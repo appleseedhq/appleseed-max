@@ -110,7 +110,6 @@ namespace
             m_sppm_max_ray_intensity_set = false;
             m_sppm_max_ray_intensity = 1.0f;
 
-
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
             m_shader_override = 0;

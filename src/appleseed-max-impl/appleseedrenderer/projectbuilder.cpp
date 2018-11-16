@@ -512,7 +512,7 @@ namespace
         return false;
     }
 
-    bool get_photon_target(Object* object, const TimeValue time)
+    bool is_photon_target(Object* object, const TimeValue time)
     {
         if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
         {
@@ -660,7 +660,7 @@ namespace
                 get_medium_priority(instance_node->GetObjectRef(), time))
             .insert(
                 "photon_target",
-                get_photon_target(instance_node->GetObjectRef(), time));
+                is_photon_target(instance_node->GetObjectRef(), time));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
