@@ -252,8 +252,11 @@ void DialogLogTarget::write(
         {
           case asf::LogMessage::Category::Error:
           case asf::LogMessage::Category::Fatal:
-          case asf::LogMessage::Category::Warning:
             if (m_open_mode != OpenMode::Never)
+                print_to_dialog();
+            break;
+          case asf::LogMessage::Category::Warning:
+            if (m_open_mode != OpenMode::Errors && m_open_mode != OpenMode::Never)
                 print_to_dialog();
             break;
           case asf::LogMessage::Category::Debug:
