@@ -183,7 +183,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_LOG,38,34,61,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Open Log:",IDC_STATIC_LOG,0,37,34,8
     CONTROL         "Open Log",IDC_BUTTON_LOG,"CustButton",WS_TABSTOP,106,34,42,12
-    CONTROL         "Log material slots rendering",IDC_CHECK_LOG_MATERIAL_EDITOR,
+    CONTROL         "Log Material Slots Rendering",IDC_CHECK_LOG_MATERIAL_EDITOR,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,52,108,10
     CONTROL         "Use Embree (experimental)",IDC_CHECK_ENABLE_EMBREE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,82,95,10
@@ -263,7 +263,7 @@ BEGIN
     CONTROL         "Scale Multiplier",IDC_TEXT_SCALE_MULTIPLIER,"CustEdit",WS_TABSTOP,104,60,30,10
 END
 
-IDD_FORMVIEW_RENDERERPARAMS_SPPM DIALOGEX 0, 0, 200, 273
+IDD_FORMVIEW_RENDERERPARAMS_SPPM DIALOGEX 0, 0, 200, 291
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -275,56 +275,62 @@ BEGIN
     CONTROL         "Image-Based Lighting",IDC_CHECK_SPPM_IMAGE_BASED_LIGHTING,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,53,84,10
     CONTROL         "Caustics",IDC_CHECK_SPPM_CAUSTICS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,105,53,43,10
-    GROUPBOX        "Photon Tracing",IDC_STATIC,0,68,199,69
-    CONTROL         "Max Bounces:",IDC_CHECK_SPPM_PT_BOUNCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,80,58,10
-    CONTROL         "Max Ray Bounces",IDC_TEXT_SPPM_PT_BOUNCES,"CustEdit",WS_TABSTOP,106,79,16,10
+    GROUPBOX        "Photon Tracing",IDC_STATIC,0,69,199,84
+    CONTROL         "Max Bounces:",IDC_CHECK_SPPM_PT_BOUNCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,81,58,10
+    CONTROL         "Max Ray Bounces",IDC_TEXT_SPPM_PT_BOUNCES,"CustEdit",WS_TABSTOP,106,80,16,10
     CONTROL         "Max Ray Bounces",IDC_SPINNER_SPPM_PT_BOUNCES,
-                    "SpinnerControl",WS_TABSTOP,125,79,6,10
-    LTEXT           "Russian Roulette Start Bounce:",IDC_STATIC_SPPM_PT_RR_MIN_PATH_LENGTH,4,95,100,8
+                    "SpinnerControl",WS_TABSTOP,125,80,6,10
+    LTEXT           "Russian Roulette Start Bounce:",IDC_STATIC_SPPM_PT_RR_MIN_PATH_LENGTH,4,96,100,8
     CONTROL         "Russian Roulette Start Bounce",IDC_TEXT_SPPM_PT_RR_MIN_PATH_LENGTH,
-                    "CustEdit",WS_TABSTOP,106,94,16,10
+                    "CustEdit",WS_TABSTOP,106,95,16,10
     CONTROL         "Russian Roulette Start Bounce",IDC_SPINNER_SPPM_PT_RR_MIN_PATH_LENGTH,
-                    "SpinnerControl",WS_TABSTOP,125,94,6,10
-    LTEXT           "Light Photons:",IDC_STATIC_SPPM_PT_LIGHT_PHOTONS,4,110,46,8
-    CONTROL         "Light Photons",IDC_TEXT_SPPM_PT_LIGHT_PHOTONS,"CustEdit",WS_TABSTOP,106,109,37,10
+                    "SpinnerControl",WS_TABSTOP,125,95,6,10
+    LTEXT           "Light Photons:",IDC_STATIC_SPPM_PT_LIGHT_PHOTONS,4,111,46,8
+    CONTROL         "Light Photons",IDC_TEXT_SPPM_PT_LIGHT_PHOTONS,"CustEdit",WS_TABSTOP,106,110,37,10
     CONTROL         "Light Photons",IDC_SPINNER_SPPM_PT_LIGHT_PHOTONS,
-                    "SpinnerControl",WS_TABSTOP,145,109,6,10
-    LTEXT           "Environment Photons:",IDC_STATIC_SPPM_PT_ENVIRONMENT_PHOTONS,4,125,70,8
+                    "SpinnerControl",WS_TABSTOP,145,110,6,10
+    LTEXT           "Environment Photons:",IDC_STATIC_SPPM_PT_ENVIRONMENT_PHOTONS,4,126,70,8
     CONTROL         "Environment Photons",IDC_TEXT_SPPM_PT_ENVIRONMENT_PHOTONS,
-                    "CustEdit",WS_TABSTOP,106,124,37,10
+                    "CustEdit",WS_TABSTOP,106,125,37,10
     CONTROL         "Environment Photons",IDC_SPINNER_SPPM_PT_ENVIRONMENT_PHOTONS,
-                    "SpinnerControl",WS_TABSTOP,145,124,6,10
-    CONTROL         "Max Bounces:",IDC_CHECK_SPPM_RADIANCE_BOUNCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,153,58,10
+                    "SpinnerControl",WS_TABSTOP,145,125,6,10
+    CONTROL         "Max Bounces:",IDC_CHECK_SPPM_RADIANCE_BOUNCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,171,58,10
     CONTROL         "Max Ray Bounces",IDC_TEXT_SPPM_RADIANCE_BOUNCES,
-                    "CustEdit",WS_TABSTOP,106,152,16,10
+                    "CustEdit",WS_TABSTOP,106,170,16,10
     CONTROL         "Max Ray Bounces",IDC_SPINNER_SPPM_RADIANCE_BOUNCES,
-                    "SpinnerControl",WS_TABSTOP,125,152,6,10
-    LTEXT           "Russian Roulette Start Bounce:",IDC_STATIC_SPPM_RADIANCE_RR_MIN_PATH_LENGTH,4,167,100,8
+                    "SpinnerControl",WS_TABSTOP,125,170,6,10
+    LTEXT           "Russian Roulette Start Bounce:",IDC_STATIC_SPPM_RADIANCE_RR_MIN_PATH_LENGTH,4,185,100,8
     CONTROL         "Russian Roulette Start Bounce",IDC_TEXT_SPPM_RADIANCE_RR_MIN_PATH_LENGTH,
-                    "CustEdit",WS_TABSTOP,106,167,16,10
+                    "CustEdit",WS_TABSTOP,106,185,16,10
     CONTROL         "Russian Roulette Start Bounce",IDC_SPINNER_SPPM_RADIANCE_RR_MIN_PATH_LENGTH,
-                    "SpinnerControl",WS_TABSTOP,125,167,6,10
-    LTEXT           "Initial Radius:",IDC_STATIC_SPPM_RADIANCE_INITIAL_RADIUS,4,182,43,8
+                    "SpinnerControl",WS_TABSTOP,125,185,6,10
+    LTEXT           "Initial Radius:",IDC_STATIC_SPPM_RADIANCE_INITIAL_RADIUS,4,200,43,8
     CONTROL         "Initial Search Radius",IDC_TEXT_SPPM_RADIANCE_INITIAL_RADIUS,
-                    "CustEdit",WS_TABSTOP,106,181,18,10
+                    "CustEdit",WS_TABSTOP,106,199,18,10
     CONTROL         "Initial Search Radius",IDC_SPINNER_SPPM_RADIANCE_INITIAL_RADIUS,
-                    "SpinnerControl",WS_TABSTOP,125,181,6,10
-    LTEXT           "Max Photons:",IDC_STATIC_SPPM_RADIANCE_MAX_PHOTONS,4,196,44,8
+                    "SpinnerControl",WS_TABSTOP,125,199,6,10
+    LTEXT           "Max Photons:",IDC_STATIC_SPPM_RADIANCE_MAX_PHOTONS,4,214,44,8
     CONTROL         "Max Photons",IDC_TEXT_SPPM_RADIANCE_MAX_PHOTONS,
-                    "CustEdit",WS_TABSTOP,106,196,16,10
+                    "CustEdit",WS_TABSTOP,106,214,16,10
     CONTROL         "Max Photons",IDC_SPINNER_SPPM_RADIANCE_MAX_PHOTONS,
-                    "SpinnerControl",WS_TABSTOP,125,196,6,10
-    LTEXT           "Alpha:",IDC_STATIC_SPPM_RADIANCE_ALPHA,4,211,21,8
-    CONTROL         "Alpha",IDC_TEXT_SPPM_RADIANCE_ALPHA,"CustEdit",WS_TABSTOP,106,211,18,10
-    CONTROL         "Alpha",IDC_SPINNER_SPPM_RADIANCE_ALPHA,"SpinnerControl",WS_TABSTOP,125,211,6,10
-    GROUPBOX        "Radiance  Estimation",IDC_STATIC,0,140,199,84
-    CONTROL         "Visualize Photons",IDC_CHECK_SPPM_VIEW_PHOTONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,241,71,10
-    GROUPBOX        "Debug Options",IDC_STATIC,0,229,199,44
-    LTEXT           "Initial View Radius:",IDC_STATIC_SPPM_VIEW_PHOTONS_RADIUS,4,256,60,8
+                    "SpinnerControl",WS_TABSTOP,125,214,6,10
+    LTEXT           "Alpha:",IDC_STATIC_SPPM_RADIANCE_ALPHA,4,229,21,8
+    CONTROL         "Alpha",IDC_TEXT_SPPM_RADIANCE_ALPHA,"CustEdit",WS_TABSTOP,106,229,18,10
+    CONTROL         "Alpha",IDC_SPINNER_SPPM_RADIANCE_ALPHA,"SpinnerControl",WS_TABSTOP,125,229,6,10
+    GROUPBOX        "Radiance  Estimation",IDC_STATIC,0,158,199,84
+    CONTROL         "Visualize Photons",IDC_CHECK_SPPM_VIEW_PHOTONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,260,71,10
+    GROUPBOX        "Debug Options",IDC_STATIC,0,247,199,41
+    LTEXT           "Initial View Radius:",IDC_STATIC_SPPM_VIEW_PHOTONS_RADIUS,4,275,60,8
     CONTROL         "Initial View Radius",IDC_TEXT_SPPM_VIEW_PHOTONS_RADIUS,
-                    "CustEdit",WS_TABSTOP,106,255,18,10
+                    "CustEdit",WS_TABSTOP,106,274,18,10
     CONTROL         "Initial View Radius",IDC_SPINNER_SPPM_VIEW_PHOTONS_RADIUS,
-                    "SpinnerControl",WS_TABSTOP,125,255,6,10
+                    "SpinnerControl",WS_TABSTOP,125,274,6,10
+    CONTROL         "Max Ray Intensity:",IDC_CHECK_SPPM_MAX_RAY_INTENSITY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,140,74,10
+    CONTROL         "Max Ray Intensity",IDC_TEXT_SPPM_MAX_RAY_INTENSITY,
+                    "CustEdit",WS_TABSTOP,106,140,18,10
+    CONTROL         "Max Ray Intensity",IDC_SPINNER_SPPM_MAX_RAY_INTENSITY,
+                    "SpinnerControl",WS_TABSTOP,125,140,6,10
 END
 
 
@@ -376,7 +382,7 @@ BEGIN
 
     IDD_FORMVIEW_RENDERERPARAMS_SPPM, DIALOG
     BEGIN
-        BOTTOMMARGIN, 270
+        BOTTOMMARGIN, 288
     END
 END
 #endif    // APSTUDIO_INVOKED

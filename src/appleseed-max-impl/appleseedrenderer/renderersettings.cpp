@@ -107,6 +107,8 @@ namespace
             m_sppm_radiance_estimation_alpha = 0.7f;
             m_sppm_view_photons = false;
             m_sppm_view_photons_radius = 0.05f;
+            m_sppm_max_ray_intensity_set = false;
+            m_sppm_max_ray_intensity = 1.0f;
 
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
@@ -265,6 +267,9 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("sppm.dl_mode", get_sppm_direct_lighting_mode(m_sppm_direct_lighting_mode));
     params.insert_path("sppm.enable_caustics", m_sppm_enable_caustics);
     params.insert_path("sppm.enable_ibl", m_sppm_enable_ibl);
+
+    if (m_sppm_max_ray_intensity_set)
+        params.insert_path("sppm.path_tracing_max_ray_intensity", m_sppm_max_ray_intensity);
 
     if (!m_sppm_photon_tracing_enable_bounce_limit)
         params.insert_path("sppm.path_tracing_max_bounces", -1);
@@ -573,6 +578,14 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsSPPMViewPhotonsRadius);
         success &= write<float>(isave, m_sppm_view_photons_radius);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSPPMMaxRayIntensitySet);
+        success &= write<bool>(isave, m_sppm_max_ray_intensity_set);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsSPPMMaxRayIntensity);
+        success &= write<float>(isave, m_sppm_max_ray_intensity);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -1013,6 +1026,14 @@ IOResult RendererSettings::load_sppm_settings(ILoad* iload)
 
           case ChunkSettingsSPPMViewPhotonsRadius:
             result = read<float>(iload, &m_sppm_view_photons_radius);
+            break;
+
+          case ChunkSettingsSPPMMaxRayIntensitySet:
+            result = read<bool>(iload, &m_sppm_max_ray_intensity_set);
+            break;
+
+          case ChunkSettingsSPPMMaxRayIntensity:
+            result = read<float>(iload, &m_sppm_max_ray_intensity);
             break;
         }
 
