@@ -112,7 +112,7 @@ extern "C"
           // Make sure to update LibNumberClasses() if you add classes here.
 
           default:
-            return g_shader_registry.get_class_descriptor(i - 11);
+            return g_shader_registry.get_class_descriptor(i - 13);
         }
     }
 
