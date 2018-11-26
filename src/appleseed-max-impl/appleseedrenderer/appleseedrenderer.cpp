@@ -188,6 +188,7 @@ namespace
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_1,       L"Always" },
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,       L"Never" },
         { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,       L"On Error" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_4,       L"On Warning" },
         { IDS_RENDERERPARAMS_SAMPLER_TYPE_1,        L"Uniform Sampler" },
         { IDS_RENDERERPARAMS_SAMPLER_TYPE_2,        L"Adaptive Tile Sampler" },
         { IDS_RENDERERPARAMS_DENOISE_MODE_1 ,       L"Off" },
@@ -1548,8 +1549,8 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdOpenLogMode, L"log_open_mode", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_INT_COMBOBOX, IDC_COMBO_LOG,
-        3, IDS_RENDERERPARAMS_LOG_OPEN_MODE_1, IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,
-        IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,
+        4, IDS_RENDERERPARAMS_LOG_OPEN_MODE_1, IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,
+        IDS_RENDERERPARAMS_LOG_OPEN_MODE_3, IDS_RENDERERPARAMS_LOG_OPEN_MODE_4,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,

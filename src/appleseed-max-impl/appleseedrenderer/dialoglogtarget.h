@@ -65,9 +65,10 @@ class DialogLogTarget
     enum class OpenMode
     {
         // Changing these value WILL break compatibility.
-        Always  = 0,
-        Never   = 1,
-        Errors  = 2
+        Always      = 0,
+        Never       = 1,
+        Errors      = 2,
+        Warnings    = 3
     };
 
     explicit DialogLogTarget(
