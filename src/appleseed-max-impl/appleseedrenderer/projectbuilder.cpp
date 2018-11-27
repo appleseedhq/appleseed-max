@@ -1302,7 +1302,7 @@ namespace
             if (uvgen && uvgen->IsStdUVGen())
             {
                 StdUVGen* std_uvgen = static_cast<StdUVGen*>(uvgen);
-                env_edf_params.insert("horizontal_shift", std_uvgen->GetUOffs(time) * 180.0f);
+                env_edf_params.insert("horizontal_shift", std_uvgen->GetUOffs(time) * 180.0f + 90.0f);
                 env_edf_params.insert("vertical_shift", std_uvgen->GetVOffs(time) * 180.0f);
             }
 
