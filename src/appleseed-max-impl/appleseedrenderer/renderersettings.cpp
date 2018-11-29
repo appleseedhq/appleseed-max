@@ -52,6 +52,7 @@ namespace
             m_passes = 1;
             m_tile_size = 64;
             m_sampler_type = 0;
+            m_noise_seed = 0;
 
             m_uniform_pixel_samples = 16;
 
@@ -386,6 +387,10 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsAdaptiveTileNoiseThreshold);
         success &= write<float>(isave, m_adaptive_noise_threshold);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsNoiseSeed);
+        success &= write<int>(isave, m_noise_seed);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -810,6 +815,10 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
 
           case ChunkSettingsAdaptiveTileNoiseThreshold:
             result = read<float>(iload, &m_adaptive_noise_threshold);
+            break;
+
+          case ChunkSettingsNoiseSeed:
+            result = read<int>(iload, &m_noise_seed);
             break;
         }
 

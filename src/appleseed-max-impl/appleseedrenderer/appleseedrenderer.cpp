@@ -109,6 +109,7 @@ namespace
         ParamIdAdaptiveTileMaxSamples                   = 43,
         ParamIdAdaptiveTileNoiseThreshold               = 44,
         ParamIdBackgroundAlphaValue                     = 15,
+        ParamIdNoiseSeed                                = 76,
 
         ParamIdLightingAlgorithm                        = 52,
         ParamIdForceDefaultLightsOff                    = 13,
@@ -334,6 +335,10 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdImageSamplerType:
         v.i = settings.m_sampler_type;
+        break;
+
+      case ParamIdNoiseSeed:
+        v.i = settings.m_noise_seed;
         break;
 
       //
@@ -679,6 +684,10 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdImageSamplerType:
         settings.m_sampler_type = v.i;
+        break;
+
+      case ParamIdNoiseSeed:
+        settings.m_noise_seed = v.i;
         break;
 
      //
@@ -1175,6 +1184,13 @@ ParamBlockDesc2 g_param_block_desc(
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
         p_default, 1.0f,
         p_range, 0.0f, 1.0f,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdNoiseSeed, L"noise_seed", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_NOISE_SEED, IDC_SPINNER_NOISE_SEED, SPIN_AUTOSCALE,
+        p_default, 0,
+        p_range, 0, 2000000000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
@@ -2041,6 +2057,9 @@ int AppleseedRenderer::Render(
 
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
         create_log_window();
+
+    if (renderer_settings.m_noise_seed == 0)
+        renderer_settings.m_noise_seed = static_cast<int>(time) / GetTicksPerFrame();
 
     TimeValue eval_time = time;
     BroadcastNotification(NOTIFY_RENDER_PREEVAL, &eval_time);

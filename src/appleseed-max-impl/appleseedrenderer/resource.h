@@ -19,6 +19,7 @@
 #define IDC_SPINNER_FILTER_SIZE                         209
 #define IDS_RENDERERPARAMS_FILTER_TYPE_1                210
 #define IDS_RENDERERPARAMS_FILTER_TYPE_2                211
+#define IDC_SPINNER_FILTER_SIZE2                        211
 #define IDS_RENDERERPARAMS_FILTER_TYPE_3                212
 #define IDS_RENDERERPARAMS_FILTER_TYPE_4                213
 #define IDS_RENDERERPARAMS_FILTER_TYPE_5                214
@@ -40,6 +41,8 @@
 #define IDC_STATIC_ADAPTIVE_NOISE_THRESHOLD             230
 #define IDC_TEXT_ADAPTIVE_NOISE_THRESHOLD               231
 #define IDC_SPINNER_ADAPTIVE_NOISE_THRESHOLD            232
+#define IDC_TEXT_NOISE_SEED                             233
+#define IDC_SPINNER_NOISE_SEED                          234
 #define IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING        300
 #define IDC_CHECK_GI                                    301
 #define IDC_CHECK_CAUSTICS                              302

@@ -51,6 +51,7 @@ const USHORT ChunkSettingsAdaptiveTileBatchSize                     = 0x1161;
 const USHORT ChunkSettingsAdaptiveTileMinSamples                    = 0x1162;
 const USHORT ChunkSettingsAdaptiveTileMaxSamples                    = 0x1163;
 const USHORT ChunkSettingsAdaptiveTileNoiseThreshold                = 0x1164;
+const USHORT ChunkSettingsNoiseSeed                                 = 0x1165;
 
 const USHORT ChunkSettingsPathtracer                                = 0x1200;
 const USHORT ChunkSettingsPathtracerGI                              = 0x1210;

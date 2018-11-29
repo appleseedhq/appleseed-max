@@ -1519,7 +1519,8 @@ namespace
                         .insert("random_pixel_order", settings.m_enable_random_pixel_order)
                         .insert("patch_distance_threshold", settings.m_patch_distance_threshold)
                         .insert("spike_threshold", settings.m_spike_threshold)
-                        .insert("denoise_scales", settings.m_denoise_scales),
+                        .insert("denoise_scales", settings.m_denoise_scales)
+                        .insert("noise_seed", settings.m_noise_seed),
                     aovs));
 
             if (rend_params.rendType == RENDTYPE_REGION)
