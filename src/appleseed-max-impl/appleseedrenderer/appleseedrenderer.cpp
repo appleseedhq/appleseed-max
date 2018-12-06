@@ -68,6 +68,7 @@
 // Standard headers.
 #include <clocale>
 #include <cstddef>
+#include <limits>
 #include <string>
 
 namespace asf = foundation;
@@ -110,9 +111,12 @@ namespace
         ParamIdAdaptiveTileNoiseThreshold               = 44,
         ParamIdBackgroundAlphaValue                     = 15,
         ParamIdNoiseSeed                                = 76,
+        ParamIdEnablePerFrameNoiseSeedVariation         = 77,
 
         ParamIdLightingAlgorithm                        = 52,
         ParamIdForceDefaultLightsOff                    = 13,
+        ParamIdLightSamplingAlgorithm                   = 78,
+        ParamIdEnableLightImportanceSampling            = 79,
 
         ParamIdEnableGI                                 = 8,
         ParamIdEnableCaustics                           = 10,
@@ -198,6 +202,8 @@ namespace
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1,  L"Path Tracing" },
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,  L"Stochastic Progressive Photon Mapping" },
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,  L"Bidirectional Path Tracing" },
+        { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,  L"CDF" },
+        { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_2,  L"Light Tree" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_1,     L"No Override" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_2,     L"Albedo" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,     L"Ambient Occlusion" },
@@ -341,6 +347,10 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_noise_seed;
         break;
 
+      case ParamIdEnablePerFrameNoiseSeedVariation:
+        v.i = static_cast<int>(settings.m_enable_noise_seed);
+        break;
+
       //
       // Adaptive Tile Renderer.
       //
@@ -387,6 +397,14 @@ void AppleseedRendererPBlockAccessor::Get(
 
       case ParamIdForceDefaultLightsOff:
         v.i = static_cast<int>(settings.m_force_off_default_lights);
+        break;
+
+      case ParamIdLightSamplingAlgorithm:
+        v.i = settings.m_light_sampling_algorithm;
+        break;
+
+      case ParamIdEnableLightImportanceSampling:
+        v.i = static_cast<int>(settings.m_enable_light_importance_sampling);
         break;
 
       //
@@ -690,6 +708,10 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_noise_seed = v.i;
         break;
 
+      case ParamIdEnablePerFrameNoiseSeedVariation:
+        settings.m_enable_noise_seed = v.i > 0;
+        break;
+
      //
      // Adaptive Tile Renderer.
      //
@@ -736,6 +758,14 @@ void AppleseedRendererPBlockAccessor::Set(
 
       case ParamIdForceDefaultLightsOff:
         settings.m_force_off_default_lights = v.i > 0;
+        break;
+
+      case ParamIdLightSamplingAlgorithm:
+        settings.m_light_sampling_algorithm = v.i;
+        break;
+
+      case ParamIdEnableLightImportanceSampling:
+        settings.m_enable_light_importance_sampling = v.i > 0;
         break;
 
     //
@@ -1190,7 +1220,13 @@ ParamBlockDesc2 g_param_block_desc(
     ParamIdNoiseSeed, L"noise_seed", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_NOISE_SEED, IDC_SPINNER_NOISE_SEED, SPIN_AUTOSCALE,
         p_default, 0,
-        p_range, 0, 2000000000,
+        p_range, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnablePerFrameNoiseSeedVariation, L"enable_noise_seed", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdImageSampling, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_NOISE_SEED,
+        p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
@@ -1208,6 +1244,19 @@ ParamBlockDesc2 g_param_block_desc(
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
+
+    ParamIdLightSamplingAlgorithm, L"light_sampling_algorithm", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_INT_COMBOBOX, IDC_COMBO_LIGHT_SAMPLING_ALGORITHM,
+        2, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_2,
+        p_default, 0,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableLightImportanceSampling, L"enable_light_importance_sampling", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_IMPORTANCE_SAMPLING,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+     p_end,
 
     // --- Parameters specifications for Path Tracer rollup ---
 
@@ -2058,8 +2107,11 @@ int AppleseedRenderer::Render(
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
         create_log_window();
 
-    if (renderer_settings.m_noise_seed == 0)
-        renderer_settings.m_noise_seed = static_cast<int>(time) / GetTicksPerFrame();
+    if (renderer_settings.m_enable_noise_seed)
+    {
+        const int frame_number = static_cast<int>(time) / GetTicksPerFrame();
+        renderer_settings.m_noise_seed += frame_number;
+    }
 
     TimeValue eval_time = time;
     BroadcastNotification(NOTIFY_RENDER_PREEVAL, &eval_time);

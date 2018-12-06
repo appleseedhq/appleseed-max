@@ -59,6 +59,7 @@ class RendererSettings
     int                         m_tile_size;
     int                         m_sampler_type;
     int                         m_noise_seed;
+    bool                        m_enable_noise_seed;
 
     //
     // Uniform Pixel Sampler.
@@ -89,6 +90,8 @@ class RendererSettings
 
     int                         m_lighting_algorithm;
     bool                        m_force_off_default_lights;
+    bool                        m_enable_light_importance_sampling;
+    int                         m_light_sampling_algorithm;
 
     //
     // Path Tracer.

@@ -53,6 +53,7 @@ namespace
             m_tile_size = 64;
             m_sampler_type = 0;
             m_noise_seed = 0;
+            m_enable_noise_seed = false;
 
             m_uniform_pixel_samples = 16;
 
@@ -67,6 +68,8 @@ namespace
 
             m_lighting_algorithm = 0;
             m_force_off_default_lights = false;
+            m_enable_light_importance_sampling = false;
+            m_light_sampling_algorithm = 0;
 
             m_enable_gi = true;
             m_enable_caustics = false;
@@ -184,6 +187,18 @@ const char* get_lighting_engine_type(const int lighting_engine_type)
     }
 }
 
+const char* get_lighting_algorithm_type(const int lighting_algorithm_type)
+{
+    switch (lighting_algorithm_type)
+    {
+      case 0:  return "cdf";
+      case 1:  return "lighttree";
+      default:
+        assert(!"Invalid lighting algorithm type.");
+        return "cdf";
+    }
+}
+
 const char* get_sppm_photon_type(const int photon_type)
 {
     switch (photon_type)
@@ -230,6 +245,11 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("sampling_mode", "qmc");
     params.insert_path("lighting_engine", get_lighting_engine_type(m_lighting_algorithm));
+
+    if (m_enable_light_importance_sampling)
+        params.insert_path("light_sampler.enable_importance_sampling", m_enable_light_importance_sampling);
+
+    params.insert_path("light_sampler.algorithm", get_lighting_algorithm_type(m_light_sampling_algorithm));
 
     params.insert_path("pt.max_bounces", m_global_bounces);
 
@@ -393,6 +413,10 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<int>(isave, m_noise_seed);
         isave->EndChunk();
 
+        isave->BeginChunk(ChunkSettingsEnableNoiseSeed);
+        success &= write<bool>(isave, m_enable_noise_seed);
+        isave->EndChunk();
+
     isave->EndChunk();
 
     //
@@ -403,6 +427,14 @@ bool RendererSettings::save(ISave* isave) const
 
         isave->BeginChunk(ChunkSettingsLightingAlgorithm);
         success &= write<int>(isave, m_lighting_algorithm);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsLightSamplingAlgorithm);
+        success &= write<int>(isave, m_light_sampling_algorithm);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingsEnableLightImportanceSampling);
+        success &= write<bool>(isave, m_enable_light_importance_sampling);
         isave->EndChunk();
 
     isave->EndChunk();
@@ -819,6 +851,10 @@ IOResult RendererSettings::load_image_sampling_settings(ILoad* iload)
 
           case ChunkSettingsNoiseSeed:
             result = read<int>(iload, &m_noise_seed);
+            break;
+
+          case ChunkSettingsEnableNoiseSeed:
+            result = read<bool>(iload, &m_enable_noise_seed);
             break;
         }
 
@@ -1249,6 +1285,14 @@ IOResult RendererSettings::load_lighting_settings(ILoad* iload)
         {
           case ChunkSettingsLightingAlgorithm:
             result = read<int>(iload, &m_lighting_algorithm);
+            break;
+
+          case ChunkSettingsLightSamplingAlgorithm:
+            result = read<int>(iload, &m_light_sampling_algorithm);
+            break;
+
+          case ChunkSettingsEnableLightImportanceSampling:
+            result = read<bool>(iload, &m_enable_light_importance_sampling);
             break;
         }
 
