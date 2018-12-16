@@ -51,6 +51,8 @@ const USHORT ChunkSettingsAdaptiveTileBatchSize                     = 0x1161;
 const USHORT ChunkSettingsAdaptiveTileMinSamples                    = 0x1162;
 const USHORT ChunkSettingsAdaptiveTileMaxSamples                    = 0x1163;
 const USHORT ChunkSettingsAdaptiveTileNoiseThreshold                = 0x1164;
+const USHORT ChunkSettingsNoiseSeed                                 = 0x1165;
+const USHORT ChunkSettingsEnableNoiseSeed                           = 0x1166;
 
 const USHORT ChunkSettingsPathtracer                                = 0x1200;
 const USHORT ChunkSettingsPathtracerGI                              = 0x1210;
@@ -104,6 +106,8 @@ const USHORT ChunkSettingsPostprocessingDenoiseScales               = 0x1507;
 
 const USHORT ChunkSettingsLighting                                  = 0x1600;
 const USHORT ChunkSettingsLightingAlgorithm                         = 0x1601;
+const USHORT ChunkSettingsLightSamplingAlgorithm                    = 0x1602;
+const USHORT ChunkSettingsEnableLightImportanceSampling             = 0x1610;
 const USHORT ChunkSettingsLightingForceOffDefaultLights             = 0x1270;
 
 const USHORT ChunkSettingsSPPM                                      = 0x1700;
