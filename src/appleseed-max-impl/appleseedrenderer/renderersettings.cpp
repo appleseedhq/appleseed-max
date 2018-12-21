@@ -119,6 +119,11 @@ namespace
             m_shader_override = 0;
             m_material_preview_quality = 4; // number of uniform pixel samples
 
+            m_enable_override_material = false;
+            m_override_exclude_light_materials = false;
+            m_override_exclude_glass_materials = false;
+            m_override_material = nullptr;
+
             m_rendering_threads = 0;        // 0 = as many as there are logical cores
             m_enable_embree = false;
             m_low_priority_mode = true;
@@ -664,6 +669,18 @@ bool RendererSettings::save(ISave* isave) const
         success &= write<int>(isave, m_material_preview_quality);
         isave->EndChunk();
 
+        isave->BeginChunk(ChunkSettingEnableOverrideMaterial);
+        success &= write<bool>(isave, m_enable_override_material);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingOverrideExcludeLightMaterials);
+        success &= write<bool>(isave, m_override_exclude_light_materials);
+        isave->EndChunk();
+
+        isave->BeginChunk(ChunkSettingOverrideExcludeGlassMaterials);
+        success &= write<bool>(isave, m_override_exclude_glass_materials);
+        isave->EndChunk();
+
     isave->EndChunk();
 
     //
@@ -1147,6 +1164,18 @@ IOResult RendererSettings::load_output_settings(ILoad* iload)
 
           case ChunkSettingsOutputMaterialPreviewQuality:
             result = read(iload, &m_material_preview_quality);
+            break;
+
+          case ChunkSettingEnableOverrideMaterial:
+            result = read(iload, &m_enable_override_material);
+            break;
+
+          case ChunkSettingOverrideExcludeLightMaterials:
+            result = read(iload, &m_override_exclude_light_materials);
+            break;
+
+          case ChunkSettingOverrideExcludeGlassMaterials:
+            result = read(iload, &m_override_exclude_glass_materials);
             break;
         }
 

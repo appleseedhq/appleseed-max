@@ -86,6 +86,11 @@ const USHORT ChunkSettingsOutputScaleMultiplier                     = 0x1330;
 const USHORT ChunkSettingsOutputShaderOverride                      = 0x1340;
 const USHORT ChunkSettingsOutputMaterialPreviewQuality              = 0x1350;
 
+const USHORT ChunkSettingEnableOverrideMaterial                     = 0x1360;
+const USHORT ChunkSettingOverrideExcludeLightMaterials              = 0x1370;
+const USHORT ChunkSettingOverrideExcludeGlassMaterials              = 0x1380;
+const USHORT ChunkSettingOverrideMaterial                           = 0x1390;
+
 const USHORT ChunkSettingsSystem                                    = 0x1400;
 const USHORT ChunkSettingsSystemRenderingThreads                    = 0x1410;
 const USHORT ChunkSettingsSystemLowPriorityMode                     = 0x1420;

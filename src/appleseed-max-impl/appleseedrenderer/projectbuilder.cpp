@@ -570,7 +570,7 @@ namespace
         {
             if (is_light_emitting_material(mtl))
             {
-                if (settings.m_override_material_exclude_lights)
+                if (settings.m_override_exclude_light_materials)
                     return mtl;
                 else
                     return settings.m_override_material;
@@ -578,7 +578,7 @@ namespace
 
             if (is_glass_material(mtl))
             {
-                if (settings.m_override_material_exclude_glass)
+                if (settings.m_override_exclude_glass_materials)
                     return mtl;
                 else
                     return settings.m_override_material;
@@ -586,6 +586,7 @@ namespace
 
             return settings.m_override_material;
         }
+
         return mtl;
     }
 
@@ -631,7 +632,7 @@ namespace
                 {
                     Mtl* submtl = mtl->GetSubMtl(i);
 
-                    if (type == RenderType::MaterialPreview)
+                    if (type != RenderType::MaterialPreview)
                         submtl = override_material(submtl, settings);
 
                     if (submtl != nullptr)

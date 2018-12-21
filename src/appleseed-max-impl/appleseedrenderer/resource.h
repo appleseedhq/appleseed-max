@@ -219,12 +219,12 @@
 #define IDC_TEXT_SPPM_MAX_RAY_INTENSITY                 945
 #define IDC_STATIC_SPPM_MAX_RAY_INTENSITY               946
 
-#define IDC_STATIC_LIGHTING                             1001
-#define IDC_STATIC_OVERRIDE_MATERIAL                    1002
-#define IDC_BUTTON_OVERRIDE_MATERIAL                    1003
-#define IDC_CHECK_OVERRIDE_MATERIAL                     1004
-#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS         1005
-#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS          1006
+#define IDC_STATIC_LIGHTING                             453
+#define IDC_STATIC_OVERRIDE_MATERIAL                    454
+#define IDC_BUTTON_OVERRIDE_MATERIAL                    455
+#define IDC_CHECK_OVERRIDE_MATERIAL                     456
+#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS         457
+#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS          458
 
 // Next default values for new objects
 // 

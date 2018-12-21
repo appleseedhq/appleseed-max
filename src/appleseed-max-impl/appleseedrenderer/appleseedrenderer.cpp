@@ -181,8 +181,8 @@ namespace
         
         ParamIdEnableOverrideMaterial                   = 80,
         ParamIdOverrideMaterial                         = 81,
-        ParamIdExcludeLightMaterial                     = 82,
-        ParamIdExcludeGlassMaterial                     = 83
+        ParamIdExcludeLightMaterials                    = 82,
+        ParamIdExcludeGlassMaterials                    = 83
     };
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
@@ -312,6 +312,10 @@ void AppleseedRendererPBlockAccessor::Get(
 
     switch (id)
     {
+      //
+      // Output.
+      //
+
       case ParamIdOuputMode:
         v.i = static_cast<int>(settings.m_output_mode);
         break;
@@ -328,6 +332,18 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = settings.m_material_preview_quality;
         break;
         
+      case ParamIdEnableOverrideMaterial:
+        v.i = settings.m_enable_override_material;
+        break;
+
+      case ParamIdExcludeGlassMaterials:
+        v.i = settings.m_override_exclude_glass_materials;
+        break;
+
+      case ParamIdExcludeLightMaterials:
+        v.i = settings.m_override_exclude_light_materials;
+        break;
+
       //
       // Image Sampling.
       //
@@ -669,6 +685,10 @@ void AppleseedRendererPBlockAccessor::Set(
 
     switch (id)
     {
+      //
+      // Output.
+      //
+
       case ParamIdOuputMode:
         settings.m_output_mode = static_cast<RendererSettings::OutputMode>(v.i);
         break;
@@ -689,9 +709,28 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_material_preview_quality = v.i;
         break;
         
-     //
-     // Image Sampling.
-     //
+      case ParamIdEnableOverrideMaterial:
+        settings.m_enable_override_material = v.i > 0;
+        break;
+
+      case ParamIdOverrideMaterial:
+        if (v.r != nullptr)
+            static_cast<Mtl*>(v.r)->Update(0, FOREVER);
+
+        settings.m_override_material = static_cast<Mtl*>(v.r);
+        break;
+
+      case ParamIdExcludeGlassMaterials:
+        settings.m_override_exclude_glass_materials = v.i > 0;
+        break;
+
+      case ParamIdExcludeLightMaterials:
+        settings.m_override_exclude_light_materials = v.i > 0;
+        break;
+     
+      //
+      // Image Sampling.
+      //
 
       case ParamIdUniformPixelSamples:
         settings.m_uniform_pixel_samples = v.i;
@@ -717,9 +756,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_enable_noise_seed = v.i > 0;
         break;
 
-     //
-     // Adaptive Tile Renderer.
-     //
+      //
+      // Adaptive Tile Renderer.
+      //
 
       case ParamIdAdaptiveTileBatchSize:
         settings.m_adaptive_batch_size = v.i;
@@ -737,9 +776,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_adaptive_noise_threshold = v.f;
         break;
 
-    //
-    // Pixel Filtering and Background Alpha.
-    //
+      //
+      // Pixel Filtering and Background Alpha.
+      //
 
       case ParamIdFilterType:
         settings.m_pixel_filter = v.i;
@@ -753,9 +792,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_background_alpha = v.f;
         break;
 
-    //
-    // Lighting.
-    //
+      //
+      // Lighting.
+      //
 
       case ParamIdLightingAlgorithm:
         settings.m_lighting_algorithm = v.i;
@@ -773,9 +812,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_enable_light_importance_sampling = v.i > 0;
         break;
 
-    //
-    // Pathtracer.
-    //
+      //
+      // Pathtracer.
+      //
 
       case ParamIdEnableGI:
         settings.m_enable_gi = v.i > 0;
@@ -865,22 +904,6 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_rr_min_path_length = v.i;
         break;
 
-      case ParamIdEnableOverrideMaterial:
-        settings.m_enable_override_material = v.i > 0;
-        break;
-
-      case ParamIdOverrideMaterial:
-        settings.m_override_material = static_cast<Mtl*>(v.r);
-        break;
-
-      case ParamIdExcludeGlassMaterial:
-        settings.m_override_material_exclude_glass = v.i > 0;
-        break;
-
-      case ParamIdExcludeLightMaterial:
-        settings.m_override_material_exclude_lights = v.i > 0;
-        break;
-
       //
       // Stochastic Progressive Photon Mapping.
       //
@@ -961,9 +984,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_sppm_max_ray_intensity = v.f;
         break;
 
-    //
-    // Postprocessing.
-    //
+      //
+      // Postprocessing.
+      //
 
       case ParamIdEnableRenderStamp:
         settings.m_enable_render_stamp = v.i > 0;
@@ -1001,9 +1024,9 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_denoise_scales = v.i;
         break;
 
-    //
-    // System.
-    //
+      //
+      // System.
+      //
 
       case ParamIdCPUCores:
         settings.m_rendering_threads = v.i;
@@ -1156,6 +1179,30 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
+    ParamIdOverrideMaterial, L"override_material", TYPE_MTL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdOutput, TYPE_MTLBUTTON, IDC_BUTTON_OVERRIDE_MATERIAL,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdEnableOverrideMaterial, L"enable_override_material", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdOutput, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+        p_enable_ctrls, 3, ParamIdOverrideMaterial, ParamIdExcludeLightMaterials, ParamIdExcludeGlassMaterials,
+    p_end,
+
+    ParamIdExcludeLightMaterials, L"exclude_light_material", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdOutput, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdExcludeGlassMaterials, L"exclude_glass_material", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdOutput, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS,
+        p_default, FALSE,
+        p_accessor, &g_pblock_accessor,
+    p_end,
+
     // --- Parameters specifications for Image Sampling rollup ---
 
     ParamIdUniformPixelSamples, L"pixel_samples", TYPE_INT, P_TRANSIENT, 0,
@@ -1278,30 +1325,6 @@ ParamBlockDesc2 g_param_block_desc(
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
      p_end,
-
-    ParamIdOverrideMaterial, L"override_material", TYPE_MTL, 0, 0,
-        p_ui, ParamMapIdLighting, TYPE_MTLBUTTON, IDC_BUTTON_OVERRIDE_MATERIAL,
-        p_accessor, &g_pblock_accessor,
-    p_end,
-
-    ParamIdEnableOverrideMaterial, L"enable_override_material", TYPE_BOOL, 0, 0,
-        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL,
-        p_default, FALSE,
-        p_accessor, &g_pblock_accessor,
-        p_enable_ctrls, 3, ParamIdOverrideMaterial, ParamIdExcludeLightMaterial, ParamIdExcludeGlassMaterial,
-    p_end,
-
-    ParamIdExcludeLightMaterial, L"exclude_light_material", TYPE_BOOL, 0, 0,
-        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS,
-        p_default, FALSE,
-        p_accessor, &g_pblock_accessor,
-    p_end,
-
-    ParamIdExcludeGlassMaterial, L"exclude_glass_material", TYPE_BOOL, 0, 0,
-        p_ui, ParamMapIdLighting, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS,
-        p_default, FALSE,
-        p_accessor, &g_pblock_accessor,
-    p_end,
 
     // --- Parameters specifications for Path Tracer rollup ---
 

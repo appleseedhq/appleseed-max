@@ -145,11 +145,6 @@ class RendererSettings
     bool                        m_sppm_max_ray_intensity_set;
     float                       m_sppm_max_ray_intensity;
 
-    bool                        m_enable_override_material;
-    bool                        m_override_material_exclude_lights;
-    bool                        m_override_material_exclude_glass;
-    Mtl*                        m_override_material;
-
     //
     // Output.
     //
@@ -166,6 +161,11 @@ class RendererSettings
     float                       m_scale_multiplier;
     int                         m_shader_override;
     int                         m_material_preview_quality;
+
+    bool                        m_enable_override_material;
+    bool                        m_override_exclude_light_materials;
+    bool                        m_override_exclude_glass_materials;
+    Mtl*                        m_override_material;
 
     //
     // Post-processing.
