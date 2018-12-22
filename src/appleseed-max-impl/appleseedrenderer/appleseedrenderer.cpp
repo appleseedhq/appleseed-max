@@ -714,6 +714,7 @@ void AppleseedRendererPBlockAccessor::Set(
         break;
 
       case ParamIdOverrideMaterial:
+        // Update saved override material when scene file is opened.
         if (v.r != nullptr)
             static_cast<Mtl*>(v.r)->Update(0, FOREVER);
 
@@ -1191,13 +1192,13 @@ ParamBlockDesc2 g_param_block_desc(
         p_enable_ctrls, 3, ParamIdOverrideMaterial, ParamIdExcludeLightMaterials, ParamIdExcludeGlassMaterials,
     p_end,
 
-    ParamIdExcludeLightMaterials, L"exclude_light_material", TYPE_BOOL, P_TRANSIENT, 0,
+    ParamIdExcludeLightMaterials, L"exclude_light_materials", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdOutput, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
-    ParamIdExcludeGlassMaterials, L"exclude_glass_material", TYPE_BOOL, P_TRANSIENT, 0,
+    ParamIdExcludeGlassMaterials, L"exclude_glass_materials", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdOutput, TYPE_SINGLECHEKBOX, IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS,
         p_default, FALSE,
         p_accessor, &g_pblock_accessor,
