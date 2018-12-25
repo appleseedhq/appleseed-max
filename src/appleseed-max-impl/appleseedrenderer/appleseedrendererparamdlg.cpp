@@ -43,6 +43,7 @@
 // 3ds Max headers.
 #include <3dsmaxdlport.h>
 #include <assert1.h>
+#include <custcont.h>
 #include <iparamm2.h>
 
 // Windows headers.
@@ -268,6 +269,8 @@ namespace
 
     class OutputParamMapDlgProc
       : public ParamMap2UserDlgProc
+      , public DADMgr
+
     {
       public:
         explicit OutputParamMapDlgProc(IParamBlock2* pblock)
@@ -293,6 +296,7 @@ namespace
             switch (umsg)
             {
               case WM_INITDIALOG:
+                m_map = map;
                 init(hwnd);
                 enable_disable_controls();
                 return TRUE;
@@ -352,6 +356,10 @@ namespace
 
         void init(HWND hwnd)
         {
+            ICustButton* material_button = GetICustButton(GetDlgItem(hwnd, IDC_BUTTON_OVERRIDE_MATERIAL));
+            material_button->SetDADMgr(this);
+            ReleaseICustButton(material_button);
+
             m_radio_render_only = GetDlgItem(hwnd, IDC_RADIO_RENDER);
             m_radio_save_only = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT);
             m_radio_save_and_render = GetDlgItem(hwnd, IDC_RADIO_SAVEPROJECT_AND_RENDER);
@@ -382,7 +390,73 @@ namespace
             m_button_browse->Enable(save_project && !use_max_procedural_maps);
         }
 
+        // DADMgr methods.
+
+        SClass_ID GetDragType(
+            HWND                hwnd,
+            POINT               p) override
+        {
+            return MATERIAL_CLASS_ID;
+        }
+
+        BOOL OkToDrop(
+            ReferenceTarget*    drop_this,
+            HWND                hwnd_from,
+            HWND                hwnd_to,
+            POINT               p,
+            SClass_ID           type,
+            BOOL                is_new) override
+        {
+            if (hwnd_from == hwnd_to)
+                return FALSE;
+
+            if (hwnd_to == GetDlgItem(m_map->GetHWnd(), IDC_BUTTON_OVERRIDE_MATERIAL))
+                return type == MATERIAL_CLASS_ID;
+
+            return FALSE;
+        }
+
+        ReferenceTarget* GetInstance(
+            HWND                hwnd,
+            POINT               p,
+            SClass_ID           type) override
+        {
+            if (hwnd == GetDlgItem(m_map->GetHWnd(), IDC_BUTTON_OVERRIDE_MATERIAL))
+            {
+                ReferenceTarget* ref_target;
+                m_map->GetParamBlock()->GetValueByName(L"override_material", 0, ref_target, FOREVER);
+                return ref_target;
+            }
+            return nullptr;
+        }
+
+        void Drop(
+            ReferenceTarget*    drop_this,
+            HWND                hwnd,
+            POINT               p,
+            SClass_ID           type,
+            DADMgr*             src_mgr = nullptr,
+            BOOL                src_clone = FALSE) override
+        {
+            if (hwnd == GetDlgItem(m_map->GetHWnd(), IDC_BUTTON_OVERRIDE_MATERIAL))
+            {
+                m_map->GetParamBlock()->SetValueByName(L"override_material", drop_this, 0);
+                ICustButton* material_button = GetICustButton(hwnd);
+                if (material_button != nullptr)
+                {
+                    material_button->SetText(drop_this == nullptr ? L"None" : static_cast<MtlBase*>(drop_this)->GetFullName());
+                    ReleaseICustButton(material_button);
+                }
+            }
+        }
+
+        BOOL AutoTooltip() override
+        {
+            return TRUE;
+        }
+
       private:
+        IParamMap2*     m_map;
         HWND            m_radio_render_only;
         HWND            m_radio_save_only;
         HWND            m_radio_save_and_render;

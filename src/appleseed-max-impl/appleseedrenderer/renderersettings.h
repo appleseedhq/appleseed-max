@@ -45,6 +45,7 @@
 namespace renderer  { class Project; }
 class ILoad;
 class ISave;
+class Mtl;
 
 class RendererSettings
 {
@@ -160,6 +161,11 @@ class RendererSettings
     float                       m_scale_multiplier;
     int                         m_shader_override;
     int                         m_material_preview_quality;
+
+    bool                        m_enable_override_material;
+    bool                        m_override_exclude_light_materials;
+    bool                        m_override_exclude_glass_materials;
+    Mtl*                        m_override_material;
 
     //
     // Post-processing.
