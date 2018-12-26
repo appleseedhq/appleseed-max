@@ -741,6 +741,7 @@ namespace
     void add_object(
         asr::Assembly&          assembly,
         INode*                  node,
+        INode*                  view_node,
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
@@ -806,6 +807,43 @@ namespace
             object_assembly_instance->transform_sequence()
                 .set_transform(0.0, transform);
 
+            if (node->GetMotBlurOnOff(time) && node->MotBlur() == 1)
+            {
+                bool is_animated = false;
+                Control* tm_controller;
+                Control* controller;
+                tm_controller = node->GetTMController();
+                auto class_id = tm_controller->ClassID();
+
+                controller = tm_controller->GetPositionController();
+                is_animated = controller->IsAnimated() > 0;
+
+                controller = tm_controller->GetRotationController();
+                is_animated = is_animated || controller->IsAnimated() > 0;
+
+                controller = tm_controller->GetScaleController();
+                is_animated = is_animated || controller->IsAnimated() > 0;
+                
+                if (is_animated)
+                {
+                    float shutter_duration = 0.5f;
+                    if (view_node != nullptr)
+                    {
+                        MaxSDK::IPhysicalCamera* phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
+                        if (phys_camera != nullptr)
+                            shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
+                    }
+
+                    int time_offset = asf::round<int, float>(shutter_duration * GetTicksPerFrame());
+                    asf::Transformd transform =
+                        asf::Transformd::from_local_to_parent(
+                            to_matrix4d(node->GetObjTMAfterWSM(time + time_offset)));
+
+                    object_assembly_instance->transform_sequence()
+                        .set_transform(1.0, transform);
+                }
+            }
+
             assembly.assembly_instances().insert(object_assembly_instance);
         }
         else
@@ -852,6 +890,7 @@ namespace
 
     void add_objects(
         asr::Assembly&          assembly,
+        INode*                  view_node,
         const MaxSceneEntities& entities,
         const RenderType        type,
         const RendererSettings& settings,
@@ -867,6 +906,7 @@ namespace
             add_object(
                 assembly,
                 object,
+                view_node,
                 type,
                 settings,
                 time,
@@ -1165,6 +1205,7 @@ namespace
     void populate_assembly(
         asr::Scene&                         scene,
         asr::Assembly&                      assembly,
+        INode*                              view_node,
         const RendParams&                   rend_params,
         const MaxSceneEntities&             entities,
         const std::vector<DefaultLight>&    default_lights,
@@ -1179,6 +1220,7 @@ namespace
         AssemblyMap assembly_map;
         add_objects(
             assembly,
+            view_node,
             entities,
             type,
             settings,
@@ -1681,6 +1723,20 @@ asf::auto_release_ptr<asr::Camera> build_camera(
                 // Create camera - DOF disabled.
                 camera = asr::PinholeCameraFactory().create("camera", params);
             }
+
+            if (phys_camera->GetMotionBlurEnabled(time, FOREVER))
+            {
+                float shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
+                int time_offset = asf::round<int, float>(shutter_duration * GetTicksPerFrame());
+                asf::Transformd transform =
+                    asf::Transformd::from_local_to_parent(
+                        asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
+                        to_matrix4d(view_node->GetObjTMAfterWSM(time + time_offset)));
+
+                camera->transform_sequence()
+                    .set_transform(1.0, transform);
+            }
+
         }
         else
         {
@@ -1750,6 +1806,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     populate_assembly(
         scene.ref(),
         assembly.ref(),
+        view_node,
         rend_params,
         entities,
         default_lights,
