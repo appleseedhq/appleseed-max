@@ -18,7 +18,7 @@
     <ProjectGuid>{62C41566-DBCB-49D3-943A-4DD53222269E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>appleseedmax</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -77,15 +77,17 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;DEBUG;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\boost_1_55_0;$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\boost_1_55_0;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-debug\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -132,8 +134,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\boost_1_55_0;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include;$(SolutionDir)..\..\boost_1_55_0;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -141,6 +143,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>false</FunctionLevelLinking>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,7 +151,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -194,8 +197,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_FILESYSTEM_VERSION=3;BOOST_FILESYSTEM_NO_DEPRECATED;APPLESEED_WITH_OIIO;OIIO_STATIC_BUILD;APPLESEED_WITH_OSL;OSL_STATIC_LIBRARY;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_WITH_NORMALIZED_DIFFUSION_BSSRDF;XERCES_STATIC_LIBRARY;BOOST_PYTHON_STATIC_LIB;APPLESEED_X86;APPLESEED_USE_SSE;APPLESEED_ENABLE_IMATH_INTEROP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\boost_1_55_0;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc14\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc14\SeExpr-release\include;$(SolutionDir)..\..\boost_1_55_0;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -203,13 +206,14 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>false</FunctionLevelLinking>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v140\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc14;$(SolutionDir)..\..\boost_1_55_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;Paramblk2.lib;ShLwApi.Lib;appleseed.lib;ilmbase-release\lib\Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
