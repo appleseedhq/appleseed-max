@@ -436,7 +436,7 @@ namespace
         return material_info;
     }
 
-    asr::VisibilityFlags::Type get_visibility_flags(Object* object, const TimeValue time)
+    void for_each_modifier(Object* object, const Class_ID modifier_class_id, const std::function<bool (Modifier* modifier)>& callback)
     {
         if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
         {
@@ -444,93 +444,85 @@ namespace
             for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
             {
                 Modifier* modifier = derived_object->GetModifier(i);
-                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
+                if (modifier->ClassID() == modifier_class_id)
                 {
-                    const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
-                    return obj_props_mod->get_visibility_flags(time);
+                    if (callback(modifier))
+                        break;
                 }
             }
         }
+    }
 
-        return asr::VisibilityFlags::AllRays;
+    asr::VisibilityFlags::Type get_visibility_flags(Object* object, const TimeValue time)
+    {
+        asr::VisibilityFlags::Type flags = asr::VisibilityFlags::AllRays;
+
+        for_each_modifier(object, AppleseedObjPropsMod::get_class_id(), [time, &flags](Modifier* modifier)
+        {
+            const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+            flags = obj_props_mod->get_visibility_flags(time);
+            return true;
+        });
+
+        return flags;
     }
 
     std::string get_sss_set(Object* object, const TimeValue time)
     {
-        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-        {
-            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
-            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
-            {
-                Modifier* modifier = derived_object->GetModifier(i);
-                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
-                {
-                    const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
-                    return obj_props_mod->get_sss_set(time);
-                }
-            }
-        }
+        std::string sss_set;
 
-        return std::string();
+        for_each_modifier(object, AppleseedObjPropsMod::get_class_id(), [time, &sss_set](Modifier* modifier)
+        {
+            const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+            sss_set = obj_props_mod->get_sss_set(time);
+            return true;
+        });
+
+        return sss_set;
     }
 
     int get_medium_priority(Object* object, const TimeValue time)
     {
-        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-        {
-            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
-            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
-            {
-                Modifier* modifier = derived_object->GetModifier(i);
-                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
-                {
-                    const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
-                    return obj_props_mod->get_medium_priority(time);
-                }
-            }
-        }
+        int medium_priority = 0;
 
-        return 0;
+        for_each_modifier(object, AppleseedObjPropsMod::get_class_id(), [time, &medium_priority](Modifier* modifier)
+        {
+            const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+            medium_priority = obj_props_mod->get_medium_priority(time);
+            return true;
+        });
+
+        return medium_priority;
     }
 
     bool should_optimize_for_instancing(Object* object, const TimeValue time)
     {
-        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-        {
-            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
-            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
-            {
-                Modifier* modifier = derived_object->GetModifier(i);
-                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
-                {
-                    int optimize_for_instancing = 0;
-                    modifier->GetParamBlockByID(0)->GetValueByName(L"optimize_for_instancing", time, optimize_for_instancing, FOREVER);
-                    return optimize_for_instancing == TRUE;
-                }
-            }
-        }
+        bool optimize_for_instancing = false;
 
-        return false;
+        for_each_modifier(object, AppleseedObjPropsMod::get_class_id(), [time, &optimize_for_instancing](Modifier* modifier)
+        {
+            int value = 0;
+            modifier->GetParamBlockByID(0)->GetValueByName(L"optimize_for_instancing", time, value, FOREVER);
+            optimize_for_instancing = value == TRUE;
+            return true;
+        });
+
+        return optimize_for_instancing;
     }
 
     bool is_photon_target(Object* object, const TimeValue time)
     {
-        if (object->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-        {
-            IDerivedObject* derived_object = static_cast<IDerivedObject*>(object);
-            for (int i = 0, e = derived_object->NumModifiers(); i < e; ++i)
-            {
-                Modifier* modifier = derived_object->GetModifier(i);
-                if (modifier->ClassID() == AppleseedObjPropsMod::get_class_id())
-                {
-                    int photon_target = 0;
-                    modifier->GetParamBlockByID(0)->GetValueByName(L"photon_target", time, photon_target, FOREVER);
-                    return photon_target == TRUE;
-                }
-            }
-        }
+        bool is_photon_target = false;
 
-        return false;
+        for_each_modifier(object, AppleseedObjPropsMod::get_class_id(), [time, &is_photon_target](Modifier* modifier)
+        {
+            int value = 0;
+            modifier->GetParamBlockByID(0)->GetValueByName(L"photon_target", time, value, FOREVER);
+            is_photon_target = value == TRUE;
+            return true;
+        });
+
+        return is_photon_target;
     }
 
     bool is_light_emitting_material(Mtl* mtl)
