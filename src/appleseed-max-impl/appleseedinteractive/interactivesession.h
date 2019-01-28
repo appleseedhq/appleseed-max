@@ -63,7 +63,7 @@ class InteractiveSession
         foundation::auto_release_ptr<renderer::Camera>  camera);
 
   private:
-    std::unique_ptr<InteractiveRendererController>  m_render_ctrl;
+    std::unique_ptr<InteractiveRendererController>  m_renderer_controller;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
     IIRenderMgr*                                    m_iirender_mgr;

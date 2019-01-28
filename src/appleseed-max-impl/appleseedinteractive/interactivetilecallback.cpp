@@ -36,6 +36,11 @@
 
 namespace asr = renderer;
 
+
+//
+// InteractiveTileCallback class implementation.
+//
+
 namespace
 {
     const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
@@ -44,11 +49,11 @@ namespace
 InteractiveTileCallback::InteractiveTileCallback(
     Bitmap*                     bitmap,
     IIRenderMgr*                iimanager,
-    asr::IRendererController*   render_controller)
+    asr::IRendererController*   renderer_controller)
   : TileCallback(bitmap, nullptr)
   , m_bitmap(bitmap)
   , m_iimanager(iimanager)
-  , m_renderer_ctrl(render_controller)
+  , m_renderer_controller(renderer_controller)
 {
 }
 
@@ -59,7 +64,7 @@ void InteractiveTileCallback::on_progressive_frame_update(
 
     // Wait until UI proc gets handled to ensure class object is valid.
     m_ui_promise = std::promise<void>();
-    if (m_renderer_ctrl->get_status() == asr::IRendererController::ContinueRendering)
+    if (m_renderer_controller->get_status() == asr::IRendererController::ContinueRendering)
     {
         PostMessage(
             GetCOREInterface()->GetMAXHWnd(),
@@ -78,4 +83,29 @@ void InteractiveTileCallback::update_caller(UINT_PTR param_ptr)
         tile_callback->m_iimanager->UpdateDisplay();
 
     tile_callback->m_ui_promise.set_value();
+}
+
+
+//
+// InteractiveTileCallbackFactory class implementation.
+//
+
+InteractiveTileCallbackFactory::InteractiveTileCallbackFactory(
+    Bitmap*                     bitmap,
+    IIRenderMgr*                iimanager,
+    asr::IRendererController*   renderer_controller)
+  : m_bitmap(bitmap)
+  , m_iimanager(iimanager)
+  , m_renderer_controller(renderer_controller)
+{
+}
+
+void InteractiveTileCallbackFactory::release()
+{
+    delete this;
+}
+
+asr::ITileCallback* InteractiveTileCallbackFactory::create()
+{
+    return new InteractiveTileCallback(m_bitmap, m_iimanager, m_renderer_controller);
 }
