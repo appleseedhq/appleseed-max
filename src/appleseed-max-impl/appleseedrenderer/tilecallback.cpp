@@ -50,6 +50,11 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
+
+//
+// TileCallback class implementation.
+//
+
 namespace
 {
     void draw_hline(
@@ -263,4 +268,27 @@ void TileCallback::blit_tile(
                 reinterpret_cast<BMM_Color_fl*>(&color));
         }
     }
+}
+
+
+//
+// TileCallbackFactory class implementation.
+//
+
+TileCallbackFactory::TileCallbackFactory(
+    Bitmap*                 bitmap,
+    volatile asf::uint32*   rendered_tile_count)
+  : m_bitmap(bitmap)
+  , m_rendered_tile_count(rendered_tile_count)
+{
+}
+
+void TileCallbackFactory::release()
+{
+    delete this;
+}
+
+asr::ITileCallback* TileCallbackFactory::create()
+{
+    return new TileCallback(m_bitmap, m_rendered_tile_count);
 }

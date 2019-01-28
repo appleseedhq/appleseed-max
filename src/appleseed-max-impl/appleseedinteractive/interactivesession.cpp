@@ -51,17 +51,20 @@ InteractiveSession::InteractiveSession(
   , m_iirender_mgr(iirender_mgr)
   , m_renderer_settings(settings)
   , m_bitmap(bitmap)
-  , m_render_ctrl(nullptr)
+  , m_renderer_controller(nullptr)
 {
 }
 
 void InteractiveSession::render_thread()
 {
     // Create the renderer controller.
-    m_render_ctrl.reset(new InteractiveRendererController());
+    m_renderer_controller.reset(new InteractiveRendererController());
 
-    // Create the tile callback.
-    InteractiveTileCallback m_tile_callback(m_bitmap, m_iirender_mgr, m_render_ctrl.get());
+    // Create the tile callback factory.
+    InteractiveTileCallbackFactory m_tile_callback_factory(
+        m_bitmap,
+        m_iirender_mgr,
+        m_renderer_controller.get());
 
     // Create the master renderer.
     asf::SearchPaths search_paths;
@@ -70,8 +73,8 @@ void InteractiveSession::render_thread()
             *m_project,
             m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),
             search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
-            m_render_ctrl.get(),
-            &m_tile_callback));
+            m_renderer_controller.get(),
+            &m_tile_callback_factory));
 
     // Render the frame.
     renderer->render();
@@ -84,12 +87,12 @@ void InteractiveSession::start_render()
 
 void InteractiveSession::abort_render()
 {
-    m_render_ctrl->set_status(asr::IRendererController::AbortRendering);
+    m_renderer_controller->set_status(asr::IRendererController::AbortRendering);
 }
 
 void InteractiveSession::reininitialize_render()
 {
-    m_render_ctrl->set_status(asr::IRendererController::ReinitializeRendering);
+    m_renderer_controller->set_status(asr::IRendererController::ReinitializeRendering);
 }
 
 void InteractiveSession::end_render()
@@ -101,6 +104,6 @@ void InteractiveSession::end_render()
 void InteractiveSession::schedule_camera_update(
     asf::auto_release_ptr<asr::Camera>  camera)
 {
-    m_render_ctrl->schedule_update(
+    m_renderer_controller->schedule_update(
         std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(*m_project, camera)));
 }
