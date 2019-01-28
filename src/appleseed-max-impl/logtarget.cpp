@@ -52,10 +52,19 @@ namespace asf = foundation;
 
 namespace
 {
+    const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
+
+    bool is_main_thread()
+    {
+        return GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
+    }
+
     typedef std::vector<std::string> StringVec;
 
-    void emit_message(const DWORD type, const StringVec& lines)
+    void do_emit_message(const DWORD type, const StringVec& lines)
     {
+        assert(is_main_thread());
+
         for (const auto& line : lines)
         {
             GetCOREInterface()->Log()->LogEntry(
@@ -86,22 +95,30 @@ namespace
         g_message_queue.push_back(message);
     }
 
-    void emit_pending_messages()
+    void emit_pending_messages_no_lock()
     {
-        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+        assert(is_main_thread());
 
         for (const auto& message : g_message_queue)
-            emit_message(message.m_type, message.m_lines);
+            do_emit_message(message.m_type, message.m_lines);
 
         g_message_queue.clear();
     }
 
-    const UINT WM_TRIGGER_CALLBACK = WM_USER + 4764;
-
-    bool is_main_thread()
+    void emit_pending_messages()
     {
-        return GetCOREInterface15()->GetMainThreadID() == GetCurrentThreadId();
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+
+        emit_pending_messages_no_lock();
     }
+
+    void emit_message(const DWORD type, const StringVec& lines)
+    {
+        boost::mutex::scoped_lock lock(g_message_queue_mutex);
+
+        emit_pending_messages_no_lock();
+        do_emit_message(type, lines);
+   }
 }
 
 void LogTarget::release()
