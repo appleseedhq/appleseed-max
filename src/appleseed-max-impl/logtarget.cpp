@@ -60,7 +60,7 @@ namespace
         {
             GetCOREInterface()->Log()->LogEntry(
                 type,
-                FALSE,
+                NO_DIALOG,
                 L"appleseed",
                 L"[appleseed] %s",
                 utf8_to_wide(line).c_str());

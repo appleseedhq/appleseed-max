@@ -55,7 +55,7 @@ namespace
         {
             GetCOREInterface()->Log()->LogEntry(
                 SYSLOG_ERROR,
-                FALSE,
+                NO_DIALOG,
                 L"appleseed",
                 L"[appleseed] GetModuleFileName() failed.");
             return false;
@@ -66,7 +66,7 @@ namespace
 
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_DEBUG,
-            FALSE,
+            NO_DIALOG,
             L"appleseed",
             L"[appleseed] Loading %s...", path);
 
@@ -76,7 +76,7 @@ namespace
         {
             GetCOREInterface()->Log()->LogEntry(
                 SYSLOG_ERROR,
-                FALSE,
+                NO_DIALOG,
                 L"appleseed",
                 L"[appleseed] Failed to load %s.", path);
         }
@@ -122,7 +122,7 @@ extern "C"
     {
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_DEBUG,
-            FALSE,
+            NO_DIALOG,
             L"appleseed",
             L"[appleseed] Entered LibInitialize().");
 

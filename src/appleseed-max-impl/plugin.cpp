@@ -146,21 +146,21 @@ extern "C"
 
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_INFO,
-            FALSE,
+            NO_DIALOG,
             L"appleseed",
             L"[appleseed] %s",
             sep.c_str());
 
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_INFO,
-            FALSE,
+            NO_DIALOG,
             L"appleseed",
             L"[appleseed] %s",
             title.c_str());
 
         GetCOREInterface()->Log()->LogEntry(
             SYSLOG_INFO,
-            FALSE,
+            NO_DIALOG,
             L"appleseed",
             L"[appleseed] %s",
             sep.c_str());
