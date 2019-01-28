@@ -370,7 +370,7 @@ namespace
 
                 assembly.objects().insert(
                     asf::auto_release_ptr<asr::Object>(
-                        convert_mesh_object(*mesh, Matrix3(TRUE), object_info)));
+                        convert_mesh_object(*mesh, Matrix3(TRUE), object_info)));   // can't use Matrix3::Identity (link error)
 
                 if (need_delete)
                     mesh->DeleteThis();
