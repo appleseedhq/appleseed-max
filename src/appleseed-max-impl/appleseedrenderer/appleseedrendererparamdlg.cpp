@@ -150,11 +150,11 @@ namespace
             std::wstring    m_download_url;
         };
 
-        IRendParams*                    m_rend_params;
-        HWND                            m_rollup;
-        HWND                            m_button_download_hwnd;
-        ICustButton*                    m_button_download;
-        std::auto_ptr<UpdateCheckData>  m_update_data;
+        IRendParams*                        m_rend_params;
+        HWND                                m_rollup;
+        HWND                                m_button_download_hwnd;
+        ICustButton*                        m_button_download;
+        std::unique_ptr<UpdateCheckData>    m_update_data;
 
         enum { WM_UPDATE_CHECK_DATA = WM_USER + 101 };
 
@@ -178,7 +178,7 @@ namespace
 
         static void async_update_check(HWND hwnd)
         {
-            std::auto_ptr<UpdateCheckData> data(new UpdateCheckData());
+            std::unique_ptr<UpdateCheckData> data(new UpdateCheckData());
             data->m_update_available = false;
 
             std::string version_string, publication_date, download_url;
@@ -524,7 +524,7 @@ namespace
 
 struct AppleseedRendererParamDlg::Impl
 {
-    std::auto_ptr<AboutPanel>   m_about_panel;
+    std::unique_ptr<AboutPanel> m_about_panel;
     IParamMap2*                 m_pmap_output;
     IParamMap2*                 m_pmap_image_sampling;
     IParamMap2*                 m_pmap_lighting;

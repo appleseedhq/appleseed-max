@@ -2120,7 +2120,7 @@ namespace
 
         // Create the master renderer.
         asf::SearchPaths search_paths;
-        std::auto_ptr<asr::MasterRenderer> renderer(
+        std::unique_ptr<asr::MasterRenderer> renderer(
             new asr::MasterRenderer(
                 project,
                 project.configurations().get_by_name("final")->get_inherited_parameters(),
