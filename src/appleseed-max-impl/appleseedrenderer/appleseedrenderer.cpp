@@ -55,6 +55,7 @@
 #include "foundation/platform/types.h"
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/kvpair.h"
+#include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
 #include <assert1.h>
@@ -2118,10 +2119,12 @@ namespace
         TileCallback tile_callback(bitmap, &rendered_tile_count);
 
         // Create the master renderer.
+        asf::SearchPaths search_paths;
         std::auto_ptr<asr::MasterRenderer> renderer(
             new asr::MasterRenderer(
                 project,
                 project.configurations().get_by_name("final")->get_inherited_parameters(),
+                search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
                 &renderer_controller,
                 &tile_callback));
 
