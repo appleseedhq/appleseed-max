@@ -1721,6 +1721,10 @@ asf::auto_release_ptr<asr::Project> build_project(
     project->search_paths().set_root_path(get_root_path());
     project->search_paths().push_back_explicit_path("shaders/max");
     project->search_paths().push_back_explicit_path("shaders/appleseed");
+    project->search_paths().push_back_explicit_path(".");
+
+    // Discover and load plugins before building the scene.
+    project->get_plugin_store().load_all_plugins_from_paths(project->search_paths());
 
     // Add default configurations to the project.
     project->add_default_configurations();
