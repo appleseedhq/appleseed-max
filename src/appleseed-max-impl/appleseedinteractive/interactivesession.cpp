@@ -36,6 +36,9 @@
 #include "renderer/api/project.h"
 #include "renderer/api/rendering.h"
 
+// appleseed.foundation headers.
+#include "foundation/utility/searchpaths.h"
+
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -61,10 +64,12 @@ void InteractiveSession::render_thread()
     InteractiveTileCallback m_tile_callback(m_bitmap, m_iirender_mgr, m_render_ctrl.get());
 
     // Create the master renderer.
+    asf::SearchPaths search_paths;
     std::auto_ptr<asr::MasterRenderer> renderer(
         new asr::MasterRenderer(
             *m_project,
             m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),
+            search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
             m_render_ctrl.get(),
             &m_tile_callback));
 
