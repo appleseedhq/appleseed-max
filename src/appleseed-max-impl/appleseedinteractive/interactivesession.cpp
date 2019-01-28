@@ -65,7 +65,7 @@ void InteractiveSession::render_thread()
 
     // Create the master renderer.
     asf::SearchPaths search_paths;
-    std::auto_ptr<asr::MasterRenderer> renderer(
+    std::unique_ptr<asr::MasterRenderer> renderer(
         new asr::MasterRenderer(
             *m_project,
             m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),

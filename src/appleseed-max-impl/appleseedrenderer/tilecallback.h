@@ -69,7 +69,7 @@ class TileCallback
   private:
     Bitmap*                             m_bitmap;
     volatile foundation::uint32*        m_rendered_tile_count;
-    std::auto_ptr<foundation::Tile>     m_float_tile_storage;
+    std::unique_ptr<foundation::Tile>   m_float_tile_storage;
 
     void blit_tile(
         const renderer::Frame&          frame,
