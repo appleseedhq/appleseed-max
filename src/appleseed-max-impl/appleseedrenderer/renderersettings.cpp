@@ -173,7 +173,8 @@ const char* get_shader_override_type(const int shader_override_type)
       case 19: return "tangent";
       case 20: return "uv";
       case 21: return "world_space_position";
-      case 22: return "world_space_wireframe";
+      case 22: return "world_space_velocity";
+      case 23: return "world_space_wireframe";
       default: 
         assert(!"Invalid shader override type."); 
         return "coverage";
