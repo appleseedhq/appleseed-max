@@ -807,23 +807,16 @@ namespace
             object_assembly_instance->transform_sequence()
                 .set_transform(0.0, transform);
 
-            if (node->GetMotBlurOnOff(time) && node->MotBlur() == 1)
+            const int ObjectMotionBlur = 1;
+            if (node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur)
             {
-                bool is_animated = false;
-                Control* tm_controller;
-                Control* controller;
-                tm_controller = node->GetTMController();
-                auto class_id = tm_controller->ClassID();
+                Control* tm_controller = node->GetTMController();
 
-                controller = tm_controller->GetPositionController();
-                is_animated = controller->IsAnimated() > 0;
+                const bool is_animated =
+                    tm_controller->GetPositionController()->IsAnimated() > 0 ||
+                    tm_controller->GetRotationController()->IsAnimated() > 0 ||
+                    tm_controller->GetScaleController()->IsAnimated() > 0;
 
-                controller = tm_controller->GetRotationController();
-                is_animated = is_animated || controller->IsAnimated() > 0;
-
-                controller = tm_controller->GetScaleController();
-                is_animated = is_animated || controller->IsAnimated() > 0;
-                
                 if (is_animated)
                 {
                     float shutter_duration = 0.5f;
@@ -834,7 +827,7 @@ namespace
                             shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
                     }
 
-                    int time_offset = asf::round<int, float>(shutter_duration * GetTicksPerFrame());
+                    const int time_offset = asf::round<int>(shutter_duration * GetTicksPerFrame());
                     asf::Transformd transform =
                         asf::Transformd::from_local_to_parent(
                             to_matrix4d(node->GetObjTMAfterWSM(time + time_offset)));
@@ -1726,17 +1719,15 @@ asf::auto_release_ptr<asr::Camera> build_camera(
 
             if (phys_camera->GetMotionBlurEnabled(time, FOREVER))
             {
-                float shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
-                int time_offset = asf::round<int, float>(shutter_duration * GetTicksPerFrame());
-                asf::Transformd transform =
+                const float shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
+                const int time_offset = asf::round<int, float>(shutter_duration * GetTicksPerFrame());
+                const asf::Transformd transform =
                     asf::Transformd::from_local_to_parent(
                         asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
                         to_matrix4d(view_node->GetObjTMAfterWSM(time + time_offset)));
 
-                camera->transform_sequence()
-                    .set_transform(1.0, transform);
+                camera->transform_sequence().set_transform(1.0, transform);
             }
-
         }
         else
         {
