@@ -1719,14 +1719,20 @@ asf::auto_release_ptr<asr::Camera> build_camera(
 
             if (phys_camera->GetMotionBlurEnabled(time, FOREVER))
             {
-                const float shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
-                const int time_offset = asf::round<int, float>(shutter_duration * GetTicksPerFrame());
                 const asf::Transformd transform =
                     asf::Transformd::from_local_to_parent(
                         asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
-                        to_matrix4d(view_node->GetObjTMAfterWSM(time + time_offset)));
+                        to_matrix4d(view_node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
 
                 camera->transform_sequence().set_transform(1.0, transform);
+
+                // Set motion blur parameters.
+                const float opening_time = phys_camera->GetShutterOffsetInFrames(time, FOREVER);
+                const float closing_time = opening_time + phys_camera->GetShutterDurationInFrames(time, FOREVER);
+                params.insert("shutter_open_begin_time", opening_time);
+                params.insert("shutter_open_end_time", opening_time);
+                params.insert("shutter_close_begin_time", closing_time);
+                params.insert("shutter_close_end_time", closing_time);
             }
         }
         else
