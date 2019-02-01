@@ -84,28 +84,3 @@ void InteractiveTileCallback::update_caller(UINT_PTR param_ptr)
 
     tile_callback->m_ui_promise.set_value();
 }
-
-
-//
-// InteractiveTileCallbackFactory class implementation.
-//
-
-InteractiveTileCallbackFactory::InteractiveTileCallbackFactory(
-    Bitmap*                     bitmap,
-    IIRenderMgr*                iimanager,
-    asr::IRendererController*   renderer_controller)
-  : m_bitmap(bitmap)
-  , m_iimanager(iimanager)
-  , m_renderer_controller(renderer_controller)
-{
-}
-
-void InteractiveTileCallbackFactory::release()
-{
-    delete this;
-}
-
-asr::ITileCallback* InteractiveTileCallbackFactory::create()
-{
-    return new InteractiveTileCallback(m_bitmap, m_iimanager, m_renderer_controller);
-}

@@ -167,6 +167,7 @@ void TileCallback::on_tile_begin(
         &BracketColor);
 
     // Partially refresh the display window.
+    // Note that Bitmap::RefreshWindow() must be called from the UI thread.
     RECT rect = make_rect(x, y, tile.get_width(), tile.get_height());
     m_bitmap->RefreshWindow(&rect);
 }
@@ -191,6 +192,7 @@ void TileCallback::on_tile_end(
     blit_tile(*frame, tile_x, tile_y);
 
     // Partially refresh the display window.
+    // Note that Bitmap::RefreshWindow() must be called from the UI thread.
     RECT rect = make_rect(x, y, tile.get_width(), tile.get_height());
     m_bitmap->RefreshWindow(&rect);
 
@@ -215,6 +217,7 @@ void TileCallback::on_progressive_frame_update(
     }
 
     // Refresh the entire display window.
+    // Note that Bitmap::RefreshWindow() must be called from the UI thread.
     m_bitmap->RefreshWindow();
 }
 
@@ -268,27 +271,4 @@ void TileCallback::blit_tile(
                 reinterpret_cast<BMM_Color_fl*>(&color));
         }
     }
-}
-
-
-//
-// TileCallbackFactory class implementation.
-//
-
-TileCallbackFactory::TileCallbackFactory(
-    Bitmap*                 bitmap,
-    volatile asf::uint32*   rendered_tile_count)
-  : m_bitmap(bitmap)
-  , m_rendered_tile_count(rendered_tile_count)
-{
-}
-
-void TileCallbackFactory::release()
-{
-    delete this;
-}
-
-asr::ITileCallback* TileCallbackFactory::create()
-{
-    return new TileCallback(m_bitmap, m_rendered_tile_count);
 }

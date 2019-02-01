@@ -41,7 +41,6 @@
 
 // Forward declarations.
 namespace renderer  { class Frame; }
-namespace renderer  { class ITileCallback; }
 class Bitmap;
 
 class TileCallback
@@ -76,21 +75,4 @@ class TileCallback
         const renderer::Frame&          frame,
         const size_t                    tile_x,
         const size_t                    tile_y);
-};
-
-class TileCallbackFactory
-  : public renderer::ITileCallbackFactory
-{
-  public:
-    TileCallbackFactory(
-        Bitmap*                         bitmap,
-        volatile foundation::uint32*    rendered_tile_count);
-
-    void release() override;
-
-    renderer::ITileCallback* create() override;
-
-  private:
-    Bitmap*                             m_bitmap;
-    volatile foundation::uint32*        m_rendered_tile_count;
 };

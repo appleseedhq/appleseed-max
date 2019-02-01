@@ -60,8 +60,8 @@ void InteractiveSession::render_thread()
     // Create the renderer controller.
     m_renderer_controller.reset(new InteractiveRendererController());
 
-    // Create the tile callback factory.
-    InteractiveTileCallbackFactory m_tile_callback_factory(
+    // Create the tile callback.
+    InteractiveTileCallback m_tile_callback(
         m_bitmap,
         m_iirender_mgr,
         m_renderer_controller.get());
@@ -74,7 +74,7 @@ void InteractiveSession::render_thread()
             m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),
             search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
             m_renderer_controller.get(),
-            &m_tile_callback_factory));
+            &m_tile_callback));
 
     // Render the frame.
     renderer->render();
