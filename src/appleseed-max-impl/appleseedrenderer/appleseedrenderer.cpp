@@ -2115,8 +2115,8 @@ namespace
             &rendered_tile_count,
             total_tile_count);
 
-        // Create the tile callback factory.
-        TileCallbackFactory tile_callback_factory(bitmap, &rendered_tile_count);
+        // Create the tile callback.
+        TileCallback tile_callback(bitmap, &rendered_tile_count);
 
         // Create the master renderer.
         asf::SearchPaths search_paths;
@@ -2126,7 +2126,7 @@ namespace
                 project.configurations().get_by_name("final")->get_inherited_parameters(),
                 search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
                 &renderer_controller,
-                &tile_callback_factory));
+                &tile_callback));
 
         // Render the frame.
         renderer->render();

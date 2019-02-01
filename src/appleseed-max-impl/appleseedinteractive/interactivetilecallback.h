@@ -63,22 +63,3 @@ class InteractiveTileCallback
 
     static void update_caller(UINT_PTR param_ptr);
 };
-
-class InteractiveTileCallbackFactory
-  : public renderer::ITileCallbackFactory
-{
-  public:
-    InteractiveTileCallbackFactory(
-        Bitmap*                         bitmap,
-        IIRenderMgr*                    iimanager,
-        renderer::IRendererController*  renderer_controller);
-
-    void release() override;
-
-    renderer::ITileCallback* create() override;
-
-  private:
-    Bitmap*                             m_bitmap;
-    IIRenderMgr*                        m_iimanager;
-    renderer::IRendererController*      m_renderer_controller;
-};
