@@ -819,21 +819,12 @@ namespace
 
                 if (is_animated)
                 {
-                    float shutter_duration = 0.5f;
-                    if (view_node != nullptr)
-                    {
-                        MaxSDK::IPhysicalCamera* phys_camera = dynamic_cast<MaxSDK::IPhysicalCamera*>(view_node->EvalWorldState(time).obj);
-                        if (phys_camera != nullptr)
-                            shutter_duration = phys_camera->GetShutterDurationInFrames(time, FOREVER);
-                    }
-
-                    const int time_offset = asf::round<int>(shutter_duration * GetTicksPerFrame());
-                    asf::Transformd transform =
+                    asf::Transformd animated_transform =
                         asf::Transformd::from_local_to_parent(
-                            to_matrix4d(node->GetObjTMAfterWSM(time + time_offset)));
+                            to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
 
                     object_assembly_instance->transform_sequence()
-                        .set_transform(1.0, transform);
+                        .set_transform(1.0, animated_transform);
                 }
             }
 
