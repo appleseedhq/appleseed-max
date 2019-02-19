@@ -1296,7 +1296,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdEnablePerFrameNoiseSeedVariation, L"enable_noise_seed", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SINGLECHEKBOX, IDC_CHECK_ENABLE_NOISE_SEED,
-        p_default, FALSE,
+        p_default, TRUE,
         p_accessor, &g_pblock_accessor,
     p_end,
 
