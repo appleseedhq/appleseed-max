@@ -53,7 +53,7 @@ namespace
             m_tile_size = 64;
             m_sampler_type = 0;
             m_noise_seed = 0;
-            m_enable_noise_seed = false;
+            m_enable_noise_seed = true;
 
             m_uniform_pixel_samples = 16;
 
