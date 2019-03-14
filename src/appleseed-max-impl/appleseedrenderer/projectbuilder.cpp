@@ -819,7 +819,7 @@ namespace
 
                 if (is_animated)
                 {
-                    asf::Transformd animated_transform =
+                   asf::Transformd animated_transform =
                         asf::Transformd::from_local_to_parent(
                             to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
 
@@ -1718,12 +1718,13 @@ asf::auto_release_ptr<asr::Camera> build_camera(
                 camera->transform_sequence().set_transform(1.0, transform);
 
                 // Set motion blur parameters.
+                asr::ParamArray& camera_params = camera->get_parameters();
                 const float opening_time = phys_camera->GetShutterOffsetInFrames(time, FOREVER);
                 const float closing_time = opening_time + phys_camera->GetShutterDurationInFrames(time, FOREVER);
-                params.insert("shutter_open_begin_time", opening_time);
-                params.insert("shutter_open_end_time", opening_time);
-                params.insert("shutter_close_begin_time", closing_time);
-                params.insert("shutter_close_end_time", closing_time);
+                camera_params.insert("shutter_open_begin_time", opening_time);
+                camera_params.insert("shutter_open_end_time", opening_time);
+                camera_params.insert("shutter_close_begin_time", closing_time);
+                camera_params.insert("shutter_close_end_time", closing_time);
             }
         }
         else
