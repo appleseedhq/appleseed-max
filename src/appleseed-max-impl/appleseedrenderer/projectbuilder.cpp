@@ -990,73 +990,77 @@ namespace
         const float decay_start = light_object->GetDecayRadius(time);
         const int decay_exponent = light_object->GetDecayType();
 
-        // Create a color entity.
-        const std::string color_name =
-            insert_color(assembly, light_name + "_color", color);
+        // Skip exporting lights with zero intensity
+        if (!asf::is_zero(color) && intensity > 0.0f)
+        {
+            // Create a color entity.
+            const std::string color_name =
+                insert_color(assembly, light_name + "_color", color);
 
-        // Get light from envmap.
-        INode* sun_node(nullptr);
-        BOOL sun_node_on(FALSE);
-        float sun_size_mult;
-        if (rend_params.envMap != nullptr &&
-            rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
-        {
-            AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_node_on", time, sun_node_on, FOREVER);
-            env_map->GetParamBlock(0)->GetValueByName(L"sun_size_multiplier", time, sun_size_mult, FOREVER);
-        }
+            // Get light from envmap.
+            INode* sun_node(nullptr);
+            BOOL sun_node_on(FALSE);
+            float sun_size_mult;
+            if (rend_params.envMap != nullptr &&
+                rend_params.envMap->IsSubClassOf(AppleseedEnvMap::get_class_id()))
+            {
+                AppleseedEnvMap* env_map = static_cast<AppleseedEnvMap*>(rend_params.envMap);
+                env_map->GetParamBlock(0)->GetValueByName(L"sun_node", time, sun_node, FOREVER);
+                env_map->GetParamBlock(0)->GetValueByName(L"sun_node_on", time, sun_node_on, FOREVER);
+                env_map->GetParamBlock(0)->GetValueByName(L"sun_size_multiplier", time, sun_size_mult, FOREVER);
+            }
 
-        if (sun_node && sun_node_on && light_node == sun_node)
-        {
-            add_sun_light(
-                assembly,
-                light_name,
-                transform,
-                color_name,
-                intensity,
-                sun_size_mult,
-                "environment_edf");
-        }        
-        else if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
-        {
-            add_omni_light(
-                assembly,
-                light_name,
-                transform,
-                color_name,
-                intensity,
-                decay_start,
-                decay_exponent);
-        }
-        else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0) ||
-                 light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
-        {
-            add_spot_light(
-                assembly,
-                light_name,
-                transform,
-                color_name,
-                intensity,
-                light_object->GetHotspot(time),
-                light_object->GetFallsize(time),
-                decay_start,
-                decay_exponent);
-        }
-        else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
-                 light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
-        {
-            add_directional_light(
-                assembly,
-                light_name,
-                transform,
-                color_name,
-                intensity);
-        }
-        else
-        {
-            // Unsupported light type.
-            // todo: emit warning message.
+            if (sun_node && sun_node_on && light_node == sun_node)
+            {
+                add_sun_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    intensity,
+                    sun_size_mult,
+                    "environment_edf");
+            }
+            else if (light_object->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0))
+            {
+                add_omni_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    intensity,
+                    decay_start,
+                    decay_exponent);
+            }
+            else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0) ||
+                light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
+            {
+                add_spot_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    intensity,
+                    light_object->GetHotspot(time),
+                    light_object->GetFallsize(time),
+                    decay_start,
+                    decay_exponent);
+            }
+            else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
+                light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
+            {
+                add_directional_light(
+                    assembly,
+                    light_name,
+                    transform,
+                    color_name,
+                    intensity);
+            }
+            else
+            {
+                // Unsupported light type.
+                // todo: emit warning message.
+            }
         }
     }
 
