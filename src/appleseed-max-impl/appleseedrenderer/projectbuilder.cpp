@@ -991,7 +991,7 @@ namespace
         const int decay_exponent = light_object->GetDecayType();
 
         // Skip exporting lights with zero intensity
-        if ((color[0] + color[1] + color[2]) > 0.0f && intensity > 0.0f)
+        if (!asf::is_zero(color) && intensity > 0.0f)
         {
             // Create a color entity.
             const std::string color_name =
