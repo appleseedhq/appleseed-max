@@ -741,6 +741,7 @@ namespace
     void add_object(
         asr::Assembly&          assembly,
         INode*                  node,
+        INode*                  view_node,
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
@@ -806,6 +807,27 @@ namespace
             object_assembly_instance->transform_sequence()
                 .set_transform(0.0, transform);
 
+            const int ObjectMotionBlur = 1;
+            if (node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur)
+            {
+                Control* tm_controller = node->GetTMController();
+
+                const bool is_animated =
+                    tm_controller->GetPositionController()->IsAnimated() > 0 ||
+                    tm_controller->GetRotationController()->IsAnimated() > 0 ||
+                    tm_controller->GetScaleController()->IsAnimated() > 0;
+
+                if (is_animated)
+                {
+                   asf::Transformd animated_transform =
+                        asf::Transformd::from_local_to_parent(
+                            to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
+
+                    object_assembly_instance->transform_sequence()
+                        .set_transform(1.0, animated_transform);
+                }
+            }
+
             assembly.assembly_instances().insert(object_assembly_instance);
         }
         else
@@ -852,6 +874,7 @@ namespace
 
     void add_objects(
         asr::Assembly&          assembly,
+        INode*                  view_node,
         const MaxSceneEntities& entities,
         const RenderType        type,
         const RendererSettings& settings,
@@ -867,6 +890,7 @@ namespace
             add_object(
                 assembly,
                 object,
+                view_node,
                 type,
                 settings,
                 time,
@@ -1169,6 +1193,7 @@ namespace
     void populate_assembly(
         asr::Scene&                         scene,
         asr::Assembly&                      assembly,
+        INode*                              view_node,
         const RendParams&                   rend_params,
         const MaxSceneEntities&             entities,
         const std::vector<DefaultLight>&    default_lights,
@@ -1183,6 +1208,7 @@ namespace
         AssemblyMap assembly_map;
         add_objects(
             assembly,
+            view_node,
             entities,
             type,
             settings,
@@ -1685,6 +1711,25 @@ asf::auto_release_ptr<asr::Camera> build_camera(
                 // Create camera - DOF disabled.
                 camera = asr::PinholeCameraFactory().create("camera", params);
             }
+
+            if (phys_camera->GetMotionBlurEnabled(time, FOREVER))
+            {
+                const asf::Transformd transform =
+                    asf::Transformd::from_local_to_parent(
+                        asf::Matrix4d::make_scaling(asf::Vector3d(settings.m_scale_multiplier)) *
+                        to_matrix4d(view_node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
+
+                camera->transform_sequence().set_transform(1.0, transform);
+
+                // Set motion blur parameters.
+                asr::ParamArray& camera_params = camera->get_parameters();
+                const float opening_time = phys_camera->GetShutterOffsetInFrames(time, FOREVER);
+                const float closing_time = opening_time + phys_camera->GetShutterDurationInFrames(time, FOREVER);
+                camera_params.insert("shutter_open_begin_time", opening_time);
+                camera_params.insert("shutter_open_end_time", opening_time);
+                camera_params.insert("shutter_close_begin_time", closing_time);
+                camera_params.insert("shutter_close_end_time", closing_time);
+            }
         }
         else
         {
@@ -1754,6 +1799,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     populate_assembly(
         scene.ref(),
         assembly.ref(),
+        view_node,
         rend_params,
         entities,
         default_lights,
