@@ -582,6 +582,15 @@ namespace
         return mtl;
     }
 
+    bool is_node_animated(INode* node)
+    {
+        Control* tm_controller = node->GetTMController();
+        return 
+            tm_controller->GetPositionController()->IsAnimated() > 0 ||
+            tm_controller->GetRotationController()->IsAnimated() > 0 ||
+            tm_controller->GetScaleController()->IsAnimated() > 0;
+    }
+
     enum class RenderType
     {
         Default,
@@ -810,16 +819,17 @@ namespace
             const int ObjectMotionBlur = 1;
             if (node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur)
             {
-                Control* tm_controller = node->GetTMController();
-
-                const bool is_animated =
-                    tm_controller->GetPositionController()->IsAnimated() > 0 ||
-                    tm_controller->GetRotationController()->IsAnimated() > 0 ||
-                    tm_controller->GetScaleController()->IsAnimated() > 0;
+                bool is_animated = is_node_animated(node);
+                INode* parent_node = node->GetParentNode();
+                while (!is_animated && !parent_node->IsRootNode())
+                {
+                    is_animated = is_node_animated(parent_node);
+                    parent_node = parent_node->GetParentNode();
+                }
 
                 if (is_animated)
                 {
-                   asf::Transformd animated_transform =
+                    asf::Transformd animated_transform =
                         asf::Transformd::from_local_to_parent(
                             to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
 
