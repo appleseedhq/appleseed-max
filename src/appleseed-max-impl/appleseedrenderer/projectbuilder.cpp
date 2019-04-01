@@ -1368,19 +1368,33 @@ namespace
                 }
             }
 
+            asf::Vector3d UVFlip_vec(-1,1,1);
             UVGen* uvgen = rend_params.envMap->GetTheUVGen();
             if (uvgen && uvgen->IsStdUVGen())
             {
                 StdUVGen* std_uvgen = static_cast<StdUVGen*>(uvgen);
-                env_edf_params.insert("horizontal_shift", std_uvgen->GetUOffs(time) * 180.0f + 90.0f);
-                env_edf_params.insert("vertical_shift", std_uvgen->GetVOffs(time) * 180.0f);
+
+                float h_shift = std_uvgen->GetUOffs(time) * 360.0f + 90.0f + asf::rad_to_deg(std_uvgen->GetUAng(time));
+                float v_shift = std_uvgen->GetVOffs(time) * -180.0f - asf::rad_to_deg(std_uvgen->GetVAng(time));
+
+                env_edf_params.insert("horizontal_shift", h_shift);
+                env_edf_params.insert("vertical_shift", v_shift);
+
+                UVFlip_vec = asf::Vector3d(-1 * std_uvgen->GetUScl(time), std_uvgen->GetVScl(time), 1);
             }
 
-            scene.environment_edfs().insert(
-                asf::auto_release_ptr<asr::EnvironmentEDF>(
-                    asr::LatLongMapEnvironmentEDFFactory().create(
-                        "environment_edf",
-                        env_edf_params)));
+            // Flip environment horizontally to be consistent with Max environment background viewport preview.
+            const asf::Transformd flip_lr =
+                asf::Transformd::from_local_to_parent(
+                    asf::Matrix4d::make_scaling(UVFlip_vec));
+
+            asf::auto_release_ptr<asr::EnvironmentEDF> env_edf(
+                asr::LatLongMapEnvironmentEDFFactory().create(
+                    "environment_edf",
+                    env_edf_params));
+
+            env_edf->transform_sequence().set_transform(0.0f, flip_lr);
+            scene.environment_edfs().insert(env_edf);
         }
 
         // Create environment shader.
