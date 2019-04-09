@@ -392,6 +392,7 @@ namespace
 
     MaterialInfo get_or_create_material(
         asr::Assembly&          assembly,
+        asr::Assembly*          root_assembly,
         const std::string&      instance_name,
         Mtl*                    mtl,
         MaterialMap&            material_map,
@@ -399,6 +400,7 @@ namespace
         const TimeValue         time)
     {
         MaterialInfo material_info;
+        asr::Assembly* parent_assembly = root_assembly != nullptr ? root_assembly : &assembly;
 
         auto appleseed_mtl =
             static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
@@ -410,10 +412,10 @@ namespace
             {
                 // The appleseed material does not exist yet, let the material plugin create it.
                 material_info.m_name =
-                    make_unique_name(assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
-                assembly.materials().insert(
+                    make_unique_name(parent_assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
+                parent_assembly->materials().insert(
                     appleseed_mtl->create_material(
-                        assembly,
+                        *parent_assembly,
                         material_info.m_name.c_str(),
                         use_max_procedural_maps,
                         time));
@@ -429,7 +431,7 @@ namespace
         else
         {
             // It isn't an appleseed material: return an empty material that will appear black.
-            material_info.m_name = insert_empty_material(assembly, instance_name + "_mat");
+            material_info.m_name = insert_empty_material(*parent_assembly, instance_name + "_mat");
             material_info.m_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
         }
 
@@ -599,6 +601,7 @@ namespace
 
     void create_object_instance(
         asr::Assembly&          assembly,
+        asr::Assembly*          root_assembly,
         INode*                  instance_node,
         const asf::Transformd&  transform,
         const ObjectInfo&       object_info,
@@ -641,6 +644,7 @@ namespace
                         const auto material_info =
                             get_or_create_material(
                                 assembly,
+                                root_assembly,
                                 instance_name,
                                 submtl,
                                 material_map,
@@ -672,6 +676,7 @@ namespace
                 const auto material_info =
                     get_or_create_material(
                         assembly,
+                        root_assembly,
                         instance_name,
                         mtl,
                         material_map,
@@ -785,6 +790,7 @@ namespace
                 {
                     create_object_instance(
                         object_assembly.ref(),
+                        &assembly,
                         node,
                         asf::Transformd::identity(),
                         object_info,
@@ -854,6 +860,7 @@ namespace
                 {
                     create_object_instance(
                         assembly,
+                        nullptr,
                         node,
                         transform,
                         object_info,
@@ -870,6 +877,7 @@ namespace
                 {
                     create_object_instance(
                         assembly,
+                        nullptr,
                         node,
                         transform,
                         object_info,
