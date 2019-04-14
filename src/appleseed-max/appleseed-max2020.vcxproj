@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -25,26 +25,26 @@
     <ProjectGuid>{F43B3C0E-2A72-4B30-9016-DEC6B022D135}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>appleseedmax</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -65,21 +65,21 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>appleseed-max2016</TargetName>
+    <TargetName>appleseed-max2020</TargetName>
     <TargetExt>.dlr</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>appleseed-max2016</TargetName>
+    <TargetName>appleseed-max2020</TargetName>
     <TargetExt>.dlr</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>appleseed-max2016</TargetName>
+    <TargetName>appleseed-max2020</TargetName>
     <TargetExt>.dlr</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -88,29 +88,29 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;maxutil.lib;Paramblk2.lib;ShLwApi.Lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2020\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,7 +121,7 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -136,20 +136,20 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;maxutil.lib;Paramblk2.lib;ShLwApi.Lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2020\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
@@ -160,7 +160,7 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -174,20 +174,20 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;bmm.lib;core.lib;maxutil.lib;Paramblk2.lib;ShLwApi.Lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2016\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2016\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2020\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2016\Current\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2016\Current\"</Command>
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

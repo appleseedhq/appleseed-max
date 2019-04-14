@@ -6,7 +6,7 @@ REM Visit https://appleseedhq.net/ for additional information and resources.
 REM
 REM This software is released under the MIT license.
 REM
-REM Copyright (c) 2016-2018 Francois Beaune, The appleseedhq Organization
+REM Copyright (c) 2016-2019 Francois Beaune, The appleseedhq Organization
 REM
 REM Permission is hereby granted, free of charge, to any person obtaining a copy
 REM of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,10 @@ set config=%1
 
 pushd %~dp0
 
-call impl-make-single-package.bat %config% 2016
 call impl-make-single-package.bat %config% 2017
 call impl-make-single-package.bat %config% 2018
 call impl-make-single-package.bat %config% 2019
+call impl-make-single-package.bat %config% 2020
 
 popd
 
