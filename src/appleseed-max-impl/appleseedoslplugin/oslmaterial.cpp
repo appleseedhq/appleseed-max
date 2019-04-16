@@ -63,6 +63,32 @@ namespace
     const wchar_t* GenericOSLTextureFriendlyClassName = L"appleseed OSL texture";
 }
 
+//post load callback to set up the controls with the exposetransform pointer
+class ExposeTransformPLCB : public PostLoadCallback
+{
+public:
+    OSLMaterial *eT;
+    ExposeTransformPLCB(OSLMaterial* e)
+    {
+        eT = e;
+    }
+    void proc(ILoad *iload) override
+    {
+        IParamBlock2PostLoadInfo* postLoadInfo = (IParamBlock2PostLoadInfo*)
+            eT->m_pblock->GetInterface(IPARAMBLOCK2POSTLOADINFO_ID);
+
+        if (postLoadInfo)
+        {
+            DWORD version = postLoadInfo->GetVersion();
+        }
+
+        //set up all of the pblock params..
+        int numParams = eT->m_pblock->NumParams();
+
+        delete this;
+    }
+};
+
 
 //
 // OSLMaterial class implementation.
@@ -182,9 +208,34 @@ RefTargetHandle OSLMaterial::GetReference(int i)
 void OSLMaterial::SetReference(int i, RefTargetHandle rt_arg)
 {
     if (i == 0)
+    {
         m_pblock = static_cast<IParamBlock2*>(rt_arg);
+        if (m_pblock != nullptr)
+        {
+            std::vector<std::pair<std::wstring, int>> p_block_desc_info;
+            auto block_id = m_pblock->ID();
+            for (int j = 0, e = m_pblock->NumParams(); j < e; ++j)
+            {
+                p_block_desc_info.push_back(
+                    std::make_pair(std::wstring(m_pblock->GetLocalName(m_pblock->IndextoID(j)).data()), m_pblock->IndextoID(j))
+                );
+            }
+        }
+    }
     else if (i == 1)
         m_bump_pblock = static_cast<IParamBlock2*>(rt_arg);
+
+    if (m_bump_pblock != nullptr)
+    {
+        std::vector<std::pair<std::wstring, int>> p_block_desc_info;
+        auto block_id = m_bump_pblock->ID();
+        for (int j = 0, e = m_bump_pblock->NumParams(); j < e; ++j)
+        {
+            p_block_desc_info.push_back(
+                std::make_pair(std::wstring(m_bump_pblock->GetLocalName(m_bump_pblock->IndextoID(j)).data()), m_bump_pblock->IndextoID(j))
+            );
+        }
+    }
 }
 
 RefResult OSLMaterial::NotifyRefChanged(
@@ -337,6 +388,9 @@ IOResult OSLMaterial::Save(ISave* isave)
 IOResult OSLMaterial::Load(ILoad* iload)
 {
     IOResult result = IO_OK;
+
+    ExposeTransformPLCB* plcb = new ExposeTransformPLCB(this);
+    iload->RegisterPostLoadCallback(plcb);
 
     while (true)
     {

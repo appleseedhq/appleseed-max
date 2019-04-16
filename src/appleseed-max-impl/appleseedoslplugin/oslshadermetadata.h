@@ -164,6 +164,8 @@ class OSLParamInfo
     std::string m_maya_attribute_name;
     bool m_connectable;
     bool m_max_hidden_attr;
+    int m_max_param_id;
+    bool m_max_obsolete;
     MaxParam m_max_param;
 };
 

@@ -56,6 +56,7 @@
 
 // Standard headers.
 #include <memory>
+#include <map>
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
@@ -420,25 +421,27 @@ void OSLShaderRegistry::create_class_descriptors()
             L"oslTextureMapParams",                     // internal parameter block's name
             0,                                          // ID of the localized name string
             class_descr,                                // class descriptor
-            P_AUTO_CONSTRUCT,                           // block flags
-
+            P_AUTO_CONSTRUCT | P_VERSION,               // block flags
+                                                        // --- P_VERSION arguments ---
+            3,
                                                         // --- P_AUTO_CONSTRUCT arguments ---
             0,                                          // parameter block's reference number
             p_end
         ));
+        auto name = shader.m_shader_name;
 
         int param_id = 0;
         int ctrl_id = 100;
         int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
+            param_id = param_info.m_max_param_id;
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
             param_info.m_max_param.m_max_param_id = param_id;
 
-            shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
-
             if (param_info.m_max_param.m_has_constant)
             {
+                shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
                 add_const_parameter(
                     param_block_descr,
                     param_info,
@@ -454,6 +457,7 @@ void OSLShaderRegistry::create_class_descriptors()
 
             if (param_info.m_max_param.m_connectable)
             {
+                shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str + " Map")));
                 add_input_parameter(
                     param_block_descr,
                     param_info,
@@ -471,14 +475,18 @@ void OSLShaderRegistry::create_class_descriptors()
 
         }
 
-        shader.m_string_map.insert(std::make_pair(string_id++, L"Output"));
+        shader.m_string_map.insert(std::make_pair(string_id, L"Output"));
+
+        int output_param_id = param_id;
+        if (shader.m_output_params.size() > 0)
+            output_param_id = shader.m_output_params[0].m_max_param_id;
 
         MaxParam max_output_param;
         max_output_param.m_max_label_str = "Output";
         max_output_param.m_osl_param_name = "output";
         max_output_param.m_param_type = MaxParam::StringPopup;
         max_output_param.m_max_ctrl_id = ctrl_id++;
-        max_output_param.m_max_param_id = param_id;
+        max_output_param.m_max_param_id = output_param_id;
         max_output_param.m_connectable = false;
         max_output_param.m_has_constant = true;
 
@@ -488,9 +496,11 @@ void OSLShaderRegistry::create_class_descriptors()
             param_block_descr,
             shader.m_output_params,
             shader.m_string_map,
-            param_id,
+            output_param_id,
             ctrl_id,
             string_id);
+
+        string_id++;
 
         auto tn_vec = shader.find_param("Tn");
         auto bump_normal = shader.find_maya_attribute("normalCamera");
@@ -498,6 +508,7 @@ void OSLShaderRegistry::create_class_descriptors()
         if (!shader.m_is_texture && 
             (tn_vec != nullptr || bump_normal != nullptr))
         {
+            int bump_param_id = 0;
             ParamBlockDesc2* bump_param_block_descr(new ParamBlockDesc2(
                 // --- Required arguments ---
                 1,                                          // parameter block's ID
@@ -514,12 +525,19 @@ void OSLShaderRegistry::create_class_descriptors()
             add_bump_parameters(
                 bump_param_block_descr,
                 shader.m_texture_id_map,
-                param_id);
+                bump_param_id);
 
             m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(bump_param_block_descr));
         }
 
         m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(param_block_descr));
+        std::map<std::wstring, int> p_block_desc_info;
+        for (int i = 0, e = param_block_descr->Count(); i < e; ++i)
+        {
+            p_block_desc_info.insert(
+                std::make_pair(std::wstring(param_block_descr->GetParamDefByIndex(i)->int_name), param_block_descr->IndextoID(i))
+            );
+        }
         m_class_descriptors.push_back(MaxSDK::AutoPtr<ClassDesc2>(class_descr));
     }
 }

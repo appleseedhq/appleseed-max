@@ -129,6 +129,8 @@ class OSLMaterial
         const bool          use_max_procedural_maps,
         const TimeValue     time) override;
 
+    IParamBlock2*           m_pblock;
+
   protected:
     void SetReference(int i, RefTargetHandle rtarg) override;
 
@@ -138,7 +140,6 @@ class OSLMaterial
     bool                    m_has_bump_params;
     bool                    m_has_normal_params;
     Interval                m_params_validity;
-    IParamBlock2*           m_pblock;
     IParamBlock2*           m_bump_pblock;
     const OSLShaderInfo*    m_shader_info;
     IdNameVector            m_submaterial_map;
