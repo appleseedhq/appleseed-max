@@ -283,7 +283,7 @@ asf::auto_release_ptr<asf::Image> render_bitmap_to_image(
                     BMM_Color_fl c;
                     bitmap->GetLinearPixels(ix, iy, 1, &c);
 
-                    tile.set_pixel(x, y, &c.r);
+                    tile.set_pixel(x, y, &c.r, 4);
                 }
             }
         }

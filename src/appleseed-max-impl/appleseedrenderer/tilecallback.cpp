@@ -262,7 +262,7 @@ void TileCallback::blit_tile(
                 "BMM_Color_fl is expected to be the same size of foundation::Color4f");
 
             asf::Color4f color;
-            fp_tile.get_pixel(x, y, &color.r);
+            fp_tile.get_pixel(x, y, color);
 
             m_bitmap->PutPixels(
                 static_cast<int>(dest_x + x),
