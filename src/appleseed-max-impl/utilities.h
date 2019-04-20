@@ -206,6 +206,11 @@ const T load_ini_setting(const wchar_t* category, const wchar_t* key_name, const
 template <typename T>
 const T load_system_setting(const wchar_t* key_name, const T& default_value);
 
+//
+// Hash function
+//
+
+foundation::int16 pearson_hash16(const std::string& param_name);
 
 //
 // Implementation.

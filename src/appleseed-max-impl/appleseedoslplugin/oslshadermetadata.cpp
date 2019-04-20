@@ -172,7 +172,8 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
         m_has_soft_max = metadata.get_value("softmax", m_soft_max_value);
         metadata.get_value("divider", m_divider);
 
-        metadata.get_value("as_max_param_id", m_max_param_id);
+        m_max_param_id = pearson_hash16(m_param_name);
+        
         metadata.get_value("as_maya_attribute_name", m_maya_attribute_name);
         metadata.get_value("as_maya_attribute_connectable", m_connectable);
         m_max_hidden_attr = false;
@@ -233,6 +234,9 @@ OSLShaderInfo::OSLShaderInfo(
         for (size_t i = 0, e = q.get_param_count(); i < e; ++i)
         {
             OSLParamInfo osl_param(q.get_param_info(i));
+
+            if (osl_param.m_widget == "null" && !osl_param.m_connectable)
+                continue;
 
             MaxParam& max_param = osl_param.m_max_param;
 

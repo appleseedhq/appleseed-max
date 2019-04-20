@@ -430,17 +430,19 @@ void OSLShaderRegistry::create_class_descriptors()
         ));
         auto name = shader.m_shader_name;
 
-        int param_id = 0;
+        //int param_id = 0;
         int ctrl_id = 100;
         int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
-            param_id = param_info.m_max_param_id;
+            //param_id = param_info.m_max_param_id;
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
-            param_info.m_max_param.m_max_param_id = param_id;
 
             if (param_info.m_max_param.m_has_constant)
             {
+                short param_id = pearson_hash16(param_info.m_param_name); //need to remember this id inside m_max_param_id to retrieve in oslutils
+                param_info.m_max_param.m_max_param_id = param_id;
+
                 shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
                 add_const_parameter(
                     param_block_descr,
@@ -451,12 +453,14 @@ void OSLShaderRegistry::create_class_descriptors()
                     ctrl_id,
                     string_id);
 
-                param_id++;
                 string_id++;
             }
 
             if (param_info.m_max_param.m_connectable)
             {
+                short param_id = pearson_hash16(param_info.m_param_name + "_max_texture");  //need to remember this id too
+                param_info.m_max_param.m_max_map_param_id = param_id;
+
                 shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str + " Map")));
                 add_input_parameter(
                     param_block_descr,
@@ -468,7 +472,6 @@ void OSLShaderRegistry::create_class_descriptors()
                     ctrl_id,
                     string_id);
 
-                param_id++;
                 ctrl_id++;
                 string_id++;
             }
@@ -477,9 +480,9 @@ void OSLShaderRegistry::create_class_descriptors()
 
         shader.m_string_map.insert(std::make_pair(string_id, L"Output"));
 
-        int output_param_id = param_id;
+        short output_param_id = 0;
         if (shader.m_output_params.size() > 0)
-            output_param_id = shader.m_output_params[0].m_max_param_id;
+            output_param_id = pearson_hash16(shader.m_output_params[0].m_param_name);
 
         MaxParam max_output_param;
         max_output_param.m_max_label_str = "Output";
@@ -558,8 +561,8 @@ void OSLShaderRegistry::add_const_parameter(
         if (osl_param.m_has_default)
         {
             const float r = static_cast<float>(osl_param.m_default_value.at(0));
-            const float g = static_cast<float>(osl_param.m_default_value.at(0));
-            const float b = static_cast<float>(osl_param.m_default_value.at(0));
+            const float g = static_cast<float>(osl_param.m_default_value.at(1));
+            const float b = static_cast<float>(osl_param.m_default_value.at(2));
             def_val = Color(r, g, b);
         }
 

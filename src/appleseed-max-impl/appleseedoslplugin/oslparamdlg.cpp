@@ -335,7 +335,7 @@ void OSLParamDlg::add_ui_parameter(
             {
                 Texmap* tex_map = nullptr;
                 Interval iv;
-                m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
+                m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_map_param_id, 0, tex_map, iv);
 
                 const char* label = tex_map != nullptr ? "M" : "";
 

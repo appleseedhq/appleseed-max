@@ -2221,7 +2221,7 @@ int AppleseedRenderer::Render(
     if (m_rend_params.inMtlEdit)
     {
         // Write the project to disk, useful to debug material previews.
-        // asr::ProjectFileWriter::write(project.ref(), "appleseed-max-material-editor.appleseed");
+         asr::ProjectFileWriter::write(project.ref(), "C:\\Users\\sergo\\Documents\\3dsMax\\renderoutput\\appleseed-max-material-editor.appleseed");
 
         // Render the project.
         if (progress_cb)
