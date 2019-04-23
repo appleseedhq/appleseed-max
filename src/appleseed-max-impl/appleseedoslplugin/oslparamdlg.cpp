@@ -72,6 +72,10 @@ namespace
                     for (int i = 0, e = desc->Count(); i < e; ++i)
                     {
                         const ParamDef param_def = desc->GetParamDef(desc->IndextoID(i));
+                        
+                        if (param_def.flags & P_OBSOLETE)
+                            continue;
+
                         if (param_def.ctrl_type == TYPE_SPINNER)
                         {
                             const int* ctrl_ids = param_def.ctrl_IDs;

@@ -57,6 +57,9 @@
 // Standard headers.
 #include <memory>
 #include <map>
+#include <tuple>
+
+#include "oldshaderparamids.h"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
@@ -428,14 +431,13 @@ void OSLShaderRegistry::create_class_descriptors()
             0,                                          // parameter block's reference number
             p_end
         ));
-        auto name = shader.m_shader_name;
 
-        //int param_id = 0;
+        add_obsolete_parameters(shader.m_shader_name, param_block_descr);
+
         int ctrl_id = 100;
         int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
-            //param_id = param_info.m_max_param_id;
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
 
             if (param_info.m_max_param.m_has_constant)
@@ -458,7 +460,7 @@ void OSLShaderRegistry::create_class_descriptors()
 
             if (param_info.m_max_param.m_connectable)
             {
-                short param_id = pearson_hash16(param_info.m_param_name + "_max_texture");  //need to remember this id too
+                short param_id = pearson_hash16(param_info.m_param_name + "_map");
                 param_info.m_max_param.m_max_map_param_id = param_id;
 
                 shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str + " Map")));
@@ -542,6 +544,23 @@ void OSLShaderRegistry::create_class_descriptors()
             );
         }
         m_class_descriptors.push_back(MaxSDK::AutoPtr<ClassDesc2>(class_descr));
+    }
+}
+
+void OSLShaderRegistry::add_obsolete_parameters(const std::string shader_name, ParamBlockDesc2* pb_desc)
+{
+    const auto& params = obsolete_parameters[shader_name];
+
+    for (const auto& param : params)
+    {
+        pb_desc->AddParam(
+            std::get<0>(param),
+            std::get<1>(param).c_str(),
+            type_map.at(std::get<2>(param)),
+            P_OBSOLETE,
+            0,
+            p_end
+        );
     }
 }
 

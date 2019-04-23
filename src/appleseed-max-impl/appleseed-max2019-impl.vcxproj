@@ -354,6 +354,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedsssmtl\appleseedsssmtl.h" />
     <ClInclude Include="appleseedsssmtl\datachunks.h" />
     <ClInclude Include="appleseedsssmtl\resource.h" />
+    <ClInclude Include="oldshaderparamids.h" />
     <ClInclude Include="osloutputselectormap\datachunks.h" />
     <ClInclude Include="osloutputselectormap\osloutputselector.h" />
     <ClInclude Include="osloutputselectormap\resource.h" />

@@ -64,26 +64,85 @@ namespace
 }
 
 //post load callback to set up the controls with the exposetransform pointer
-class ExposeTransformPLCB : public PostLoadCallback
+class MaterialPostLoadCB : public PostLoadCallback
 {
 public:
     OSLMaterial *eT;
-    ExposeTransformPLCB(OSLMaterial* e)
+    MaterialPostLoadCB(OSLMaterial* e)
     {
         eT = e;
     }
     void proc(ILoad *iload) override
     {
-        IParamBlock2PostLoadInfo* postLoadInfo = (IParamBlock2PostLoadInfo*)
-            eT->m_pblock->GetInterface(IPARAMBLOCK2POSTLOADINFO_ID);
-
-        if (postLoadInfo)
+        ParamBlockDesc2* desc = (eT->m_pblock != nullptr) ? eT->m_pblock->GetDesc() : nullptr;
+        if (DbgVerify(desc != nullptr))
         {
-            DWORD version = postLoadInfo->GetVersion();
-        }
+            DWORD version;
 
-        //set up all of the pblock params..
-        int numParams = eT->m_pblock->NumParams();
+            IParamBlock2PostLoadInfo* post_load_info = dynamic_cast<IParamBlock2PostLoadInfo*>(desc->GetInterface(IPARAMBLOCK2POSTLOADINFO_ID));
+            if (post_load_info)
+            {
+                version = post_load_info->GetVersion();
+                const IntTab& loaded_param_ids = post_load_info->GetParamLoaded();
+                for (int i = 0; i < loaded_param_ids.Count(); ++i)
+                {
+                    const int current_id = loaded_param_ids[i];
+                    auto def = eT->m_pblock->GetParamDef(current_id);
+
+                    float           f_value;
+                    int             i_value;
+                    Color           c_value;
+                    Point3          p_value;
+                    const MCHAR*    s_value;
+                    Mtl*            m_value;
+                    Texmap*         t_value;
+
+                    short new_param_id = pearson_hash16(wide_to_utf8(def.int_name));
+
+                    switch (def.type)
+                    {
+                        case TYPE_FLOAT:
+                            eT->m_pblock->GetValue(current_id, 0, f_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, f_value);
+                            break;
+                        case TYPE_INT:
+                            eT->m_pblock->GetValue(current_id, 0, i_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, i_value);
+                            break;
+                        case TYPE_RGBA:
+                            eT->m_pblock->GetValue(current_id, 0, c_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, c_value);
+                            break;
+                        case TYPE_POINT3:
+                            eT->m_pblock->GetValue(current_id, 0, p_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, p_value);
+                            break;
+                        case TYPE_STRING:
+                            eT->m_pblock->GetValue(current_id, 0, s_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, s_value);
+                            break;
+                        case TYPE_MTL:
+                            eT->m_pblock->GetValue(current_id, 0, m_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, m_value);
+                            break;
+                        case TYPE_TEXMAP:
+                            eT->m_pblock->GetValue(current_id, 0, t_value, FOREVER);
+                            eT->m_pblock->SetValue(new_param_id, 0, t_value);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            //collect id, internal name, local name and type of all the parameters
+            std::vector<std::tuple<int, std::wstring, std::wstring, int >> p_block_desc_info;
+            for (int j = 0, e = eT->m_pblock->NumParams(); j < e; ++j)
+            {
+                auto def = eT->m_pblock->GetParamDef(eT->m_pblock->IndextoID(j));
+                p_block_desc_info.push_back({ eT->m_pblock->IndextoID(j), def.int_name, eT->m_pblock->GetLocalName(eT->m_pblock->IndextoID(j)).data(), def.type });
+            }
+        }
 
         delete this;
     }
@@ -101,6 +160,7 @@ Class_ID OSLMaterial::get_class_id()
 
 OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
   : m_pblock(nullptr)
+  , m_remap(false)
   , m_bump_pblock(nullptr)
   , m_classid(class_id)
   , m_class_desc(class_desc)
@@ -212,13 +272,22 @@ void OSLMaterial::SetReference(int i, RefTargetHandle rt_arg)
         m_pblock = static_cast<IParamBlock2*>(rt_arg);
         if (m_pblock != nullptr)
         {
-            std::vector<std::pair<std::wstring, int>> p_block_desc_info;
-            auto block_id = m_pblock->ID();
+            std::map<int, std::wstring> type_map 
+            {
+                {TYPE_FLOAT, L"TYPE_FLOAT" },
+                {TYPE_INT, L"TYPE_INT" },
+                {TYPE_RGBA, L"TYPE_RGBA" },
+                {TYPE_POINT3, L"TYPE_POINT3" },
+                {TYPE_STRING, L"TYPE_STRING" },
+                {TYPE_MTL, L"TYPE_MTL" },
+                {TYPE_TEXMAP, L"TYPE_TEXMAP" }
+            };
+
+            std::vector<std::tuple<int, std::wstring, std::wstring >> p_block_desc_info;
             for (int j = 0, e = m_pblock->NumParams(); j < e; ++j)
             {
-                p_block_desc_info.push_back(
-                    std::make_pair(std::wstring(m_pblock->GetLocalName(m_pblock->IndextoID(j)).data()), m_pblock->IndextoID(j))
-                );
+                auto def = m_pblock->GetParamDef(m_pblock->IndextoID(j));
+                p_block_desc_info.push_back({m_pblock->IndextoID(j), def.int_name, type_map[def.type]});
             }
         }
     }
@@ -228,7 +297,6 @@ void OSLMaterial::SetReference(int i, RefTargetHandle rt_arg)
     if (m_bump_pblock != nullptr)
     {
         std::vector<std::pair<std::wstring, int>> p_block_desc_info;
-        auto block_id = m_bump_pblock->ID();
         for (int j = 0, e = m_bump_pblock->NumParams(); j < e; ++j)
         {
             p_block_desc_info.push_back(
@@ -389,7 +457,7 @@ IOResult OSLMaterial::Load(ILoad* iload)
 {
     IOResult result = IO_OK;
 
-    ExposeTransformPLCB* plcb = new ExposeTransformPLCB(this);
+    MaterialPostLoadCB* plcb = new MaterialPostLoadCB(this);
     iload->RegisterPostLoadCallback(plcb);
 
     while (true)
@@ -424,7 +492,6 @@ IOResult OSLMaterial::Load(ILoad* iload)
 
     return result;
 }
-
 
 Color OSLMaterial::GetAmbient(int mtlNum, BOOL backFace)
 {
