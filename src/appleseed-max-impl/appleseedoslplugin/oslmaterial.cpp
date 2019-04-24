@@ -160,7 +160,6 @@ Class_ID OSLMaterial::get_class_id()
 
 OSLMaterial::OSLMaterial(Class_ID class_id, OSLPluginClassDesc* class_desc)
   : m_pblock(nullptr)
-  , m_remap(false)
   , m_bump_pblock(nullptr)
   , m_classid(class_id)
   , m_class_desc(class_desc)
@@ -272,22 +271,12 @@ void OSLMaterial::SetReference(int i, RefTargetHandle rt_arg)
         m_pblock = static_cast<IParamBlock2*>(rt_arg);
         if (m_pblock != nullptr)
         {
-            std::map<int, std::wstring> type_map 
-            {
-                {TYPE_FLOAT, L"TYPE_FLOAT" },
-                {TYPE_INT, L"TYPE_INT" },
-                {TYPE_RGBA, L"TYPE_RGBA" },
-                {TYPE_POINT3, L"TYPE_POINT3" },
-                {TYPE_STRING, L"TYPE_STRING" },
-                {TYPE_MTL, L"TYPE_MTL" },
-                {TYPE_TEXMAP, L"TYPE_TEXMAP" }
-            };
 
-            std::vector<std::tuple<int, std::wstring, std::wstring >> p_block_desc_info;
+            std::vector<std::tuple<int, std::wstring, int>> p_block_desc_info;
             for (int j = 0, e = m_pblock->NumParams(); j < e; ++j)
             {
                 auto def = m_pblock->GetParamDef(m_pblock->IndextoID(j));
-                p_block_desc_info.push_back({m_pblock->IndextoID(j), def.int_name, type_map[def.type]});
+                p_block_desc_info.push_back({m_pblock->IndextoID(j), def.int_name, def.type });
             }
         }
     }

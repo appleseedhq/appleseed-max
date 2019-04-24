@@ -202,13 +202,11 @@ void OSLTexture::SetReference(int i, RefTargetHandle rt_arg)
         m_pblock = static_cast<IParamBlock2*>(rt_arg);
         if (m_pblock != nullptr)
         {
-            std::vector<std::pair<std::wstring, int>> p_block_desc_info;
-            auto block_id = m_pblock->ID();
+            std::vector<std::tuple<int, std::wstring, int>> p_block_desc_info;
             for (int j = 0, e = m_pblock->NumParams(); j < e; ++j)
             {
-                p_block_desc_info.push_back(
-                    std::make_pair(std::wstring(m_pblock->GetLocalName(m_pblock->IndextoID(j)).data()), m_pblock->IndextoID(j))
-                );
+                auto def = m_pblock->GetParamDef(m_pblock->IndextoID(j));
+                p_block_desc_info.push_back({ m_pblock->IndextoID(j), def.int_name, def.type });
             }
         }
         break;
