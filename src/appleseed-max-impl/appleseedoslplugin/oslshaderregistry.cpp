@@ -556,7 +556,7 @@ void OSLShaderRegistry::add_obsolete_parameters(const std::string shader_name, P
         pb_desc->AddParam(
             std::get<0>(param),
             std::get<1>(param).c_str(),
-            type_map.at(std::get<2>(param)),
+            std::get<2>(param),
             P_OBSOLETE,
             0,
             p_end
