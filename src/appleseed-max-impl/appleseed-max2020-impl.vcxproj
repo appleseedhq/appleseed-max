@@ -86,7 +86,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
@@ -102,11 +102,11 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
 if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
 if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
 
 rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders" 2&gt;nul
 rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders" 2&gt;nul
@@ -150,7 +150,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -165,11 +165,11 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
 if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
 if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
 
 rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders" 2&gt;nul
 rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders" 2&gt;nul
@@ -212,7 +212,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\v141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;C:\Barbo\3d\appleseed_addons\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;C:\Barbo\3d\appleseed_addons\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -227,11 +227,11 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
 if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
 if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\$(PlatformToolset)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
 
 rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders" 2&gt;nul
 rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders" 2&gt;nul
