@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2019 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,12 +55,12 @@ namespace
             m_noise_seed = 0;
             m_enable_noise_seed = true;
 
-            m_uniform_pixel_samples = 16;
+            m_uniform_pixel_samples = 64;
 
             m_adaptive_batch_size = 16;
-            m_adaptive_min_samples = 0;
+            m_adaptive_min_samples = 16;
             m_adaptive_max_samples = 256;
-            m_adaptive_noise_threshold = 1.0f;
+            m_adaptive_noise_threshold = 0.1f;
 
             m_pixel_filter = 0;
             m_pixel_filter_size = 1.5f;

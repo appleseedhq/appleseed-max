@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2019 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -1213,7 +1213,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdUniformPixelSamples, L"pixel_samples", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_PIXEL_SAMPLES, IDC_SPINNER_PIXEL_SAMPLES, SPIN_AUTOSCALE,
-        p_default, 16,
+        p_default, 64,
         p_range, 1, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
@@ -1265,7 +1265,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdAdaptiveTileMinSamples, L"minimum_samples", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_MIN_ADAPTIVE_SAMPLES, IDC_SPINNER_MIN_ADAPTIVE_SAMPLES, SPIN_AUTOSCALE,
-        p_default, 0,
+        p_default, 16,
         p_range, 0, 1000000,
         p_accessor, &g_pblock_accessor,
     p_end,
@@ -1279,7 +1279,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdAdaptiveTileNoiseThreshold, L"noise_threshold", TYPE_FLOAT, P_TRANSIENT, 0,
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ADAPTIVE_NOISE_THRESHOLD, IDC_SPINNER_ADAPTIVE_NOISE_THRESHOLD, SPIN_AUTOSCALE,
-        p_default, 1.0f,
+        p_default, 0.1f,
         p_range, 0.0f, 25.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
