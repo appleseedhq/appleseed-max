@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2019 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -82,6 +82,8 @@ namespace
         FilterList filter;
         filter.Append(L"Project Files (*.appleseed)");
         filter.Append(L"*.appleseed");
+        filter.Append(L"Packed Project Files (*.appleseedz)");
+        filter.Append(L"*.appleseedz");
         filter.Append(L"All Files (*.*)");
         filter.Append(L"*.*");
 
