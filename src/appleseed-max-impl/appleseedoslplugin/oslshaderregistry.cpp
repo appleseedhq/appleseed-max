@@ -56,6 +56,10 @@
 
 // Standard headers.
 #include <memory>
+#include <map>
+#include <tuple>
+
+#include "obsoleteparameterids.h"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
@@ -420,25 +424,28 @@ void OSLShaderRegistry::create_class_descriptors()
             L"oslTextureMapParams",                     // internal parameter block's name
             0,                                          // ID of the localized name string
             class_descr,                                // class descriptor
-            P_AUTO_CONSTRUCT,                           // block flags
-
+            P_AUTO_CONSTRUCT | P_VERSION,               // block flags
+                                                        // --- P_VERSION arguments ---
+            2,
                                                         // --- P_AUTO_CONSTRUCT arguments ---
             0,                                          // parameter block's reference number
             p_end
         ));
 
-        int param_id = 0;
+        add_obsolete_parameters(shader.m_shader_name, param_block_descr);
+
         int ctrl_id = 100;
         int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
-            param_info.m_max_param.m_max_param_id = param_id;
-
-            shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
 
             if (param_info.m_max_param.m_has_constant)
             {
+                short param_id = pearson_hash16(param_info.m_param_name);
+                param_info.m_max_param.m_max_param_id = param_id;
+
+                shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
                 add_const_parameter(
                     param_block_descr,
                     param_info,
@@ -448,12 +455,15 @@ void OSLShaderRegistry::create_class_descriptors()
                     ctrl_id,
                     string_id);
 
-                param_id++;
                 string_id++;
             }
 
             if (param_info.m_max_param.m_connectable)
             {
+                short param_id = pearson_hash16(param_info.m_param_name + "_map");
+                param_info.m_max_param.m_max_map_param_id = param_id;
+
+                shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str + " Map")));
                 add_input_parameter(
                     param_block_descr,
                     param_info,
@@ -464,21 +474,24 @@ void OSLShaderRegistry::create_class_descriptors()
                     ctrl_id,
                     string_id);
 
-                param_id++;
                 ctrl_id++;
                 string_id++;
             }
 
         }
 
-        shader.m_string_map.insert(std::make_pair(string_id++, L"Output"));
+        shader.m_string_map.insert(std::make_pair(string_id, L"Output"));
+
+        short output_param_id = 0;
+        if (shader.m_output_params.size() > 0)
+            output_param_id = pearson_hash16(shader.m_output_params[0].m_param_name);
 
         MaxParam max_output_param;
         max_output_param.m_max_label_str = "Output";
         max_output_param.m_osl_param_name = "output";
         max_output_param.m_param_type = MaxParam::StringPopup;
         max_output_param.m_max_ctrl_id = ctrl_id++;
-        max_output_param.m_max_param_id = param_id;
+        max_output_param.m_max_param_id = output_param_id;
         max_output_param.m_connectable = false;
         max_output_param.m_has_constant = true;
 
@@ -488,9 +501,11 @@ void OSLShaderRegistry::create_class_descriptors()
             param_block_descr,
             shader.m_output_params,
             shader.m_string_map,
-            param_id,
+            output_param_id,
             ctrl_id,
             string_id);
+
+        string_id++;
 
         auto tn_vec = shader.find_param("Tn");
         auto bump_normal = shader.find_maya_attribute("normalCamera");
@@ -498,6 +513,7 @@ void OSLShaderRegistry::create_class_descriptors()
         if (!shader.m_is_texture && 
             (tn_vec != nullptr || bump_normal != nullptr))
         {
+            int bump_param_id = 0;
             ParamBlockDesc2* bump_param_block_descr(new ParamBlockDesc2(
                 // --- Required arguments ---
                 1,                                          // parameter block's ID
@@ -514,13 +530,37 @@ void OSLShaderRegistry::create_class_descriptors()
             add_bump_parameters(
                 bump_param_block_descr,
                 shader.m_texture_id_map,
-                param_id);
+                bump_param_id);
 
             m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(bump_param_block_descr));
         }
 
         m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(param_block_descr));
+        std::map<std::wstring, int> p_block_desc_info;
+        for (int i = 0, e = param_block_descr->Count(); i < e; ++i)
+        {
+            p_block_desc_info.insert(
+                std::make_pair(std::wstring(param_block_descr->GetParamDefByIndex(i)->int_name), param_block_descr->IndextoID(i))
+            );
+        }
         m_class_descriptors.push_back(MaxSDK::AutoPtr<ClassDesc2>(class_descr));
+    }
+}
+
+void OSLShaderRegistry::add_obsolete_parameters(const std::string shader_name, ParamBlockDesc2* pb_desc)
+{
+    const auto& params = obsolete_parameters[shader_name];
+
+    for (const auto& param : params)
+    {
+        pb_desc->AddParam(
+            std::get<0>(param),
+            std::get<1>(param).c_str(),
+            std::get<2>(param),
+            P_OBSOLETE,
+            0,
+            p_end
+        );
     }
 }
 
@@ -540,8 +580,8 @@ void OSLShaderRegistry::add_const_parameter(
         if (osl_param.m_has_default)
         {
             const float r = static_cast<float>(osl_param.m_default_value.at(0));
-            const float g = static_cast<float>(osl_param.m_default_value.at(0));
-            const float b = static_cast<float>(osl_param.m_default_value.at(0));
+            const float g = static_cast<float>(osl_param.m_default_value.at(1));
+            const float b = static_cast<float>(osl_param.m_default_value.at(2));
             def_val = Color(r, g, b);
         }
 

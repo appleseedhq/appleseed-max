@@ -338,6 +338,9 @@ IOResult OSLMaterial::Load(ILoad* iload)
 {
     IOResult result = IO_OK;
 
+    OSLPluginPostLoadCB* plcb = new OSLPluginPostLoadCB(this);
+    iload->RegisterPostLoadCallback(plcb);
+
     while (true)
     {
         result = iload->OpenChunk();

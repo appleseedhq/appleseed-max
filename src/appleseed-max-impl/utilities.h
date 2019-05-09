@@ -62,7 +62,8 @@ class Bitmap;
 class BitmapTex;
 class Interval;
 class Texmap;
-
+class MtlBase;
+class ILoad;
 
 //
 // Math functions.
@@ -205,6 +206,24 @@ const T load_ini_setting(const wchar_t* category, const wchar_t* key_name, const
 
 template <typename T>
 const T load_system_setting(const wchar_t* key_name, const T& default_value);
+
+
+//
+// Support for obsolete parameter IDs
+//
+
+foundation::int16 pearson_hash16(const std::string& param_name);
+
+//Post-load callback to transfer values from obsolete parameters to new hashed parameter IDs
+class OSLPluginPostLoadCB : public PostLoadCallback
+{
+  public:
+    OSLPluginPostLoadCB(MtlBase* plugin);
+    void proc(ILoad* iload) override;
+
+  private:
+    MtlBase* m_plugin;
+};
 
 
 //

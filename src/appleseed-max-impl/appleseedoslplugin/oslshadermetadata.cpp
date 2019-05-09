@@ -233,6 +233,9 @@ OSLShaderInfo::OSLShaderInfo(
         {
             OSLParamInfo osl_param(q.get_param_info(i));
 
+            if (osl_param.m_widget == "null" && !osl_param.m_connectable)
+                continue;
+
             MaxParam& max_param = osl_param.m_max_param;
 
             max_param.m_osl_param_name = osl_param.m_param_name;

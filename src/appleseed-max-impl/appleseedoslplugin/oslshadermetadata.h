@@ -81,6 +81,7 @@ class MaxParam
     bool            m_has_constant;
     std::string     m_max_label_str;
     int             m_max_param_id;
+    int             m_max_map_param_id;
     int             m_max_ctrl_id;
     std::string     m_osl_param_name;
     std::string     m_page_name;

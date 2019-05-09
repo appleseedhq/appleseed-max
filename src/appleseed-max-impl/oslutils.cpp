@@ -589,9 +589,7 @@ void create_osl_shader(
         Texmap* texmap = nullptr;
         if (max_param.m_connectable)
         {
-            int texture_param_id = 
-                max_param.m_has_constant ? max_param.m_max_param_id + 1 : max_param.m_max_param_id;
-            param_block->GetValue(texture_param_id, time, texmap, FOREVER);
+            param_block->GetValue(max_param.m_max_map_param_id, time, texmap, FOREVER);
 
             if (texmap != nullptr)
             {
@@ -646,7 +644,7 @@ void create_osl_shader(
         if (max_param.m_connectable && max_param.m_param_type == MaxParam::Closure)
         {
             Mtl* material = nullptr;
-            param_block->GetValue(max_param.m_max_param_id, time, material, FOREVER);
+            param_block->GetValue(max_param.m_max_map_param_id, time, material, FOREVER);
             if (material != nullptr && assembly != nullptr)
             {
                 connect_sub_mtl(

@@ -47,6 +47,9 @@ class OSLShaderRegistry
     ClassDesc2* get_class_descriptor(int index) const;
     int get_size() const;
     void create_class_descriptors();
+    void add_obsolete_parameters(
+        const std::string shader_name,
+        ParamBlockDesc2* param_block_desc);
     void add_const_parameter(
         ParamBlockDesc2*        pb_desc,
         const OSLParamInfo&     osl_param,
