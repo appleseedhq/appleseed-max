@@ -29,6 +29,9 @@
 // Interface header.
 #include "tilecallback.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/frame.h"
 

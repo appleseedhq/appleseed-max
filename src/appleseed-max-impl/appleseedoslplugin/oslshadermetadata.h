@@ -28,6 +28,9 @@
 
 #pragma once
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
 #include "foundation/utility/containers/dictionary.h"

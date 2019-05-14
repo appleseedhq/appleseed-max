@@ -32,6 +32,9 @@
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/containers/dictionary.h"

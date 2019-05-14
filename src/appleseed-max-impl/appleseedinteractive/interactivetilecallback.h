@@ -31,6 +31,9 @@
 // appleseed-max headers.
 #include "appleseedrenderer/tilecallback.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/types.h"
 #include "foundation/platform/windows.h"

@@ -28,6 +28,9 @@
 
 #pragma once
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
 #include "renderer/api/rendering.h"
