@@ -77,7 +77,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc140\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\osl-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\SeExpr-debug\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2018 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
@@ -134,7 +134,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2018 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -197,7 +197,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc140\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2018 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
