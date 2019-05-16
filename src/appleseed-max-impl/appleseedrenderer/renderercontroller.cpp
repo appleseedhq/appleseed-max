@@ -29,6 +29,9 @@
 // Interface header.
 #include "renderercontroller.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/atomic.h"
 #include "foundation/platform/windows.h"    // include before 3ds Max headers

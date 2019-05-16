@@ -34,6 +34,9 @@
 #include "osloutputselectormap/osloutputselector.h"
 #include "main.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/color.h"
 #include "renderer/api/source.h"

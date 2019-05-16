@@ -32,6 +32,9 @@
 // appleseed-max headers.
 #include "utilities.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
 

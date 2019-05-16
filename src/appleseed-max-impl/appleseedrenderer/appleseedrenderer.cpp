@@ -43,6 +43,9 @@
 #include "utilities.h"
 #include "version.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/frame.h"
 #include "renderer/api/project.h"

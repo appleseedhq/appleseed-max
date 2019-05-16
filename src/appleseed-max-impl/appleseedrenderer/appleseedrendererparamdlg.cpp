@@ -37,6 +37,9 @@
 #include "utilities.h"
 #include "version.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/core/appleseed.h"
 
