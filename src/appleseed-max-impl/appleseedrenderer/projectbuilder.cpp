@@ -47,6 +47,7 @@
 #include "renderer/api/aov.h"
 #include "renderer/api/camera.h"
 #include "renderer/api/color.h"
+#include "renderer/api/edf.h"
 #include "renderer/api/environment.h"
 #include "renderer/api/environmentedf.h"
 #include "renderer/api/environmentshader.h"
@@ -79,6 +80,7 @@
 #include <genlight.h>
 #include <iInstanceMgr.h>
 #include <INodeTab.h>
+#include <lslights.h>
 #include <modstack.h>
 #include <object.h>
 #include <pbbitmap.h>
@@ -926,6 +928,24 @@ namespace
         }
     }
 
+
+    void add_point_light(
+        asr::Assembly&          assembly,
+        const std::string&      light_name,
+        const asf::Transformd&  transform,
+        const std::string&      color_name,
+        const float             intensity)
+    {
+        asf::auto_release_ptr<asr::Light> light(
+            asr::PointLightFactory().create(
+                light_name.c_str(),
+                asr::ParamArray()
+                    .insert("intensity", color_name)
+                    .insert("intensity_multiplier", intensity * asf::Pi<float>())));
+        light->set_transform(transform);
+        assembly.lights().insert(light);
+    }
+
     void add_omni_light(
         asr::Assembly&          assembly,
         const std::string&      light_name,
@@ -1002,12 +1022,141 @@ namespace
             asr::SunLightFactory().create(
                 light_name.c_str(),
                 asr::ParamArray()
-                  .insert("radiance_multiplier", intensity * asf::Pi<float>())
-                  .insert("turbidity", 1.0)
-                  .insert("environment_edf", sky_name)
-                  .insert("size_multiplier", size_mult)));
+                    .insert("radiance_multiplier", intensity * asf::Pi<float>())
+                    .insert("turbidity", 1.0)
+                    .insert("environment_edf", sky_name)
+                    .insert("size_multiplier", size_mult)));
         light->set_transform(transform);
         assembly.lights().insert(light);
+    }
+
+    void add_light_instance(
+        asr::Assembly&                      assembly,
+        const std::string&                  light_name,
+        const Matrix3&                      light_transform,
+        const std::string&                  color_name,
+        const float                         intensity,
+        const asr::VisibilityFlags::Type    visibility)
+    {
+        // EDF for the light.
+        const std::string edf_name = make_unique_name(assembly.edfs(), light_name + "_edf");
+        assembly.edfs().insert(
+            asr::DiffuseEDFFactory().create(edf_name.c_str(), 
+                asr::ParamArray()
+                    .insert("radiance", color_name)
+                    .insert("radiance_multiplier", intensity)));
+
+        // Material for the light.
+        const std::string material_name =
+            make_unique_name(assembly.materials(), light_name + "_mat");
+        assembly.materials().insert(
+            asr::GenericMaterialFactory().create(
+                material_name.c_str(), 
+                asr::ParamArray().insert("edf", edf_name)));
+
+        // Light object instance.
+        const std::string instance_name =
+            make_unique_name(assembly.object_instances(), light_name + "_inst");
+
+        asf::StringDictionary front_material_mappings;
+        front_material_mappings.insert("default", material_name);
+
+        // Create the instance and insert it into the assembly.
+        const asf::Transformd transform = asf::Transformd::from_local_to_parent(to_matrix4d(light_transform));
+        assembly.object_instances().insert(
+            asr::ObjectInstanceFactory::create(
+                instance_name.c_str(),
+                asr::ParamArray()
+                    .insert(
+                        "visibility",
+                        asr::VisibilityFlags::to_dictionary(visibility)),
+                light_name.c_str(),
+                transform,
+                front_material_mappings));
+    }
+
+    typedef LightscapeLight::LightTypes LightType;
+
+    void add_physical_light(
+        asr::Assembly&          assembly,
+        INode*                  light_node,
+        LightscapeLight*        light_object,
+        const asf::Color3f      color,
+        const float             intensity,
+        const TimeValue         time)
+    {
+        const ObjectState object_state = light_node->EvalWorldState(time);
+        
+        // Compute a unique name for this light.
+        std::string object_name = wide_to_utf8(light_node->GetName());
+        object_name = make_unique_name(assembly.objects(), object_name);
+        const std::string color_name = insert_color(assembly, object_name + "_color", color);
+
+        Matrix3 light_transform = light_node->GetObjTMAfterWSM(time);
+        light_transform.PreRotateX(-asf::HalfPi<float>());
+
+        asf::auto_release_ptr<asr::Object> light_obj;
+
+        const int light_type = light_object->Type();
+
+        switch (light_type)
+        {
+          case LightType::TARGET_SPHERE_TYPE:
+          case LightType::SPHERE_TYPE:
+            {
+                light_obj = asr::SphereObjectFactory().create(object_name.c_str(),
+                    asr::ParamArray()
+                        .insert("radius", light_object->GetRadius(time))
+                );
+            }
+            break;
+
+          case LightType::TARGET_AREA_TYPE:
+          case LightType::AREA_TYPE:
+            {
+                light_obj = asr::RectangleObjectFactory().create(object_name.c_str(),
+                    asr::ParamArray()
+                        .insert("width", light_object->GetWidth(time))
+                        .insert("height", light_object->GetLength(time))
+                );
+            }
+            break;
+
+          case LightType::TARGET_DISC_TYPE:
+          case LightType::DISC_TYPE:
+            {
+                light_obj = asr::DiskObjectFactory().create(object_name.c_str(),
+                    asr::ParamArray()
+                        .insert("radius", light_object->GetRadius(time))
+                );
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        if (light_obj.get() != nullptr)
+        {
+            // Light Object.
+            assembly.objects().insert(light_obj);
+
+            const asr::VisibilityFlags::Type visibility =
+                get_visibility_flags(light_node->GetObjectRef(), time);
+            
+            add_light_instance(
+                assembly,
+                object_name,
+                light_transform,
+                color_name,
+                intensity,
+                visibility);
+        }
+        else
+        {
+            // Unsupported physical light type.
+            // todo: emit warning message.
+        }
     }
 
     void add_light(
@@ -1081,7 +1230,7 @@ namespace
                     decay_exponent);
             }
             else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0) ||
-                light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
+                     light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
             {
                 add_spot_light(
                     assembly,
@@ -1095,7 +1244,7 @@ namespace
                     decay_exponent);
             }
             else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
-                light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
+                     light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
             {
                 add_directional_light(
                     assembly,
@@ -1103,6 +1252,40 @@ namespace
                     transform,
                     color_name,
                     intensity);
+            }
+            else if (object_state.obj->IsSubClassOf(LIGHTSCAPE_LIGHT_CLASS))
+            {
+                LightscapeLight* light_object = dynamic_cast<LightscapeLight*>(object_state.obj);
+                if (light_object == nullptr)
+                    return;
+                
+                const asf::Color3f physical_color = to_color3f(light_object->GetRGBFilter(time));
+                const float physical_intensity = light_object->GetResultingIntensity(time);
+                if (asf::is_zero(physical_color) || physical_intensity == 0.0f)
+                    return;
+
+                const int light_type = light_object->Type();
+
+                if (light_type == LightType::TARGET_POINT_TYPE ||
+                    light_type == LightType::POINT_TYPE)
+                {
+                    add_point_light(
+                        assembly,
+                        light_name,
+                        transform,
+                        color_name,
+                        physical_intensity);
+                }
+                else
+                {
+                    add_physical_light(
+                        assembly,
+                        light_node,
+                        light_object,
+                        physical_color,
+                        physical_intensity,
+                        time);
+                }
             }
             else
             {
