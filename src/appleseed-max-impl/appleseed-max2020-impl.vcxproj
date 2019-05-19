@@ -78,7 +78,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc141\ilmbase-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\openexr-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\oiio-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\osl-debug\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\SeExpr-debug\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-debug\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -86,7 +86,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
@@ -135,7 +135,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -150,7 +150,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
@@ -198,7 +198,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\appleseed-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\appleseed-deps\stage\vc141\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -212,7 +212,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-deps\stage\vc141;C:\Barbo\3d\appleseed_addons\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;C:\Barbo\3d\appleseed_addons\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
