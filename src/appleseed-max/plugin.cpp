@@ -42,6 +42,8 @@
 #include <Shlwapi.h>
 #include <tchar.h>
 
+namespace asf = foundation;
+
 namespace
 {
     HINSTANCE g_plugin_lib;
@@ -57,8 +59,9 @@ namespace
                 SYSLOG_ERROR,
                 NO_DIALOG,
                 L"appleseed",
-                L"[appleseed] GetModuleFileName() failed.");
-            return false;
+                L"[appleseed] GetModuleFileName() failed: %s",
+                asf::get_last_windows_error_message_wide().c_str());
+            return nullptr;
         }
 
         PathRemoveFileSpec(path);
@@ -78,7 +81,10 @@ namespace
                 SYSLOG_ERROR,
                 NO_DIALOG,
                 L"appleseed",
-                L"[appleseed] Failed to load %s.", path);
+                L"[appleseed] Failed to load %s: %s",
+                path,
+                asf::get_last_windows_error_message_wide().c_str());
+            return nullptr;
         }
 
         return result;
