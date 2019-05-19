@@ -504,9 +504,9 @@ namespace
         return medium_priority;
     }
 
-    bool motion_blur_enabled(INode* node, const TimeValue time)
+    bool is_motion_blur_enabled(INode* node, const TimeValue time)
     {
-        const int ObjectMotionBlur = 1;
+        constexpr int ObjectMotionBlur = 1;
         return node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur;
     }
 
@@ -599,11 +599,19 @@ namespace
 
     bool is_node_animated(INode* node)
     {
-        Control* tm_controller = node->GetTMController();
-        return 
-            tm_controller->GetPositionController()->IsAnimated() > 0 ||
-            tm_controller->GetRotationController()->IsAnimated() > 0 ||
-            tm_controller->GetScaleController()->IsAnimated() > 0;
+        while (true)
+        {
+            Control* tm_controller = node->GetTMController();
+            if (tm_controller->GetPositionController()->IsAnimated() > 0 ||
+                tm_controller->GetRotationController()->IsAnimated() > 0 ||
+                tm_controller->GetScaleController()->IsAnimated() > 0)
+                return true;
+
+            if (node->IsRootNode())
+                return false;
+
+            node = node->GetParentNode();
+        }
     }
 
     enum class RenderType
@@ -732,22 +740,15 @@ namespace
             }
         }
 
+        // Retrieve the geometrical object referenced by this node.
+        Object* object = instance_node->GetObjectRef();
+
         // Parameters.
         asr::ParamArray params;
-        params
-            .insert(
-                "visibility",
-                asr::VisibilityFlags::to_dictionary(
-                    get_visibility_flags(instance_node->GetObjectRef(), time)))
-            .insert(
-                "sss_set_id",
-                get_sss_set(instance_node->GetObjectRef(), time))
-            .insert(
-                "medium_priority",
-                get_medium_priority(instance_node->GetObjectRef(), time))
-            .insert(
-                "photon_target",
-                is_photon_target(instance_node->GetObjectRef(), time));
+        params.insert("visibility", asr::VisibilityFlags::to_dictionary(get_visibility_flags(object, time)));
+        params.insert("sss_set_id", get_sss_set(object, time));
+        params.insert("medium_priority", get_medium_priority(object, time));
+        params.insert("photon_target", is_photon_target(object, time));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
@@ -784,20 +785,19 @@ namespace
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(node->GetObjTMAfterWSM(time)));
 
-        if (motion_blur_enabled(node, time) || should_optimize_for_instancing(object, time))
+        if (is_motion_blur_enabled(node, time) || should_optimize_for_instancing(object, time))
         {
-            std::string assembly_name = wide_to_utf8(node->GetName());
-            assembly_name = make_unique_name(assembly.assemblies(), assembly_name + "_assembly");
-
+            // Look for an existing assembly for that object, or create one if none could be found.
+            std::string assembly_name;
             const AssemblyMap::const_iterator it = assembly_map.find(object);
-
             if (it == assembly_map.end())
             {
-                // Create an assembly.
+                // Create an assembly for that object.
+                assembly_name = make_unique_name(assembly.assemblies(), wide_to_utf8(node->GetName()) + "_assembly");
                 asf::auto_release_ptr<asr::Assembly> object_assembly(
                     asr::AssemblyFactory().create(assembly_name.c_str()));
 
-                // Add objects and object instances to it.
+                // Add objects and object instances to that assembly.
                 const auto object_infos = create_mesh_objects(object_assembly.ref(), node, time);
                 for (const auto& object_info : object_infos)
                 {
@@ -813,6 +813,7 @@ namespace
                         material_map);
                 }
 
+                // Remember the name of the assembly corresponding to that object.
                 assembly_map.insert(std::make_pair(object, assembly_name));
                     
                 // Insert the assembly into the scene.
@@ -823,81 +824,51 @@ namespace
                 assembly_name = it->second;
             }
 
-            // Create an instance of the assembly and insert it into the scene.
-            std::string assembly_instance_name = make_unique_name(assembly.assembly_instances(), assembly_name + "_instance");
-
+            // Create an instance of the assembly corresponding to that object.
+            const std::string object_assembly_instance_name =
+                make_unique_name(assembly.assembly_instances(), assembly_name + "_instance");
             asf::auto_release_ptr<asr::AssemblyInstance> object_assembly_instance(
                 asr::AssemblyInstanceFactory::create(
-                    assembly_instance_name.c_str(),
+                    object_assembly_instance_name.c_str(),
                     asr::ParamArray(),
                     assembly_name.c_str()));
+            object_assembly_instance->transform_sequence().set_transform(0.0, transform);
 
-            object_assembly_instance->transform_sequence()
-                .set_transform(0.0, transform);
-
-            if (motion_blur_enabled(node, time))
+            // Apply transformation motion blur if enabled on that object.
+            if (is_motion_blur_enabled(node, time))
             {
-                bool is_animated = is_node_animated(node);
-                INode* parent_node = node->GetParentNode();
-                while (!is_animated && !parent_node->IsRootNode())
-                {
-                    is_animated = is_node_animated(parent_node);
-                    parent_node = parent_node->GetParentNode();
-                }
-
-                if (is_animated)
-                {
-                    asf::Transformd animated_transform =
-                        asf::Transformd::from_local_to_parent(
-                            to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame())));
-
-                    object_assembly_instance->transform_sequence()
-                        .set_transform(1.0, animated_transform);
-                }
+                object_assembly_instance->transform_sequence()
+                    .set_transform(1.0, asf::Transformd::from_local_to_parent(
+                        to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame()))));
             }
 
+            // Insert the assembly instance into the parent assembly.
             assembly.assembly_instances().insert(object_assembly_instance);
         }
         else
         {
             // Check if we already generated the corresponding appleseed objects.
-            const ObjectMap::const_iterator it = object_map.find(object);
+            ObjectMap::const_iterator it = object_map.find(object);
             if (it == object_map.end())
             {
-                // The appleseed objects do not exist yet, create and instantiate them.
+                // Create appleseed objects.
                 const auto object_infos = create_mesh_objects(assembly, node, time);
-                object_map.insert(std::make_pair(object, object_infos));
-
-                for (const auto& object_info : object_infos)
-                {
-                    create_object_instance(
-                        assembly,
-                        nullptr,
-                        node,
-                        transform,
-                        object_info,
-                        type,
-                        settings,
-                        time,
-                        material_map);
-                }
+                it = object_map.insert(std::make_pair(object, object_infos)).first;
             }
-            else
+
+            // Create object instances.
+            for (const auto& object_info : it->second)
             {
-                // The appleseed objects already exist, simply instantiate them.
-                for (const auto& object_info : it->second)
-                {
-                    create_object_instance(
-                        assembly,
-                        nullptr,
-                        node,
-                        transform,
-                        object_info,
-                        type,
-                        settings,
-                        time,
-                        material_map);
-                }
+                create_object_instance(
+                    assembly,
+                    nullptr,
+                    node,
+                    transform,
+                    object_info,
+                    type,
+                    settings,
+                    time,
+                    material_map);
             }
         }
     }
@@ -1386,7 +1357,8 @@ namespace
                 break;
 
               case AMBIENT_LGT:
-                // todo: implement.
+                // Unsupported light type.
+                // todo: emit warning message.
                 break;
             }
         }
@@ -1438,16 +1410,16 @@ namespace
         // Add Max's default lights if
         //       the scene does not contain non-physical lights (point lights, spot lights, etc.)
         //   and the scene does not contain light-emitting materials
-        //   and the scene does not contain a light-emitting environment.
+        //   and the scene does not contain a light-emitting environment
         //   and checkbox Force Off Default Lights is off
         const bool has_lights = !entities.m_lights.empty();
         const bool has_emitting_mats = has_light_emitting_materials(material_map);
         const bool has_emitting_env = !scene.get_environment()->get_parameters().get_optional<std::string>("environment_edf").empty();
         if (rend_params.inMtlEdit ||
-           (!has_lights &&
-            !has_emitting_mats &&
-            !(has_emitting_env && settings.m_background_emits_light) &&
-            !settings.m_force_off_default_lights))
+            (!has_lights &&
+             !has_emitting_mats &&
+             !(has_emitting_env && settings.m_background_emits_light) &&
+             !settings.m_force_off_default_lights))
             add_default_lights(assembly, default_lights);
     }
 
