@@ -1030,6 +1030,9 @@ namespace
 
         // Retrieve the light's parameters.
         GenLight* light_object = dynamic_cast<GenLight*>(object_state.obj);
+        if (light_object == nullptr)
+            return;
+
         const asf::Color3f color = to_color3f(light_object->GetRGBColor(time));
         const float intensity = light_object->GetIntensity(time);
         const float decay_start = light_object->GetDecayRadius(time);
