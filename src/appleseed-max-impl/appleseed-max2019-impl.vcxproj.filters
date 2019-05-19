@@ -25,7 +25,6 @@
     <ClCompile Include="appleseedrenderer\updatechecker.cpp">
       <Filter>appleseedrenderer</Filter>
     </ClCompile>
-    <ClCompile Include="iappleseedmtl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="utilities.cpp" />
@@ -102,7 +101,7 @@
     </ClCompile>
     <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp">
       <Filter>appleseedvolumemtl</Filter>
-    </ClCompile>   
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -287,6 +286,7 @@
     </ClInclude>  
     <ClInclude Include="_beginmaxheaders.h" />
     <ClInclude Include="_endmaxheaders.h" />
+    <ClInclude Include="iappleseedgeometricobject.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -330,7 +330,7 @@
     </ResourceCompile>
     <ResourceCompile Include="appleseedvolumemtl\appleseedvolumemtl.rc">
       <Filter>appleseedvolumemtl</Filter>
-    </ResourceCompile>    
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="bump">

@@ -25,7 +25,6 @@
     <ClCompile Include="appleseedrenderer\updatechecker.cpp">
       <Filter>appleseedrenderer</Filter>
     </ClCompile>
-    <ClCompile Include="iappleseedmtl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="utilities.cpp" />
@@ -287,6 +286,7 @@
     </ClInclude>
     <ClInclude Include="_beginmaxheaders.h" />
     <ClInclude Include="_endmaxheaders.h" />
+    <ClInclude Include="iappleseedgeometricobject.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">

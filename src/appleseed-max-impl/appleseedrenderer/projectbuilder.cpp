@@ -36,6 +36,7 @@
 #include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/maxsceneentities.h"
 #include "appleseedrenderer/renderersettings.h"
+#include "iappleseedgeometricobject.h"
 #include "iappleseedmtl.h"
 #include "seexprutils.h"
 #include "utilities.h"
@@ -387,6 +388,37 @@ namespace
         }
 
         return object_infos;
+    }
+
+    std::vector<ObjectInfo> create_objects(
+        asr::Assembly&          assembly,
+        INode*                  object_node,
+        const TimeValue         time)
+    {
+        // Retrieve the geometrical object referenced by this node.
+        Object* object = object_node->GetObjectRef();
+
+        // Check if this object is defined by an appleseed-max plugin.
+        auto appleseed_geo_object =
+            static_cast<IAppleseedGeometricObject*>(object->GetInterface(IAppleseedGeometricObject::interface_id()));
+
+        if (appleseed_geo_object)
+        {
+            ObjectInfo object_info;
+            object_info.m_name = wide_to_utf8(object_node->GetName());
+            object_info.m_name = make_unique_name(assembly.objects(), object_info.m_name);
+
+            // Create the object and insert it into the assembly.
+            asf::auto_release_ptr<asr::Object> object =
+                appleseed_geo_object->create_object(assembly, object_info.m_name.c_str());
+            assembly.objects().insert(object);
+
+            return { object_info };
+        }
+        else
+        {
+            return create_mesh_objects(assembly, object_node, time);
+        }
     }
 
     typedef std::map<Mtl*, std::string> MaterialMap;
@@ -798,7 +830,7 @@ namespace
                     asr::AssemblyFactory().create(assembly_name.c_str()));
 
                 // Add objects and object instances to that assembly.
-                const auto object_infos = create_mesh_objects(object_assembly.ref(), node, time);
+                const auto object_infos = create_objects(object_assembly.ref(), node, time);
                 for (const auto& object_info : object_infos)
                 {
                     create_object_instance(
@@ -852,7 +884,7 @@ namespace
             if (it == object_map.end())
             {
                 // Create appleseed objects.
-                const auto object_infos = create_mesh_objects(assembly, node, time);
+                const auto object_infos = create_objects(assembly, node, time);
                 it = object_map.insert(std::make_pair(object, object_infos)).first;
             }
 
