@@ -38,12 +38,19 @@
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <baseinterface.h>
+#include <maxtypes.h>
 #include "_endmaxheaders.h"
 
 // Forward declarations.
 namespace renderer  { class Assembly; }
 namespace renderer  { class Material; }
-class Interface_ID;
+
+//
+// Interface of an appleseed material plugin.
+//
+// Note: This class must be entirely defined in this header file to allow
+// other plugins to use it without forcing them to link to appleseed-max.
+//
 
 class IAppleseedMtl
   : public BaseInterface
@@ -51,6 +58,7 @@ class IAppleseedMtl
   public:
     static Interface_ID interface_id();
 
+    // BaseInterface methods.
     Interface_ID GetID() override;
 
     // The sides (front and/or back) on which this material should be applied.
@@ -67,3 +75,18 @@ class IAppleseedMtl
         const bool          use_max_procedural_maps,
         const TimeValue     time) = 0;
 };
+
+
+//
+// IAppleseedMtl class implementation.
+//
+
+inline Interface_ID IAppleseedMtl::interface_id()
+{
+    return Interface_ID(0x1d87d86, 0x209f11dc);
+}
+
+inline Interface_ID IAppleseedMtl::GetID()
+{
+    return interface_id();
+}

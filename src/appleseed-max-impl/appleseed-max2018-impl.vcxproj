@@ -274,7 +274,6 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp" />
     <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp" />
     <ClCompile Include="builtinmapsupport.cpp" />
-    <ClCompile Include="iappleseedmtl.cpp" />
     <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="logtarget.cpp" />
     <ClCompile Include="main.cpp" />
@@ -335,6 +334,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedglassmtl\appleseedglassmtl.h" />
     <ClInclude Include="appleseedglassmtl\datachunks.h" />
     <ClInclude Include="appleseedglassmtl\resource.h" />
+    <ClInclude Include="iappleseedgeometricobject.h" />
     <ClInclude Include="iappleseedmtl.h" />
     <ClInclude Include="appleseedlightmtl\appleseedlightmtl.h" />
     <ClInclude Include="appleseedlightmtl\datachunks.h" />

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2019 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,58 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "iappleseedmtl.h"
+#pragma once
+
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
+// appleseed.foundation headers.
+#include "foundation/platform/windows.h"    // include before 3ds Max headers
+#include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
+#include <baseinterface.h>
 #include <maxtypes.h>
 #include "_endmaxheaders.h"
 
-Interface_ID IAppleseedMtl::interface_id()
+// Forward declarations.
+namespace renderer  { class Assembly; }
+namespace renderer  { class Object; }
+namespace renderer  { class Project; }
+
+//
+// Interface of an appleseed geometric object plugin.
+//
+// Note: This class must be entirely defined in this header file to allow
+// other plugins to use it without forcing them to link to appleseed-max.
+//
+
+class IAppleseedGeometricObject
+  : public BaseInterface
 {
-    return Interface_ID(0x1d87d86, 0x209f11dc);
+  public:
+    static Interface_ID interface_id();
+
+    // BaseInterface methods.
+    Interface_ID GetID() override;
+
+    virtual foundation::auto_release_ptr<renderer::Object> create_object(
+        renderer::Assembly& assembly,
+        const char*         name) = 0;
+};
+
+
+//
+// IAppleseedGeometricObject class implementation.
+//
+
+inline Interface_ID IAppleseedGeometricObject::interface_id()
+{
+    return Interface_ID(0x5c481697, 0x8d67948);
 }
 
-Interface_ID IAppleseedMtl::GetID()
+inline Interface_ID IAppleseedGeometricObject::GetID()
 {
     return interface_id();
 }
