@@ -73,12 +73,15 @@ asr::ParamArray get_uv_params(Texmap* texmap, const TimeValue time)
     DbgAssert(texmap->MapSlotType(texmap->GetMapChannel()) == MAPSLOT_TEXTURE);
     DbgAssert(static_cast<StdUVGen*>(uv_gen)->GetUVWSource() == UVWSRC_EXPLICIT);
 
-    float u_tiling = std_uv->GetUScl(time);
-    float v_tiling = std_uv->GetVScl(time);
-    float u_offset = std_uv->GetUOffs(time);
-    float v_offset = std_uv->GetVOffs(time);
-    float w_rotation = std_uv->GetWAng(time);
-    int tiling = std_uv->GetTextureTiling();
+    const float u_tiling = std_uv->GetUScl(time);
+    const float v_tiling = std_uv->GetVScl(time);
+    const float u_offset = std_uv->GetUOffs(time);
+    const float v_offset = std_uv->GetVOffs(time);
+    const float w_rotation = std_uv->GetWAng(time);
+    const int tiling = std_uv->GetTextureTiling();
+    const int real_world_scale = std_uv->GetUseRealWorldScale();
+
+    uv_params.insert("in_real_world_mode", fmt_osl_expr(real_world_scale));
 
     if (tiling & U_WRAP)
         uv_params.insert("in_wrapU", fmt_osl_expr(1));
