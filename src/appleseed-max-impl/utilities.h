@@ -54,6 +54,7 @@
 #include <maxtypes.h>
 #include <point3.h>
 #include <point4.h>
+#undef base_type
 
 // Standard headers.
 #include <cstddef>

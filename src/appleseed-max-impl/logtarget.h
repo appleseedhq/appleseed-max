@@ -36,6 +36,7 @@
 
 // Standard headers.
 #include <cstddef>
+#undef base_type
 
 class LogTarget
   : public foundation::ILogTarget

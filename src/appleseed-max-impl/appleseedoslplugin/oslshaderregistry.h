@@ -34,6 +34,7 @@
 // 3ds Max headers.
 #include <iparamb2.h>
 #include <maxtypes.h>
+#undef base_type
 
 // Standard headers.
 #include <string>

@@ -37,6 +37,7 @@
 // 3ds Max headers.
 #include <iparamb2.h>
 #include <renderelements.h>
+#undef base_type
 
 // Forward declarations.
 namespace renderer

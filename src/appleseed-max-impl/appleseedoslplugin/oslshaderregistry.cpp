@@ -53,6 +53,7 @@
 #include <iparamb2.h>
 #include <iparamm2.h>
 #include <maxtypes.h>
+#undef base_type
 
 // Boost headers.
 #include "boost/filesystem.hpp"
