@@ -50,10 +50,11 @@
 #include "foundation/utility/string.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <iparamb2.h>
 #include <iparamm2.h>
 #include <maxtypes.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 // Boost headers.
 #include "boost/filesystem.hpp"

@@ -285,6 +285,8 @@
     <ClInclude Include="appleseedvolumemtl\resource.h">
       <Filter>appleseedvolumemtl</Filter>
     </ClInclude>    
+    <ClInclude Include="_beginmaxheaders.h" />
+    <ClInclude Include="_endmaxheaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">

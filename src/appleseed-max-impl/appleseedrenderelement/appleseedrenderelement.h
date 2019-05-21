@@ -35,9 +35,10 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <iparamb2.h>
 #include <renderelements.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 // Forward declarations.
 namespace renderer

@@ -502,6 +502,12 @@ namespace
         return medium_priority;
     }
 
+    bool motion_blur_enabled(INode* node, const TimeValue time)
+    {
+        const int ObjectMotionBlur = 1;
+        return node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur;
+    }
+
     bool should_optimize_for_instancing(Object* object, const TimeValue time)
     {
         bool optimize_for_instancing = false;
@@ -776,7 +782,7 @@ namespace
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(node->GetObjTMAfterWSM(time)));
 
-        if (should_optimize_for_instancing(object, time))
+        if (motion_blur_enabled(node, time) || should_optimize_for_instancing(object, time))
         {
             std::string assembly_name = wide_to_utf8(node->GetName());
             assembly_name = make_unique_name(assembly.assemblies(), assembly_name + "_assembly");
@@ -827,8 +833,7 @@ namespace
             object_assembly_instance->transform_sequence()
                 .set_transform(0.0, transform);
 
-            const int ObjectMotionBlur = 1;
-            if (node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur)
+            if (motion_blur_enabled(node, time))
             {
                 bool is_animated = is_node_animated(node);
                 INode* parent_node = node->GetParentNode();

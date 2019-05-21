@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2019 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,25 +28,4 @@
 
 #pragma once
 
-// Build options header.
-#include "renderer/api/buildoptions.h"
-
-// appleseed.foundation headers.
-#include "foundation/utility/log.h"
-
-// Standard headers.
-#include <cstddef>
-
-class LogTarget
-  : public foundation::ILogTarget
-{
-  public:
-    void release() override;
-
-    void write(
-        const foundation::LogMessage::Category  category,
-        const char*                             file,
-        const size_t                            line,
-        const char*                             header,
-        const char*                             message) override;
-};
+#undef base_type

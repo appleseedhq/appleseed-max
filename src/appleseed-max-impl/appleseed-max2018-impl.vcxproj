@@ -361,6 +361,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="seexprutils.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="_beginmaxheaders.h" />
+    <ClInclude Include="_endmaxheaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedblendmtl\appleseedblendmtl.rc" />

@@ -46,9 +46,10 @@
 #include "utilities.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <iparamb2.h>
 #include <maxtypes.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <iostream>

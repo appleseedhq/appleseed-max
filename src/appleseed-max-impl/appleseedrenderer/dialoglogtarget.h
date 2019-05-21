@@ -35,11 +35,12 @@
 #include "foundation/utility/log.h"
 
 // Standard headers.
+#include "_beginmaxheaders.h"
 #include <cstddef>
 #include <string>
 #include <utility>
 #include <vector>
-#undef base_type
+#include "_endmaxheaders.h"
 
 typedef std::vector<std::string> StringVec;
 typedef foundation::LogMessage::Category MessageType;
