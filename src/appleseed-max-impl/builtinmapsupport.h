@@ -39,8 +39,10 @@
 #include "foundation/image/color.h"
 
 // 3ds Max Headers.
+#include "_beginmaxheaders.h"
 #include <color.h>
 #include <maxtypes.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <string>

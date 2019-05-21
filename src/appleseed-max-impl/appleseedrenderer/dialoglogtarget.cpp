@@ -46,7 +46,9 @@
 #include "boost/thread/mutex.hpp"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <max.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <Richedit.h>

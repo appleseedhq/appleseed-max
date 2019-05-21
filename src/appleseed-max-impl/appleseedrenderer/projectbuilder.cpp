@@ -75,6 +75,7 @@
 #include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <assert1.h>
 #include <bitmap.h>
 #include <genlight.h>
@@ -89,6 +90,7 @@
 #include <Scene/IPhysicalCamera.h>
 #include <trig.h>
 #include <triobj.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <cstddef>
@@ -502,12 +504,6 @@ namespace
         return medium_priority;
     }
 
-    bool motion_blur_enabled(INode* node, const TimeValue time)
-    {
-        const int ObjectMotionBlur = 1;
-        return node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur;
-    }
-
     bool should_optimize_for_instancing(Object* object, const TimeValue time)
     {
         bool optimize_for_instancing = false;
@@ -782,7 +778,7 @@ namespace
             asf::Transformd::from_local_to_parent(
                 to_matrix4d(node->GetObjTMAfterWSM(time)));
 
-        if (motion_blur_enabled(node, time) || should_optimize_for_instancing(object, time))
+        if (should_optimize_for_instancing(object, time))
         {
             std::string assembly_name = wide_to_utf8(node->GetName());
             assembly_name = make_unique_name(assembly.assemblies(), assembly_name + "_assembly");
@@ -833,7 +829,8 @@ namespace
             object_assembly_instance->transform_sequence()
                 .set_transform(0.0, transform);
 
-            if (motion_blur_enabled(node, time))
+            const int ObjectMotionBlur = 1;
+            if (node->GetMotBlurOnOff(time) && node->MotBlur() == ObjectMotionBlur)
             {
                 bool is_animated = is_node_animated(node);
                 INode* parent_node = node->GetParentNode();

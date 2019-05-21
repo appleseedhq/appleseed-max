@@ -41,8 +41,10 @@
 #include "boost/thread/mutex.hpp"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <assert1.h>
 #include <matrix3.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <clocale>

@@ -30,7 +30,9 @@
 #include "iappleseedmtl.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <maxtypes.h>
+#include "_endmaxheaders.h"
 
 Interface_ID IAppleseedMtl::interface_id()
 {

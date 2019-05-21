@@ -60,8 +60,10 @@
 #include "main/allocator.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <iparamb2.h>
 #include <plugapi.h>
+#include "_endmaxheaders.h"
 
 // Windows headers.
 #include <tchar.h>

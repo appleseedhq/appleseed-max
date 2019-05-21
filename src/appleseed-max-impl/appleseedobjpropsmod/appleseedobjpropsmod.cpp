@@ -35,8 +35,10 @@
 #include "utilities.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <modstack.h>
 #include <paramtype.h>
+#include "_endmaxheaders.h"
 
 #if MAX_RELEASE == MAX_RELEASE_R18
 #define TYPE_SINGLECHECKBOX TYPE_SINGLECHEKBOX

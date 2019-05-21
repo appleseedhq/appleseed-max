@@ -36,8 +36,10 @@
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <maxtypes.h>
 #include <render.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <vector>

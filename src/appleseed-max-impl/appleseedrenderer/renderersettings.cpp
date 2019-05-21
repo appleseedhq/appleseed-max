@@ -41,7 +41,9 @@
 #include "renderer/api/utility.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <ioapi.h>
+#include "_endmaxheaders.h"
 
 namespace asr = renderer;
 

@@ -37,7 +37,9 @@
 #include "foundation/math/vector.h"
 
 // 3ds Max Headers.
+#include "_beginmaxheaders.h"
 #include <maxtypes.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <string>

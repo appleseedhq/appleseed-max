@@ -55,12 +55,14 @@
 #include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <AssetManagement/AssetUser.h>
 #include <color.h>
 #include <hsv.h>
 #include <iparamm2.h>
 #include <stdmat.h>
 #include <strclass.h>
+#include "_endmaxheaders.h"
 
 // Windows headers.
 #include <tchar.h>

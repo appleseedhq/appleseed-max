@@ -32,7 +32,9 @@
 #include "bump/resource.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <iparamm2.h>
+#include "_endmaxheaders.h"
 
 class BumpParamMapDlgProc
   : public ParamMap2UserDlgProc
