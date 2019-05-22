@@ -38,13 +38,14 @@
 #include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <iparamb2.h>
 #include <maxtypes.h>
 #include <object.h>
 #include <ref.h>
 #include <strbasic.h>
 #include <strclass.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 class AppleseedObjPropsMod
   : public OSModifier

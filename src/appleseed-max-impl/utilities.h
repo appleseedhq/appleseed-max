@@ -44,6 +44,7 @@
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <assert1.h>
 #include <color.h>
 #include <ioapi.h>
@@ -54,6 +55,7 @@
 #include <maxtypes.h>
 #include <point3.h>
 #include <point4.h>
+#include "_endmaxheaders.h"
 
 // Standard headers.
 #include <cstddef>

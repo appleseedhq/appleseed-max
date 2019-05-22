@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2019 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,40 +25,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
-#pragma once
-
-// Build options header.
-#include "renderer/api/buildoptions.h"
-
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
-// 3ds Max headers.
-#include "_beginmaxheaders.h"
-#include <render.h>
-#include "_endmaxheaders.h"
-
-// Forward declarations.
-class AppleseedRenderer;
-class RendererSettings;
-
-class AppleseedRendererParamDlg
-  : public RendParamDlg
-{
-  public:
-    AppleseedRendererParamDlg(
-        IRendParams*        rend_params,
-        BOOL                in_progress,
-        AppleseedRenderer*  renderer);
-
-    ~AppleseedRendererParamDlg() override;
-
-    void DeleteThis() override;
-
-    void AcceptParams() override;
-
-  private:
-    struct Impl;
-    Impl* impl;
-};

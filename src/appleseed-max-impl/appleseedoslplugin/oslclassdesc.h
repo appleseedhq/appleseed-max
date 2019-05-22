@@ -38,9 +38,10 @@
 #include "oslshaderregistry.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <IMaterialBrowserEntryInfo.h>
 #include <IMtlRender_Compatibility.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 //
 // OSLPlugin material browser info.

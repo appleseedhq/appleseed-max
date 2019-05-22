@@ -50,6 +50,7 @@
 #include "foundation/utility/string.h"
 
 // 3ds Max Headers.
+#include "_beginmaxheaders.h"
 #include <AssetManagement/AssetUser.h>
 #include <assert1.h>
 #include <bitmap.h>
@@ -58,6 +59,7 @@
 #include <maxapi.h>
 #include <plugapi.h>
 #include <stdmat.h>
+#include "_endmaxheaders.h"
 
 // Windows headers.
 #include <Shlwapi.h>

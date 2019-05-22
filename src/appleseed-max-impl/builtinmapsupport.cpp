@@ -33,6 +33,7 @@
 #include "appleseedoslplugin/osltexture.h"
 #include "oslutils.h"
 #include "utilities.h"
+#include "_endmaxheaders.h"
 
 // Build options header.
 #include "renderer/api/buildoptions.h"
@@ -42,7 +43,9 @@
 #include "renderer/api/utility.h"
 
 // 3ds Max Headers.
+#include "_beginmaxheaders.h"
 #include <imtl.h>
+#include "_endmaxheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

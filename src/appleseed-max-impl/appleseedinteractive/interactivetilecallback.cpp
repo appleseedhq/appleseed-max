@@ -30,9 +30,11 @@
 #include "interactivetilecallback.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <bitmap.h>
 #include <interactiverender.h>
 #include <maxapi.h>
+#include "_endmaxheaders.h"
 
 namespace asr = renderer;
 

@@ -39,6 +39,7 @@
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <color.h>
 #include <IMaterialBrowserEntryInfo.h>
 #include <IMtlRender_Compatibility.h>
@@ -47,7 +48,7 @@
 #include <maxtypes.h>
 #include <ref.h>
 #include <strbasic.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 // Forward declarations.
 namespace renderer  { class Material; }

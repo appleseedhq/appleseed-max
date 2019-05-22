@@ -40,10 +40,11 @@
 #include "iappleseedmtl.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <imtl.h>
 #include <iparamb2.h>
 #include <maxtypes.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 // Forward declarations.
 namespace renderer { class Material; }

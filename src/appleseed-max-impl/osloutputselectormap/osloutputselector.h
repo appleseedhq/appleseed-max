@@ -36,6 +36,7 @@
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <IMaterialBrowserEntryInfo.h>
 #include <IMtlRender_Compatibility.h>
 #include <imtl.h>
@@ -44,7 +45,7 @@
 #include <istdplug.h>
 #include <maxtypes.h>
 #include <stdmat.h>
-#undef base_type
+#include "_endmaxheaders.h"
 
 class OSLOutputSelector
   : public Texmap

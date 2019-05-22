@@ -37,7 +37,9 @@
 #include "foundation/utility/memory.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <object.h>
+#include "_endmaxheaders.h"
 
 
 //
