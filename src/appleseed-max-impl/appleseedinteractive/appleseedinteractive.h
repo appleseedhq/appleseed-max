@@ -42,9 +42,6 @@
 #include <interactiverender.h>
 #include <ISceneEventManager.h>
 #include <maxapi.h>
-#if MAX_RELEASE == MAX_RELEASE_R18
-#include <Rendering/IAbortableRenderer.h>
-#endif
 #include "_endmaxheaders.h"
 
 // Standard headers.
@@ -59,9 +56,6 @@ class ViewParams;
 
 class AppleseedInteractiveRender
   : public IInteractiveRender
-#if MAX_RELEASE == MAX_RELEASE_R18
-  , public MaxSDK::IAbortableRenderer
-#endif
 {
   public:
     AppleseedInteractiveRender();
