@@ -30,7 +30,9 @@
 #include "main.h"
 
 // 3ds Max headers.
+#include "_beginmaxheaders.h"
 #include <max.h>
+#include "_endmaxheaders.h"
 
 HINSTANCE g_module;
 

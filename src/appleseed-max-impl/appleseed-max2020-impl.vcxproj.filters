@@ -283,9 +283,7 @@
     </ClInclude>
     <ClInclude Include="appleseedvolumemtl\resource.h">
       <Filter>appleseedvolumemtl</Filter>
-    </ClInclude>  
-    <ClInclude Include="_beginmaxheaders.h" />
-    <ClInclude Include="_endmaxheaders.h" />
+    </ClInclude>
     <ClInclude Include="iappleseedgeometricobject.h" />
   </ItemGroup>
   <ItemGroup>

@@ -87,8 +87,8 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <StringPooling>true</StringPooling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -120,8 +120,8 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -159,8 +159,8 @@ if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_USE_SSE;APPLESEED_WITH_DISNEY_MATERIAL;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;NDEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>

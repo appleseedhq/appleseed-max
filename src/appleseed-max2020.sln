@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max-impl", "appleseed-max-impl\appleseed-max2020-impl.vcxproj", "{62C41566-DBCB-49D3-943A-4DD53222269E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2020-impl", "appleseed-max-impl\appleseed-max2020-impl.vcxproj", "{62C41566-DBCB-49D3-943A-4DD53222269E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max", "appleseed-max\appleseed-max2020.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2020", "appleseed-max\appleseed-max2020.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D67435B8-82A7-44C7-BCD9-CB641841C24E}"
+	ProjectSection(SolutionItems) = preProject
+		_beginmaxheaders.h = _beginmaxheaders.h
+		_endmaxheaders.h = _endmaxheaders.h
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BD79DA4-2EAB-4E4E-91B8-B6488B524797}
 	EndGlobalSection
 EndGlobal
