@@ -51,15 +51,15 @@
 #include <iparamm2.h>
 #include "_endmaxheaders.h"
 
-// Windows headers.
-#include <shellapi.h>
-#include <tchar.h>
-
 // Standard headers.
 #include <future>
 #include <memory>
 #include <sstream>
 #include <string>
+
+// Windows headers.
+#include <shellapi.h>
+#include <tchar.h>
 
 namespace asf = foundation;
 

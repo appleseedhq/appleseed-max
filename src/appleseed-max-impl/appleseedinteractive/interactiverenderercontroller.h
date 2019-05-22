@@ -28,6 +28,9 @@
 
 #pragma once
 
+// appleseed-max headers.
+#include "appleseedinteractive/appleseedinteractive.h"
+
 // Build options header.
 #include "renderer/api/buildoptions.h"
 
@@ -38,9 +41,6 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
-
-// appleseed-max headers.
-#include "appleseedinteractive/appleseedinteractive.h"
 
 // Standard headers.
 #include <memory>
