@@ -33,7 +33,7 @@
 #include "appleseedrenderer/renderersettings.h"
 
 // Build options header.
-#include "renderer/api/buildoptions.h"
+#include "foundation/core/buildoptions.h"
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
