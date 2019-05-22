@@ -49,7 +49,7 @@
 #include "foundation/utility/siphash.h"
 #include "foundation/utility/string.h"
 
-// 3ds Max Headers.
+// 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <AssetManagement/AssetUser.h>
 #include <assert1.h>

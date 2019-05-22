@@ -38,7 +38,7 @@
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
 
-// 3ds Max Headers.
+// 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <assert1.h>
 #include <bitmap.h>

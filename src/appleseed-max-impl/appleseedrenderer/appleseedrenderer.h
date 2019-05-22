@@ -35,9 +35,6 @@
 // Build options header.
 #include "renderer/api/buildoptions.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <iparamb2.h>

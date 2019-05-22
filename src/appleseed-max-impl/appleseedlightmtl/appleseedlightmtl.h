@@ -35,7 +35,6 @@
 #include "renderer/api/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.

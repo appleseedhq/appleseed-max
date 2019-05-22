@@ -32,7 +32,7 @@
 #include "renderer/api/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
+#include "foundation/platform/windows.h"
 
 // DLL instance handle of the plugin.
 extern HINSTANCE g_module;
