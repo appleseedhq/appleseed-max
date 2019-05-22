@@ -28,6 +28,9 @@
 
 #pragma once
 
+// Build options header.
+#include "foundation/core/buildoptions.h"
+
 // appleseed.foundation headers.
 #include "foundation/platform/windows.h"
 
