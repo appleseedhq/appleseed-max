@@ -41,7 +41,6 @@
 #include "foundation/image/image.h"
 #include "foundation/image/pixel.h"
 #include "foundation/platform/atomic.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"

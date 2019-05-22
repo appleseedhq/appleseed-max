@@ -34,9 +34,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
-
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <iparamb2.h>

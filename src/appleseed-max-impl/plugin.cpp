@@ -54,7 +54,6 @@
 
 // appleseed.foundation headers.
 #include "foundation/core/appleseed.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // appleseed.main headers.
 #include "main/allocator.h"

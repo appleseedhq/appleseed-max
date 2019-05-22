@@ -42,7 +42,7 @@
 #include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
 
-// 3ds Max Headers.
+// 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <imtl.h>
 #include "_endmaxheaders.h"

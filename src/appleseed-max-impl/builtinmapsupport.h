@@ -35,10 +35,9 @@
 #include "renderer/api/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/image/color.h"
 
-// 3ds Max Headers.
+// 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <color.h>
 #include <maxtypes.h>

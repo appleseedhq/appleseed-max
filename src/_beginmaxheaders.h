@@ -25,3 +25,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+
+// Build options header.
+#include "foundation/core/buildoptions.h"
+
+// This header file must be included before any 3ds Max header file.
+#include "foundation/platform/windows.h"

@@ -34,7 +34,6 @@
 
 // appleseed.foundation headers.
 #include "foundation/platform/atomic.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"

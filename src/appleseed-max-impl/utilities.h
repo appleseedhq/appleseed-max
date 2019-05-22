@@ -40,7 +40,6 @@
 #include "foundation/image/image.h"
 #include "foundation/math/matrix.h"
 #include "foundation/math/vector.h"
-#include "foundation/platform/windows.h"    // include before 3ds Max headers
 #include "foundation/utility/autoreleaseptr.h"
 
 // 3ds Max headers.
