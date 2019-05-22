@@ -64,12 +64,12 @@
 #include <plugapi.h>
 #include "_endmaxheaders.h"
 
-// Windows headers.
-#include <tchar.h>
-
 // Standard headers.
 #include <sstream>
 #include <string>
+
+// Windows headers.
+#include <tchar.h>
 
 namespace asf = foundation;
 namespace asr = renderer;

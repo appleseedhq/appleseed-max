@@ -29,11 +29,14 @@
 // Interface header.
 #include "oslshadermetadata.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
+// appleseed-max headers.
+#include "utilities.h"
 
 // Build options header.
 #include "renderer/api/buildoptions.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
@@ -41,9 +44,6 @@
 #include "foundation/utility/iostreamop.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/string.h"
-
-// appleseed-max headers.
-#include "utilities.h"
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"

@@ -28,14 +28,14 @@
 
 #pragma once
 
+// appleseed-max headers.
+#include "appleseedoslplugin/oslshadermetadata.h"
+
 // Build options header.
 #include "renderer/api/buildoptions.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
-
-// appleseed-max headers.
-#include "appleseedoslplugin/oslshadermetadata.h"
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"

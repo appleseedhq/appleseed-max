@@ -28,9 +28,6 @@
 
 #pragma once
 
-// Build options header.
-#include "renderer/api/buildoptions.h"
-
 // appleseed-max headers.
 #include "oslshaderregistry.h"
 
@@ -39,6 +36,7 @@
 #include <IMaterialBrowserEntryInfo.h>
 #include <IMtlRender_Compatibility.h>
 #include "_endmaxheaders.h"
+
 
 //
 // OSLPlugin material browser info.

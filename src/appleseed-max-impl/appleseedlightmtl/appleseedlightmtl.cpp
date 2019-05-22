@@ -61,11 +61,11 @@
 #include <strclass.h>
 #include "_endmaxheaders.h"
 
-// Windows headers.
-#include <tchar.h>
-
 // Standard headers.
 #include <algorithm>
+
+// Windows headers.
+#include <tchar.h>
 
 namespace asf = foundation;
 namespace asr = renderer;

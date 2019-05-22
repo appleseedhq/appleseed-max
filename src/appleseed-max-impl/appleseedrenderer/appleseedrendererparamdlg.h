@@ -28,9 +28,6 @@
 
 #pragma once
 
-// Build options header.
-#include "renderer/api/buildoptions.h"
-
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <render.h>

@@ -32,16 +32,16 @@
 // RapidJSON headers.
 #include "3rdparty/rapidjson/document.h"
 
-// Windows headers.
-#include <Windows.h>
-#include <wininet.h>
-#include <tchar.h>
-
 // Standard headers.
 #include <cstddef>
 #include <ctime>
 #include <exception>
 #include <vector>
+
+// Windows headers.
+#include <Windows.h>
+#include <wininet.h>
+#include <tchar.h>
 
 namespace json = rapidjson;
 
