@@ -2134,11 +2134,10 @@ namespace
                 project,
                 project.configurations().get_by_name("final")->get_inherited_parameters(),
                 search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
-                &renderer_controller,
                 &tile_callback));
 
         // Render the frame.
-        renderer->render();
+        renderer->render(renderer_controller);
 
         return renderer_controller.get_status();
 

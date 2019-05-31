@@ -76,11 +76,10 @@ void InteractiveSession::render_thread()
             *m_project,
             m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),
             search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
-            m_renderer_controller.get(),
             &m_tile_callback));
 
     // Render the frame.
-    renderer->render();
+    renderer->render(*m_renderer_controller);
 }
 
 void InteractiveSession::start_render()
