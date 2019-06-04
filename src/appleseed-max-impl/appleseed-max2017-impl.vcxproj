@@ -58,19 +58,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>appleseed-max2017-impl</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>appleseed-max2017-impl</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>appleseed-max2017-impl</TargetName>
@@ -79,13 +76,10 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-debug\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-debug\include;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -128,15 +122,10 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -179,14 +168,10 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-release\include;$(SolutionDir)..\..\boost_1_69_0;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;$(SolutionDir)..\..\boost_1_69_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
