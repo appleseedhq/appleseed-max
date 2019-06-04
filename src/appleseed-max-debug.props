@@ -16,10 +16,15 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);$(SolutionDir)..\..\appleseed\src\appleseed</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);$(SolutionDir)..\..\appleseed\src\appleseed;$(SolutionDir)..\..\boost_1_69_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>APPLESEED_ENABLE_IMATH_INTEROP;APPLESEED_X86;BOOST_FILESYSTEM_NO_DEPRECATED;BOOST_FILESYSTEM_VERSION=3;BOOST_PYTHON_STATIC_LIB;DEBUG;OIIO_STATIC_BUILD;OSL_STATIC_LIBRARY;WIN32;WIN64;XERCES_STATIC_LIBRARY;_CRT_SECURE_NO_WARNINGS;_DEBUG;_SCL_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Paramblk2.lib;ShLwApi.Lib;appleseed.lib;bmm.lib;core.lib;geom.lib;maxutil.lib;mesh.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
