@@ -47,9 +47,6 @@ namespace renderer  { class Material; }
 //
 // Interface of an appleseed material plugin.
 //
-// Note: This class must be entirely defined in this header file to allow
-// other plugins to use it without forcing them to link to appleseed-max.
-//
 
 class IAppleseedMtl
   : public BaseInterface
@@ -68,6 +65,7 @@ class IAppleseedMtl
     // (for instance because its emission is set to 0)?
     virtual bool can_emit_light() const = 0;
 
+    // Create an appleseed material.
     virtual foundation::auto_release_ptr<renderer::Material> create_material(
         renderer::Assembly& assembly,
         const char*         name,

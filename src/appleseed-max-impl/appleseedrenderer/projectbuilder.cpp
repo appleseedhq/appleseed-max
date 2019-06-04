@@ -36,10 +36,12 @@
 #include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/maxsceneentities.h"
 #include "appleseedrenderer/renderersettings.h"
-#include "iappleseedgeometricobject.h"
-#include "iappleseedmtl.h"
 #include "seexprutils.h"
 #include "utilities.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedgeometricobject.h"
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -416,6 +418,7 @@ namespace
     }
 
     std::vector<ObjectInfo> create_objects(
+        asr::Project&           project,
         asr::Assembly&          assembly,
         INode*                  object_node,
         const TimeValue         time)
@@ -435,7 +438,10 @@ namespace
 
             // Create the object and insert it into the assembly.
             asf::auto_release_ptr<asr::Object> object =
-                appleseed_geo_object->create_object(assembly, object_info.m_name.c_str());
+                appleseed_geo_object->create_object(project, assembly, object_info.m_name.c_str(), time);
+            if (!object)
+                return {};
+
             assembly.objects().insert(object);
 
             return { object_info };
@@ -477,12 +483,14 @@ namespace
                 // The appleseed material does not exist yet, let the material plugin create it.
                 material_info.m_name =
                     make_unique_name(parent_assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
-                parent_assembly->materials().insert(
+                asf::auto_release_ptr<asr::Material> material =
                     appleseed_mtl->create_material(
                         *parent_assembly,
                         material_info.m_name.c_str(),
                         use_max_procedural_maps,
-                        time));
+                        time);
+                // todo: handle material creation errors.
+                parent_assembly->materials().insert(material);
                 material_map.insert(std::make_pair(mtl, material_info.m_name));
             }
             else
@@ -824,6 +832,7 @@ namespace
     typedef std::map<Object*, std::string> AssemblyMap;
 
     void add_object(
+        asr::Project&           project,
         asr::Assembly&          assembly,
         INode*                  node,
         INode*                  view_node,
@@ -855,7 +864,7 @@ namespace
                     asr::AssemblyFactory().create(assembly_name.c_str()));
 
                 // Add objects and object instances to that assembly.
-                const auto object_infos = create_objects(object_assembly.ref(), node, time);
+                const auto object_infos = create_objects(project, object_assembly.ref(), node, time);
                 for (const auto& object_info : object_infos)
                 {
                     create_object_instance(
@@ -909,7 +918,7 @@ namespace
             if (it == object_map.end())
             {
                 // Create appleseed objects.
-                const auto object_infos = create_objects(assembly, node, time);
+                const auto object_infos = create_objects(project, assembly, node, time);
                 it = object_map.insert(std::make_pair(object, object_infos)).first;
             }
 
@@ -931,6 +940,7 @@ namespace
     }
 
     void add_objects(
+        asr::Project&           project,
         asr::Assembly&          assembly,
         INode*                  view_node,
         const MaxSceneEntities& entities,
@@ -946,6 +956,7 @@ namespace
         {
             const auto& object = entities.m_objects[i];
             add_object(
+                project,
                 assembly,
                 object,
                 view_node,
@@ -1253,6 +1264,7 @@ namespace
     }
 
     void populate_assembly(
+        asr::Project&                       project,
         asr::Scene&                         scene,
         asr::Assembly&                      assembly,
         INode*                              view_node,
@@ -1269,6 +1281,7 @@ namespace
         MaterialMap material_map;
         AssemblyMap assembly_map;
         add_objects(
+            project,
             assembly,
             view_node,
             entities,
@@ -1873,6 +1886,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     const RenderType type =
         rend_params.inMtlEdit ? RenderType::MaterialPreview : RenderType::Default;
     populate_assembly(
+        project.ref(),
         scene.ref(),
         assembly.ref(),
         view_node,

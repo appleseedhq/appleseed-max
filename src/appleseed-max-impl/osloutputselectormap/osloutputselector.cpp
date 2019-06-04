@@ -91,7 +91,7 @@ namespace
                     Texmap* texmap = nullptr;
                     pblock->GetValue(ParamIdSourceMap, t, texmap, FOREVER);
 
-                    if (texmap != nullptr && is_osl_texture(texmap))
+                    if (dynamic_cast<OSLTexture*>(texmap) != nullptr)
                     {
                         auto output_names = static_cast<OSLTexture*>(texmap)->get_output_names();
 
@@ -184,7 +184,7 @@ namespace
         param_map->GetParamBlock()->GetValue(ParamIdSourceMap, time, texmap, FOREVER);
 
         SendMessage(GetDlgItem(dlg_hwnd, IDC_COMBO_OUTPUT_NAME), CB_RESETCONTENT, 0, 0);
-        if (texmap != nullptr && is_osl_texture(texmap))
+        if (dynamic_cast<OSLTexture*>(texmap) != nullptr)
         {
             auto output_names = static_cast<OSLTexture*>(texmap)->get_output_names();
             for (const auto& name : output_names)
