@@ -49,14 +49,14 @@
 #include "foundation/utility/string.h"
 
 // 3ds Max headers.
-#include "_beginmaxheaders.h"
+#include "appleseed-max-common/_beginmaxheaders.h"
 #include <bitmap.h>
 #include <imtl.h>
 #include <maxapi.h>
 #include <maxtypes.h>
 #include <stdmat.h>
 #include <iparamm2.h>
-#include "_endmaxheaders.h"
+#include "appleseed-max-common/_endmaxheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

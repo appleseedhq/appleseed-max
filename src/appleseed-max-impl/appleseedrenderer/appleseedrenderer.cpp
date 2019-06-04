@@ -61,7 +61,7 @@
 #include "foundation/utility/searchpaths.h"
 
 // 3ds Max headers.
-#include "_beginmaxheaders.h"
+#include "appleseed-max-common/_beginmaxheaders.h"
 #include <assert1.h>
 #include <bitmap.h>
 #include <interactiverender.h>
@@ -69,7 +69,7 @@
 #include <notify.h>
 #include <pbbitmap.h>
 #include <renderelements.h>
-#include "_endmaxheaders.h"
+#include "appleseed-max-common/_endmaxheaders.h"
 
 // Standard headers.
 #include <clocale>

@@ -7,12 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017-impl", "a
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017", "appleseed-max\appleseed-max2017.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A65226E8-3622-479B-94D2-D61162069E8E}"
-	ProjectSection(SolutionItems) = preProject
-		_beginmaxheaders.h = _beginmaxheaders.h
-		_endmaxheaders.h = _endmaxheaders.h
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max-common", "appleseed-max-common\appleseed-max-common.vcxproj", "{44361726-ECBC-451E-8BB4-B49960BC9EB9}"
 EndProject
 Global

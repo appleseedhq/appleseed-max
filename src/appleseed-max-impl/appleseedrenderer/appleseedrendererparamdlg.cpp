@@ -44,12 +44,12 @@
 #include "foundation/core/appleseed.h"
 
 // 3ds Max headers.
-#include "_beginmaxheaders.h"
+#include "appleseed-max-common/_beginmaxheaders.h"
 #include <3dsmaxdlport.h>
 #include <assert1.h>
 #include <custcont.h>
 #include <iparamm2.h>
-#include "_endmaxheaders.h"
+#include "appleseed-max-common/_endmaxheaders.h"
 
 // Standard headers.
 #include <future>
