@@ -32,10 +32,10 @@
 #include "dialoglogtarget.h"
 
 // 3ds Max headers.
-#include "_beginmaxheaders.h"
+#include "appleseed-max-common/_beginmaxheaders.h"
 #include <maxtypes.h>
 #include <strclass.h>
-#include "_endmaxheaders.h"
+#include "appleseed-max-common/_endmaxheaders.h"
 
 // Standard headers.
 #include <string>

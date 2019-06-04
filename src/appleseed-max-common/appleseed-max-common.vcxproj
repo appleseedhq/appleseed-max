@@ -19,6 +19,8 @@
     <ClInclude Include="iappleseedmtl.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="utilities.h" />
+    <ClInclude Include="_beginmaxheaders.h" />
+    <ClInclude Include="_endmaxheaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utilities.cpp" />

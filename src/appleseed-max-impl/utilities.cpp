@@ -47,7 +47,7 @@
 #include "foundation/utility/siphash.h"
 
 // 3ds Max headers.
-#include "_beginmaxheaders.h"
+#include "appleseed-max-common/_beginmaxheaders.h"
 #include <AssetManagement/AssetUser.h>
 #include <Materials/Texmap.h>
 #include <Rendering/ShadeContext.h>
@@ -63,7 +63,7 @@
 #include <plugapi.h>
 #include <point3.h>
 #include <stdmat.h>
-#include "_endmaxheaders.h"
+#include "appleseed-max-common/_endmaxheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

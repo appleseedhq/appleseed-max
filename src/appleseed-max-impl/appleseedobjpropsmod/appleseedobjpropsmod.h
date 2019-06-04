@@ -35,14 +35,14 @@
 #include "renderer/api/scene.h"
 
 // 3ds Max headers.
-#include "_beginmaxheaders.h"
+#include "appleseed-max-common/_beginmaxheaders.h"
 #include <iparamb2.h>
 #include <maxtypes.h>
 #include <object.h>
 #include <ref.h>
 #include <strbasic.h>
 #include <strclass.h>
-#include "_endmaxheaders.h"
+#include "appleseed-max-common/_endmaxheaders.h"
 
 class AppleseedObjPropsMod
   : public OSModifier
