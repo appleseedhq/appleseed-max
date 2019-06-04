@@ -32,51 +32,8 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/platform/windows.h"
 
-// 3ds Max headers.
-#include "_beginmaxheaders.h"
-#include <baseinterface.h>
-#include <maxtypes.h>
-#include "_endmaxheaders.h"
-
-// Forward declarations.
-namespace renderer  { class Assembly; }
-namespace renderer  { class Object; }
-namespace renderer  { class Project; }
-
-//
-// Interface of an appleseed geometric object plugin.
-//
-// Note: This class must be entirely defined in this header file to allow
-// other plugins to use it without forcing them to link to appleseed-max.
-//
-
-class IAppleseedGeometricObject
-  : public BaseInterface
-{
-  public:
-    static Interface_ID interface_id();
-
-    // BaseInterface methods.
-    Interface_ID GetID() override;
-
-    virtual foundation::auto_release_ptr<renderer::Object> create_object(
-        renderer::Assembly& assembly,
-        const char*         name) = 0;
-};
-
-
-//
-// IAppleseedGeometricObject class implementation.
-//
-
-inline Interface_ID IAppleseedGeometricObject::interface_id()
-{
-    return Interface_ID(0x5c481697, 0x8d67948);
-}
-
-inline Interface_ID IAppleseedGeometricObject::GetID()
-{
-    return interface_id();
-}
+// DLL instance handle of the plugin.
+// This must be provided by the clients of this static library.
+extern HINSTANCE g_module;

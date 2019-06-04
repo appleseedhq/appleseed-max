@@ -30,9 +30,7 @@
 #include "utilities.h"
 
 // appleseed-max headers.
-#include "appleseedoslplugin/osltexture.h"
 #include "osloutputselectormap/osloutputselector.h"
-#include "main.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -47,94 +45,28 @@
 #include "foundation/image/tile.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/siphash.h"
-#include "foundation/utility/string.h"
 
 // 3ds Max headers.
 #include "_beginmaxheaders.h"
 #include <AssetManagement/AssetUser.h>
+#include <Materials/Texmap.h>
+#include <Rendering/ShadeContext.h>
 #include <assert1.h>
 #include <bitmap.h>
+#include <box3.h>
 #include <imtl.h>
+#include <interval.h>
+#include <iparamb2.h>
 #include <iparamm2.h>
-#include <maxapi.h>
+#include <ipoint2.h>
+#include <paramtype.h>
 #include <plugapi.h>
+#include <point3.h>
 #include <stdmat.h>
 #include "_endmaxheaders.h"
 
-// Windows headers.
-#include <Shlwapi.h>
-
 namespace asf = foundation;
 namespace asr = renderer;
-
-std::string wide_to_utf8(const std::wstring& wstr)
-{
-    if (wstr.empty())
-        return std::string();
-
-    const int wstr_size = static_cast<int>(wstr.size());
-    const int result_size = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, nullptr, 0, nullptr, nullptr);
-
-    std::string result(result_size, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], wstr_size, &result[0], result_size, nullptr, nullptr);
-
-    return result;
-}
-
-std::string wide_to_utf8(const wchar_t* wstr)
-{
-    const int result_size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, nullptr, 0, nullptr, nullptr);
-
-    std::string result(result_size - 1, 0);
-    WideCharToMultiByte(CP_UTF8, 0, wstr, -1, &result[0], result_size - 1, nullptr, nullptr);
-
-    return result;
-}
-
-std::wstring utf8_to_wide(const std::string& str)
-{
-    if (str.empty())
-        return std::wstring();
-
-    const int str_size = static_cast<int>(str.size());
-    const int result_size = MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, nullptr, 0);
-
-    std::wstring result(result_size, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &str[0], str_size, &result[0], result_size);
-
-    return result;
-}
-
-std::wstring utf8_to_wide(const char* str)
-{
-    const int result_size = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
-
-    std::wstring result(result_size - 1, 0);
-    MultiByteToWideChar(CP_UTF8, 0, str, -1, &result[0], result_size - 1);
-
-    return result;
-}
-
-std::string get_root_path()
-{
-    wchar_t path[MAX_PATH];
-    const DWORD path_length = sizeof(path) / sizeof(wchar_t);
-
-    const auto result = GetModuleFileName(g_module, path, path_length);
-    DbgAssert(result != 0);
-
-    PathRemoveFileSpec(path);
-
-    return wide_to_utf8(path);
-}
-
-WStr replace_extension(const WStr& file_path, const WStr& new_ext)
-{
-    const int i = file_path.last(L'.');
-    WStr new_file_path = i == -1 ? file_path : file_path.Substr(0, i);
-    new_file_path.Append(new_ext);
-    return new_file_path;
-}
 
 void update_map_buttons(IParamMap2* param_map)
 {
@@ -169,11 +101,6 @@ bool is_bitmap_texture(Texmap* map)
         return false;
 
     return true;
-}
-
-bool is_osl_texture(Texmap* map)
-{
-    return dynamic_cast<OSLTexture*>(map) != nullptr;
 }
 
 bool is_supported_procedural_texture(Texmap* map, const bool use_max_procedural_maps)
@@ -255,11 +182,11 @@ bool is_linear_texture(BitmapTex* bitmap_tex)
 }
 
 asf::auto_release_ptr<asf::Image> render_bitmap_to_image(
-    Bitmap*         bitmap,
-    const size_t    image_width,
-    const size_t    image_height,
-    const size_t    tile_width,
-    const size_t    tile_height)
+    Bitmap*                 bitmap,
+    const size_t            image_width,
+    const size_t            image_height,
+    const size_t            tile_width,
+    const size_t            tile_height)
 {
     asf::auto_release_ptr<asf::Image> image(
         new asf::Image(
@@ -308,12 +235,12 @@ void insert_color(asr::BaseGroup& base_group, const Color& color, const char* na
 }
 
 std::string insert_texture_and_instance(
-    asr::BaseGroup& base_group,
-    Texmap*         texmap,
-    const bool      use_max_procedural_maps,
-    const TimeValue time,
-    asr::ParamArray texture_params,
-    asr::ParamArray texture_instance_params)
+    asr::BaseGroup&         base_group,
+    Texmap*                 texmap,
+    const bool              use_max_procedural_maps,
+    const TimeValue         time,
+    const asr::ParamArray&  texture_params,
+    const asr::ParamArray&  texture_instance_params)
 {
     if (use_max_procedural_maps && is_supported_procedural_texture(texmap, use_max_procedural_maps))
     {
@@ -339,10 +266,10 @@ std::string insert_texture_and_instance(
 }
 
 std::string insert_bitmap_texture_and_instance(
-    asr::BaseGroup& base_group,
-    BitmapTex*      bitmap_tex,
-    asr::ParamArray texture_params,
-    asr::ParamArray texture_instance_params)
+    asr::BaseGroup&         base_group,
+    BitmapTex*              bitmap_tex,
+    asr::ParamArray         texture_params,
+    asr::ParamArray         texture_instance_params)
 {
     // todo: it can happen that `filepath` is empty here; report an error.
     const std::string filepath = wide_to_utf8(bitmap_tex->GetMap().GetFullFilePath());
@@ -766,11 +693,11 @@ namespace
 }
 
 std::string insert_procedural_texture_and_instance(
-    asr::BaseGroup& base_group,
-    Texmap*         texmap,
-    const TimeValue time,
-    asr::ParamArray texture_params,
-    asr::ParamArray texture_instance_params)
+    asr::BaseGroup&         base_group,
+    Texmap*                 texmap,
+    const TimeValue         time,
+    asr::ParamArray         texture_params,
+    asr::ParamArray         texture_instance_params)
 {
     texmap->Update(time, FOREVER);
     load_map_files_recursively(texmap, time);

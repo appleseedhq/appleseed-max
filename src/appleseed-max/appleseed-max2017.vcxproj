@@ -21,6 +21,11 @@
   <ItemGroup>
     <ClInclude Include="main.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\appleseed-max-common\appleseed-max-common.vcxproj">
+      <Project>{44361726-ecbc-451e-8bb4-b49960bc9eb9}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F43B3C0E-2A72-4B30-9016-DEC6B022D135}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

@@ -28,8 +28,8 @@
 
 #pragma once
 
-// appleseed-max headers.
-#include "iappleseedmtl.h"
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"

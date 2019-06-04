@@ -334,8 +334,6 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedglassmtl\appleseedglassmtl.h" />
     <ClInclude Include="appleseedglassmtl\datachunks.h" />
     <ClInclude Include="appleseedglassmtl\resource.h" />
-    <ClInclude Include="iappleseedgeometricobject.h" />
-    <ClInclude Include="iappleseedmtl.h" />
     <ClInclude Include="appleseedlightmtl\appleseedlightmtl.h" />
     <ClInclude Include="appleseedlightmtl\datachunks.h" />
     <ClInclude Include="appleseedlightmtl\resource.h" />
@@ -380,6 +378,11 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
   </ItemGroup>
   <ItemGroup>
     <None Include="appleseedrenderelement\appleseedrenderelement.aps" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\appleseed-max-common\appleseed-max-common.vcxproj">
+      <Project>{44361726-ecbc-451e-8bb4-b49960bc9eb9}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

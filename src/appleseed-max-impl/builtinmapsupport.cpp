@@ -59,7 +59,7 @@ void connect_output_selector(
 {
     Texmap* input_map = nullptr;
     texmap->GetParamBlock(0)->GetValueByName(L"source_map", time, input_map, FOREVER);
-    if (input_map != nullptr && is_osl_texture(input_map))
+    if (dynamic_cast<OSLTexture*>(input_map) != nullptr)
     {
         OSLTexture* osl_texture = static_cast<OSLTexture*>(input_map);
         auto output_names = osl_texture->get_output_names();

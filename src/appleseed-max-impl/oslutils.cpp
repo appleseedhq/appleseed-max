@@ -33,8 +33,10 @@
 #include "appleseedoslplugin/oslshadermetadata.h"
 #include "appleseedoslplugin/osltexture.h"
 #include "builtinmapsupport.h"
-#include "iappleseedmtl.h"
 #include "utilities.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -261,7 +263,7 @@ void connect_float_texture(
         return;
     }
 
-    if (is_osl_texture(texmap))
+    if (dynamic_cast<OSLTexture*>(texmap) != nullptr)
     {
         OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
         osl_tex->create_osl_texture(shader_group, material_node_name, material_input_name, time);
@@ -322,7 +324,7 @@ void connect_color_texture(
         return;
     }
 
-    if (is_osl_texture(texmap))
+    if (dynamic_cast<OSLTexture*>(texmap) != nullptr)
     {
         OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
         osl_tex->create_osl_texture(shader_group, material_node_name, material_input_name, time);
@@ -411,7 +413,7 @@ void connect_bump_map(
     const float         amount,
     const TimeValue     time)
 {
-    if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
+    if (is_supported_procedural_texture(texmap, false) || dynamic_cast<OSLTexture*>(texmap) != nullptr)
     {
         auto bump_map_layer_name = asf::format("{0}_bump_map", material_node_name);
 
@@ -476,7 +478,7 @@ void connect_normal_map(
     const float         amount,
     const TimeValue     time)
 {
-    if (is_supported_procedural_texture(texmap, false) || is_osl_texture(texmap))
+    if (is_supported_procedural_texture(texmap, false) || dynamic_cast<OSLTexture*>(texmap) != nullptr)
     {
         auto normal_map_layer_name = asf::format("{0}_normal_map", material_node_name);
 
@@ -636,7 +638,7 @@ void create_osl_shader(
                   case MaxParam::NormalParam:
                   case MaxParam::PointParam:
                     {
-                        if (is_osl_texture(texmap))
+                        if (dynamic_cast<OSLTexture*>(texmap) != nullptr)
                         {
                             OSLTexture* osl_tex = static_cast<OSLTexture*>(texmap);
                             osl_tex->create_osl_texture(
