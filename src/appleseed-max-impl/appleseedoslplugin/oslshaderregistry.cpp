@@ -63,9 +63,9 @@
 // Standard headers.
 #include <memory>
 
-namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
+namespace bf = boost::filesystem;
 
 typedef std::map<std::wstring, OSLShaderInfo> OSLShaderInfoMap;
 
@@ -193,7 +193,7 @@ namespace
 
     bool do_register_shader(
         OSLShaderInfoMap&               shader_map,
-        const bfs::path&                shaderPath,
+        const bf::path&                 shaderPath,
         asr::ShaderQuery&               query)
     {
         if (query.open(shaderPath.string().c_str()))
@@ -230,7 +230,7 @@ namespace
 
     bool register_shader(
         OSLShaderInfoMap&       shader_map,
-        const bfs::path&        shaderPath,
+        const bf::path&         shaderPath,
         asr::ShaderQuery&       query)
     {
         try
@@ -263,19 +263,19 @@ namespace
 
     void register_shaders_in_directory(
         OSLShaderInfoMap&       shader_map,
-        const bfs::path&        shaderDir,
+        const bf::path&         shaderDir,
         asr::ShaderQuery&       query)
     {
         try
         {
-            if (bfs::exists(shaderDir) && bfs::is_directory(shaderDir))
+            if (bf::exists(shaderDir) && bf::is_directory(shaderDir))
             {
-                for (bfs::directory_iterator it(shaderDir), e; it != e; ++it)
+                for (bf::directory_iterator it(shaderDir), e; it != e; ++it)
                 {
-                    const bfs::file_status shaderStatus = it->status();
-                    if (shaderStatus.type() == bfs::regular_file)
+                    const bf::file_status shaderStatus = it->status();
+                    if (shaderStatus.type() == bf::regular_file)
                     {
-                        const bfs::path& shaderPath = it->path();
+                        const bf::path& shaderPath = it->path();
                         if (shaderPath.extension() == ".oso")
                         {
                             RENDERER_LOG_DEBUG(
@@ -290,7 +290,7 @@ namespace
                 }
             }
         }
-        catch (const bfs::filesystem_error& e)
+        catch (const bf::filesystem_error& e)
         {
             RENDERER_LOG_ERROR(
                 "Filesystem error, path = %s, error = %s.",
@@ -302,9 +302,9 @@ namespace
     void register_shading_nodes(OSLShaderInfoMap& shader_map)
     {
         // Build list of dirs to look for shaders
-        std::vector<bfs::path> shaderPaths;
+        std::vector<bf::path> shaderPaths;
 
-        bfs::path p(get_root_path());
+        bf::path p(get_root_path());
         p = p / "shaders" / "appleseed";
         shaderPaths.push_back(p);
 
@@ -319,7 +319,7 @@ namespace
                 paths);
 
             for (size_t i = 0, e = paths.size(); i < e; ++i)
-                shaderPaths.push_back(bfs::path(paths[i]));
+                shaderPaths.push_back(bf::path(paths[i]));
         }
 
         asf::auto_release_ptr<asr::ShaderQuery> query =
