@@ -183,8 +183,9 @@ namespace
 
     struct ObjectInfo
     {
-        std::string                     m_name;             // name of the appleseed object
-        std::map<MtlID, asf::uint32>    m_mtlid_to_slot;    // map a 3ds Max's material ID to an appleseed's material slot
+        std::string                     m_name;                 // name of the appleseed object
+        std::map<MtlID, std::string>    m_mtlid_to_slot_name;   // map a Max's material ID to an appleseed's material slot name
+        std::map<MtlID, asf::uint32>    m_mtlid_to_slot_index;  // map a Max's material ID to an appleseed's material slot index
     };
 
     asf::auto_release_ptr<asr::MeshObject> convert_mesh_object(
@@ -328,18 +329,19 @@ namespace
 
             // Assign to the triangle the material slot corresponding to the face's material ID,
             // creating a new material slot if necessary.
-            asf::uint32 slot;
+            asf::uint32 slot_index;
             const MtlID mtlid = face.getMatID();
-            const auto it = object_info.m_mtlid_to_slot.find(mtlid);
-            if (it == object_info.m_mtlid_to_slot.end())
+            const auto it = object_info.m_mtlid_to_slot_index.find(mtlid);
+            if (it == object_info.m_mtlid_to_slot_index.end())
             {
                 // Create a new material slot in the object.
                 const auto slot_name = "material_slot_" + asf::to_string(object->get_material_slot_count());
-                slot = static_cast<asf::uint32>(object->push_material_slot(slot_name.c_str()));
-                object_info.m_mtlid_to_slot.insert(std::make_pair(mtlid, slot));
+                slot_index = static_cast<asf::uint32>(object->push_material_slot(slot_name.c_str()));
+                object_info.m_mtlid_to_slot_name.insert(std::make_pair(mtlid, slot_name));
+                object_info.m_mtlid_to_slot_index.insert(std::make_pair(mtlid, slot_index));
             }
-            else slot = it->second;
-            triangle.m_pa = slot;
+            else slot_index = it->second;
+            triangle.m_pa = slot_index;
 
             object->push_triangle(triangle);
         }
@@ -362,7 +364,7 @@ namespace
         const ObjectState object_state = object_node->EvalWorldState(time);
         GeomObject* geom_object = static_cast<GeomObject*>(object_state.obj);
 
-        // Create one appleseed MeshObject per 3ds Max Mesh.
+        // Create one appleseed MeshObject per Max Mesh.
         const int render_mesh_count = geom_object->NumberOfRenderMeshes();
         if (render_mesh_count > 0)
         {
@@ -442,6 +444,11 @@ namespace
             if (!object)
                 return {};
 
+            // Remember the material slots declared by the object.
+            for (size_t i = 0, e = object->get_material_slot_count(); i < e; ++i)
+                object_info.m_mtlid_to_slot_name.insert(std::make_pair(0, object->get_material_slot(i)));
+
+            // Insert object into assembly.
             assembly.objects().insert(object);
 
             return { object_info };
@@ -737,16 +744,14 @@ namespace
                                 settings.m_use_max_procedural_maps,
                                 time);
 
-                        const auto entry = object_info.m_mtlid_to_slot.find(i);
-                        if (entry != object_info.m_mtlid_to_slot.end())
+                        const auto entry = object_info.m_mtlid_to_slot_name.find(i);
+                        if (entry != object_info.m_mtlid_to_slot_name.end())
                         {
-                            const std::string slot_name = "material_slot_" + asf::to_string(entry->second);
-
                             if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                                front_material_mappings.insert(slot_name, material_info.m_name);
+                                front_material_mappings.insert(entry->second, material_info.m_name);
 
                             if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                                back_material_mappings.insert(slot_name, material_info.m_name);
+                                back_material_mappings.insert(entry->second, material_info.m_name);
                         }
                     }
                 }
@@ -770,15 +775,13 @@ namespace
                         time);
 
                 // Assign it to all material slots.
-                for (const auto& entry : object_info.m_mtlid_to_slot)
+                for (const auto& entry : object_info.m_mtlid_to_slot_name)
                 {
-                    const std::string slot_name = "material_slot_" + asf::to_string(entry.second);
-
                     if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                        front_material_mappings.insert(slot_name, material_info.m_name);
+                        front_material_mappings.insert(entry.second, material_info.m_name);
 
                     if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                        back_material_mappings.insert(slot_name, material_info.m_name);
+                        back_material_mappings.insert(entry.second, material_info.m_name);
                 }
             }
         }
@@ -797,11 +800,10 @@ namespace
                     to_color3f(Color(instance_node->GetWireColor())));
 
             // Assign it to all material slots.
-            for (const auto& entry : object_info.m_mtlid_to_slot)
+            for (const auto& entry : object_info.m_mtlid_to_slot_name)
             {
-                const std::string slot_name = "material_slot_" + asf::to_string(entry.second);
-                front_material_mappings.insert(slot_name, material_name);
-                back_material_mappings.insert(slot_name, material_name);
+                front_material_mappings.insert(entry.second, material_name);
+                back_material_mappings.insert(entry.second, material_name);
             }
         }
 
@@ -1882,7 +1884,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     asf::auto_release_ptr<asr::Assembly> assembly(
         asr::AssemblyFactory().create("assembly"));
 
-    // Populate the assembly with entities from the 3ds Max scene.
+    // Populate the assembly with entities from the Max scene.
     const RenderType type =
         rend_params.inMtlEdit ? RenderType::MaterialPreview : RenderType::Default;
     populate_assembly(
