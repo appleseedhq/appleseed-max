@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2019 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -1545,13 +1545,13 @@ namespace
         {
           case 0:  return "blackman-harris";
           case 1:  return "box";
-          case 2:  return "catmull";
-          case 3:  return "bspline";
+          case 2:  return "blackman-harris"; // legacy catmull mapped to blackman-harris
+          case 3:  return "blackman-harris"; // legacy bspline mapped to blackman-harris
           case 4:  return "gaussian";
-          case 5:  return "lanczos";
-          case 6:  return "mitchell";
+          case 5:  return "blackman-harris"; // legacy lanczos mapped to blackman-harris
+          case 6:  return "blackman-harris"; // legacy mitchell mapped to blackman-harris
           case 7:  return "triangle";
-          default: return "box";
+          default: return "blackman-harris";
         }
     }
 
