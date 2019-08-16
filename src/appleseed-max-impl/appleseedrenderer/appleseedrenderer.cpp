@@ -214,7 +214,6 @@ namespace
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,      L"Stochastic Progressive Photon Mapping" },
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,      L"Bidirectional Path Tracing" },
         { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,      L"CDF" },
-        { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_2,      L"Light Tree" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_1,         L"No Override" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_2,         L"Albedo" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,         L"Ambient Occlusion" },
