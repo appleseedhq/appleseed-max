@@ -33,7 +33,6 @@
 #include "appleseedoslplugin/osltexture.h"
 #include "oslutils.h"
 #include "utilities.h"
-#include "appleseed-max-common/_endmaxheaders.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
