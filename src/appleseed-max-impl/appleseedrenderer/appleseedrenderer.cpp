@@ -1326,7 +1326,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdLightSamplingAlgorithm, L"light_sampling_algorithm", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_INT_COMBOBOX, IDC_COMBO_LIGHT_SAMPLING_ALGORITHM,
-        2, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_2,
+        1, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
