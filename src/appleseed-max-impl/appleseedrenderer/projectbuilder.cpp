@@ -82,6 +82,7 @@
 #include <genlight.h>
 #include <iInstanceMgr.h>
 #include <INodeTab.h>
+#include <MeshNormalSpec.h>
 #include <modstack.h>
 #include <object.h>
 #include <pbbitmap.h>
@@ -230,15 +231,38 @@ namespace
             asf::uint32 normal_indices[3];
             if (face_smgroup == 0)
             {
-                // No smooth group for this face, use the face normal.
-                const Point3 n = normal_transform * mesh.getFaceNormal(i);
-                const asf::uint32 normal_index =
-                    static_cast<asf::uint32>(
-                        object->push_vertex_normal(
-                            asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
-                normal_indices[0] = normal_index;
-                normal_indices[1] = normal_index;
-                normal_indices[2] = normal_index;
+                // No smooth group for this face, check if face has explicit normals.
+                bool normal_set = false;
+                MeshNormalSpec* nspec = mesh.GetSpecifiedNormals();
+                if (nspec)
+                {
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        const int norm_index = nspec->GetNormalIndex(i, j);
+                        normal_set = norm_index >= 0;
+                        if (!normal_set)
+                            break;
+                        
+                        const Point3& n = nspec->Normal(norm_index);
+                        normal_indices[j] =
+                            static_cast<asf::uint32>(
+                                object->push_vertex_normal(
+                                    asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
+                    }
+                }
+
+                if (!normal_set)
+                {
+                    // No explicit normals for this face, use face normal.
+                    const Point3 n = normal_transform * mesh.getFaceNormal(i);
+                    const asf::uint32 normal_index =
+                        static_cast<asf::uint32>(
+                            object->push_vertex_normal(
+                                asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
+                    normal_indices[0] = normal_index;
+                    normal_indices[1] = normal_index;
+                    normal_indices[2] = normal_index;
+                }
             }
             else
             {
@@ -317,6 +341,8 @@ namespace
 
             object->push_triangle(triangle);
         }
+
+        compute_smooth_vertex_tangents(object.ref());
 
         // todo: optimize the object.
 
