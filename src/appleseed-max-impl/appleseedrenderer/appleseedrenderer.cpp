@@ -214,7 +214,6 @@ namespace
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,      L"Stochastic Progressive Photon Mapping" },
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,      L"Bidirectional Path Tracing" },
         { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,      L"CDF" },
-        { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_2,      L"Light Tree" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_1,         L"No Override" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_2,         L"Albedo" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,         L"Ambient Occlusion" },
@@ -1326,7 +1325,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdLightSamplingAlgorithm, L"light_sampling_algorithm", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_INT_COMBOBOX, IDC_COMBO_LIGHT_SAMPLING_ALGORITHM,
-        2, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_2,
+        1, IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
