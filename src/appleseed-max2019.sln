@@ -7,11 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2019-impl", "a
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2019", "appleseed-max\appleseed-max2019.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B331A228-A27B-4B1A-B7E0-CDA919C3F576}"
-	ProjectSection(SolutionItems) = preProject
-		_beginmaxheaders.h = _beginmaxheaders.h
-		_endmaxheaders.h = _endmaxheaders.h
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2019-common", "appleseed-max-common\appleseed-max2019-common.vcxproj", "{44361726-ECBC-451E-8BB4-B49960BC9EB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +28,17 @@ Global
 		{F43B3C0E-2A72-4B30-9016-DEC6B022D135}.Release|x64.Build.0 = Release|x64
 		{F43B3C0E-2A72-4B30-9016-DEC6B022D135}.Ship|x64.ActiveCfg = Ship|x64
 		{F43B3C0E-2A72-4B30-9016-DEC6B022D135}.Ship|x64.Build.0 = Ship|x64
+		{44361726-ECBC-451E-8BB4-B49960BC9EB9}.Debug|x64.ActiveCfg = Debug|x64
+		{44361726-ECBC-451E-8BB4-B49960BC9EB9}.Debug|x64.Build.0 = Debug|x64
+		{44361726-ECBC-451E-8BB4-B49960BC9EB9}.Release|x64.ActiveCfg = Release|x64
+		{44361726-ECBC-451E-8BB4-B49960BC9EB9}.Release|x64.Build.0 = Release|x64
+		{44361726-ECBC-451E-8BB4-B49960BC9EB9}.Ship|x64.ActiveCfg = Ship|x64
+		{44361726-ECBC-451E-8BB4-B49960BC9EB9}.Ship|x64.Build.0 = Ship|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB515EA3-35D2-412C-A34E-A3F2993F3352}
 	EndGlobalSection
 EndGlobal

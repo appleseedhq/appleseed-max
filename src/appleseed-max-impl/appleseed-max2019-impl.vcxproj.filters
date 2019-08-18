@@ -134,7 +134,6 @@
     <ClInclude Include="appleseedrenderer\updatechecker.h">
       <Filter>appleseedrenderer</Filter>
     </ClInclude>
-    <ClInclude Include="iappleseedmtl.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
@@ -284,7 +283,6 @@
     <ClInclude Include="appleseedvolumemtl\resource.h">
       <Filter>appleseedvolumemtl</Filter>
     </ClInclude>
-    <ClInclude Include="iappleseedgeometricobject.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
