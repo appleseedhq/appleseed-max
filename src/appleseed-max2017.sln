@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017-impl", "a
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017", "appleseed-max\appleseed-max2017.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max-common", "appleseed-max-common\appleseed-max-common.vcxproj", "{44361726-ECBC-451E-8BB4-B49960BC9EB9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017-common", "appleseed-max-common\appleseed-max2017-common.vcxproj", "{44361726-ECBC-451E-8BB4-B49960BC9EB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
