@@ -94,7 +94,8 @@ namespace
         ParamIdLightColorTexmap = 1,
         ParamIdLightPower       = 2,
         ParamIdEmissionFront    = 3,
-        ParamIdEmissionBack     = 4
+        ParamIdEmissionBack     = 4,
+        ParamIdLightExposure    = 5
     };
 
     enum TexmapId
@@ -147,6 +148,12 @@ namespace
             p_default, 1.0f,
             p_range, 0.0f, 1000000.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_POWER, IDC_SPINNER_LIGHT_POWER, SPIN_AUTOSCALE,
+        p_end,
+
+        ParamIdLightExposure, L"light_exposure", TYPE_FLOAT, P_ANIMATABLE, IDS_LIGHT_EXPOSURE,
+            p_default, 0.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_EXPOSURE, IDC_SPINNER_LIGHT_EXPOSURE, SPIN_AUTOSCALE,
         p_end,
 
         ParamIdEmissionFront, L"emission_front", TYPE_BOOL, 0, IDS_EMISSION_FRONT,
@@ -335,6 +342,9 @@ void AppleseedLightMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdLightColorTexmap, t, m_light_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdLightPower, t, m_light_power, m_params_validity);
+        float exposure;
+        m_pblock->GetValue(ParamIdLightExposure, t, exposure, m_params_validity);
+        m_light_power *= std::pow(2.0f, exposure);
 
         int emission_front;
         m_pblock->GetValue(ParamIdEmissionFront, t, emission_front, m_params_validity);
