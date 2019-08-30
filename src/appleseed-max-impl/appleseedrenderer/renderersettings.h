@@ -121,6 +121,21 @@ class RendererSettings
     bool                        m_optimize_for_lights_outside_volumes;
 
     //
+    // Guided Path Tracer.
+    //
+
+    int                         m_gpt_samples_per_pass;
+    bool                        m_gpt_enable_guided_bounce_limit;
+    int                         m_gpt_max_guided_bounces;
+    int                         m_gpt_spatial_filter_type;
+    int                         m_gpt_directional_filter_type;
+    int                         m_gpt_guided_bounce_mode;
+    float                       m_gpt_sampling_fraction_learning_rate;
+    int                         m_gpt_iteration_progression_mode;
+    int                         m_gpt_bsdf_sampling_fraction_mode;
+    float                       m_gpt_fixed_bsdf_sampling_fraction;
+
+    //
     // Stochastic Progressive Photon Mapping.
     //
 

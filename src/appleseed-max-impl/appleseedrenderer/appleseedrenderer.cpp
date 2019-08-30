@@ -94,7 +94,8 @@ namespace
         ParamMapIdPathTracer,
         ParamMapIdSPPM,
         ParamMapIdPostProcessing,
-        ParamMapIdSystem
+        ParamMapIdSystem,
+        ParamMapIdGuidedPathTracer
     };
 
     enum ParamId
@@ -147,6 +148,17 @@ namespace
         ParamIdVolumeDistanceSamples                    = 38,
         ParamIdOptLightOutsideVolumes                   = 39, 
 
+        ParamIdGPTSamplesPerPass                        = 85,
+        ParamIdGPTIterationProgressionMode              = 86,
+        ParamIdGPTEnableGuidedPathLimit                 = 87,
+        ParamIdGPTGuidedPathLimit                       = 88,
+        ParamIdGPTSpatialFilterType                     = 89,
+        ParamIdGPTDirectionalFilterType                 = 90,
+        ParamIdGPTGuidedBounceMode                      = 91,
+        ParamIdGPTSamplingFractionLearningRate          = 92,
+        ParamIdGPTSamplingFractionMode                  = 93,
+        ParamIdGPTFixedSamplingFractionRatio            = 94,
+
         ParamIdSPPMPhotonType                           = 57,
         ParamIdSPPMDirectLightingType                   = 58,
         ParamIdSPPMEnableCaustics                       = 59,
@@ -193,58 +205,72 @@ namespace
     
     const asf::KeyValuePair<int, const wchar_t*> g_dialog_strings[] =
     {
-        { IDS_RENDERERPARAMS_FILTER_TYPE_1,             L"Blackman-Harris" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_2,             L"Box" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_3,             L" Catmull-Rom Spline - Legacy" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_4,             L" Cubic B-spline - Legacy" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_5,             L"Gaussian" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_6,             L" Lanczos - Legacy" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_7,             L" Mitchell-Netravali - Legacy" },
-        { IDS_RENDERERPARAMS_FILTER_TYPE_8,             L"Triangle" },
-        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_1,           L"Always" },
-        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,           L"Never" },
-        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,           L"On Error" },
-        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_4,           L"On Warning" },
-        { IDS_RENDERERPARAMS_SAMPLER_TYPE_1,            L"Uniform Sampler" },
-        { IDS_RENDERERPARAMS_SAMPLER_TYPE_2,            L"Adaptive Tile Sampler" },
-        { IDS_RENDERERPARAMS_DENOISE_MODE_1 ,           L"Off" },
-        { IDS_RENDERERPARAMS_DENOISE_MODE_2,            L"On" },
-        { IDS_RENDERERPARAMS_DENOISE_MODE_3,            L"Write Outputs" },
-        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1,      L"Path Tracing" },
-        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,      L"Stochastic Progressive Photon Mapping" },
-        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,      L"Bidirectional Path Tracing" },
-        { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,      L"CDF" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_1,         L"No Override" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_2,         L"Albedo" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,         L"Ambient Occlusion" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_4,         L"Assemblies" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_5,         L"Assembly Instances" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_6,         L"Barycentric Coordinates" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_7,         L"Bitangents" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_8,         L"Coverage" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_9,         L"Depth" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_10,        L"Facing Ratio" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_11,        L"Geometric Normals" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_12,        L"Materials" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_13,        L"Object Instances" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_14,        L"Objects" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_15,        L"Original Shading Normals" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_16,        L"Primitives" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_17,        L"Ray Spread" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_18,        L"Screen-Space Velocity" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_19,        L"Screen-Space Wireframe" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_20,        L"Shading Normals" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_21,        L"Sides" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_22,        L"Tangents" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_23,        L"UV Coordinates" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_24,        L"World-Space Position" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_25,        L"World-Space Velocity" },
-        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_26,        L"World-Space Wireframe" },
-        { IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_1,        L"Monochromatic" },
-        { IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_2,        L"Polychromatic" },
-        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_1,            L"Ray Traced" },
-        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_2,            L"SPPM" },
-        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_3,            L"Off" }
+        { IDS_RENDERERPARAMS_FILTER_TYPE_1,                             L"Blackman-Harris" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_2,                             L"Box" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_3,                             L" Catmull-Rom Spline - Legacy" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_4,                             L" Cubic B-spline - Legacy" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_5,                             L"Gaussian" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_6,                             L" Lanczos - Legacy" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_7,                             L" Mitchell-Netravali - Legacy" },
+        { IDS_RENDERERPARAMS_FILTER_TYPE_8,                             L"Triangle" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_1,                           L"Always" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_2,                           L"Never" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_3,                           L"On Error" },
+        { IDS_RENDERERPARAMS_LOG_OPEN_MODE_4,                           L"On Warning" },
+        { IDS_RENDERERPARAMS_SAMPLER_TYPE_1,                            L"Uniform Sampler" },
+        { IDS_RENDERERPARAMS_SAMPLER_TYPE_2,                            L"Adaptive Tile Sampler" },
+        { IDS_RENDERERPARAMS_DENOISE_MODE_1 ,                           L"Off" },
+        { IDS_RENDERERPARAMS_DENOISE_MODE_2,                            L"On" },
+        { IDS_RENDERERPARAMS_DENOISE_MODE_3,                            L"Write Outputs" },
+        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1,                      L"Path Tracing" },
+        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,                      L"Stochastic Progressive Photon Mapping" },
+        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,                      L"Guided Path Tracing" },
+        { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,                      L"CDF" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_1,                         L"No Override" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_2,                         L"Albedo" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_3,                         L"Ambient Occlusion" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_4,                         L"Assemblies" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_5,                         L"Assembly Instances" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_6,                         L"Barycentric Coordinates" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_7,                         L"Bitangents" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_8,                         L"Coverage" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_9,                         L"Depth" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_10,                        L"Facing Ratio" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_11,                        L"Geometric Normals" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_12,                        L"Materials" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_13,                        L"Object Instances" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_14,                        L"Objects" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_15,                        L"Original Shading Normals" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_16,                        L"Primitives" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_17,                        L"Ray Spread" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_18,                        L"Screen-Space Velocity" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_19,                        L"Screen-Space Wireframe" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_20,                        L"Shading Normals" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_21,                        L"Sides" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_22,                        L"Tangents" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_23,                        L"UV Coordinates" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_24,                        L"World-Space Position" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_25,                        L"World-Space Velocity" },
+        { IDS_RENDERERPARAMS_SHADER_OVERRIDE_26,                        L"World-Space Wireframe" },
+        { IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_1,                        L"Monochromatic" },
+        { IDS_RENDERERPARAMS_SPPM_PHOTON_TYPE_2,                        L"Polychromatic" },
+        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_1,                            L"Ray Traced" },
+        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_2,                            L"SPPM" },
+        { IDS_RENDERERPARAMS_SPPM_DL_TYPE_3,                            L"Off" },
+        { IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_1,                 L"Stochastic" },
+        { IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_2,                 L"Box" },
+        { IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_3,                 L"Nearest" },
+        { IDS_RENDERERPARAMS_GPT_DIRECTIONAL_FILTER_TYPE_1,             L"Box" },
+        { IDS_RENDERERPARAMS_GPT_DIRECTIONAL_FILTER_TYPE_2,             L"Nearest" },
+        { IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_1,             L"Learned Distribution" },
+        { IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_2,             L"Strictly Diffuse" },
+        { IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_3,             L"Strictly Glossy" },
+        { IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_4,             L"Prefer Diffuse" },
+        { IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_5,             L"Prefer Glossy" },
+        { IDS_RENDERERPARAMS_GPT_ITERATION_PROGRESSION_TYPE_1,          L"Combine Iterations" },
+        { IDS_RENDERERPARAMS_GPT_ITERATION_PROGRESSION_TYPE_2,          L"Automatic Cut-Off" },
+        { IDS_RENDERERPARAMS_GPT_SAMPLING_FRACTION_MODE_TYPE_1,         L"Learn" },
+        { IDS_RENDERERPARAMS_GPT_SAMPLING_FRACTION_MODE_TYPE_2,         L"Fixed" }
     };
 
     class AppleseedRenderContext
@@ -676,6 +702,50 @@ void AppleseedRendererPBlockAccessor::Get(
         v.i = static_cast<int>(settings.m_texture_cache_size);
         break;
 
+      //
+      // Guided Path Tracer.
+      //
+
+      case ParamIdGPTSamplesPerPass:
+        v.i = settings.m_gpt_samples_per_pass;
+        break;
+
+      case ParamIdGPTEnableGuidedPathLimit:
+        v.i = static_cast<int>(settings.m_gpt_enable_guided_bounce_limit);
+        break;
+
+      case ParamIdGPTGuidedPathLimit:
+        v.i = settings.m_gpt_max_guided_bounces;
+        break;
+
+      case ParamIdGPTSpatialFilterType:
+        v.i = settings.m_gpt_spatial_filter_type;
+        break;
+
+      case ParamIdGPTDirectionalFilterType:
+        v.i = settings.m_gpt_directional_filter_type;
+        break;
+
+      case ParamIdGPTGuidedBounceMode:
+        v.i = settings.m_gpt_guided_bounce_mode;
+        break;
+
+      case ParamIdGPTSamplingFractionLearningRate:
+        v.f = settings.m_gpt_sampling_fraction_learning_rate;
+        break;
+
+      case ParamIdGPTIterationProgressionMode:
+        v.i = settings.m_gpt_iteration_progression_mode;
+        break;
+
+      case ParamIdGPTFixedSamplingFractionRatio:
+        v.f = settings.m_gpt_fixed_bsdf_sampling_fraction;
+        break;
+
+      case ParamIdGPTSamplingFractionMode:
+        v.i = settings.m_gpt_bsdf_sampling_fraction_mode;
+        break;
+
       default:
         break;
     }
@@ -1065,6 +1135,50 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_texture_cache_size = v.i;
         break;
 
+      //
+      // Guided Path Tracer.
+      //
+
+      case ParamIdGPTSamplesPerPass:
+        settings.m_gpt_samples_per_pass = v.i;
+        break;
+
+      case ParamIdGPTEnableGuidedPathLimit:
+        settings.m_gpt_enable_guided_bounce_limit = v.i > 0;
+        break;
+
+      case ParamIdGPTGuidedPathLimit:
+        settings.m_gpt_max_guided_bounces = v.i;
+        break;
+
+      case ParamIdGPTSpatialFilterType:
+        settings.m_gpt_spatial_filter_type = v.i;
+        break;
+
+      case ParamIdGPTDirectionalFilterType:
+        settings.m_gpt_directional_filter_type = v.i;
+        break;
+
+      case ParamIdGPTGuidedBounceMode:
+        settings.m_gpt_guided_bounce_mode = v.i;
+        break;
+
+      case ParamIdGPTSamplingFractionLearningRate:
+        settings.m_gpt_sampling_fraction_learning_rate = v.f;
+        break;
+
+      case ParamIdGPTIterationProgressionMode:
+        settings.m_gpt_iteration_progression_mode = v.i;
+        break;
+
+      case ParamIdGPTFixedSamplingFractionRatio:
+        settings.m_gpt_fixed_bsdf_sampling_fraction = v.f;
+        break;
+
+      case ParamIdGPTSamplingFractionMode:
+        settings.m_gpt_bsdf_sampling_fraction_mode = v.i;
+        break;
+
       default:
         break;
     }
@@ -1095,58 +1209,66 @@ ParamBlockDesc2 g_param_block_desc(
     0,                                          // parameter block's reference number
 
                                                 // --- P_MULTIMAP arguments ---
-    7,
+    8,
 
     // --- P_AUTO_UI arguments for Parameters rollup ---
 
     ParamMapIdOutput,
-    IDD_FORMVIEW_RENDERERPARAMS_OUTPUT,         // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_OUTPUT,                 // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
 
     ParamMapIdImageSampling,
-    IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING,  // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_IMAGESAMPLING,          // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
 
     ParamMapIdLighting,
-    IDD_FORMVIEW_RENDERERPARAMS_LIGHTING,       // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_LIGHTING,               // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
 
     ParamMapIdPathTracer,
-    IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING,   // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING,           // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
 
     ParamMapIdSPPM,
-    IDD_FORMVIEW_RENDERERPARAMS_SPPM,           // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_SPPM,                   // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
 
     ParamMapIdPostProcessing,
-    IDD_FORMVIEW_RENDERERPARAMS_POSTPROCESSING, // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_POSTPROCESSING,         // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
 
     ParamMapIdSystem,
-    IDD_FORMVIEW_RENDERERPARAMS_SYSTEM,         // ID of the dialog template
-    0,                                          // ID of the dialog's title string
-    0,                                          // IParamMap2 creation/deletion flag mask
-    0,                                          // rollup creation flag
+    IDD_FORMVIEW_RENDERERPARAMS_SYSTEM,                 // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
     nullptr,
+
+    ParamMapIdGuidedPathTracer,
+    IDD_FORMVIEW_RENDERERPARAMS_GUIDED_PATH_TRACING,    // ID of the dialog template
+    0,                                                  // ID of the dialog's title string
+    0,                                                  // IParamMap2 creation/deletion flag mask
+    0,                                                  // rollup creation flag
+    nullptr,
+
 
     // --- Parameters specifications for Output rollup ---
 
@@ -1312,7 +1434,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdLightingAlgorithm, L"lighting_algorithm", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_INT_COMBOBOX, IDC_COMBO_LIGHTING_ALGORITHM,
-        2, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,
+        3, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
@@ -1727,6 +1849,81 @@ ParamBlockDesc2 g_param_block_desc(
         p_default, 1024,
         p_range, 1, 1024*1024,
         p_accessor, &g_pblock_accessor,
+    p_end,
+
+        // --- Parameters specifications for Guided Path Tracer rollup ---
+
+    ParamIdGPTSamplesPerPass, L"gpt_samples_per_pass", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_GPT_SAMPLES_PER_PASS, IDC_SPINNER_GPT_SAMPLES_PER_PASS, SPIN_AUTOSCALE,
+        p_default, 8,
+        p_range, 1, 1000000,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTEnableGuidedPathLimit, L"enable_path_guide_limit", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GPT_GUIDED_PATH_LENGTH,
+        p_default, TRUE,
+        p_enable_ctrls, 1, ParamIdGPTGuidedPathLimit,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTGuidedPathLimit, L"path_guide_limit", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_GPT_GUIDED_PATH_LENGTH, IDC_SPINNER_GPT_GUIDED_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_default, 8,
+        p_range, 1, 100,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTSpatialFilterType, L"spatial_filter_type", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_SPATIAL_FILTER_TYPE,
+        3, IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_1, IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_2,
+        IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_3,
+        p_default, 0,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTDirectionalFilterType, L"directional_filter_type", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_DIRECTIONAL_FILTER_TYPE,
+        2, IDS_RENDERERPARAMS_GPT_DIRECTIONAL_FILTER_TYPE_1, IDS_RENDERERPARAMS_GPT_DIRECTIONAL_FILTER_TYPE_2,
+        p_default, 0,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTGuidedBounceMode, L"guided_bounce_mode", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_GUIDED_BOUNCE_MODE_TYPE,
+        5, IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_1, IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_2,
+        IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_3, IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_4,
+        IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_5,
+        p_default, 0,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTSamplingFractionLearningRate, L"sampling_fraction_learning_rate", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_GPT_SAMPLING_FRACTION_LEARNING_RATE, IDC_SPINNER_GPT_SAMPLING_FRACTION_LEARNING_RATE, SPIN_AUTOSCALE,
+        p_default, 0.01f,
+        p_range, 1.0e-6f, 0.99f,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTIterationProgressionMode, L"iteration_progression_mode", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_ITERATION_PROGRESSION_TYPE,
+        2, IDS_RENDERERPARAMS_GPT_ITERATION_PROGRESSION_TYPE_1, IDS_RENDERERPARAMS_GPT_ITERATION_PROGRESSION_TYPE_2,
+        p_default, 0,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
+    ParamIdGPTFixedSamplingFractionRatio, L"fixed_sampling_fraction_ratio", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_GPT_FIXED_BSDF_SAMPLING_FRACTION, IDC_SPINNER_GPT_FIXED_BSDF_SAMPLING_FRACTION, SPIN_AUTOSCALE,
+        p_default, 0.5f,
+        p_range, 1.0e-6f, 0.99f,
+        p_accessor, & g_pblock_accessor,
+        p_end,
+
+    ParamIdGPTSamplingFractionMode, L"bsdf_sampling_fraction_mode", TYPE_INT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_SAMPLING_FRACTION_MODE_TYPE,
+        2, IDS_RENDERERPARAMS_GPT_SAMPLING_FRACTION_MODE_TYPE_1, IDS_RENDERERPARAMS_GPT_SAMPLING_FRACTION_MODE_TYPE_2,
+        p_default, 0,
+        p_accessor, & g_pblock_accessor,
     p_end,
 
     p_end

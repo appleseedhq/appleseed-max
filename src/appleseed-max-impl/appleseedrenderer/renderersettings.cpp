@@ -99,6 +99,17 @@ namespace
             m_max_ray_intensity = 1.0f;
             m_clamp_roughness = false;
 
+            m_gpt_samples_per_pass = 8;
+            m_gpt_enable_guided_bounce_limit = true;
+            m_gpt_max_guided_bounces = 8;
+            m_gpt_spatial_filter_type = 0;
+            m_gpt_directional_filter_type = 0;
+            m_gpt_guided_bounce_mode = 0;
+            m_gpt_sampling_fraction_learning_rate = 0.01f;
+            m_gpt_iteration_progression_mode = 0;
+            m_gpt_bsdf_sampling_fraction_mode = 0;
+            m_gpt_fixed_bsdf_sampling_fraction = 0.5f;
+
             m_sppm_photon_type = 1;
             m_sppm_direct_lighting_mode = 0;
             m_sppm_enable_caustics = true;
@@ -192,8 +203,9 @@ const char* get_lighting_engine_type(const int lighting_engine_type)
 {
     switch (lighting_engine_type)
     {
-      case 0:  return "pt";
-      case 1:  return "sppm";
+      case 0:  return "pt";     // unidirectional path tracing
+      case 1:  return "sppm";   // stochastic progressive photon mapping
+      case 2:  return "gpt";    // guided path tracing
       default:
         assert(!"Invalid lighting engine type.");
         return "pt";
@@ -237,6 +249,70 @@ const char* get_sppm_direct_lighting_mode(const int lighting_mode)
     }
 }
 
+const char* get_gpt_spatial_filter_type(const int filter_type)
+{
+    switch (filter_type)
+    {
+    case 0:  return "stochastic";
+    case 1:  return "box";
+    case 2:  return "nearest";
+    default:
+        assert(!"Invalid spatial filter type.");
+        return "stochastic";
+    }
+}
+
+const char* get_gpt_directional_filter_type(const int filter_type)
+{
+    switch (filter_type)
+    {
+    case 0:  return "box";
+    case 1:  return "nearest";
+    default:
+        assert(!"Invalid directional filter type.");
+        return "box";
+    }
+}
+
+const char* get_gpt_guided_bounce_mode(const int bounce_mode)
+{
+    switch (bounce_mode)
+    {
+    case 0:  return "learn";
+    case 1:  return "strictly_diffuse";
+    case 2:  return "strictly_glossy";
+    case 3:  return "prefer_diffuse";
+    case 4:  return "prefer_glossy";
+    default:
+        assert(!"Invalid guided bounce mode.");
+        return "learn";
+    }
+}
+
+const char* get_gpt_iteration_progression_mode(const int mode_type)
+{
+    switch (mode_type)
+    {
+    case 0:  return "combine";
+    case 1:  return "automatic";
+    default:
+        assert(!"Unknown parameter for iteration progression.");
+        return "combine";
+    }
+}
+
+const char* get_gpt_sampling_fraction_mode(const int mode_type)
+{
+    switch (mode_type)
+    {
+    case 0:  return "learn";
+    case 1:  return "fixed";
+    default:
+        assert(!"Unknown parameter for bsdf sampling fraction mode.");
+        return "learn";
+    }
+}
+
 const RendererSettings& RendererSettings::defaults()
 {
     static DefaultRendererSettings default_settings;
@@ -252,6 +328,8 @@ void RendererSettings::apply(asr::Project& project) const
     apply_settings_to_interactive_config(project);
 }
 
+// Common render settings.
+
 void RendererSettings::apply_common_settings(asr::Project& project, const char* config_name) const
 {
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
@@ -263,6 +341,8 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
         params.insert_path("light_sampler.enable_importance_sampling", m_enable_light_importance_sampling);
 
     params.insert_path("light_sampler.algorithm", get_lighting_algorithm_type(m_light_sampling_algorithm));
+
+    // Path tracing.
 
     params.insert_path("pt.max_bounces", m_global_bounces);
 
@@ -297,6 +377,8 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
 
+    // SPPM.
+
     params.insert_path("sppm.photon_type", get_sppm_photon_type(m_sppm_photon_type));
     params.insert_path("sppm.dl_mode", get_sppm_direct_lighting_mode(m_sppm_direct_lighting_mode));
     params.insert_path("sppm.enable_caustics", m_sppm_enable_caustics);
@@ -322,6 +404,57 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("sppm.view_photons", m_sppm_view_photons);
     params.insert_path("sppm.view_photons_radius", m_sppm_view_photons_radius);
 
+    // Guided path tracing.
+
+    params.insert_path("gpt.bsdf_sampling_fraction", get_gpt_sampling_fraction_mode(m_gpt_bsdf_sampling_fraction_mode));
+    params.insert_path("gpt.fixed_bsdf_sampling_fraction_value", m_gpt_fixed_bsdf_sampling_fraction);
+    params.insert_path("gpt.guided_bounce_mode", get_gpt_guided_bounce_mode(m_gpt_guided_bounce_mode));
+    params.insert_path("gpt.iteration_progression", get_gpt_iteration_progression_mode(m_gpt_iteration_progression_mode));
+    params.insert_path("gpt.learning_rate", m_gpt_sampling_fraction_learning_rate);
+    params.insert_path("gpt.spatial_filter", get_gpt_spatial_filter_type(m_gpt_spatial_filter_type));
+    params.insert_path("gpt.samples_per_pass", m_gpt_samples_per_pass);
+    params.insert_path("gpt.directional_filter", get_gpt_directional_filter_type(m_gpt_directional_filter_type));
+    params.insert_path("gpt.rr_min_path_length", m_rr_min_path_length);
+    params.insert_path("gpt.next_event_estimation", "true");
+
+    if (m_gpt_enable_guided_bounce_limit)
+        params.insert_path("gpt.max_guided_bounces", m_gpt_max_guided_bounces);
+    else params.insert_path("gpt.max_guided_bounces", -1);
+
+    if (!m_dl_enable_dl)
+        params.insert_path("gpt.enable_dl", false);
+
+    params.insert_path("gpt.enable_caustics", m_enable_caustics);
+    params.insert_path("gpt.dl_light_samples", m_dl_light_samples);
+    params.insert_path("gpt.dl_low_light_threshold", m_dl_low_light_threshold);
+    params.insert_path("gpt.ibl_env_samples", m_ibl_env_samples);
+    params.insert_path("gpt.enable_ibl", m_background_emits_light);
+    params.insert_path("gpt.max_bounces", m_global_bounces);
+
+    if (m_diffuse_bounces_enabled)
+        params.insert_path("gpt.max_diffuse_bounces", m_diffuse_bounces);
+
+    if (!m_enable_gi)
+        params.insert_path("gpt.max_diffuse_bounces", 0);
+
+    if (m_glossy_bounces_enabled)
+        params.insert_path("gpt.max_glossy_bounces", m_glossy_bounces);
+
+    if (m_specular_bounces_enabled)
+        params.insert_path("gpt.max_specular_bounces", m_specular_bounces);
+
+    if (m_volume_bounces_enabled)
+        params.insert_path("gpt.max_volume_bounces", m_volume_bounces);
+
+    params.insert_path("gpt.volume_distance_samples", m_volume_distance_samples);
+    params.insert_path("gpt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
+    params.insert_path("gpt.clamp_roughness", m_clamp_roughness);
+
+    if (m_max_ray_intensity_set)
+        params.insert_path("gpt.max_ray_intensity", m_max_ray_intensity);
+
+    // System.
+
     params.insert_path("use_embree", m_enable_embree);
     params.insert_path("texture_store.max_size", m_texture_cache_size * 1024 * 1024);
 
@@ -333,13 +466,22 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
        params.insert_path("shading_engine.override_shading.mode", get_shader_override_type(m_shader_override));  
 }
 
+// Final render settings.
+
 void RendererSettings::apply_settings_to_final_config(asr::Project& project) const
 {
     asr::ParamArray& params = project.configurations().get_by_name("final")->get_parameters();
 
     params.insert_path("generic_frame_renderer.tile_ordering", "spiral");
     params.insert_path("passes", m_passes);
-    params.insert_path("shading_result_framebuffer", m_passes == 1 ? "ephemeral" : "permanent");
+    if (m_passes == 1 && m_lighting_algorithm == 0)
+    {
+        params.insert_path("shading_result_framebuffer", "ephemeral");
+    }
+    else
+    {
+        params.insert_path("shading_result_framebuffer", "permanent");
+    }
 
     if (m_sampler_type == 0)
     {
@@ -357,6 +499,8 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
         params.insert_path("adaptive_tile_renderer.noise_threshold", m_adaptive_noise_threshold);
     }
 }
+
+// Interactive render settings.
 
 void RendererSettings::apply_settings_to_interactive_config(asr::Project& project) const
 {
