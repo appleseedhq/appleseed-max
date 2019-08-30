@@ -322,7 +322,7 @@ void OSLParamDlg::add_ui_parameter(
     {
         if (max_param.m_param_type == MaxParam::Closure)
         {
-            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col3X, y_pos, TexButtonWidth, EditHeight, ctrl_id);
+            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth + (Col3X - Col2X), EditHeight, ctrl_id);
         }
         else
         {
