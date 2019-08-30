@@ -263,6 +263,7 @@ void OSLParamDlg::add_ui_parameter(
     const int EditWidth = 25;
     const int EditHeight = 10;
     const int TexButtonWidth = 84;
+    const int MtlButtonWidth = TexButtonWidth + (Col3X - Col2X);
 
     int col1_x = 10;
     int y_pos = 5;
@@ -304,7 +305,7 @@ void OSLParamDlg::add_ui_parameter(
 
           case MaxParam::IntMapper:
           case MaxParam::StringPopup:
-            dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth, EditHeight, ctrl_id++);
+            dialog_template.AddComboBox((LPCSTR)"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP | WS_VISIBLE, NULL, Col2X, y_pos, MtlButtonWidth, EditHeight, ctrl_id++);
             y_pos += 2;
             break;
 
@@ -322,7 +323,7 @@ void OSLParamDlg::add_ui_parameter(
     {
         if (max_param.m_param_type == MaxParam::Closure)
         {
-            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col2X, y_pos, TexButtonWidth + (Col3X - Col2X), EditHeight, ctrl_id);
+            dialog_template.AddComponent((LPCSTR)"CustButton", (LPCSTR)"", WS_VISIBLE, NULL, Col2X, y_pos, MtlButtonWidth, EditHeight, ctrl_id);
         }
         else
         {
