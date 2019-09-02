@@ -115,7 +115,9 @@ namespace
         ParamIdBumpMethod                   = 15,
         ParamIdBumpTexmap                   = 16,
         ParamIdBumpAmount                   = 17,
-        ParamIdBumpUpVector                 = 18
+        ParamIdBumpUpVector                 = 18,
+        ParamIdAlphaTexmap                  = 19,
+        ParamIdAlpha                        = 20
     };
 
     enum TexmapId
@@ -128,6 +130,7 @@ namespace
         TexmapIdSpecularRoughness           = 4,
         TexmapIdSpecularAnisotropy          = 5,
         TexmapIdBumpMap                     = 6,
+        TexmapIdAlphaMap                    = 7,
         TexmapCount                         // keep last
     };
 
@@ -139,7 +142,8 @@ namespace
         L"Specular Amount",
         L"Specular Roughness",
         L"Specular Anisotropy",
-        L"Bump Map"
+        L"Bump Map",
+        L"Alpha Map"
     };
 
     const ParamId g_texmap_id_to_param_id[TexmapCount] =
@@ -150,7 +154,8 @@ namespace
         ParamIdSpecularAmountTexmap,
         ParamIdSpecularRoughnessTexmap,
         ParamIdSpecularAnisotropyTexmap,
-        ParamIdBumpTexmap
+        ParamIdBumpTexmap,
+        ParamIdAlphaTexmap
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -227,6 +232,16 @@ namespace
             p_default, 1.3f,
             p_range, 1.0f, 4.0f,
             p_ui, ParamMapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_SSS_IOR, IDC_SLIDER_SSS_IOR, 0.1f,
+        p_end,
+
+        ParamIdAlpha, L"alpha", TYPE_FLOAT, P_ANIMATABLE, IDS_ALPHA,
+            p_default, 100.0f,
+            p_range, 0.0f, 100.0f,
+            p_ui, ParamMapIdSSS, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EDIT_ALPHA, IDC_SLIDER_ALPHA, 10.0f,
+        p_end,
+        ParamIdAlphaTexmap, L"alpha_texmap", TYPE_TEXMAP, 0, IDS_TEXMAP_ALPHA,
+            p_subtexno, TexmapIdAlphaMap,
+            p_ui, ParamMapIdSSS, TYPE_TEXMAPBUTTON, IDC_TEXMAP_ALPHA,
         p_end,
 
         // --- Parameters specifications for Specular rollup ---
@@ -312,9 +327,11 @@ AppleseedSSSMtl::AppleseedSSSMtl()
   , m_sss_color_texmap(nullptr)
   , m_sss_scattering_color(0.5f, 0.5f, 0.5f)
   , m_sss_scattering_color_texmap(nullptr)
+  , m_alpha_texmap(nullptr)
   , m_sss_amount(100.0f)
   , m_sss_scale(1.0f)
   , m_sss_ior(1.3f)
+  , m_alpha(100.0f)
   , m_specular_color(0.9f, 0.9f, 0.9f)
   , m_specular_color_texmap(nullptr)
   , m_specular_amount(100.0f)
@@ -495,10 +512,12 @@ void AppleseedSSSMtl::Update(TimeValue t, Interval& valid)
 
         m_pblock->GetValue(ParamIdSSSScatteringColor, t, m_sss_scattering_color, m_params_validity);
         m_pblock->GetValue(ParamIdSSSScatteringColorTexmap, t, m_sss_scattering_color_texmap, m_params_validity);
+        m_pblock->GetValue(ParamIdAlphaTexmap, t, m_alpha_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdSSSAmount, t, m_sss_amount, m_params_validity);
         m_pblock->GetValue(ParamIdSSSScale, t, m_sss_scale, m_params_validity);
         m_pblock->GetValue(ParamIdSSSIOR, t, m_sss_ior, m_params_validity);
+        m_pblock->GetValue(ParamIdAlpha, t, m_alpha, m_params_validity);
 
         m_pblock->GetValue(ParamIdSpecularColor, t, m_specular_color, m_params_validity);
         m_pblock->GetValue(ParamIdSpecularColorTexmap, t, m_specular_color_texmap, m_params_validity);
@@ -687,7 +706,7 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
     // BSSRDF.
     connect_color_texture(shader_group.ref(), name, "Radius", m_sss_scattering_color_texmap, m_sss_scattering_color, time);
     connect_color_texture(shader_group.ref(), name, "SSSColor", m_sss_color_texmap, m_sss_color, time);
-    
+
     // BRDF.
     connect_color_texture(shader_group.ref(), name, "SpecularColor", m_specular_color_texmap, m_specular_color, time);
     connect_float_texture(shader_group.ref(), name, "SpecularReflectance", m_specular_amount_texmap, m_specular_amount / 100.0f, time);
@@ -739,6 +758,21 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_osl_material(
 
     asr::ParamArray material_params;
     material_params.insert("osl_surface", shader_group_name);
+
+    // Alpha.
+    const bool use_max_procedural_maps = true;
+    const std::string instance_name =
+        insert_texture_and_instance(
+            assembly,
+            m_alpha_texmap,
+            use_max_procedural_maps,
+            time,
+            asr::ParamArray(),
+            asr::ParamArray()
+            .insert("alpha_mode", "detect"));
+    if (!instance_name.empty())
+        material_params.insert("alpha_map", instance_name);
+    else material_params.insert("alpha_map", m_alpha / 100.0f);
 
     return asr::OSLMaterialFactory().create(name, material_params);
 }
@@ -866,6 +900,12 @@ asf::auto_release_ptr<asr::Material> AppleseedSSSMtl::create_builtin_material(
             break;
         }
     }
+
+    // Alpha.
+    instance_name = insert_texture_and_instance(assembly, m_alpha_texmap, use_max_procedural_maps, time);
+    if (!instance_name.empty())
+        material_params.insert("alpha_map", instance_name);
+    else material_params.insert("alpha_map", m_alpha / 100.0f);
 
     return asr::GenericMaterialFactory().create(name, material_params);
 }

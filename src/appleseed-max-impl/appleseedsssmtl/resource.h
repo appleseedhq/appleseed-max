@@ -32,6 +32,13 @@
 #define IDC_SLIDER_SSS_IOR                  5052
 #define IDS_SSS_IOR                         5053
 
+#define IDC_LABEL_ALPHA                     5060
+#define IDC_EDIT_ALPHA                      5061
+#define IDC_SLIDER_ALPHA                    5062
+#define IDC_TEXMAP_ALPHA                    5063
+#define IDS_ALPHA                           5064
+#define IDS_TEXMAP_ALPHA                    5065
+
 #define IDD_FORMVIEW_SPECULAR_PARAMS        6000
 #define IDS_FORMVIEW_SPECULAR_PARAMS_TITLE  6001
 
