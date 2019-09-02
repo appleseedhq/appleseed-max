@@ -50,7 +50,7 @@ END
 // Dialog
 //
 
-IDD_FORMVIEW_SSS_PARAMS DIALOGEX 0, 0, 217, 67
+IDD_FORMVIEW_SSS_PARAMS DIALOGEX 0, 0, 217, 79
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -71,6 +71,12 @@ BEGIN
     LTEXT           "IOR:",IDC_LABEL_SSS_IOR,7,54,48,8
     CONTROL         "IOR Edit",IDC_EDIT_SSS_IOR,"CustEdit",WS_TABSTOP,69,54,30,10
     CONTROL         "IOR Slider",IDC_SLIDER_SSS_IOR,"SliderControl",WS_TABSTOP,101,54,97,13
+    LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,66,48,8
+    CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,69,66,30,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,
+                    "SliderControl",WS_TABSTOP,101,66,97,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,
+                    "CustButton",WS_TABSTOP,200,66,10,10
 END
 
 IDD_FORMVIEW_SPECULAR_PARAMS DIALOGEX 0, 0, 217, 55
@@ -177,6 +183,7 @@ STRINGTABLE
 BEGIN
     IDS_SSS_SCALE           "Scale"
     IDS_SSS_IOR             "IOR"
+    IDS_ALPHA               "Alpha"
 END
 
 STRINGTABLE

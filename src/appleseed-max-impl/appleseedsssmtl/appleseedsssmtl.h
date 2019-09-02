@@ -154,9 +154,11 @@ private:
     Texmap*         m_sss_color_texmap;
     Color           m_sss_scattering_color;
     Texmap*         m_sss_scattering_color_texmap;
+    Texmap*         m_alpha_texmap;
     float           m_sss_amount;
     float           m_sss_scale;
     float           m_sss_ior;
+    float           m_alpha;
     Color           m_specular_color;
     Texmap*         m_specular_color_texmap;
     float           m_specular_amount;
