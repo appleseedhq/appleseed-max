@@ -63,6 +63,7 @@
 
 // Standard headers.
 #include <algorithm>
+#include <cmath>
 
 // Windows headers.
 #include <tchar.h>
@@ -152,7 +153,7 @@ namespace
 
         ParamIdLightExposure, L"light_exposure", TYPE_FLOAT, P_ANIMATABLE, IDS_LIGHT_EXPOSURE,
             p_default, 0.0f,
-            p_range, 0.0f, 100.0f,
+            p_range, -64.0f, 64.0f,
             p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LIGHT_EXPOSURE, IDC_SPINNER_LIGHT_EXPOSURE, SPIN_AUTOSCALE,
         p_end,
 
@@ -342,6 +343,7 @@ void AppleseedLightMtl::Update(TimeValue t, Interval& valid)
         m_pblock->GetValue(ParamIdLightColorTexmap, t, m_light_color_texmap, m_params_validity);
 
         m_pblock->GetValue(ParamIdLightPower, t, m_light_power, m_params_validity);
+
         float exposure;
         m_pblock->GetValue(ParamIdLightExposure, t, exposure, m_params_validity);
         m_light_power *= std::pow(2.0f, exposure);
