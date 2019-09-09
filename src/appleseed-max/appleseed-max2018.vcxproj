@@ -73,14 +73,8 @@
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2018 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2018\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2018\Current" 2&gt;nul
-
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2018\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2018\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2018\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2018\Current\"</Command>
+      <Message>Moving output files...</Message>
+      <Command>post-build.cmd "$(SolutionDir)" "$(Configuration)" "$(TargetPath)" "$(TargetName)" "$(PlatformToolsetVersion)" "2018"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
