@@ -52,108 +52,12 @@
     <OutDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup>
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-debug\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
-    </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\Current" 2&gt;nul
-
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders" 2&gt;nul
-rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders" 2&gt;nul
-
-mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\max\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\appleseed\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\Current\shaders\max\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\Current\shaders\appleseed\" 2&gt;nul
-
-del /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\max\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders\max\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders\appleseed\*.oso" 2&gt;nul
-
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\max\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2020\Current\shaders\max\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2020\Current\shaders\appleseed\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
-    </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\Current" 2&gt;nul
-
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.dll" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(SolutionDir)..\..\appleseed\sandbox\bin\vc$(PlatformToolsetVersion)\$(Configuration)\appleseed.pdb" "$(SolutionDir)..\sandbox\max2020\Current\"
-
-rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders" 2&gt;nul
-rmdir /S /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders" 2&gt;nul
-
-mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\max\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\appleseed\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\Current\shaders\max\" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2020\Current\shaders\appleseed\" 2&gt;nul
-
-del /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\max\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\appleseed\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders\max\*.oso" 2&gt;nul
-del /Q "$(SolutionDir)..\sandbox\max2020\Current\shaders\appleseed\*.oso" 2&gt;nul
-
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\max\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2020\$(Configuration)\shaders\appleseed\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\max\*.oso" "$(SolutionDir)..\sandbox\max2020\Current\shaders\max\"
-copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(SolutionDir)..\sandbox\max2020\Current\shaders\appleseed\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\sandbox\max2020\$(Configuration)" 2&gt;nul

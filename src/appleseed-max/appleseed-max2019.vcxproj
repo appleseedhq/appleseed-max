@@ -65,60 +65,12 @@
     <IntDir>$(SolutionDir)..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetExt>.dlr</TargetExt>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup>
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
-    </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2019\Current" 2&gt;nul
-
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\Current\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
-    </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2019\Current" 2&gt;nul
-
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2019\Current\"
-
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2019\Current\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2019 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\sandbox\max2019\$(Configuration)" 2&gt;nul
