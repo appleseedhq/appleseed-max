@@ -99,6 +99,7 @@ namespace
             m_max_ray_intensity = 1.0f;
             m_clamp_roughness = false;
 
+            m_gpt_enable_path_guiding = false;
             m_gpt_samples_per_pass = 8;
             m_gpt_enable_guided_bounce_limit = true;
             m_gpt_max_guided_bounces = 8;
@@ -205,7 +206,6 @@ const char* get_lighting_engine_type(const int lighting_engine_type)
     {
       case 0:  return "pt";     // unidirectional path tracing
       case 1:  return "sppm";   // stochastic progressive photon mapping
-      case 2:  return "gpt";    // guided path tracing
       default:
         assert(!"Invalid lighting engine type.");
         return "pt";
@@ -335,7 +335,11 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     asr::ParamArray& params = project.configurations().get_by_name(config_name)->get_parameters();
 
     params.insert_path("sampling_mode", "qmc");
-    params.insert_path("lighting_engine", get_lighting_engine_type(m_lighting_algorithm));
+
+    if (m_gpt_enable_path_guiding)
+        params.insert_path("lighting_engine", "gpt");
+    else params.insert_path("lighting_engine", get_lighting_engine_type(m_lighting_algorithm));
+
 
     if (m_enable_light_importance_sampling)
         params.insert_path("light_sampler.enable_importance_sampling", m_enable_light_importance_sampling);
@@ -372,7 +376,10 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("pt.rr_min_path_length", m_rr_min_path_length);
     params.insert_path("pt.volume_distance_samples", m_volume_distance_samples);
     params.insert_path("pt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
-    params.insert_path("pt.clamp_roughness", m_clamp_roughness); 
+
+    // Disable roughness clamping for guided path tracing.
+    if (!m_gpt_enable_path_guiding)
+        params.insert_path("pt.clamp_roughness", m_clamp_roughness); 
 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);

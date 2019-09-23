@@ -536,7 +536,6 @@ struct AppleseedRendererParamDlg::Impl
     IParamMap2*                 m_pmap_image_sampling;
     IParamMap2*                 m_pmap_lighting;
     IParamMap2*                 m_pmap_pathtracer;
-    IParamMap2*                 m_pmap_guided_pathtracer;
     IParamMap2*                 m_pmap_sppm;
     IParamMap2*                 m_pmap_postprocessing;
     IParamMap2*                 m_pmap_system;
@@ -549,7 +548,6 @@ struct AppleseedRendererParamDlg::Impl
       , m_pmap_image_sampling(nullptr)
       , m_pmap_lighting(nullptr)
       , m_pmap_pathtracer(nullptr)
-      , m_pmap_guided_pathtracer(nullptr)
       , m_pmap_sppm(nullptr)
       , m_pmap_postprocessing(nullptr)
       , m_pmap_system(nullptr)
@@ -595,15 +593,6 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING),
             L"Path Tracing",
-            0);
-
-        m_pmap_guided_pathtracer = CreateRParamMap2(
-            7,
-            renderer->GetParamBlock(0),
-            rend_params,
-            g_module,
-            MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_GUIDED_PATH_TRACING),
-            L"Guided Path Tracing",
             0);
 
         m_pmap_sppm = CreateRParamMap2(
@@ -657,9 +646,6 @@ struct AppleseedRendererParamDlg::Impl
 
         if (m_pmap_output != nullptr)
             DestroyRParamMap2(m_pmap_output);
-
-        if (m_pmap_guided_pathtracer != nullptr)
-            DestroyRParamMap2(m_pmap_guided_pathtracer);
 
     }
 };

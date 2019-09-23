@@ -121,6 +121,7 @@
 #define IDC_TEXT_GPT_FIXED_BSDF_SAMPLING_FRACTION                   380
 #define IDC_STATIC_GPT_FIXED_BSDF_SAMPLING_FRACTION                 381
 #define IDC_SPINNER_GPT_FIXED_BSDF_SAMPLING_FRACTION                382
+#define IDC_CHECK_GPT_ENABLE_PATH_GUIDING                           383
 #define IDD_FORMVIEW_RENDERERPARAMS_OUTPUT                          400
 #define IDC_RADIO_RENDER                                            401
 #define IDC_RADIO_SAVEPROJECT                                       402

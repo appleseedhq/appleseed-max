@@ -158,6 +158,7 @@ namespace
         ParamIdGPTSamplingFractionLearningRate          = 92,
         ParamIdGPTSamplingFractionMode                  = 93,
         ParamIdGPTFixedSamplingFractionRatio            = 94,
+        ParamIdGPTEnablePathGuiding                     = 95,
 
         ParamIdSPPMPhotonType                           = 57,
         ParamIdSPPMDirectLightingType                   = 58,
@@ -224,7 +225,6 @@ namespace
         { IDS_RENDERERPARAMS_DENOISE_MODE_3,                            L"Write Outputs" },
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1,                      L"Path Tracing" },
         { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,                      L"Stochastic Progressive Photon Mapping" },
-        { IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,                      L"Guided Path Tracing" },
         { IDS_RENDERERPARAMS_LIGHT_SAMPLER_TYPE_1,                      L"CDF" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_1,                         L"No Override" },
         { IDS_RENDERERPARAMS_SHADER_OVERRIDE_2,                         L"Albedo" },
@@ -706,6 +706,10 @@ void AppleseedRendererPBlockAccessor::Get(
       // Guided Path Tracer.
       //
 
+      case ParamIdGPTEnablePathGuiding:
+        v.i = static_cast<int>(settings.m_gpt_enable_path_guiding);
+        break;
+
       case ParamIdGPTSamplesPerPass:
         v.i = settings.m_gpt_samples_per_pass;
         break;
@@ -1139,6 +1143,10 @@ void AppleseedRendererPBlockAccessor::Set(
       // Guided Path Tracer.
       //
 
+      case ParamIdGPTEnablePathGuiding:
+        settings.m_gpt_enable_path_guiding = v.i > 0;
+        break;
+
       case ParamIdGPTSamplesPerPass:
         settings.m_gpt_samples_per_pass = v.i;
         break;
@@ -1209,7 +1217,7 @@ ParamBlockDesc2 g_param_block_desc(
     0,                                          // parameter block's reference number
 
                                                 // --- P_MULTIMAP arguments ---
-    8,
+    7,
 
     // --- P_AUTO_UI arguments for Parameters rollup ---
 
@@ -1257,13 +1265,6 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamMapIdSystem,
     IDD_FORMVIEW_RENDERERPARAMS_SYSTEM,                 // ID of the dialog template
-    0,                                                  // ID of the dialog's title string
-    0,                                                  // IParamMap2 creation/deletion flag mask
-    0,                                                  // rollup creation flag
-    nullptr,
-
-    ParamMapIdGuidedPathTracer,
-    IDD_FORMVIEW_RENDERERPARAMS_GUIDED_PATH_TRACING,    // ID of the dialog template
     0,                                                  // ID of the dialog's title string
     0,                                                  // IParamMap2 creation/deletion flag mask
     0,                                                  // rollup creation flag
@@ -1434,7 +1435,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdLightingAlgorithm, L"lighting_algorithm", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdLighting, TYPE_INT_COMBOBOX, IDC_COMBO_LIGHTING_ALGORITHM,
-        3, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_3,
+        2, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_1, IDS_RENDERERPARAMS_LIGHTING_ALGORITHM_2,
         p_default, 0,
         p_accessor, &g_pblock_accessor,
     p_end,
@@ -1851,31 +1852,39 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
-        // --- Parameters specifications for Guided Path Tracer rollup ---
+        // --- Parameters specifications for Guided Path Tracer ---
+
+    ParamIdGPTEnablePathGuiding, L"enable_path_guiding", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GPT_ENABLE_PATH_GUIDING,
+        p_default, FALSE,
+        p_enable_ctrls, 10, ParamIdGPTSamplesPerPass, ParamIdGPTGuidedPathLimit, ParamIdGPTSpatialFilterType, ParamIdGPTFixedSamplingFractionRatio, ParamIdGPTEnableGuidedPathLimit,
+        ParamIdGPTDirectionalFilterType, ParamIdGPTGuidedBounceMode, ParamIdGPTSamplingFractionLearningRate, ParamIdGPTIterationProgressionMode, ParamIdGPTSamplingFractionMode,
+        p_accessor, & g_pblock_accessor,
+    p_end,
 
     ParamIdGPTSamplesPerPass, L"gpt_samples_per_pass", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_GPT_SAMPLES_PER_PASS, IDC_SPINNER_GPT_SAMPLES_PER_PASS, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_GPT_SAMPLES_PER_PASS, IDC_SPINNER_GPT_SAMPLES_PER_PASS, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 1, 1000000,
         p_accessor, & g_pblock_accessor,
     p_end,
 
     ParamIdGPTEnableGuidedPathLimit, L"enable_path_guide_limit", TYPE_BOOL, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GPT_GUIDED_PATH_LENGTH,
+        p_ui, ParamMapIdPathTracer, TYPE_SINGLECHEKBOX, IDC_CHECK_GPT_GUIDED_PATH_LENGTH,
         p_default, TRUE,
         p_enable_ctrls, 1, ParamIdGPTGuidedPathLimit,
         p_accessor, & g_pblock_accessor,
     p_end,
 
     ParamIdGPTGuidedPathLimit, L"path_guide_limit", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_GPT_GUIDED_PATH_LENGTH, IDC_SPINNER_GPT_GUIDED_PATH_LENGTH, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_GPT_GUIDED_PATH_LENGTH, IDC_SPINNER_GPT_GUIDED_PATH_LENGTH, SPIN_AUTOSCALE,
         p_default, 8,
         p_range, 1, 100,
         p_accessor, & g_pblock_accessor,
     p_end,
 
     ParamIdGPTSpatialFilterType, L"spatial_filter_type", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_SPATIAL_FILTER_TYPE,
+        p_ui, ParamMapIdPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_SPATIAL_FILTER_TYPE,
         3, IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_1, IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_2,
         IDS_RENDERERPARAMS_GPT_SPATIAL_FILTER_TYPE_3,
         p_default, 0,
@@ -1883,14 +1892,14 @@ ParamBlockDesc2 g_param_block_desc(
     p_end,
 
     ParamIdGPTDirectionalFilterType, L"directional_filter_type", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_DIRECTIONAL_FILTER_TYPE,
+        p_ui, ParamMapIdPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_DIRECTIONAL_FILTER_TYPE,
         2, IDS_RENDERERPARAMS_GPT_DIRECTIONAL_FILTER_TYPE_1, IDS_RENDERERPARAMS_GPT_DIRECTIONAL_FILTER_TYPE_2,
         p_default, 0,
         p_accessor, & g_pblock_accessor,
     p_end,
 
     ParamIdGPTGuidedBounceMode, L"guided_bounce_mode", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_GUIDED_BOUNCE_MODE_TYPE,
+        p_ui, ParamMapIdPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_GUIDED_BOUNCE_MODE_TYPE,
         5, IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_1, IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_2,
         IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_3, IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_4,
         IDS_RENDERERPARAMS_GPT_GUIDED_BOUNCE_MODE_TYPE_5,
@@ -1899,28 +1908,28 @@ ParamBlockDesc2 g_param_block_desc(
     p_end,
 
     ParamIdGPTSamplingFractionLearningRate, L"sampling_fraction_learning_rate", TYPE_FLOAT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_GPT_SAMPLING_FRACTION_LEARNING_RATE, IDC_SPINNER_GPT_SAMPLING_FRACTION_LEARNING_RATE, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_GPT_SAMPLING_FRACTION_LEARNING_RATE, IDC_SPINNER_GPT_SAMPLING_FRACTION_LEARNING_RATE, SPIN_AUTOSCALE,
         p_default, 0.01f,
         p_range, 1.0e-6f, 0.99f,
         p_accessor, & g_pblock_accessor,
     p_end,
 
     ParamIdGPTIterationProgressionMode, L"iteration_progression_mode", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_ITERATION_PROGRESSION_TYPE,
+        p_ui, ParamMapIdPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_ITERATION_PROGRESSION_TYPE,
         2, IDS_RENDERERPARAMS_GPT_ITERATION_PROGRESSION_TYPE_1, IDS_RENDERERPARAMS_GPT_ITERATION_PROGRESSION_TYPE_2,
         p_default, 0,
         p_accessor, & g_pblock_accessor,
     p_end,
 
     ParamIdGPTFixedSamplingFractionRatio, L"fixed_sampling_fraction_ratio", TYPE_FLOAT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_GPT_FIXED_BSDF_SAMPLING_FRACTION, IDC_SPINNER_GPT_FIXED_BSDF_SAMPLING_FRACTION, SPIN_AUTOSCALE,
+        p_ui, ParamMapIdPathTracer, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_GPT_FIXED_BSDF_SAMPLING_FRACTION, IDC_SPINNER_GPT_FIXED_BSDF_SAMPLING_FRACTION, SPIN_AUTOSCALE,
         p_default, 0.5f,
         p_range, 1.0e-6f, 0.99f,
         p_accessor, & g_pblock_accessor,
         p_end,
 
     ParamIdGPTSamplingFractionMode, L"bsdf_sampling_fraction_mode", TYPE_INT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdGuidedPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_SAMPLING_FRACTION_MODE_TYPE,
+        p_ui, ParamMapIdPathTracer, TYPE_INT_COMBOBOX, IDC_COMBO_GPT_SAMPLING_FRACTION_MODE_TYPE,
         2, IDS_RENDERERPARAMS_GPT_SAMPLING_FRACTION_MODE_TYPE_1, IDS_RENDERERPARAMS_GPT_SAMPLING_FRACTION_MODE_TYPE_2,
         p_default, 0,
         p_accessor, & g_pblock_accessor,
