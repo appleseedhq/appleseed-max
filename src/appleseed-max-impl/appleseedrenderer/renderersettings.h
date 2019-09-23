@@ -124,6 +124,7 @@ class RendererSettings
     // Guided Path Tracer.
     //
 
+    bool                        m_gpt_enable_path_guiding;
     int                         m_gpt_samples_per_pass;
     bool                        m_gpt_enable_guided_bounce_limit;
     int                         m_gpt_max_guided_bounces;
