@@ -376,10 +376,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("pt.rr_min_path_length", m_rr_min_path_length);
     params.insert_path("pt.volume_distance_samples", m_volume_distance_samples);
     params.insert_path("pt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
-
-    // Disable roughness clamping for guided path tracing.
-    if (!m_gpt_enable_path_guiding)
-        params.insert_path("pt.clamp_roughness", m_clamp_roughness); 
+    params.insert_path("pt.clamp_roughness", m_clamp_roughness);
 
     if (m_max_ray_intensity_set)
         params.insert_path("pt.max_ray_intensity", m_max_ray_intensity);
@@ -455,10 +452,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
 
     params.insert_path("gpt.volume_distance_samples", m_volume_distance_samples);
     params.insert_path("gpt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
-    params.insert_path("gpt.clamp_roughness", m_clamp_roughness);
-
-    if (m_max_ray_intensity_set)
-        params.insert_path("gpt.max_ray_intensity", m_max_ray_intensity);
+    params.insert_path("gpt.clamp_roughness", m_clamp_roughness); 
 
     // System.
 
