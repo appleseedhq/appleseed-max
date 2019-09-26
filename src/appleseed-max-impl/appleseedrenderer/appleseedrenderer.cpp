@@ -1833,32 +1833,11 @@ IParamBlock2* AppleseedRenderer::GetParamBlockByID(BlockID id)
 
 void* AppleseedRenderer::GetInterface(ULONG id)
 {
-#if MAX_RELEASE < 19000
-    // This code is specific to 3ds Max 2016 3ds Max 2017 has a new API for that.
-    if (id == I_RENDER_ID)
-    {
-        if (m_interactive_renderer == nullptr)
-            m_interactive_renderer = new AppleseedInteractiveRender();
-
-        return static_cast<IInteractiveRender*>(m_interactive_renderer);
-    }
-    if (id == IRenderElementCompatible::IID)
-    {
-        return &g_appleseed_renderelement_compatible;
-    }
-    else
-#endif
-    {
-        return Renderer::GetInterface(id);
-    }
+    return Renderer::GetInterface(id);
 }
 
 BaseInterface* AppleseedRenderer::GetInterface(Interface_ID id)
 {
-#if MAX_RELEASE < 19000
-    if (id == IRENDERERREQUIREMENTS_INTERFACE_ID)
-        return static_cast<IRendererRequirements*>(this);
-#endif
     if (id == TAB_DIALOG_OBJECT_INTERFACE_ID)
         return static_cast<ITabDialogObject*>(this);
     else return Renderer::GetInterface(id);
@@ -1871,18 +1850,13 @@ bool AppleseedRenderer::HasRequirement(Requirement requirement)
       case kRequirement_NoVFB:
       case kRequirement_DontSaveRenderOutput:
         return m_settings.m_output_mode == RendererSettings::OutputMode::SaveProjectOnly;
-#if MAX_RELEASE < 19000
-      case kRequirement8_Wants32bitFPOutput: return true;
-#else
+
       case kRequirement_Wants32bitFPOutput: return true;
       case kRequirement_SupportsConcurrentRendering: return true;
-#endif
     }
 
     return false;
 }
-
-#if MAX_RELEASE > 18000
 
 bool AppleseedRenderer::IsStopSupported() const
 {
@@ -1934,7 +1908,6 @@ void AppleseedRenderer::GetPlatformInformation(MSTR& info) const
 {
 }
 
-#endif
 
 RefTargetHandle AppleseedRenderer::Clone(RemapDir& remap)
 {
