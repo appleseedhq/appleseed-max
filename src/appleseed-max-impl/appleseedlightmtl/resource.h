@@ -22,6 +22,11 @@
 #define IDC_BUTTON_EMISSION_BACK            3033
 #define IDS_EMISSION_BACK                   3034
 
+#define IDC_LABEL_LIGHT_EXPOSURE            3040
+#define IDC_EDIT_LIGHT_EXPOSURE             3041
+#define IDC_SPINNER_LIGHT_EXPOSURE          3042
+#define IDS_LIGHT_EXPOSURE                  3043
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
