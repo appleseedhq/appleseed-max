@@ -59,47 +59,47 @@ BEGIN
     CONTROL         "Base Color Map",IDC_TEXMAP_BASE_COLOR,"CustButton",WS_TABSTOP,101,6,109,10
     LTEXT           "Metallic:",IDC_LABEL_METALLIC,7,18,48,8
     CONTROL         "Metallic Edit",IDC_EDIT_METALLIC,"CustEdit",WS_TABSTOP,69,18,30,10
-    CONTROL         "Metallic Slider",IDC_SLIDER_METALLIC,"SliderControl",WS_TABSTOP,101,18,97,13
-    CONTROL         "Metallic Map",IDC_TEXMAP_METALLIC,"CustButton",WS_TABSTOP,200,18,10,10
+    CONTROL         "Metallic Slider",IDC_SLIDER_METALLIC,"SliderControl",WS_TABSTOP,101,18,79,13
+    CONTROL         "Metallic Map",IDC_TEXMAP_METALLIC,"CustButton",WS_TABSTOP,182,18,28,10
     LTEXT           "Specular:",IDC_LABEL_SPECULAR,7,30,48,8
     CONTROL         "Specular Edit",IDC_EDIT_SPECULAR,"CustEdit",WS_TABSTOP,69,30,30,10
-    CONTROL         "Specular Slider",IDC_SLIDER_SPECULAR,"SliderControl",WS_TABSTOP,101,30,97,13
-    CONTROL         "Specular Map",IDC_TEXMAP_SPECULAR,"CustButton",WS_TABSTOP,200,30,10,10
+    CONTROL         "Specular Slider",IDC_SLIDER_SPECULAR,"SliderControl",WS_TABSTOP,101,30,79,13
+    CONTROL         "Specular Map",IDC_TEXMAP_SPECULAR,"CustButton",WS_TABSTOP,182,30,28,10
     LTEXT           "Specular Tint:",IDC_LABEL_SPECULAR_TINT,7,42,48,8
     CONTROL         "Specular Tint Edit",IDC_EDIT_SPECULAR_TINT,"CustEdit",WS_TABSTOP,69,42,30,10
     CONTROL         "Specular Tint Slider",IDC_SLIDER_SPECULAR_TINT,
-                    "SliderControl",WS_TABSTOP,101,42,97,13
-    CONTROL         "Specular Tint Map",IDC_TEXMAP_SPECULAR_TINT,"CustButton",WS_TABSTOP,200,42,10,10
+                    "SliderControl",WS_TABSTOP,101,42,79,13
+    CONTROL         "Specular Tint Map",IDC_TEXMAP_SPECULAR_TINT,"CustButton",WS_TABSTOP,182,42,28,10
     LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,54,48,8
     CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,69,54,30,10
-    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,101,54,97,13
-    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,200,54,10,10
+    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,101,54,79,13
+    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,182,54,28,10
     LTEXT           "Sheen:",IDC_LABEL_SHEEN,7,66,48,8
     CONTROL         "Sheen Edit",IDC_EDIT_SHEEN,"CustEdit",WS_TABSTOP,69,66,30,10
-    CONTROL         "Sheen Slider",IDC_SLIDER_SHEEN,"SliderControl",WS_TABSTOP,101,66,97,13
-    CONTROL         "Sheen Map",IDC_TEXMAP_SHEEN,"CustButton",WS_TABSTOP,200,66,10,10
+    CONTROL         "Sheen Slider",IDC_SLIDER_SHEEN,"SliderControl",WS_TABSTOP,101,66,79,13
+    CONTROL         "Sheen Map",IDC_TEXMAP_SHEEN,"CustButton",WS_TABSTOP,182,66,28,10
     LTEXT           "Sheen Tint:",IDC_LABEL_SHEEN_TINT,7,78,48,8
     CONTROL         "Sheen Tint Edit",IDC_EDIT_SHEEN_TINT,"CustEdit",WS_TABSTOP,69,78,30,10
-    CONTROL         "Sheen Tint Slider",IDC_SLIDER_SHEEN_TINT,"SliderControl",WS_TABSTOP,101,78,97,13
-    CONTROL         "Sheen Tint Map",IDC_TEXMAP_SHEEN_TINT,"CustButton",WS_TABSTOP,200,78,10,10
+    CONTROL         "Sheen Tint Slider",IDC_SLIDER_SHEEN_TINT,"SliderControl",WS_TABSTOP,101,78,79,13
+    CONTROL         "Sheen Tint Map",IDC_TEXMAP_SHEEN_TINT,"CustButton",WS_TABSTOP,182,78,28,10
     LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,90,48,8
     CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,69,90,30,10
-    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,101,90,97,13
-    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,200,90,10,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,101,90,79,13
+    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,182,90,28,10
     LTEXT           "Clearcoat:",IDC_LABEL_CLEARCOAT,7,102,48,8
     CONTROL         "Clearcoat Edit",IDC_EDIT_CLEARCOAT,"CustEdit",WS_TABSTOP,69,102,30,10
-    CONTROL         "Clearcoat Slider",IDC_SLIDER_CLEARCOAT,"SliderControl",WS_TABSTOP,101,102,97,13
-    CONTROL         "Clearcoat Map",IDC_TEXMAP_CLEARCOAT,"CustButton",WS_TABSTOP,200,102,10,10
+    CONTROL         "Clearcoat Slider",IDC_SLIDER_CLEARCOAT,"SliderControl",WS_TABSTOP,101,102,79,13
+    CONTROL         "Clearcoat Map",IDC_TEXMAP_CLEARCOAT,"CustButton",WS_TABSTOP,182,102,28,10
     LTEXT           "Clearcoat Gloss:",IDC_LABEL_CLEARCOAT_GLOSS,7,114,56,8
     CONTROL         "Clearcoat Gloss Edit",IDC_EDIT_CLEARCOAT_GLOSS,"CustEdit",WS_TABSTOP,69,114,30,10
     CONTROL         "Clearcoat Gloss Slider",IDC_SLIDER_CLEARCOAT_GLOSS,
-                    "SliderControl",WS_TABSTOP,101,114,97,13
+                    "SliderControl",WS_TABSTOP,101,114,79,13
     CONTROL         "Clearcoat Gloss Map",IDC_TEXMAP_CLEARCOAT_GLOSS,
-                    "CustButton",WS_TABSTOP,200,114,10,10
+                    "CustButton",WS_TABSTOP,182,114,28,10
     LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,126,48,8
     CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,69,126,30,10
-    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,101,126,97,13
-    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,200,126,10,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,101,126,79,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,182,126,28,10
 END
 
 
@@ -113,7 +113,7 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_FORMVIEW_PARAMS, DIALOG
     BEGIN
-        VERTGUIDE, 198
+        VERTGUIDE, 180
         VERTGUIDE, 210
     END
 END

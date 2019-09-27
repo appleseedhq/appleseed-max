@@ -84,14 +84,14 @@ BEGIN
     CONTROL         "Diffuse Map",IDC_TEXMAP_DIFFUSE,"CustButton",WS_TABSTOP,106,6,104,10
     LTEXT           "Diffuse Weight:",IDC_LABEL_DIFFUSE_WEIGHT,7,18,65,8
     CONTROL         "Diffuse Edit",IDC_EDIT_DIFFUSE_WEIGHT,"CustEdit",WS_TABSTOP,73,18,30,10
-    CONTROL         "Diffuse Slider",IDC_SLIDER_DIFFUSE_WEIGHT,"SliderControl",WS_TABSTOP,106,18,92,13
+    CONTROL         "Diffuse Slider",IDC_SLIDER_DIFFUSE_WEIGHT,"SliderControl",WS_TABSTOP,106,18,74,13
     LTEXT           "Scattering:",IDC_LABEL_SCATTERING,7,30,65,8
     CONTROL         "Scattering Edit",IDC_EDIT_SCATTERING,"CustEdit",WS_TABSTOP,73,30,30,10
-    CONTROL         "Scattering Slider",IDC_SLIDER_SCATTERING,"SliderControl",WS_TABSTOP,106,30,92,13
+    CONTROL         "Scattering Slider",IDC_SLIDER_SCATTERING,"SliderControl",WS_TABSTOP,106,30,74,13
     LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,42,48,8
     CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,42,30,10
-    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,42,92,13
-    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,200,42,10,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,42,74,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,182,42,28,10
 END
 
 
