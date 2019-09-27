@@ -66,20 +66,20 @@ BEGIN
     LTEXT           "Reflectance:",IDC_LABEL_REFLECTANCE,7,30,48,8
     CONTROL         "Reflectance Edit",IDC_EDIT_REFLECTANCE,"CustEdit",WS_TABSTOP,73,30,30,10
     CONTROL         "Reflectance Slider",IDC_SLIDER_REFLECTANCE,
-                    "SliderControl",WS_TABSTOP,106,30,92,13
-    CONTROL         "Reflectance Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,200,30,10,10
+                    "SliderControl",WS_TABSTOP,106,30,74,13
+    CONTROL         "Reflectance Map",IDC_TEXMAP_REFLECTANCE,"CustButton",WS_TABSTOP,182,30,28,10
     LTEXT           "Roughness:",IDC_LABEL_ROUGHNESS,7,42,48,8
     CONTROL         "Roughness Edit",IDC_EDIT_ROUGHNESS,"CustEdit",WS_TABSTOP,73,42,30,10
-    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,42,92,13
-    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,200,42,10,10
+    CONTROL         "Roughness Slider",IDC_SLIDER_ROUGHNESS,"SliderControl",WS_TABSTOP,106,42,74,13
+    CONTROL         "Roughness Map",IDC_TEXMAP_ROUGHNESS,"CustButton",WS_TABSTOP,182,42,28,10
     LTEXT           "Anisotropy:",IDC_LABEL_ANISOTROPY,7,54,48,8
     CONTROL         "Anisotropy Edit",IDC_EDIT_ANISOTROPY,"CustEdit",WS_TABSTOP,73,54,30,10
-    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,106,54,92,13
-    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,200,54,10,10
+    CONTROL         "Anisotropy Slider",IDC_SLIDER_ANISOTROPY,"SliderControl",WS_TABSTOP,106,54,74,13
+    CONTROL         "Anisotropy Map",IDC_TEXMAP_ANISOTROPY,"CustButton",WS_TABSTOP,182,54,28,10
     LTEXT           "Alpha:",IDC_LABEL_ALPHA,7,66,48,8
     CONTROL         "Alpha Edit",IDC_EDIT_ALPHA,"CustEdit",WS_TABSTOP,73,66,30,10
-    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,66,92,13
-    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,200,66,10,10
+    CONTROL         "Alpha Slider",IDC_SLIDER_ALPHA,"SliderControl",WS_TABSTOP,106,66,74,13
+    CONTROL         "Alpha Map",IDC_TEXMAP_ALPHA,"CustButton",WS_TABSTOP,182,66,28,10
 END
 
 
