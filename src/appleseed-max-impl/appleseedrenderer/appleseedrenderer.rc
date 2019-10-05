@@ -72,9 +72,9 @@ BEGIN
     LTEXT           "Pixel Samples:",IDC_STATIC,4,51,48,8
     CONTROL         "Pixel Samples",IDC_TEXT_PIXEL_SAMPLES,"CustEdit",WS_TABSTOP,50,50,30,10
     CONTROL         "Pixel Samples",IDC_SPINNER_PIXEL_SAMPLES,"SpinnerControl",WS_TABSTOP,82,50,6,10
-    LTEXT           "Render Passes:",IDC_STATIC,101,6,53,8
-    CONTROL         "Passes",IDC_TEXT_PASSES,"CustEdit",WS_TABSTOP,157,5,30,10
-    CONTROL         "Passes",IDC_SPINNER_PASSES,"SpinnerControl",WS_TABSTOP,189,5,6,10
+    LTEXT           "Render Passes:",IDC_STATIC,101,51,53,8
+    CONTROL         "Passes",IDC_TEXT_PASSES,"CustEdit",WS_TABSTOP,157,50,30,10
+    CONTROL         "Passes",IDC_SPINNER_PASSES,"SpinnerControl",WS_TABSTOP,189,50,6,10
     LTEXT           "Tile Size:",IDC_STATIC,0,7,48,8
     CONTROL         "Tile Size",IDC_TEXT_TILE_SIZE,"CustEdit",WS_TABSTOP,50,5,30,10
     CONTROL         "Tile Size",IDC_SPINNER_TILE_SIZE,"SpinnerControl",WS_TABSTOP,82,5,6,10
@@ -105,10 +105,6 @@ BEGIN
     CONTROL         "Max Samples",IDC_SPINNER_MAX_ADAPTIVE_SAMPLES,
                     "SpinnerControl",WS_TABSTOP,189,98,6,10
     GROUPBOX        "Adaptive Tile Sampler",IDC_STATIC,0,68,199,45
-    LTEXT           "Background Alpha:",IDC_STATIC_BACKGROUND_ALPHA,101,51,63,8
-    CONTROL         "Background Alpha",IDC_TEXT_BACKGROUND_ALPHA,"CustEdit",WS_TABSTOP,164,50,23,10
-    CONTROL         "Background Alpha",IDC_SPINNER_BACKGROUND_ALPHA,
-                    "SpinnerControl",WS_TABSTOP,189,50,6,10
     GROUPBOX        "Uniform Sampler",IDC_STATIC,0,38,93,28
     LTEXT           "Sampling Pattern Seed:",IDC_STATIC,4,178,110,8
     CONTROL         "Noise Seed",IDC_TEXT_NOISE_SEED,"CustEdit",WS_TABSTOP,101,176,30,10
@@ -248,7 +244,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_LIGHT_SAMPLING_ALGORITHM,53,21,146,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_FORMVIEW_RENDERERPARAMS_OUTPUT DIALOGEX 0, 0, 200, 167
+IDD_FORMVIEW_RENDERERPARAMS_OUTPUT DIALOGEX 0, 0, 200, 182
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -262,22 +258,26 @@ BEGIN
     CONTROL         "Browse...",IDC_BUTTON_BROWSE,"CustButton",WS_TABSTOP,153,43,46,10
     LTEXT           "Scene Scale Multiplier:",IDC_STATIC_SCALE_MULTIPLIER,0,61,77,8
     CONTROL         "Material Preview Quality",IDC_TEXT_MATERIAL_PREVIEW_QUALITY,
-                    "CustEdit",WS_TABSTOP,104,76,30,10
+                    "CustEdit",WS_TABSTOP,104,75,30,10
     CONTROL         "Scale Multiplier",IDC_SPINNER_SCALE_MULTIPLIER,
                     "SpinnerControl",WS_TABSTOP,135,60,6,10
-    COMBOBOX        IDC_COMBO_DIAGNOSTIC_SHADER_MODE,61,91,138,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Override Shading:",IDC_STATIC,0,93,61,8
+    COMBOBOX        IDC_COMBO_DIAGNOSTIC_SHADER_MODE,61,105,138,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Override Shading:",IDC_STATIC,0,107,61,8
     LTEXT           "Material Preview Quality:",IDC_STATIC_MATERIAL_PREVIEW_QUALITY,0,76,81,8
     CONTROL         "Material Preview Quality",IDC_SPINNER_MATERIAL_PREVIEW_QUALITY,
-                    "SpinnerControl",WS_TABSTOP,135,76,6,10
+                    "SpinnerControl",WS_TABSTOP,135,75,6,10
     CONTROL         "Scale Multiplier",IDC_TEXT_SCALE_MULTIPLIER,"CustEdit",WS_TABSTOP,104,60,30,10
-    GROUPBOX        "Material Override",IDC_STATIC_OVERRIDE_MATERIAL,0,109,199,52
-    CONTROL         "Override Material",IDC_CHECK_OVERRIDE_MATERIAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,122,67,10
-    CONTROL         "None",IDC_BUTTON_OVERRIDE_MATERIAL,"CustButton",WS_TABSTOP,73,120,119,12
+    GROUPBOX        "Material Override",IDC_STATIC_OVERRIDE_MATERIAL,0,122,199,52
+    CONTROL         "Override Material",IDC_CHECK_OVERRIDE_MATERIAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,138,67,10
+    CONTROL         "None",IDC_BUTTON_OVERRIDE_MATERIAL,"CustButton",WS_TABSTOP,73,136,119,12
     CONTROL         "Exclude Light Materials",IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,135,93,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,151,93,10
     CONTROL         "Exclude Glass Materials",IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,148,93,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,164,93,10
+    LTEXT           "Background Alpha:",IDC_STATIC_BACKGROUND_ALPHA,0,91,63,8
+    CONTROL         "Background Alpha",IDC_TEXT_BACKGROUND_ALPHA,"CustEdit",WS_TABSTOP,104,90,29,10
+    CONTROL         "Background Alpha",IDC_SPINNER_BACKGROUND_ALPHA,
+                    "SpinnerControl",WS_TABSTOP,135,90,6,10
 END
 
 IDD_FORMVIEW_RENDERERPARAMS_SPPM DIALOGEX 0, 0, 200, 291
@@ -394,7 +394,7 @@ BEGIN
 
     IDD_FORMVIEW_RENDERERPARAMS_OUTPUT, DIALOG
     BEGIN
-        BOTTOMMARGIN, 159
+        BOTTOMMARGIN, 174
     END
 
     IDD_FORMVIEW_RENDERERPARAMS_SPPM, DIALOG

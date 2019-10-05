@@ -1213,6 +1213,13 @@ ParamBlockDesc2 g_param_block_desc(
         p_accessor, &g_pblock_accessor,
     p_end,
 
+    ParamIdBackgroundAlphaValue, L"background_alpha", TYPE_FLOAT, P_TRANSIENT, 0,
+        p_ui, ParamMapIdOutput, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
+        p_default, 1.0f,
+        p_range, 0.0f, 1.0f,
+        p_accessor, & g_pblock_accessor,
+    p_end,
+
     // --- Parameters specifications for Image Sampling rollup ---
 
     ParamIdUniformPixelSamples, L"pixel_samples", TYPE_INT, P_TRANSIENT, 0,
@@ -1285,13 +1292,6 @@ ParamBlockDesc2 g_param_block_desc(
         p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_ADAPTIVE_NOISE_THRESHOLD, IDC_SPINNER_ADAPTIVE_NOISE_THRESHOLD, SPIN_AUTOSCALE,
         p_default, 0.1f,
         p_range, 0.0f, 25.0f,
-        p_accessor, &g_pblock_accessor,
-    p_end,
-
-    ParamIdBackgroundAlphaValue, L"background_alpha", TYPE_FLOAT, P_TRANSIENT, 0,
-        p_ui, ParamMapIdImageSampling, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_TEXT_BACKGROUND_ALPHA, IDC_SPINNER_BACKGROUND_ALPHA, SPIN_AUTOSCALE,
-        p_default, 1.0f,
-        p_range, 0.0f, 1.0f,
         p_accessor, &g_pblock_accessor,
     p_end,
 
