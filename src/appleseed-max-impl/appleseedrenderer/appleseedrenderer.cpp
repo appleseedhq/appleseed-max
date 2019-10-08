@@ -2345,6 +2345,7 @@ int AppleseedRenderer::Render(
     RendererSettings renderer_settings = m_settings;
     if (m_rend_params.inMtlEdit)
     {   
+        renderer_settings.m_gpt_enable_path_guiding = false;
         renderer_settings.m_lighting_algorithm = 0;
         renderer_settings.m_sampler_type = 0;
         renderer_settings.m_shader_override = 0;
