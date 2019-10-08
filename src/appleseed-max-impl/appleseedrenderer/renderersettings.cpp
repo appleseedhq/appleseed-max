@@ -453,6 +453,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("gpt.volume_distance_samples", m_volume_distance_samples);
     params.insert_path("gpt.optimize_for_lights_outside_volumes", m_optimize_for_lights_outside_volumes);
     params.insert_path("gpt.clamp_roughness", m_clamp_roughness); 
+    params.insert_path("gpt.save_tree_iterations", "none");
 
     // System.
 
