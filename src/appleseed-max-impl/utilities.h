@@ -74,7 +74,6 @@ class Texmap;
 
 void update_map_buttons(IParamMap2* param_map);
 
-
 //
 // Bitmap functions.
 //
@@ -129,6 +128,17 @@ std::string insert_procedural_texture_and_instance(
     renderer::ParamArray        texture_params = renderer::ParamArray(),
     renderer::ParamArray        texture_instance_params = renderer::ParamArray());
 
+//
+// Version information functions.
+//
+
+extern void print_libraries_information();
+
+extern void print_libraries_features();
+
+extern const char* to_enabled_disabled(const bool value);
+
+extern void print_third_party_libraries_information();
 
 //
 // Implementation.
