@@ -31,7 +31,6 @@
 
 // appleseed-max headers.
 #include "osloutputselectormap/osloutputselector.h"
-#include "version.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -78,7 +77,6 @@ const char* to_enabled_disabled(const bool value)
 
 void print_libraries_information()
 {
-    const auto verstr = PluginVersionString;
     RENDERER_LOG_INFO(
         "appleseed for Autodesk 3ds Max using %s version %s, %s configuration\n"
         "compiled on %s at %s using %s version %s\n"
