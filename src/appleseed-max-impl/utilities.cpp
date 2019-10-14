@@ -75,7 +75,7 @@ const char* to_enabled_disabled(const bool value)
     return value ? "enabled" : "disabled";
 }
 
-void print_libraries_information()
+void print_appleseed_library_information()
 {
     RENDERER_LOG_INFO(
         "appleseed for Autodesk 3ds Max using %s version %s, %s configuration\n"
@@ -93,35 +93,35 @@ void print_libraries_information()
         asf::Compiler::get_compiler_version());
 }
 
-void print_libraries_features()
+void print_appleseed_library_features()
 {
-        const bool WithDisneyMaterial =
-    #ifdef APPLESEED_WITH_DISNEY_MATERIAL
-            true;
-    #else
-            false;
-    #endif
+    const bool WithDisneyMaterial =
+#ifdef APPLESEED_WITH_DISNEY_MATERIAL
+        true;
+#else
+        false;
+#endif
 
-        const bool WithEmbree =
-    #ifdef APPLESEED_WITH_EMBREE
-            true;
-    #else
-            false;
-    #endif
+    const bool WithEmbree =
+#ifdef APPLESEED_WITH_EMBREE
+        true;
+#else
+        false;
+#endif
 
-        const bool WithSpectralSupport =
-    #ifdef APPLESEED_WITH_SPECTRAL_SUPPORT
-            true;
-    #else
-            false;
-    #endif
+    const bool WithSpectralSupport =
+#ifdef APPLESEED_WITH_SPECTRAL_SUPPORT
+        true;
+#else
+        false;
+#endif
 
-        const bool WithGPUSupport =
-    #ifdef APPLESEED_WITH_GPU
-            true;
-    #else
-            false;
-    #endif
+    const bool WithGPUSupport =
+#ifdef APPLESEED_WITH_GPU
+        true;
+#else
+        false;
+#endif
 
     RENDERER_LOG_INFO(
         "library features:\n"
@@ -146,12 +146,11 @@ void print_third_party_libraries_information()
         const asf::APIStringPair& version = versions[i];
         const char* lib_name = version.m_first.c_str();
         const char* lib_version = version.m_second.c_str();
-        const size_t lib_name_length = strlen(lib_name);
+        const size_t lib_name_length = std::strlen(lib_name);
         const std::string spacing(30 - lib_name_length, ' ');
         RENDERER_LOG_INFO("  %s%s%s", lib_name, spacing.c_str(), lib_version);
     }
 }
-
 
 void update_map_buttons(IParamMap2* param_map)
 {

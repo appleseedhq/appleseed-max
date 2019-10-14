@@ -2157,12 +2157,11 @@ int AppleseedRenderer::Render(
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
     {
         create_log_window();
-        print_libraries_information();
-        print_libraries_features();
+        print_appleseed_library_information();
+        print_appleseed_library_features();
         print_third_party_libraries_information();
         asf::System::print_information(asr::global_logger());
     }
-
 
     if (renderer_settings.m_enable_noise_seed)
     {
