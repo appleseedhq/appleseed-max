@@ -54,6 +54,7 @@
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/image.h"
+#include "foundation/platform/system.h"
 #include "foundation/platform/thread.h"
 #include "foundation/platform/types.h"
 #include "foundation/utility/autoreleaseptr.h"
@@ -1072,9 +1073,6 @@ void AppleseedRendererPBlockAccessor::Set(
 
 AppleseedRendererClassDesc g_appleseed_renderer_classdesc;
 asf::auto_release_ptr<DialogLogTarget> g_dialog_log_target;
-#if MAX_RELEASE < 19000
-AppleseedRECompatible g_appleseed_renderelement_compatible;
-#endif
 AppleseedRendererPBlockAccessor g_pblock_accessor;
 
 ParamBlockDesc2 g_param_block_desc(
@@ -2157,7 +2155,13 @@ int AppleseedRenderer::Render(
     }
 
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
+    {
         create_log_window();
+        print_appleseed_library_information();
+        print_appleseed_library_features();
+        print_third_party_libraries_information();
+        asf::System::print_information(asr::global_logger());
+    }
 
     if (renderer_settings.m_enable_noise_seed)
     {
@@ -2238,6 +2242,7 @@ int AppleseedRenderer::Render(
 
             if (progress_cb)
                 progress_cb->SetTitle(L"Rendering...");
+
             if (m_settings.m_low_priority_mode)
             {
                 asf::ProcessPriorityContext background_context(

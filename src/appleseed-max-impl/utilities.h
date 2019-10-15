@@ -131,6 +131,19 @@ std::string insert_procedural_texture_and_instance(
 
 
 //
+// Version information functions.
+//
+
+void print_appleseed_library_information();
+
+void print_appleseed_library_features();
+
+const char* to_enabled_disabled(const bool value);
+
+void print_third_party_libraries_information();
+
+
+//
 // Implementation.
 //
 

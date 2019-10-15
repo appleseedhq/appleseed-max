@@ -41,6 +41,8 @@
 #include "renderer/api/texture.h"
 
 // appleseed.foundation headers.
+#include "foundation/core/appleseed.h"
+#include "foundation/core/thirdparties.h"
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/tile.h"
 #include "foundation/utility/searchpaths.h"
@@ -67,6 +69,88 @@
 
 namespace asf = foundation;
 namespace asr = renderer;
+
+const char* to_enabled_disabled(const bool value)
+{
+    return value ? "enabled" : "disabled";
+}
+
+void print_appleseed_library_information()
+{
+    RENDERER_LOG_INFO(
+        "appleseed for Autodesk 3ds Max using %s version %s, %s configuration\n"
+        "compiled on %s at %s using %s version %s\n"
+        "copyright (c) 2010-2013 Francois Beaune, Jupiter Jazz Limited\n"
+        "copyright (c) 2014-2019 The appleseedhq Organization\n"
+        "this software is released under the MIT license (https://opensource.org/licenses/MIT).\n"
+        "visit https://appleseedhq.net/ for additional information and resources.",
+        asf::Appleseed::get_lib_name(),
+        asf::Appleseed::get_lib_version(),
+        asf::Appleseed::get_lib_configuration(),
+        asf::Appleseed::get_lib_compilation_date(),
+        asf::Appleseed::get_lib_compilation_time(),
+        asf::Compiler::get_compiler_name(),
+        asf::Compiler::get_compiler_version());
+}
+
+void print_appleseed_library_features()
+{
+    const bool WithDisneyMaterial =
+#ifdef APPLESEED_WITH_DISNEY_MATERIAL
+        true;
+#else
+        false;
+#endif
+
+    const bool WithEmbree =
+#ifdef APPLESEED_WITH_EMBREE
+        true;
+#else
+        false;
+#endif
+
+    const bool WithSpectralSupport =
+#ifdef APPLESEED_WITH_SPECTRAL_SUPPORT
+        true;
+#else
+        false;
+#endif
+
+    const bool WithGPUSupport =
+#ifdef APPLESEED_WITH_GPU
+        true;
+#else
+        false;
+#endif
+
+    RENDERER_LOG_INFO(
+        "library features:\n"
+        "  Instruction sets              %s\n"
+        "  Disney material with SeExpr   %s\n"
+        "  Embree                        %s\n"
+        "  Spectral support              %s\n"
+        "  GPU support                   %s",
+        asf::Appleseed::get_lib_cpu_features(),
+        to_enabled_disabled(WithDisneyMaterial),
+        to_enabled_disabled(WithEmbree),
+        to_enabled_disabled(WithSpectralSupport),
+        to_enabled_disabled(WithGPUSupport));
+}
+
+void print_third_party_libraries_information()
+{
+    const asf::LibraryVersionArray versions = asf::ThirdParties::get_versions();
+    RENDERER_LOG_INFO("third party libraries:\n");
+    for (size_t i = 0, e = versions.size(); i < e; ++i)
+    {
+        const asf::APIStringPair& version = versions[i];
+        const char* lib_name = version.m_first.c_str();
+        const char* lib_version = version.m_second.c_str();
+        const size_t lib_name_length = std::strlen(lib_name);
+        const std::string spacing(30 - lib_name_length, ' ');
+        RENDERER_LOG_INFO("  %s%s%s", lib_name, spacing.c_str(), lib_version);
+    }
+}
 
 void update_map_buttons(IParamMap2* param_map)
 {
