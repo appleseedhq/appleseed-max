@@ -1,5 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
+#pragma code_page(65001)
+
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -17,7 +19,6 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -57,7 +58,7 @@ BEGIN
     LTEXT           "Color:",IDC_LABEL_SSS_COLOR,7,6,48,8
     CONTROL         "Color Swatch",IDC_SWATCH_SSS_COLOR,"ColorSwatch",WS_TABSTOP,69,6,30,10
     CONTROL         "Color Map",IDC_TEXMAP_SSS_COLOR,"CustButton",WS_TABSTOP,101,6,109,10
-    LTEXT           "Scattering Color:",IDC_LABEL_SSS_SCATTERING_COLOR,7,18,48,8
+    LTEXT           "Scattering Color:",IDC_LABEL_SSS_SCATTERING_COLOR,7,18,55,8
     CONTROL         "Scattering Color Swatch",IDC_SWATCH_SSS_SCATTERING_COLOR,
                     "ColorSwatch",WS_TABSTOP,69,18,30,10
     CONTROL         "Scattering Color Map",IDC_TEXMAP_SSS_SCATTERING_COLOR,
