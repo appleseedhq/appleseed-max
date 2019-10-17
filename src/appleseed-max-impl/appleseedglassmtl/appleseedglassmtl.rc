@@ -1,5 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
+#pragma code_page(65001)
+
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -17,7 +19,6 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ BEGIN
                     "ColorSwatch",WS_TABSTOP,69,18,30,10
     CONTROL         "Reflection Tint Map",IDC_TEXMAP_REFLECTION_TINT,
                     "CustButton",WS_TABSTOP,101,18,109,10
-    LTEXT           "Refraction Tint:",IDC_LABEL_REFRACTION_TINT,7,30,48,8
+    LTEXT           "Refraction Tint:",IDC_LABEL_REFRACTION_TINT,7,30,56,8
     CONTROL         "Refraction Tint Swatch",IDC_SWATCH_REFRACTION_TINT,
                     "ColorSwatch",WS_TABSTOP,69,30,30,10
     CONTROL         "Refraction Tint Map",IDC_TEXMAP_REFRACTION_TINT,
