@@ -4,7 +4,7 @@
 
 ## Overview
 
-appleseed-max is an appleseed plugin for [Autodesk® 3ds Max®](http://www.autodesk.com/products/3ds-max/overview) 2016 and later.
+appleseed-max is an appleseed plugin for [Autodesk® 3ds Max®](http://www.autodesk.com/products/3ds-max/overview) 2017 and later.
 
 * [**Download** the latest release](https://github.com/appleseedhq/appleseed-max/releases/latest/)
 * [**Report** bugs and suggest features](https://github.com/appleseedhq/appleseed-max/issues)
@@ -13,4 +13,4 @@ appleseed-max is an appleseed plugin for [Autodesk® 3ds Max®](http://www.autod
 
 appleseed and its accompanying software is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
-© 2010-2018 The appleseedhq Organization
+© 2010-2019 The appleseedhq Organization
