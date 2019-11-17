@@ -450,7 +450,6 @@ namespace
 
             // Insert object into assembly.
             assembly.objects().insert(object);
-
             return { object_info };
         }
         else
@@ -610,6 +609,20 @@ namespace
         });
 
         return is_photon_target;
+    }
+
+    float get_shadow_terminator_correction(Object* object, const TimeValue time)
+    {
+        float shadow_terminator_correction = 0.0f;
+
+        for_each_modifier(object, AppleseedObjPropsMod::get_class_id(), [time, &shadow_terminator_correction](Modifier* modifier)
+            {
+                const auto obj_props_mod = static_cast<const AppleseedObjPropsMod*>(modifier);
+                shadow_terminator_correction = obj_props_mod->get_shadow_terminator_correction(time);
+                return true;
+            });
+
+        return shadow_terminator_correction;
     }
 
     bool is_light_emitting_material(Mtl* mtl)
@@ -816,6 +829,7 @@ namespace
         params.insert("sss_set_id", get_sss_set(object, time));
         params.insert("medium_priority", get_medium_priority(object, time));
         params.insert("photon_target", is_photon_target(object, time));
+        params.insert("shadow_terminator_correction", get_shadow_terminator_correction(object, time));
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 

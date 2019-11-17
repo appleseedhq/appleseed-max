@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2017-2018 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2017-2019 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -63,19 +63,21 @@ namespace
     enum ParamId
     {
         // Changing these value WILL break compatibility.
-        ParamIdVisibilityCamera         = 0,
-        ParamIdVisibilityLight          = 1,
-        ParamIdVisibilityShadow         = 2,
-        ParamIdVisibilityTransparency   = 3,
-        ParamIdVisibilityProbe          = 4,
-        ParamIdVisibilityDiffuse        = 5,
-        ParamIdVisibilityGlossy         = 6,
-        ParamIdVisibilitySpecular       = 7,
-        ParamIdVisibilitySSS            = 8,
-        ParamIdSSSSet                   = 9,
-        ParamIdOptimizeForInstancing    = 10,
-        ParamIdMediumPriority           = 11,
-        ParamIdPhotonTarget             = 12
+        ParamIdVisibilityCamera             = 0,
+        ParamIdVisibilityLight              = 1,
+        ParamIdVisibilityShadow             = 2,
+        ParamIdVisibilityTransparency       = 3,
+        ParamIdVisibilityProbe              = 4,
+        ParamIdVisibilityDiffuse            = 5,
+        ParamIdVisibilityGlossy             = 6,
+        ParamIdVisibilitySpecular           = 7,
+        ParamIdVisibilitySSS                = 8,
+        ParamIdSSSSet                       = 9,
+        ParamIdOptimizeForInstancing        = 10,
+        ParamIdMediumPriority               = 11,
+        ParamIdPhotonTarget                 = 12,
+        ParamIdShadowTerminatorCorrection   = 13
+
     };
 
     ParamBlockDesc2 g_block_desc(
@@ -152,6 +154,10 @@ namespace
         ParamIdPhotonTarget, L"photon_target", TYPE_BOOL, 0, IDS_PHOTON_TARGET,
             p_default, FALSE,
             p_ui, ParamMapIdVisibility, TYPE_SINGLECHECKBOX, IDC_BUTTON_PHOTON_TARGET,
+        p_end,
+        ParamIdShadowTerminatorCorrection, L"shadow_terminator_correction", TYPE_FLOAT, P_TRANSIENT, 0,
+            p_ui, ParamMapIdVisibility, TYPE_SPINNER, EDITTYPE_FLOAT, IDS_TEXT_SHADOW_TERMINATOR_CORRECTION, IDS_SPINNER_SHADOW_TERMINATOR_CORRECTION, SPIN_AUTOSCALE,
+            p_default, 0.0f, p_range, 0.0f, 0.5f,
         p_end,
 
         // --- The end ---
@@ -363,6 +369,11 @@ std::string AppleseedObjPropsMod::get_sss_set(const TimeValue t) const
 int AppleseedObjPropsMod::get_medium_priority(const TimeValue t) const
 {
    return m_pblock->GetInt(ParamIdMediumPriority, t, FOREVER);
+}
+
+float AppleseedObjPropsMod::get_shadow_terminator_correction(const TimeValue t) const
+{
+    return m_pblock->GetFloat(ParamIdShadowTerminatorCorrection, t, FOREVER);
 }
 
 
