@@ -73,7 +73,7 @@ BEGIN
                     "SpinnerControl",WS_TABSTOP,88,139,6,10
     CONTROL         "Photon Target (SPPM)",IDC_BUTTON_PHOTON_TARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,125,84,10
     GROUPBOX        "Visibility Flags:",IDC_STATIC_VISIBILITY,1,1,107,111
-    LTEXT           "Shadow Terminator Fix:",IDC_STATIC,5,164,53,21
+    LTEXT           "Shadow Terminator Fix:",IDC_STATIC_SHADOW_TERMINATOR_CORRECTION,5,164,53,21
     CONTROL         "Shadow Terminator Correction",IDS_TEXT_SHADOW_TERMINATOR_CORRECTION,
                     "CustEdit",WS_TABSTOP,58,168,29,10
     CONTROL         "Shadow Terminator Correction",IDS_SPINNER_SHADOW_TERMINATOR_CORRECTION,
