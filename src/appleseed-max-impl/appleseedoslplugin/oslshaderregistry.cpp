@@ -440,6 +440,9 @@ void OSLShaderRegistry::create_class_descriptors()
         int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
+            if (param_info.m_max_param_id != -1)
+                param_id = param_info.m_max_param_id;
+
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
 
             if (param_info.m_max_param.m_is_constant)

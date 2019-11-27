@@ -177,6 +177,9 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
         m_has_soft_max = metadata.get_value("softmax", m_soft_max_value);
         metadata.get_value("divider", m_divider);
 
+        if (!metadata.get_value("as_max_param_id", m_max_param_id))
+            m_max_param_id = -1;
+
         metadata.get_value("as_maya_attribute_name", m_maya_attribute_name);
         metadata.get_value("as_maya_attribute_connectable", m_connectable);
         m_max_hidden_attr = false;
