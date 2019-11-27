@@ -108,6 +108,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
   : m_has_default(false)
   , m_divider(false)
   , m_lock_geom(true)
+  , m_deprecated(false)
 {
     m_param_name = param_info.get("name");
     m_param_type = param_info.get("type");
@@ -184,6 +185,8 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
         metadata.get_value("as_maya_attribute_connectable", m_connectable);
         m_max_hidden_attr = false;
         metadata.get_value("as_max_attribute_hidden", m_max_hidden_attr);
+
+        metadata.get_value("as_deprecated", m_deprecated);
     }
 }
 
