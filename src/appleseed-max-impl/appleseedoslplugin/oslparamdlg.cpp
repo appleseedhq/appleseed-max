@@ -74,6 +74,10 @@ namespace
                     for (int i = 0, e = desc->Count(); i < e; ++i)
                     {
                         const ParamDef param_def = desc->GetParamDef(desc->IndextoID(i));
+                        
+                        if (param_def.flags & P_OBSOLETE)
+                            continue;
+
                         if (param_def.ctrl_type == TYPE_SPINNER)
                         {
                             const int* ctrl_ids = param_def.ctrl_IDs;
@@ -278,7 +282,7 @@ void OSLParamDlg::add_ui_parameter(
     const std::string param_label = max_param.m_max_label_str + ":";
     dialog_template.AddStatic((LPCSTR)param_label.c_str(), WS_VISIBLE, NULL, col1_x, y_pos, LabelWidth, EditHeight, ctrl_id++);
     
-    if (max_param.m_has_constant)
+    if (max_param.m_is_constant)
     {
         switch (max_param.m_param_type)
         {
@@ -319,7 +323,7 @@ void OSLParamDlg::add_ui_parameter(
         }
     }
 
-    if (max_param.m_connectable)
+    if (max_param.m_is_connectable)
     {
         if (max_param.m_param_type == MaxParam::Closure)
         {
@@ -327,7 +331,7 @@ void OSLParamDlg::add_ui_parameter(
         }
         else
         {
-            const bool short_button = max_param.m_has_constant && 
+            const bool short_button = max_param.m_is_constant && 
                 (max_param.m_param_type == MaxParam::VectorParam || 
                     max_param.m_param_type == MaxParam::NormalParam ||
                     max_param.m_param_type == MaxParam::PointParam ||
@@ -338,7 +342,7 @@ void OSLParamDlg::add_ui_parameter(
             {
                 Texmap* tex_map = nullptr;
                 Interval iv;
-                m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_param_id + 1, 0, tex_map, iv);
+                m_osl_plugin->GetParamBlock(0)->GetValue(max_param.m_max_map_param_id, 0, tex_map, iv);
 
                 const char* label = tex_map != nullptr ? "M" : "";
 
