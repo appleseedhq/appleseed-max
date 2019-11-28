@@ -238,15 +238,19 @@ OSLShaderInfo::OSLShaderInfo(
         {
             OSLParamInfo osl_param(q.get_param_info(i));
 
+            if (osl_param.m_widget == "null" && !osl_param.m_connectable)
+                continue;
+
             MaxParam& max_param = osl_param.m_max_param;
 
             max_param.m_osl_param_name = osl_param.m_param_name;
             max_param.m_max_label_str = osl_param.m_label;
-            max_param.m_connectable = osl_param.m_connectable;
+            max_param.m_is_connectable = osl_param.m_connectable;
             max_param.m_param_type = MaxParam::Unsupported;
             max_param.m_page_name = osl_param.m_page;
 
-            max_param.m_has_constant = osl_param.m_valid_default &&
+            max_param.m_is_constant =
+                osl_param.m_valid_default &&
                 osl_param.m_lock_geom &&
                 osl_param.m_widget != "null";
 

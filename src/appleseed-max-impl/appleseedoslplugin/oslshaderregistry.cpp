@@ -61,6 +61,7 @@
 #include "boost/filesystem.hpp"
 
 // Standard headers.
+#include <map>
 #include <memory>
 
 namespace asf = foundation;
@@ -338,9 +339,10 @@ namespace
 
     void add_bump_parameters(
         ParamBlockDesc2*            pb_desc,
-        IdNameVector&               texture_map,
-        int&                        param_id)
+        IdNameVector&               texture_map)
     {
+        int param_id = 0;
+
         pb_desc->AddParam(
             param_id++, L"bump_method", TYPE_INT, 0, IDS_BUMP_METHOD,
             p_ui, TYPE_INT_COMBOBOX, IDC_COMBO_BUMP_METHOD,
@@ -426,8 +428,8 @@ void OSLShaderRegistry::create_class_descriptors()
             L"oslTextureMapParams",                     // internal parameter block's name
             0,                                          // ID of the localized name string
             class_descr,                                // class descriptor
-            P_AUTO_CONSTRUCT,                           // block flags
-
+            P_AUTO_CONSTRUCT | P_VERSION,               // block flags
+            1,                                          // P_VERSION argument
                                                         // --- P_AUTO_CONSTRUCT arguments ---
             0,                                          // parameter block's reference number
             p_end
@@ -439,12 +441,12 @@ void OSLShaderRegistry::create_class_descriptors()
         for (auto& param_info : shader.m_params)
         {
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
-            param_info.m_max_param.m_max_param_id = param_id;
 
-            shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
-
-            if (param_info.m_max_param.m_has_constant)
+            if (param_info.m_max_param.m_is_constant)
             {
+                param_info.m_max_param.m_max_param_id = param_id;
+
+                shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str)));
                 add_const_parameter(
                     param_block_descr,
                     param_info,
@@ -458,8 +460,11 @@ void OSLShaderRegistry::create_class_descriptors()
                 string_id++;
             }
 
-            if (param_info.m_max_param.m_connectable)
+            if (param_info.m_max_param.m_is_connectable)
             {
+                param_info.m_max_param.m_max_map_param_id = param_id;
+
+                shader.m_string_map.insert(std::make_pair(string_id, utf8_to_wide(param_info.m_max_param.m_max_label_str + " Map")));
                 add_input_parameter(
                     param_block_descr,
                     param_info,
@@ -477,7 +482,7 @@ void OSLShaderRegistry::create_class_descriptors()
 
         }
 
-        shader.m_string_map.insert(std::make_pair(string_id++, L"Output"));
+        shader.m_string_map.insert(std::make_pair(string_id, L"Output"));
 
         MaxParam max_output_param;
         max_output_param.m_max_label_str = "Output";
@@ -485,8 +490,8 @@ void OSLShaderRegistry::create_class_descriptors()
         max_output_param.m_param_type = MaxParam::StringPopup;
         max_output_param.m_max_ctrl_id = ctrl_id++;
         max_output_param.m_max_param_id = param_id;
-        max_output_param.m_connectable = false;
-        max_output_param.m_has_constant = true;
+        max_output_param.m_is_connectable = false;
+        max_output_param.m_is_constant = true;
 
         shader.m_output_param = max_output_param;
         
@@ -497,6 +502,8 @@ void OSLShaderRegistry::create_class_descriptors()
             param_id,
             ctrl_id,
             string_id);
+
+        string_id++;
 
         auto tn_vec = shader.find_param("Tn");
         auto bump_normal = shader.find_maya_attribute("normalCamera");
@@ -519,8 +526,7 @@ void OSLShaderRegistry::create_class_descriptors()
 
             add_bump_parameters(
                 bump_param_block_descr,
-                shader.m_texture_id_map,
-                param_id);
+                shader.m_texture_id_map);
 
             m_paramblock_descriptors.push_back(MaxSDK::AutoPtr<ParamBlockDesc2>(bump_param_block_descr));
         }
@@ -814,12 +820,13 @@ void OSLShaderRegistry::add_input_parameter(
         auto param_str = utf8_to_wide(max_param.m_osl_param_name + "_map");
         texture_map.push_back(std::make_pair(param_id, utf8_to_wide(max_param.m_max_label_str)));
 
-        const bool short_button = max_param.m_has_constant &&
+        const bool short_button =
+            max_param.m_is_constant &&
             (max_param.m_param_type == MaxParam::VectorParam || 
-                max_param.m_param_type == MaxParam::NormalParam ||
-                max_param.m_param_type == MaxParam::PointParam ||
-                max_param.m_param_type == MaxParam::StringPopup ||
-                max_param.m_param_type == MaxParam::IntMapper);
+             max_param.m_param_type == MaxParam::NormalParam ||
+             max_param.m_param_type == MaxParam::PointParam ||
+             max_param.m_param_type == MaxParam::StringPopup ||
+             max_param.m_param_type == MaxParam::IntMapper);
 
         const int flag = short_button ? P_NO_AUTO_LABELS : 0;
         PBAccessor* tex_accessor = &g_texture_accessor;
