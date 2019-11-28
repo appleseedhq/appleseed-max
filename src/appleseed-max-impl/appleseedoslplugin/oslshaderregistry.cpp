@@ -552,8 +552,8 @@ void OSLShaderRegistry::add_const_parameter(
         if (osl_param.m_has_default)
         {
             const float r = static_cast<float>(osl_param.m_default_value.at(0));
-            const float g = static_cast<float>(osl_param.m_default_value.at(0));
-            const float b = static_cast<float>(osl_param.m_default_value.at(0));
+            const float g = static_cast<float>(osl_param.m_default_value.at(1));
+            const float b = static_cast<float>(osl_param.m_default_value.at(2));
             def_val = Color(r, g, b);
         }
 
