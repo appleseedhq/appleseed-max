@@ -582,7 +582,7 @@ namespace
         {
         }
 
-        asf::uint64 compute_signature() const override
+        std::uint64_t compute_signature() const override
         {
             return asf::siphash24(m_texmap);
         }

@@ -758,7 +758,7 @@ bool RendererSettings::save(ISave* isave) const
         isave->EndChunk();
 
         isave->BeginChunk(ChunkSettingsSystemTextureCacheSize);
-        success &= write<foundation::uint64>(isave, m_texture_cache_size);
+        success &= write<std::uint64_t>(isave, m_texture_cache_size);
         isave->EndChunk();
         
     isave->EndChunk();
@@ -1237,7 +1237,7 @@ IOResult RendererSettings::load_system_settings(ILoad* iload)
             break;
 
           case ChunkSettingsSystemTextureCacheSize:
-            result = read<foundation::uint64>(iload, &m_texture_cache_size);
+            result = read<std::uint64_t>(iload, &m_texture_cache_size);
             break;
         }
 

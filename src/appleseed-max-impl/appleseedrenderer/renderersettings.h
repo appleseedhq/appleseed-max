@@ -190,7 +190,7 @@ class RendererSettings
     bool                        m_use_max_procedural_maps;
     DialogLogTarget::OpenMode   m_log_open_mode;
     bool                        m_log_material_editor_messages;
-    foundation::uint64          m_texture_cache_size;
+    std::uint64_t               m_texture_cache_size;
 
     // Apply these settings to a given project.
     void apply(renderer::Project& project) const;

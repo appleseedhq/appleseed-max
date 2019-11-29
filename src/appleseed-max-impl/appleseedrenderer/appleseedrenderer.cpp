@@ -56,7 +56,6 @@
 #include "foundation/image/image.h"
 #include "foundation/platform/system.h"
 #include "foundation/platform/thread.h"
-#include "foundation/platform/types.h"
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/kvpair.h"
 #include "foundation/utility/searchpaths.h"
@@ -75,6 +74,7 @@
 // Standard headers.
 #include <clocale>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <string>
 
@@ -2083,7 +2083,7 @@ namespace
         RendProgressCallback*   progress_cb)
     {
         // Number of rendered tiles, shared counter accessed atomically.
-        volatile asf::uint32 rendered_tile_count = 0;
+        volatile std::uint32_t rendered_tile_count = 0;
 
         // Create the renderer controller.
         const size_t total_tile_count =
