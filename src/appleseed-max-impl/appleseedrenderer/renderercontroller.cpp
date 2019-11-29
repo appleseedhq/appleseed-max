@@ -45,7 +45,7 @@ namespace asr = renderer;
 
 RendererController::RendererController(
     RendProgressCallback*   progress_cb,
-    volatile asf::uint32*   rendered_tile_count,
+    volatile std::uint32_t* rendered_tile_count,
     const size_t            total_tile_count)
   : m_progress_cb(progress_cb)
   , m_rendered_tile_count(rendered_tile_count)

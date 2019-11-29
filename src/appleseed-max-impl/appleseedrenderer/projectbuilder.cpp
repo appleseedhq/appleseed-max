@@ -72,7 +72,6 @@
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
 #include "foundation/math/vector.h"
-#include "foundation/platform/types.h"
 #include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/iostreamop.h"
 #include "foundation/utility/searchpaths.h"
@@ -97,6 +96,7 @@
 
 // Standard headers.
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <map>
 #include <sstream>
@@ -185,7 +185,7 @@ namespace
     {
         std::string                     m_name;                 // name of the appleseed object
         std::map<MtlID, std::string>    m_mtlid_to_slot_name;   // map a Max's material ID to an appleseed's material slot name
-        std::map<MtlID, asf::uint32>    m_mtlid_to_slot_index;  // map a Max's material ID to an appleseed's material slot index
+        std::map<MtlID, std::uint32_t>  m_mtlid_to_slot_index;  // map a Max's material ID to an appleseed's material slot index
     };
 
     asf::auto_release_ptr<asr::MeshObject> convert_mesh_object(
@@ -231,7 +231,7 @@ namespace
             const DWORD face_smgroup = face.getSmGroup();
             const MtlID face_mat = face.getMatID();
 
-            asf::uint32 normal_indices[3];
+            std::uint32_t normal_indices[3];
             if (face_smgroup == 0)
             {
                 // No smooth group for this face, check if face has explicit normals.
@@ -248,7 +248,7 @@ namespace
                         
                         const Point3& n = nspec->Normal(norm_index);
                         normal_indices[j] =
-                            static_cast<asf::uint32>(
+                            static_cast<std::uint32_t>(
                                 object->push_vertex_normal(
                                     asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                     }
@@ -258,8 +258,8 @@ namespace
                 {
                     // No explicit normals for this face, use face normal.
                     const Point3 n = normal_transform * mesh.getFaceNormal(i);
-                    const asf::uint32 normal_index =
-                        static_cast<asf::uint32>(
+                    const std::uint32_t normal_index =
+                        static_cast<std::uint32_t>(
                             object->push_vertex_normal(
                                 asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                     normal_indices[0] = normal_index;
@@ -278,7 +278,7 @@ namespace
                         // This vertex has a single normal.
                         const Point3& n = rvertex.rn.getNormal();
                         normal_indices[j] =
-                            static_cast<asf::uint32>(
+                            static_cast<std::uint32_t>(
                                 object->push_vertex_normal(
                                     asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                     }
@@ -293,7 +293,7 @@ namespace
                             {
                                 const Point3& n = rn.getNormal();
                                 normal_indices[j] =
-                                    static_cast<asf::uint32>(
+                                    static_cast<std::uint32_t>(
                                         object->push_vertex_normal(
                                             asf::safe_normalize(asr::GVector3(n.x, n.y, n.z))));
                                 break;
@@ -304,7 +304,7 @@ namespace
             }
 
             static_assert(
-                sizeof(DWORD) == sizeof(asf::uint32),
+                sizeof(DWORD) == sizeof(std::uint32_t),
                 "DWORD is expected to be 32-bit long");
 
             asr::Triangle triangle;
@@ -329,14 +329,14 @@ namespace
 
             // Assign to the triangle the material slot corresponding to the face's material ID,
             // creating a new material slot if necessary.
-            asf::uint32 slot_index;
+            std::uint32_t slot_index;
             const MtlID mtlid = face.getMatID();
             const auto it = object_info.m_mtlid_to_slot_index.find(mtlid);
             if (it == object_info.m_mtlid_to_slot_index.end())
             {
                 // Create a new material slot in the object.
                 const auto slot_name = "material_slot_" + asf::to_string(object->get_material_slot_count());
-                slot_index = static_cast<asf::uint32>(object->push_material_slot(slot_name.c_str()));
+                slot_index = static_cast<std::uint32_t>(object->push_material_slot(slot_name.c_str()));
                 object_info.m_mtlid_to_slot_name.insert(std::make_pair(mtlid, slot_name));
                 object_info.m_mtlid_to_slot_index.insert(std::make_pair(mtlid, slot_index));
             }

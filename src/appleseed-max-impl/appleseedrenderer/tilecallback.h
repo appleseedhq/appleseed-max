@@ -36,10 +36,10 @@
 
 // appleseed.foundation headers.
 #include "foundation/image/tile.h"
-#include "foundation/platform/types.h"
 
 // Standard headers.
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 
 // Forward declarations.
@@ -52,7 +52,7 @@ class TileCallback
   public:
     TileCallback(
         Bitmap*                         bitmap,
-        volatile foundation::uint32*    rendered_tile_count);
+        volatile std::uint32_t*         rendered_tile_count);
 
     void release() override;
 
@@ -71,7 +71,7 @@ class TileCallback
 
   private:
     Bitmap*                             m_bitmap;
-    volatile foundation::uint32*        m_rendered_tile_count;
+    volatile std::uint32_t*             m_rendered_tile_count;
     std::unique_ptr<foundation::Tile>   m_float_tile_storage;
 
     void blit_tile(

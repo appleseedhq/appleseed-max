@@ -131,7 +131,7 @@ namespace
 
 TileCallback::TileCallback(
     Bitmap*                 bitmap,
-    volatile asf::uint32*   rendered_tile_count)
+    volatile std::uint32_t* rendered_tile_count)
   : m_bitmap(bitmap)
   , m_rendered_tile_count(rendered_tile_count)
 {
