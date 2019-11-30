@@ -44,6 +44,7 @@
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
+#include <assert1.h>
 #include <log.h>
 #include <max.h>
 #include "appleseed-max-common/_endmaxheaders.h"
@@ -67,7 +68,7 @@ namespace
 
     void do_emit_message(const DWORD type, const StringVec& lines)
     {
-        assert(is_main_thread());
+        DbgAssert(is_main_thread());
 
         for (const auto& line : lines)
         {
@@ -101,7 +102,7 @@ namespace
 
     void emit_pending_messages_no_lock()
     {
-        assert(is_main_thread());
+        DbgAssert(is_main_thread());
 
         for (const auto& message : g_message_queue)
             do_emit_message(message.m_type, message.m_lines);

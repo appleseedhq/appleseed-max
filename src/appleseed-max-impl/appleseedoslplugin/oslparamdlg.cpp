@@ -40,6 +40,7 @@
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
+#include <assert1.h>
 #include <iparamm2.h>
 #include <maxtypes.h>
 #include "appleseed-max-common/_endmaxheaders.h"
@@ -212,7 +213,7 @@ ReferenceTarget* OSLParamDlg::GetThing()
 
 void OSLParamDlg::SetThing(ReferenceTarget *m)
 {
-    assert(m->ClassID() == m_osl_plugin->ClassID());
+    DbgAssert(m->ClassID() == m_osl_plugin->ClassID());
     m_osl_plugin = static_cast<MtlBase*>(m);
     m_pmap->SetParamBlock(m_osl_plugin->GetParamBlock(0));
 }
