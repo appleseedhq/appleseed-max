@@ -42,6 +42,7 @@
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
+#include <assert1.h>
 #include <ioapi.h>
 #include "appleseed-max-common/_endmaxheaders.h"
 
@@ -183,7 +184,7 @@ const char* get_shader_override_type(const int shader_override_type)
       case 24: return "world_space_velocity";
       case 25: return "world_space_wireframe";
       default: 
-        assert(!"Invalid shader override type."); 
+        DbgAssert(!"Invalid shader override type."); 
         return "coverage";
     }
 }
@@ -192,10 +193,10 @@ const char* get_lighting_engine_type(const int lighting_engine_type)
 {
     switch (lighting_engine_type)
     {
-      case 0:  return "pt";
-      case 1:  return "sppm";
+      case 0: return "pt";
+      case 1: return "sppm";
       default:
-        assert(!"Invalid lighting engine type.");
+        DbgAssert(!"Invalid lighting engine type.");
         return "pt";
     }
 }
@@ -204,10 +205,10 @@ const char* get_lighting_algorithm_type(const int lighting_algorithm_type)
 {
     switch (lighting_algorithm_type)
     {
-      case 0:  return "cdf";
-      case 1:  return "lighttree";
+      case 0: return "cdf";
+      case 1: return "lighttree";
       default:
-        assert(!"Invalid lighting algorithm type.");
+        DbgAssert(!"Invalid lighting algorithm type.");
         return "cdf";
     }
 }
@@ -216,10 +217,10 @@ const char* get_sppm_photon_type(const int photon_type)
 {
     switch (photon_type)
     {
-      case 0:  return "mono";
-      case 1:  return "poly";
+      case 0: return "mono";
+      case 1: return "poly";
       default: 
-        assert(!"Invalid photon type."); 
+        DbgAssert(!"Invalid photon type."); 
         return "poly";
     }
 }
@@ -228,11 +229,11 @@ const char* get_sppm_direct_lighting_mode(const int lighting_mode)
 {
     switch (lighting_mode)
     {
-      case 0:  return "rt";
-      case 1:  return "sppm";
-      case 2:  return "off";
+      case 0: return "rt";
+      case 1: return "sppm";
+      case 2: return "off";
       default: 
-        assert(!"Invalid SPPM direct lighting mode."); 
+        DbgAssert(!"Invalid SPPM direct lighting mode."); 
         return "rt";
     }
 }
