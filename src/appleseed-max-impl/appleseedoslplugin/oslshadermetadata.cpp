@@ -108,12 +108,12 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
   : m_has_default(false)
   , m_divider(false)
   , m_lock_geom(true)
-  , m_deprecated(false)
+  , m_is_deprecated(false)
 {
     m_param_name = param_info.get("name");
     m_param_type = param_info.get("type");
     m_valid_default = param_info.get<bool>("validdefault");
-    m_connectable = true;
+    m_is_connectable = true;
 
     // todo: lots of refactoring possibilities here...
     if (m_valid_default)
@@ -182,11 +182,11 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& param_info)
             m_max_param_id = -1;
 
         metadata.get_value("as_maya_attribute_name", m_maya_attribute_name);
-        metadata.get_value("as_maya_attribute_connectable", m_connectable);
+        metadata.get_value("as_maya_attribute_connectable", m_is_connectable);
         m_max_hidden_attr = false;
         metadata.get_value("as_max_attribute_hidden", m_max_hidden_attr);
 
-        metadata.get_value("as_deprecated", m_deprecated);
+        metadata.get_value("as_deprecated", m_is_deprecated);
     }
 }
 
@@ -244,14 +244,14 @@ OSLShaderInfo::OSLShaderInfo(
         {
             OSLParamInfo osl_param(q.get_param_info(i));
 
-            if (osl_param.m_widget == "null" && !osl_param.m_connectable)
+            if (osl_param.m_widget == "null" && !osl_param.m_is_connectable)
                 continue;
 
             MaxParam& max_param = osl_param.m_max_param;
 
             max_param.m_osl_param_name = osl_param.m_param_name;
             max_param.m_max_label_str = osl_param.m_label;
-            max_param.m_is_connectable = osl_param.m_connectable;
+            max_param.m_is_connectable = osl_param.m_is_connectable;
             max_param.m_param_type = MaxParam::Unsupported;
             max_param.m_page_name = osl_param.m_page;
 
