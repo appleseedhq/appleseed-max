@@ -1683,7 +1683,7 @@ ParamBlockDesc2 g_param_block_desc(
 
     ParamIdCPUCores, L"cpu_cores", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSystem, TYPE_SPINNER, EDITTYPE_INT, IDC_TEXT_RENDERINGTHREADS, IDC_SPINNER_RENDERINGTHREADS, SPIN_AUTOSCALE,
-        p_default, 0,
+        p_default, -1,
         p_range, -255, 256,
         p_accessor, &g_pblock_accessor,
     p_end,
