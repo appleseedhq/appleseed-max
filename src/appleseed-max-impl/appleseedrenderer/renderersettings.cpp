@@ -130,7 +130,7 @@ namespace
             m_override_exclude_glass_materials = false;
             m_override_material = nullptr;
 
-            m_rendering_threads = 0;        // 0 = as many as there are logical cores
+            m_rendering_threads = -1;        // -1 = all available logical cores -1 are used for rendering
             m_enable_embree = false;
             m_low_priority_mode = true;
             m_use_max_procedural_maps = false;
@@ -326,10 +326,6 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("use_embree", m_enable_embree);
     params.insert_path("texture_store.max_size", m_texture_cache_size * 1024 * 1024);
 
-    if (m_rendering_threads == 0)
-        params.insert_path("rendering_threads", "auto");
-    else params.insert_path("rendering_threads", m_rendering_threads);
-
     if (m_shader_override > 0)
        params.insert_path("shading_engine.override_shading.mode", get_shader_override_type(m_shader_override));  
 }
@@ -357,6 +353,10 @@ void RendererSettings::apply_settings_to_final_config(asr::Project& project) con
         params.insert_path("adaptive_tile_renderer.max_samples", m_adaptive_max_samples);
         params.insert_path("adaptive_tile_renderer.noise_threshold", m_adaptive_noise_threshold);
     }
+
+    if (m_rendering_threads == 0)
+        params.insert_path("rendering_threads", "auto");    // use all available logical cores
+    else params.insert_path("rendering_threads", m_rendering_threads);
 }
 
 void RendererSettings::apply_settings_to_interactive_config(asr::Project& project) const
@@ -369,7 +369,7 @@ void RendererSettings::apply_settings_to_interactive_config(asr::Project& projec
     params.insert_path("lighting_engine", "pt");
 
     if (m_rendering_threads == 0)
-        params.insert_path("rendering_threads", "-1");
+        params.insert_path("rendering_threads", "-1");  // keep one logical core free for UI tasks in ActiveShade mode
     else params.insert_path("rendering_threads", m_rendering_threads);
 }
 
