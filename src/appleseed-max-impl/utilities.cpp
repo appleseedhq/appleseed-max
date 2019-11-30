@@ -67,6 +67,9 @@
 #include <stdmat.h>
 #include "appleseed-max-common/_endmaxheaders.h"
 
+// Standard headers.
+#include <cstdint>
+
 namespace asf = foundation;
 namespace asr = renderer;
 
