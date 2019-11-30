@@ -63,20 +63,20 @@ BEGIN
     CONTROL         "Glossy",IDC_BUTTON_VISIBILITY_GLOSSY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,78,94,10
     CONTROL         "Specular",IDC_BUTTON_VISIBILITY_SPECULAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,89,94,10
     CONTROL         "SSS",IDC_BUTTON_VISIBILITY_SSS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,100,94,10
-    CONTROL         "SSS Set",IDC_SSS_SET,"CustEdit",WS_TABSTOP,58,153,38,10
     LTEXT           "SSS Set Id:",IDC_SSS_SET_LABEL,5,153,38,8
+    CONTROL         "SSS Set",IDC_TEXTEDIT_SSS_SET,"CustEdit",WS_TABSTOP,58,153,38,10
     CONTROL         "Optimize for Instancing",IDC_BUTTON_OPTIMIZE_FOR_INSTANCING,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,114,94,10
-    LTEXT           "Medium Priority:",IDS_STATIC_MEDIUM_PRIORITY,5,139,50,8
-    CONTROL         "Medium Priority",IDS_TEXT_MEDIUM_PRIORITY,"CustEdit",WS_TABSTOP,58,139,29,10
-    CONTROL         "Medium Priority",IDS_SPINNER_MEDIUM_PRIORITY,
+    LTEXT           "Medium Priority:",IDC_STATIC_MEDIUM_PRIORITY,5,139,50,8
+    CONTROL         "Medium Priority",IDC_EDIT_MEDIUM_PRIORITY,"CustEdit",WS_TABSTOP,58,139,29,10
+    CONTROL         "Medium Priority",IDC_SPINNER_MEDIUM_PRIORITY,
                     "SpinnerControl",WS_TABSTOP,88,139,6,10
     CONTROL         "Photon Target (SPPM)",IDC_BUTTON_PHOTON_TARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,125,84,10
     GROUPBOX        "Visibility Flags:",IDC_STATIC_VISIBILITY,1,1,107,111
     LTEXT           "Shadow Terminator Fix:",IDC_STATIC_SHADOW_TERMINATOR_CORRECTION,5,164,53,21
-    CONTROL         "Shadow Terminator Correction",IDS_TEXT_SHADOW_TERMINATOR_CORRECTION,
+    CONTROL         "Shadow Terminator Correction",IDC_EDIT_SHADOW_TERMINATOR_CORRECTION,
                     "CustEdit",WS_TABSTOP,58,168,29,10
-    CONTROL         "Shadow Terminator Correction",IDS_SPINNER_SHADOW_TERMINATOR_CORRECTION,
+    CONTROL         "Shadow Terminator Correction",IDC_SPINNER_SHADOW_TERMINATOR_CORRECTION,
                     "SpinnerControl",WS_TABSTOP,88,168,6,10
 END
 
