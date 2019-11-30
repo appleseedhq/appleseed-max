@@ -440,6 +440,9 @@ void OSLShaderRegistry::create_class_descriptors()
         int string_id = 100;
         for (auto& param_info : shader.m_params)
         {
+            if (param_info.m_max_param_id != -1)
+                param_id = param_info.m_max_param_id;
+
             param_info.m_max_param.m_max_ctrl_id = ctrl_id++;
 
             if (param_info.m_max_param.m_is_constant)
@@ -546,6 +549,7 @@ void OSLShaderRegistry::add_const_parameter(
     int&                    string_id)
 {
     auto param_str = utf8_to_wide(max_param.m_osl_param_name);
+    const int deprecated_bit = osl_param.m_is_deprecated ? P_OBSOLETE : 0;
     if (max_param.m_param_type == MaxParam::Color)
     {
         Color def_val(0.0f, 0.0f, 0.0f);
@@ -563,7 +567,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_RGBA,
-            P_ANIMATABLE,
+            P_ANIMATABLE | deprecated_bit,
             string_id,
             p_default, def_val,
             p_ui, TYPE_COLORSWATCH, ctrl_id_1,
@@ -594,7 +598,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_FLOAT,
-            P_ANIMATABLE,
+            P_ANIMATABLE | deprecated_bit,
             string_id,
             p_default, def_val,
             p_range, min_val, max_val,
@@ -626,7 +630,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_INT,
-            P_ANIMATABLE,
+            P_ANIMATABLE | deprecated_bit,
             string_id,
             p_default, def_val,
             p_range, min_val, max_val,
@@ -647,7 +651,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_INT,
-            0,
+            deprecated_bit,
             string_id,
             p_default, def_val,
             p_ui, TYPE_SINGLECHEKBOX, ctrl_id_1,
@@ -667,7 +671,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_INT,
-            0,
+            deprecated_bit,
             string_id,
             p_ui, TYPE_INT_COMBOBOX, ctrl_id_1,
             0,
@@ -712,7 +716,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_INT,
-            0,
+            deprecated_bit,
             string_id,
             p_ui, TYPE_INT_COMBOBOX, ctrl_id_1,
             0,
@@ -764,7 +768,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_POINT3,
-            P_ANIMATABLE,
+            P_ANIMATABLE | deprecated_bit,
             string_id,
             p_default, def_val,
             p_range, -10.0f, 10.0f,
@@ -781,7 +785,7 @@ void OSLShaderRegistry::add_const_parameter(
             param_id,
             param_str.c_str(),
             TYPE_STRING,
-            0,
+            deprecated_bit,
             string_id,
             p_ui, TYPE_EDITBOX, ctrl_id_1,
             p_end
@@ -799,6 +803,7 @@ void OSLShaderRegistry::add_input_parameter(
     const int               ctrl_id,
     const int               string_id)
 {
+    const int deprecated_bit = osl_param.m_is_deprecated ? P_OBSOLETE : 0;
     if (max_param.m_param_type == MaxParam::Closure)
     {
         auto param_str = utf8_to_wide(max_param.m_osl_param_name);
@@ -808,7 +813,7 @@ void OSLShaderRegistry::add_input_parameter(
             param_id,
             param_str.c_str(),
             TYPE_MTL,
-            0,
+            deprecated_bit,
             string_id,
             p_ui, TYPE_MTLBUTTON, ctrl_id,
             p_accessor, &g_material_accessor,
@@ -828,7 +833,7 @@ void OSLShaderRegistry::add_input_parameter(
              max_param.m_param_type == MaxParam::StringPopup ||
              max_param.m_param_type == MaxParam::IntMapper);
 
-        const int flag = short_button ? P_NO_AUTO_LABELS : 0;
+        const int auto_labels_bit = short_button ? P_NO_AUTO_LABELS : 0;
         PBAccessor* tex_accessor = &g_texture_accessor;
         if (short_button)
             tex_accessor = &g_texture_accessor_short;
@@ -837,7 +842,7 @@ void OSLShaderRegistry::add_input_parameter(
             param_id,
             param_str.c_str(),
             TYPE_TEXMAP,
-            flag,
+            auto_labels_bit | deprecated_bit,
             string_id,
             p_ui, TYPE_TEXMAPBUTTON, ctrl_id,
             p_accessor, tex_accessor,
