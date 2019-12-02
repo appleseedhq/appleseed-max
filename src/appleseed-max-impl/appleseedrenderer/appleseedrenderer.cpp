@@ -2135,23 +2135,26 @@ int AppleseedRenderer::Render(
     if (m_view_node)
         get_view_params_from_view_node(m_view_params, m_view_node, time);
 
-    // Retrieve and tweak renderer settings.
+    // Retrieve and tweak renderer settings for material preview rendering.
     RendererSettings renderer_settings = m_settings;
     if (m_rend_params.inMtlEdit)
     {   
-        renderer_settings.m_lighting_algorithm = 0;
-        renderer_settings.m_sampler_type = 0;
-        renderer_settings.m_shader_override = 0;
-        renderer_settings.m_denoise_mode = 0;
+        renderer_settings.m_lighting_algorithm = 0;         // path tracing
+        renderer_settings.m_sampler_type = 0;               // uniform sampler
+        renderer_settings.m_shader_override = 0;            // no overrides
+        renderer_settings.m_denoise_mode = 0;               // denoiser disabled
         renderer_settings.m_uniform_pixel_samples = renderer_settings.m_material_preview_quality;
         // renderer_settings.m_uniform_pixel_samples = m_rend_params.mtlEditAA ? 32 : 4;
         renderer_settings.m_passes = 1;
-        renderer_settings.m_enable_gi = true;
-        renderer_settings.m_dl_enable_dl = true;
-        renderer_settings.m_background_emits_light = false;
+        renderer_settings.m_enable_gi = true;               // global illumination enabled
+        renderer_settings.m_dl_enable_dl = true;            // direct lighting enabled
+        renderer_settings.m_background_emits_light = false; // image based lighting disabled
         renderer_settings.m_dl_light_samples = 1;
-        renderer_settings.m_dl_low_light_threshold = 0.0f;
+        renderer_settings.m_dl_low_light_threshold = 0.0f;  // low light clamping disabled
         renderer_settings.m_ibl_env_samples = 1;
+
+        if (renderer_settings.m_rendering_threads == 0)
+            renderer_settings.m_rendering_threads = -1;     // keep one logical core free for UI tasks
     }
 
     if (!m_rend_params.inMtlEdit || m_settings.m_log_material_editor_messages)
