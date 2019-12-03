@@ -2135,7 +2135,7 @@ int AppleseedRenderer::Render(
     if (m_view_node)
         get_view_params_from_view_node(m_view_params, m_view_node, time);
 
-    // Retrieve and tweak renderer settings for material preview rendering.
+    // Retrieve and tweak renderer settings for material preview.
     RendererSettings renderer_settings = m_settings;
     if (m_rend_params.inMtlEdit)
     {   
@@ -2148,7 +2148,7 @@ int AppleseedRenderer::Render(
         renderer_settings.m_passes = 1;
         renderer_settings.m_enable_gi = true;               // global illumination enabled
         renderer_settings.m_dl_enable_dl = true;            // direct lighting enabled
-        renderer_settings.m_background_emits_light = false; // image based lighting disabled
+        renderer_settings.m_background_emits_light = false; // image-based lighting disabled
         renderer_settings.m_dl_light_samples = 1;
         renderer_settings.m_dl_low_light_threshold = 0.0f;  // low light clamping disabled
         renderer_settings.m_ibl_env_samples = 1;
