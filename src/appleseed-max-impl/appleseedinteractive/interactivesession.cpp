@@ -70,12 +70,11 @@ void InteractiveSession::render_thread()
         m_renderer_controller.get());
 
     // Create the master renderer.
-    asf::SearchPaths search_paths;
     std::unique_ptr<asr::MasterRenderer> renderer(
         new asr::MasterRenderer(
             *m_project,
             m_project->configurations().get_by_name("interactive")->get_inherited_parameters(),
-            search_paths,   // don't pass a temporary because MasterRenderer only holds a const reference to the search paths
+            m_search_paths,
             &m_tile_callback));
 
     // Render the frame.

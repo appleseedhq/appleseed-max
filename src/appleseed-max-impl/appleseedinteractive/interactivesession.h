@@ -45,6 +45,8 @@
 // Forward declarations.
 namespace renderer { class Camera; }
 namespace renderer { class Project; }
+namespace foundation { class SearchPaths; }
+
 class Bitmap;
 class IIRenderMgr;
 
@@ -72,6 +74,7 @@ class InteractiveSession
     IIRenderMgr*                                    m_iirender_mgr;
     renderer::Project*                              m_project;
     RendererSettings                                m_renderer_settings;
+    foundation::SearchPaths                         m_search_paths;
 
     void render_thread();
 };
