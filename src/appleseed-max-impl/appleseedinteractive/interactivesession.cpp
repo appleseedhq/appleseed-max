@@ -39,9 +39,6 @@
 #include "renderer/api/project.h"
 #include "renderer/api/rendering.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/searchpaths.h"
-
 namespace asf = foundation;
 namespace asr = renderer;
 

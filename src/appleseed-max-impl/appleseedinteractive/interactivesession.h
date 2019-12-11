@@ -37,13 +37,13 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/searchpaths.h"
 
 // Standard headers.
 #include <memory>
 #include <thread>
 
 // Forward declarations.
-namespace foundation { class SearchPaths; }
 namespace renderer   { class Camera; }
 namespace renderer   { class Project; }
 
