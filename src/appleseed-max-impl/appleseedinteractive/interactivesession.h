@@ -37,14 +37,16 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/searchpaths.h"
 
 // Standard headers.
 #include <memory>
 #include <thread>
 
 // Forward declarations.
-namespace renderer { class Camera; }
-namespace renderer { class Project; }
+namespace renderer   { class Camera; }
+namespace renderer   { class Project; }
+
 class Bitmap;
 class IIRenderMgr;
 
@@ -71,6 +73,7 @@ class InteractiveSession
     Bitmap*                                         m_bitmap;
     IIRenderMgr*                                    m_iirender_mgr;
     renderer::Project*                              m_project;
+    foundation::SearchPaths                         m_search_paths;
     RendererSettings                                m_renderer_settings;
 
     void render_thread();
