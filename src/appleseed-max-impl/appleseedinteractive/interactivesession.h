@@ -31,6 +31,7 @@
 // appleseed-max headers.
 #include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedrenderer/renderersettings.h"
+#include "appleseedrenderer/projectbuilder.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -49,13 +50,13 @@ namespace renderer   { class Project; }
 
 class Bitmap;
 class IIRenderMgr;
+class IAppleseedMtl;
 
 class InteractiveSession
 {
   public:
     InteractiveSession(
         IIRenderMgr*                iirender_mgr,
-        renderer::Project*          project,
         const RendererSettings&     settings,
         Bitmap*                     bitmap);
 
@@ -66,15 +67,26 @@ class InteractiveSession
 
     void schedule_camera_update(
         foundation::auto_release_ptr<renderer::Camera>  camera);
+    void schedule_material_update(
+        const IAppleseedMtlMap& material_map);
+    void schedule_remove_object_instance(INode* node);
+    void schedule_add_object_instance(INode* node);
+    void schedule_udpate_object_instance(INode* node);
+
+    renderer::Project*                              m_project;
+    ObjectMap                                       m_object_map;
+    InstanceMap                                     m_object_inst_map;
+    MaterialMap                                     m_material_map;
+    RendererSettings                                m_renderer_settings;
+    AssemblyMap                                     m_assembly_map;
+    InstanceMap                                     m_assembly_inst_map;
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
     IIRenderMgr*                                    m_iirender_mgr;
-    renderer::Project*                              m_project;
     foundation::SearchPaths                         m_search_paths;
-    RendererSettings                                m_renderer_settings;
 
     void render_thread();
 };

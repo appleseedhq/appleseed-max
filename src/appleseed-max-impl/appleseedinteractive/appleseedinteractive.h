@@ -30,6 +30,7 @@
 
 // appleseed-max headers.
 #include "appleseedrenderer/maxsceneentities.h"
+#include "appleseedrenderer/projectbuilder.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -95,6 +96,10 @@ class AppleseedInteractiveRender
     void AbortRender() override;
 
     void update_camera_object(INode* camera);
+    void add_object_instance(INode* node);
+    void remove_object_instance(INode* node);
+    void update_object_instance(INode* node);
+    void update_material(Mtl* material);
     void update_render_view();
     InteractiveSession* get_render_session();
 

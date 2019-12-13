@@ -32,6 +32,9 @@
 // appleseed-max headers.
 #include "appleseedinteractive/interactivetilecallback.h"
 
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
+
 // Build options header.
 #include "foundation/core/buildoptions.h"
 
@@ -44,11 +47,9 @@ namespace asr = renderer;
 
 InteractiveSession::InteractiveSession(
     IIRenderMgr*                iirender_mgr,
-    asr::Project*               project,
     const RendererSettings&     settings,
     Bitmap*                     bitmap)
-  : m_project(project)
-  , m_iirender_mgr(iirender_mgr)
+  : m_iirender_mgr(iirender_mgr)
   , m_renderer_settings(settings)
   , m_bitmap(bitmap)
   , m_renderer_controller(nullptr)
@@ -103,5 +104,34 @@ void InteractiveSession::schedule_camera_update(
     asf::auto_release_ptr<asr::Camera>  camera)
 {
     m_renderer_controller->schedule_update(
-        std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(*m_project, camera)));
+        std::unique_ptr<ScheduledAction>(
+            new CameraObjectUpdateAction(*m_project, camera)));
+}
+
+void InteractiveSession::schedule_material_update(const IAppleseedMtlMap& material_map)
+{
+    m_renderer_controller->schedule_update(
+        std::unique_ptr<ScheduledAction>(
+            new MaterialUpdateAction(*m_project, material_map)));
+}
+
+void InteractiveSession::schedule_add_object_instance(INode* node)
+{
+    m_renderer_controller->schedule_update(
+        std::unique_ptr<ScheduledAction>(
+            new AddObjectInstanceAction(node, this)));
+}
+
+void InteractiveSession::schedule_remove_object_instance(INode* node)
+{
+    m_renderer_controller->schedule_update(
+        std::unique_ptr<ScheduledAction>(
+            new RemoveObjectInstanceAction(node, this)));
+}
+
+void InteractiveSession::schedule_udpate_object_instance(INode* node)
+{
+    m_renderer_controller->schedule_update(
+        std::unique_ptr<ScheduledAction>(
+            new UpdateObjectInstanceAction(node, this)));
 }

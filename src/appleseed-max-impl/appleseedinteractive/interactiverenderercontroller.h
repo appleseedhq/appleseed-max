@@ -30,6 +30,11 @@
 
 // appleseed-max headers.
 #include "appleseedinteractive/appleseedinteractive.h"
+#include "appleseedrenderer/projectbuilder.h"
+#include "utilities.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -47,6 +52,7 @@
 #include <vector>
 
 // Forward declarations.
+class InteractiveSession;
 namespace renderer { class Camera; }
 namespace renderer { class Project; }
 
@@ -78,6 +84,101 @@ class CameraObjectUpdateAction
   public:
     foundation::auto_release_ptr<renderer::Camera>    m_camera;
     renderer::Project&                                m_project;
+};
+
+class MaterialUpdateAction
+  : public ScheduledAction
+{
+  public:
+    MaterialUpdateAction(
+        renderer::Project&      project,
+        const IAppleseedMtlMap& material_map)
+      : m_material_map(material_map)
+      , m_project(project)
+    {
+    }
+
+    void update() override
+    {
+        renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
+        DbgAssert(assembly);
+
+        for (const auto& mtl : m_material_map)
+        {
+            renderer::Material* material = assembly->materials().get_by_name(mtl.second.c_str());
+
+            if (material)
+                assembly->materials().remove(material);
+
+            assembly->materials().insert(
+                mtl.first->create_material(
+                    *assembly,
+                    mtl.second.c_str(),
+                    false,
+                    GetCOREInterface()->GetTime()));
+        }
+    }
+
+  private:
+    IAppleseedMtlMap        m_material_map;
+    renderer::Project&      m_project;
+};
+
+class RemoveObjectInstanceAction
+  : public ScheduledAction
+{
+  public:
+      RemoveObjectInstanceAction(
+          INode* node,
+          InteractiveSession* session)
+      : m_node(node)
+      , m_session(session)
+    {
+    }
+
+    void update() override;
+
+  private:
+    INode*                          m_node;
+    InteractiveSession*             m_session;
+};
+
+class AddObjectInstanceAction
+  : public ScheduledAction
+{
+  public:
+      AddObjectInstanceAction(
+          INode* node,
+          InteractiveSession* session)
+      : m_node(node)
+      , m_session(session)
+    {
+    }
+
+    void update() override;
+
+  private:
+    INode*                          m_node;
+    InteractiveSession*             m_session;
+};
+
+class UpdateObjectInstanceAction
+  : public ScheduledAction
+{
+  public:
+      UpdateObjectInstanceAction(
+          INode* node,
+          InteractiveSession* session)
+      : m_node(node)
+      , m_session(session)
+    {
+    }
+
+    void update() override;
+
+  private:
+    INode*                          m_node;
+    InteractiveSession*             m_session;
 };
 
 class InteractiveRendererController

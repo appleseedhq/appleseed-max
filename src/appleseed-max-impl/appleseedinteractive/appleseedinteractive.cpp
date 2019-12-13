@@ -33,8 +33,10 @@
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/appleseedrenderer.h"
-#include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Boost headers.
 #include "boost/thread/locks.hpp"
@@ -208,17 +210,119 @@ namespace
 
         void ModelOtherEvent(NodeKeyTab& nodes) override
         {
-            if (m_active_camera == nullptr || m_renderer == nullptr)
+            if (m_renderer == nullptr)
                 return;
 
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
-                if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
+                if (os.obj && os.obj->SuperClassID() == CAMERA_CLASS_ID)
                 {
-                    m_renderer->update_camera_object(m_active_camera);
-                    m_renderer->get_render_session()->reininitialize_render();
-                    break;
+                    if (node == m_active_camera)
+                    {
+                        m_renderer->update_camera_object(m_active_camera);
+                        m_renderer->get_render_session()->reininitialize_render();
+                    }
                 }
+
+                if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+                {
+                    m_renderer->update_object_instance(node);
+                    m_renderer->get_render_session()->reininitialize_render();
+                }
+
+                if (os.obj && os.obj->SuperClassID() == LIGHT_CLASS_ID)
+                {
+                    //TODO: update lights here
+                }
+            }
+
+        }
+        
+        void MaterialStructured(NodeKeyTab& nodes)
+        {
+            if (m_renderer == nullptr)
+                return;
+
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                Mtl* mtl = node->GetMtl();
+                if (mtl == nullptr)
+                    continue;
+                m_renderer->update_object_instance(node);
+                m_renderer->get_render_session()->reininitialize_render();
+            }
+        }
+
+        void MaterialOtherEvent(NodeKeyTab& nodes) override
+        {
+            if (m_renderer == nullptr)
+                return;
+
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                Mtl* mtl = node->GetMtl();
+                if (mtl == nullptr)
+                    continue;
+                m_renderer->update_material(mtl);
+                m_renderer->get_render_session()->reininitialize_render();
+            }
+        }
+
+        void ControllerOtherEvent(NodeKeyTab& nodes) override 
+        {
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
+                if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+                {
+                    m_renderer->update_object_instance(node);
+                    m_renderer->get_render_session()->reininitialize_render();
+                }
+            }
+        }
+
+        void Added(NodeKeyTab& nodes) override 
+        {
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
+                if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+                {
+                    m_renderer->add_object_instance(node);
+                    m_renderer->get_render_session()->reininitialize_render();
+                }
+            }
+        }
+
+        void Deleted(NodeKeyTab& nodes) override 
+        {
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                m_renderer->remove_object_instance(node);
+                m_renderer->get_render_session()->reininitialize_render();
+            }
+        }
+
+        void DisplayPropertiesChanged(NodeKeyTab& nodes) override 
+        {
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+            }
+        }
+
+        void HideChanged(NodeKeyTab& nodes) override 
+        {
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
             }
         }
 
@@ -371,11 +475,74 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
             renderer_settings,
             m_bitmap,
             time,
-            m_progress_cb));
+            m_progress_cb,
+            get_render_session()->m_object_map,
+            get_render_session()->m_object_inst_map,
+            get_render_session()->m_material_map,
+            get_render_session()->m_assembly_map,
+            get_render_session()->m_assembly_inst_map));
 
     std::setlocale(LC_ALL, previous_locale.c_str());
 
+    get_render_session()->m_project = project.get();
+
     return project;
+}
+
+void AppleseedInteractiveRender::remove_object_instance(INode* node)
+{
+    get_render_session()->schedule_remove_object_instance(node);
+}
+
+void AppleseedInteractiveRender::add_object_instance(INode* node)
+{
+    if (node == nullptr)
+        return;
+
+    get_render_session()->schedule_add_object_instance(node);
+}
+
+void AppleseedInteractiveRender::update_object_instance(INode* node)
+{
+    if (node == nullptr)
+        return;
+
+    get_render_session()->schedule_udpate_object_instance(node);
+}
+
+void AppleseedInteractiveRender::update_material(Mtl* mtl)
+{
+    DbgAssert(mtl);
+
+    std::vector<Mtl*> materials;
+    const int submtlcount = mtl->NumSubMtls();
+    if (mtl->IsMultiMtl() && submtlcount > 0)
+    {
+        for (int i = 0; i < submtlcount; ++i)
+        {
+            Mtl* submtl = mtl->GetSubMtl(i);
+            materials.push_back(submtl);
+        }
+    }
+    else
+    {
+        materials.push_back(mtl);
+    }
+
+    IAppleseedMtlMap updated_materials;
+    for (const auto& mtl : materials)
+    {
+        IAppleseedMtl* appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl == nullptr)
+            continue;
+
+        if (get_render_session()->m_material_map.count(mtl) > 0)
+            continue;
+        updated_materials[appleseed_mtl] = get_render_session()->m_material_map[mtl];
+    }
+
+    get_render_session()->schedule_material_update(updated_materials);
 }
 
 void AppleseedInteractiveRender::update_camera_object(INode* camera)
@@ -437,13 +604,12 @@ void AppleseedInteractiveRender::BeginSession()
     RendererSettings renderer_settings = appleseed_renderer->get_renderer_settings();
     renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
     
-    m_project = prepare_project(renderer_settings, view_params, active_cam, m_time);
-
     m_render_session.reset(new InteractiveSession(
         m_iirender_mgr,
-        m_project.get(),
         renderer_settings,
         m_bitmap));
+
+    m_project = prepare_project(renderer_settings, view_params, active_cam, m_time);
 
     if (m_progress_cb)
         m_progress_cb->SetTitle(L"Rendering...");
@@ -453,8 +619,7 @@ void AppleseedInteractiveRender::BeginSession()
         g_current_interactive = this;
     }
 
-    if (active_cam != nullptr)
-        m_node_callback.reset(new SceneChangeCallback(this, active_cam));
+    m_node_callback.reset(new SceneChangeCallback(this, active_cam));
     m_view_callback.reset(new ViewportCallback());
 
     m_render_session->start_render();
@@ -488,6 +653,7 @@ void AppleseedInteractiveRender::EndSession()
     
     render_end(m_entities.m_objects, m_time);
 
+    // todo: fix crash when rendering in the viewport
     if (m_progress_cb)
         m_progress_cb->SetTitle(L"Done.");
 }
