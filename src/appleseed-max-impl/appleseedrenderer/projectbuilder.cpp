@@ -98,7 +98,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
-#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -179,13 +178,6 @@ namespace
         {
             return Point2(p.x, p.y);
         }
-    };
-
-    struct ObjectInfo
-    {
-        std::string                     m_name;                 // name of the appleseed object
-        std::map<MtlID, std::string>    m_mtlid_to_slot_name;   // map a Max's material ID to an appleseed's material slot name
-        std::map<MtlID, std::uint32_t>  m_mtlid_to_slot_index;  // map a Max's material ID to an appleseed's material slot index
     };
 
     asf::auto_release_ptr<asr::MeshObject> convert_mesh_object(
@@ -455,8 +447,6 @@ namespace
             return create_mesh_objects(assembly, object_node, time);
         }
     }
-
-    typedef std::map<Mtl*, std::string> MaterialMap;
 
     struct MaterialInfo
     {
@@ -842,9 +832,7 @@ namespace
                 back_material_mappings));
     }
 
-    typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
     typedef std::map<Object*, std::string> AssemblyMap;
-
     void add_object(
         asr::Project&           project,
         asr::Assembly&          assembly,
@@ -1288,11 +1276,11 @@ namespace
         const RenderType                    type,
         const RendererSettings&             settings,
         const TimeValue                     time,
-        RendProgressCallback*               progress_cb)
+        RendProgressCallback*               progress_cb,
+        ObjectMap&                          object_map,
+        MaterialMap&                        material_map)
     {
         // Add objects, object instances and materials to the assembly.
-        ObjectMap object_map;
-        MaterialMap material_map;
         AssemblyMap assembly_map;
         add_objects(
             project,
@@ -1863,7 +1851,9 @@ asf::auto_release_ptr<asr::Project> build_project(
     const RendererSettings&                 settings,
     Bitmap*                                 bitmap,
     const TimeValue                         time,
-    RendProgressCallback*                   progress_cb)
+    RendProgressCallback*                   progress_cb,
+    ObjectMap&                              object_map,
+    MaterialMap&                            material_map)
 {
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
@@ -1910,7 +1900,9 @@ asf::auto_release_ptr<asr::Project> build_project(
         type,
         settings,
         time,
-        progress_cb);
+        progress_cb,
+        object_map,
+        material_map);
 
     // Create an instance of the assembly and insert it into the scene.
     asf::auto_release_ptr<asr::AssemblyInstance> assembly_instance(

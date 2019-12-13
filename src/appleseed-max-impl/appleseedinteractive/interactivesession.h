@@ -49,6 +49,7 @@ namespace renderer   { class Project; }
 
 class Bitmap;
 class IIRenderMgr;
+class IAppleseedMtl;
 
 class InteractiveSession
 {
@@ -66,6 +67,8 @@ class InteractiveSession
 
     void schedule_camera_update(
         foundation::auto_release_ptr<renderer::Camera>  camera);
+    void schedule_material_update(
+        IAppleseedMtl* material, const char* material_name);
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;

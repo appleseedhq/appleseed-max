@@ -31,6 +31,9 @@
 // appleseed-max headers.
 #include "appleseedinteractive/appleseedinteractive.h"
 
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
+
 // Build options header.
 #include "foundation/core/buildoptions.h"
 
@@ -78,6 +81,40 @@ class CameraObjectUpdateAction
   public:
     foundation::auto_release_ptr<renderer::Camera>    m_camera;
     renderer::Project&                                m_project;
+};
+
+class MaterialUpdateAction
+  : public ScheduledAction
+{
+  public:
+    MaterialUpdateAction(
+        renderer::Project&      project,
+        IAppleseedMtl*          material,
+        const char*             mtl_name)
+        : m_project(project)
+        , m_material(material)
+        , m_mtl_name(mtl_name)
+    {
+    }
+
+    void update() override
+    {
+        renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
+        renderer::Material* material = assembly->materials().get_by_name(m_mtl_name.c_str());
+        
+        assembly->materials().remove(material);
+        assembly->materials().insert(
+            m_material->create_material(
+                *assembly,
+                m_mtl_name.c_str(),
+                false,
+                GetCOREInterface()->GetTime()));
+    }
+
+  private:
+    IAppleseedMtl*          m_material;
+    std::string             m_mtl_name;
+    renderer::Project&      m_project;
 };
 
 class InteractiveRendererController

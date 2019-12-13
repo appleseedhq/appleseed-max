@@ -32,6 +32,9 @@
 // appleseed-max headers.
 #include "appleseedinteractive/interactivetilecallback.h"
 
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
+
 // Build options header.
 #include "foundation/core/buildoptions.h"
 
@@ -104,4 +107,10 @@ void InteractiveSession::schedule_camera_update(
 {
     m_renderer_controller->schedule_update(
         std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(*m_project, camera)));
+}
+
+void InteractiveSession::schedule_material_update(IAppleseedMtl* material, const char* mtl_name)
+{
+    m_renderer_controller->schedule_update(
+        std::unique_ptr<ScheduledAction>(new MaterialUpdateAction(*m_project, material, mtl_name)));
 }

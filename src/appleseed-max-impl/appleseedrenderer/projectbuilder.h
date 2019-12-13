@@ -42,6 +42,7 @@
 
 // Standard headers.
 #include <vector>
+#include <map>
 
 // Forward declarations.
 namespace renderer { class Camera; }
@@ -54,6 +55,16 @@ class RendererSettings;
 class RendParams;
 class ViewParams;
 
+struct ObjectInfo
+{
+    std::string                         m_name;                 // name of the appleseed object
+    std::map<MtlID, std::string>        m_mtlid_to_slot_name;   // map a Max's material ID to appleseed's material slot name
+    std::map<MtlID, std::uint32_t>      m_mtlid_to_slot_index;  // map a Max's material ID to appleseed's material slot index
+};
+
+typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
+typedef std::map<Mtl*, std::string> MaterialMap;
+
 // Build an appleseed project from the current 3ds Max scene.
 foundation::auto_release_ptr<renderer::Project> build_project(
     const MaxSceneEntities&             entities,
@@ -65,7 +76,9 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const RendererSettings&             settings,
     Bitmap*                             bitmap,
     const TimeValue                     time,
-    RendProgressCallback*               progress_cb);
+    RendProgressCallback*               progress_cb,
+    ObjectMap&                          object_map,
+    MaterialMap&                        material_map);
 
 foundation::auto_release_ptr<renderer::Camera> build_camera(
     INode*                              view_node,

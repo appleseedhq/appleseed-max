@@ -33,8 +33,10 @@
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/appleseedrenderer.h"
-#include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Boost headers.
 #include "boost/thread/locks.hpp"
@@ -222,6 +224,22 @@ namespace
             }
         }
 
+        void MaterialOtherEvent(NodeKeyTab& nodes) override
+        {
+            if (m_renderer == nullptr)
+                return;
+
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                Mtl* mtl = node->GetMtl();
+                if (mtl == nullptr)
+                    continue;
+                m_renderer->update_material(mtl);
+                m_renderer->get_render_session()->reininitialize_render();
+            }
+        }
+
       private:
         SceneEventNamespace::CallbackKey    m_callback_key;
         AppleseedInteractiveRender*         m_renderer;
@@ -318,6 +336,8 @@ AppleseedInteractiveRender::AppleseedInteractiveRender()
   , m_progress_cb(nullptr)
 {
     m_entities.clear();
+    m_object_map.clear();
+    m_material_map.clear();
 }
 
 AppleseedInteractiveRender::~AppleseedInteractiveRender()
@@ -371,11 +391,27 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
             renderer_settings,
             m_bitmap,
             time,
-            m_progress_cb));
+            m_progress_cb,
+            m_object_map,
+            m_material_map));
 
     std::setlocale(LC_ALL, previous_locale.c_str());
 
     return project;
+}
+
+void AppleseedInteractiveRender::update_material(Mtl* mtl)
+{
+    const auto it = m_material_map.find(mtl);
+    if (it != m_material_map.end())
+    {
+        auto appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl)
+        {
+            get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
+        }
+    }
 }
 
 void AppleseedInteractiveRender::update_camera_object(INode* camera)
@@ -453,8 +489,7 @@ void AppleseedInteractiveRender::BeginSession()
         g_current_interactive = this;
     }
 
-    if (active_cam != nullptr)
-        m_node_callback.reset(new SceneChangeCallback(this, active_cam));
+    m_node_callback.reset(new SceneChangeCallback(this, active_cam));
     m_view_callback.reset(new ViewportCallback());
 
     m_render_session->start_render();
