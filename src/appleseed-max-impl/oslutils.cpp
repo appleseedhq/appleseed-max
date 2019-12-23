@@ -597,7 +597,7 @@ void create_osl_shader(
     {
         const MaxParam& max_param = param_info.m_max_param;
         Texmap* texmap = nullptr;
-        if (max_param.m_is_connectable)
+        if (max_param.m_is_connectable && max_param.m_param_type != MaxParam::Closure)
         {
             param_block->GetValue(max_param.m_max_map_param_id, time, texmap, FOREVER);
 
@@ -667,7 +667,7 @@ void create_osl_shader(
             }
         }
 
-        if (!max_param.m_is_connectable || texmap == nullptr)
+        if (max_param.m_is_constant)
         {
             switch (max_param.m_param_type)
             {
