@@ -102,7 +102,9 @@ class MaterialUpdateAction
         renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
         renderer::Material* material = assembly->materials().get_by_name(m_mtl_name.c_str());
         
-        assembly->materials().remove(material);
+        if (material)
+            assembly->materials().remove(material);
+
         assembly->materials().insert(
             m_material->create_material(
                 *assembly,

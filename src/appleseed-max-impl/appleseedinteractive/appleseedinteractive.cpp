@@ -222,6 +222,24 @@ namespace
                     break;
                 }
             }
+
+            //TODO: update lights here
+        }
+        
+        void MaterialStructured(NodeKeyTab& nodes)
+        {
+            if (m_renderer == nullptr)
+                return;
+
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                Mtl* mtl = node->GetMtl();
+                if (mtl == nullptr)
+                    continue;
+                m_renderer->add_material(mtl, node);
+                m_renderer->get_render_session()->reininitialize_render();
+            }
         }
 
         void MaterialOtherEvent(NodeKeyTab& nodes) override
@@ -239,6 +257,56 @@ namespace
                 m_renderer->get_render_session()->reininitialize_render();
             }
         }
+
+        void ControllerOtherEvent(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
+        void GeometryChanged(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
+        void TopologyChanged(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
+        void Added(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
+        void Deleted(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
+        void DisplayPropertiesChanged(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
+        void HideChanged(NodeKeyTab & nodes) override 
+        {
+          for (int i = 0, e = nodes.Count(); i < e; ++i)
+          {
+            auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
+          }
+        };
 
       private:
         SceneEventNamespace::CallbackKey    m_callback_key;
@@ -400,18 +468,52 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     return project;
 }
 
+void AppleseedInteractiveRender::add_material(Mtl* mtl, INode* node)
+{
+    auto appleseed_mtl =
+        static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+
+    if (appleseed_mtl == nullptr)
+        return;
+
+    auto obj_info = m_object_map.find(node->GetObjectRef());
+    //if (obj_info != m_object_map.end())
+    //{
+    //    auto obj_info_ = m_object_map[node->GetObjectRef()];
+    //    obj_info_.
+    //}
+    auto it = m_material_map.find(mtl);
+    if (it == m_material_map.end())
+    {
+        const renderer::Assembly* assembly = m_project->get_scene()->assemblies().get_by_name("assembly");
+        const auto mat_name = make_unique_name(assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
+        auto result = m_material_map.insert(std::make_pair(mtl, mat_name));
+        if (result.second)
+            it = result.first;
+    }
+
+    get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
+}
+
 void AppleseedInteractiveRender::update_material(Mtl* mtl)
 {
-    const auto it = m_material_map.find(mtl);
-    if (it != m_material_map.end())
+    auto appleseed_mtl =
+        static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+
+    if (appleseed_mtl == nullptr)
+        return;
+
+    auto it = m_material_map.find(mtl);
+    if (it == m_material_map.end())
     {
-        auto appleseed_mtl =
-            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-        if (appleseed_mtl)
-        {
-            get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
-        }
+        const renderer::Assembly* assembly = m_project->get_scene()->assemblies().get_by_name("assembly");
+        const auto mat_name = make_unique_name(assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
+        auto result = m_material_map.insert(std::make_pair(mtl, mat_name));
+        if (result.second)
+            it = result.first;
     }
+
+    get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
 }
 
 void AppleseedInteractiveRender::update_camera_object(INode* camera)
