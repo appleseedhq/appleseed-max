@@ -346,8 +346,6 @@ namespace
             object->push_triangle(triangle);
         }
 
-        compute_smooth_vertex_tangents(object.ref());
-
         // todo: optimize the object.
 
         return object;
