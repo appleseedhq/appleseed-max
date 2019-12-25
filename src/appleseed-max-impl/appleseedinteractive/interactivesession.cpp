@@ -109,8 +109,15 @@ void InteractiveSession::schedule_camera_update(
         std::unique_ptr<ScheduledAction>(new CameraObjectUpdateAction(*m_project, camera)));
 }
 
-void InteractiveSession::schedule_material_update(IAppleseedMtl* material, const char* mtl_name)
+void InteractiveSession::schedule_material_update(IAppleseedMtl* material, const char* material_name)
 {
     m_renderer_controller->schedule_update(
-        std::unique_ptr<ScheduledAction>(new MaterialUpdateAction(*m_project, material, mtl_name)));
+        std::unique_ptr<ScheduledAction>(new MaterialUpdateAction(*m_project, material, material_name)));
+}
+
+void InteractiveSession::schedule_assign_material(
+    IAppleseedMtl* material, const char* material_name, const InstanceMap& instances)
+{
+    m_renderer_controller->schedule_update(
+        std::unique_ptr<ScheduledAction>(new AssignMaterialAction(*m_project, material, material_name, instances)));
 }

@@ -96,7 +96,7 @@ class AppleseedInteractiveRender
     void AbortRender() override;
 
     void update_camera_object(INode* camera);
-    void add_material(Mtl* mtl, INode* node);
+    void assign_material(Mtl* mtl, INode* node);
     void update_material(Mtl* material);
     void update_render_view();
     InteractiveSession* get_render_session();

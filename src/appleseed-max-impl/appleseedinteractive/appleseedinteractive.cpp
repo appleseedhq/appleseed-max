@@ -237,7 +237,7 @@ namespace
                 Mtl* mtl = node->GetMtl();
                 if (mtl == nullptr)
                     continue;
-                m_renderer->add_material(mtl, node);
+                m_renderer->assign_material(mtl, node);
                 m_renderer->get_render_session()->reininitialize_render();
             }
         }
@@ -467,7 +467,7 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     return project;
 }
 
-void AppleseedInteractiveRender::add_material(Mtl* mtl, INode* node)
+void AppleseedInteractiveRender::assign_material(Mtl* mtl, INode* node)
 {
     auto appleseed_mtl =
         static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
@@ -475,8 +475,8 @@ void AppleseedInteractiveRender::add_material(Mtl* mtl, INode* node)
     if (appleseed_mtl == nullptr)
         return;
 
-    auto instance_map = m_object_instance_map.find(node->GetObjectRef());
-    auto object_instance = instance_map->first;
+    ObjectInstanceMap::iterator instance_map = m_object_instance_map.find(node->GetObjectRef());
+    auto object_instances = instance_map->first;
 
     // unassign all instance materials
     // assign new material
@@ -496,11 +496,12 @@ void AppleseedInteractiveRender::add_material(Mtl* mtl, INode* node)
             it = result.first;
     }
 
-    get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
+    get_render_session()->schedule_assign_material(appleseed_mtl, it->second.c_str(), instance_map->second);
 }
 
 void AppleseedInteractiveRender::update_material(Mtl* mtl)
 {
+    // TODO: recognize multi materials
     auto appleseed_mtl =
         static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
 

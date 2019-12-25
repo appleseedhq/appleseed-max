@@ -31,6 +31,7 @@
 // appleseed-max headers.
 #include "appleseedinteractive/interactiverenderercontroller.h"
 #include "appleseedrenderer/renderersettings.h"
+#include "appleseedrenderer/projectbuilder.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -69,6 +70,8 @@ class InteractiveSession
         foundation::auto_release_ptr<renderer::Camera>  camera);
     void schedule_material_update(
         IAppleseedMtl* material, const char* material_name);
+    void schedule_assign_material(
+        IAppleseedMtl* material, const char* material_name, const InstanceMap& instances);
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;
