@@ -118,7 +118,7 @@ class AppleseedInteractiveRender
     ViewExp*                                        m_view_exp;
     INode*                                          m_view_inode;
     bool                                            m_use_view_inode;
-    ObjectMap                                       m_object_map;
+    ObjectInstanceMap                               m_object_instance_map;
     MaterialMap                                     m_material_map;
 
     foundation::auto_release_ptr<renderer::Project> prepare_project(

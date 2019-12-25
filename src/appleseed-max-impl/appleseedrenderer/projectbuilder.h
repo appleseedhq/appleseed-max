@@ -46,6 +46,7 @@
 
 // Forward declarations.
 namespace renderer { class Camera; }
+namespace renderer { class ObjectInstance; }
 namespace renderer { class ParamArray; }
 namespace renderer { class Project; }
 class Bitmap;
@@ -63,6 +64,8 @@ struct ObjectInfo
 };
 
 typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
+typedef std::map<renderer::ObjectInstance*, ObjectInfo> InstanceMap;
+typedef std::map<Object*, InstanceMap> ObjectInstanceMap;
 typedef std::map<Mtl*, std::string> MaterialMap;
 
 // Build an appleseed project from the current 3ds Max scene.
@@ -77,7 +80,7 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     Bitmap*                             bitmap,
     const TimeValue                     time,
     RendProgressCallback*               progress_cb,
-    ObjectMap&                          object_map,
+    ObjectInstanceMap&                  obj_instance_map,
     MaterialMap&                        material_map);
 
 foundation::auto_release_ptr<renderer::Camera> build_camera(

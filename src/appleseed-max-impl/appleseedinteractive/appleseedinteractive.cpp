@@ -404,7 +404,6 @@ AppleseedInteractiveRender::AppleseedInteractiveRender()
   , m_progress_cb(nullptr)
 {
     m_entities.clear();
-    m_object_map.clear();
     m_material_map.clear();
 }
 
@@ -460,7 +459,7 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
             m_bitmap,
             time,
             m_progress_cb,
-            m_object_map,
+            m_object_instance_map,
             m_material_map));
 
     std::setlocale(LC_ALL, previous_locale.c_str());
@@ -476,7 +475,12 @@ void AppleseedInteractiveRender::add_material(Mtl* mtl, INode* node)
     if (appleseed_mtl == nullptr)
         return;
 
-    auto obj_info = m_object_map.find(node->GetObjectRef());
+    auto instance_map = m_object_instance_map.find(node->GetObjectRef());
+    auto object_instance = instance_map->first;
+
+    // unassign all instance materials
+    // assign new material
+
     //if (obj_info != m_object_map.end())
     //{
     //    auto obj_info_ = m_object_map[node->GetObjectRef()];

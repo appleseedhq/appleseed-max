@@ -702,6 +702,7 @@ namespace
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
+        InstanceMap&            instance_map,
         MaterialMap&            material_map)
     {
         // Compute a unique name for this instance.
@@ -822,7 +823,7 @@ namespace
             params.insert_path("visibility.shadow", false);
 
         // Create the instance and insert it into the assembly.
-        assembly.object_instances().insert(
+        const size_t instance_index = assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
                 params,
@@ -830,6 +831,11 @@ namespace
                 transform,
                 front_material_mappings,
                 back_material_mappings));
+
+        auto* object_instance = assembly.object_instances().get_by_index(instance_index);
+        instance_map.insert(std::make_pair(
+            assembly.object_instances().get_by_index(instance_index),
+            object_info));
     }
 
     typedef std::map<Object*, std::string> AssemblyMap;
@@ -842,11 +848,14 @@ namespace
         const RendererSettings& settings,
         const TimeValue         time,
         ObjectMap&              object_map,
+        ObjectInstanceMap&      obj_instance_map,
         MaterialMap&            material_map,
         AssemblyMap&            assembly_map)
     {
         // Retrieve the geometrical object referenced by this node.
         Object* object = node->GetObjectRef();
+
+        std::map<asr::ObjectInstance*, ObjectInfo> instance_map;
 
         // Compute the transform of this instance.
         const asf::Transformd transform =
@@ -878,6 +887,7 @@ namespace
                         type,
                         settings,
                         time,
+                        instance_map,
                         material_map);
                 }
 
@@ -936,9 +946,11 @@ namespace
                     type,
                     settings,
                     time,
+                    instance_map,
                     material_map);
             }
         }
+        obj_instance_map.insert(std::make_pair(object, instance_map));
     }
 
     void add_objects(
@@ -949,11 +961,12 @@ namespace
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
-        ObjectMap&              object_map,
+        ObjectInstanceMap&      obj_instance_map,
         MaterialMap&            material_map,
         AssemblyMap&            assembly_map,
         RendProgressCallback*   progress_cb)
     {
+        ObjectMap object_map;
         for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
         {
             const auto& object = entities.m_objects[i];
@@ -966,6 +979,7 @@ namespace
                 settings,
                 time,
                 object_map,
+                obj_instance_map,
                 material_map,
                 assembly_map);
 
@@ -1277,7 +1291,7 @@ namespace
         const RendererSettings&             settings,
         const TimeValue                     time,
         RendProgressCallback*               progress_cb,
-        ObjectMap&                          object_map,
+        ObjectInstanceMap&                  obj_instance_map,
         MaterialMap&                        material_map)
     {
         // Add objects, object instances and materials to the assembly.
@@ -1290,7 +1304,7 @@ namespace
             type,
             settings,
             time,
-            object_map,
+            obj_instance_map,
             material_map,
             assembly_map,
             progress_cb);
@@ -1852,7 +1866,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     Bitmap*                                 bitmap,
     const TimeValue                         time,
     RendProgressCallback*                   progress_cb,
-    ObjectMap&                              object_map,
+    ObjectInstanceMap&                      obj_instance_map,
     MaterialMap&                            material_map)
 {
     // Create an empty project.
@@ -1901,7 +1915,7 @@ asf::auto_release_ptr<asr::Project> build_project(
         settings,
         time,
         progress_cb,
-        object_map,
+        obj_instance_map,
         material_map);
 
     // Create an instance of the assembly and insert it into the scene.
