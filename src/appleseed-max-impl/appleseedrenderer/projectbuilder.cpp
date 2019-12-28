@@ -685,6 +685,12 @@ namespace
         }
     }
 
+    enum class RenderType
+    {
+        Default,
+        MaterialPreview
+    };
+
     void get_material(
         asr::Assembly*          parent_assembly,
         const ObjectInfo&       object_info,
@@ -787,12 +793,6 @@ namespace
         }
     }
 
-    enum class RenderType
-    {
-        Default,
-        MaterialPreview
-    };
-
     void create_object_instance(
         asr::Assembly&          assembly,
         asr::Assembly*          root_assembly,
@@ -817,97 +817,19 @@ namespace
 
         // Retrieve or create an appleseed material.
         Mtl* mtl = instance_node->GetMtl();
-        if (mtl)
-        {
-            // The instance has a material.
 
-            // Trigger SME materials update.
-            if (type == RenderType::MaterialPreview)
-                mtl->Update(time, FOREVER);
-
-            const int submtlcount = mtl->NumSubMtls();
-            if (mtl->IsMultiMtl() && submtlcount > 0)
-            {
-                // It's a multi/sub-object material.
-                for (int i = 0; i < submtlcount; ++i)
-                {
-                    Mtl* submtl = mtl->GetSubMtl(i);
-
-                    if (type != RenderType::MaterialPreview)
-                        submtl = override_material(submtl, settings);
-
-                    if (submtl != nullptr)
-                    {
-                        const auto material_info =
-                            get_or_create_material(
-                                parent_assembly,
-                                instance_name,
-                                submtl,
-                                material_map,
-                                settings.m_use_max_procedural_maps,
-                                time);
-
-                        const auto entry = object_info.m_mtlid_to_slot_name.find(i);
-                        if (entry != object_info.m_mtlid_to_slot_name.end())
-                        {
-                            if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                                front_material_mappings.insert(entry->second, material_info.m_name);
-
-                            if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                                back_material_mappings.insert(entry->second, material_info.m_name);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // It's a single material.
-
-                if (type != RenderType::MaterialPreview)
-                    mtl = override_material(mtl, settings);
-
-                // Create the appleseed material.
-                const auto material_info =
-                    get_or_create_material(
-                        parent_assembly,
-                        instance_name,
-                        mtl,
-                        material_map,
-                        settings.m_use_max_procedural_maps,
-                        time);
-
-                // Assign it to all material slots.
-                for (const auto& entry : object_info.m_mtlid_to_slot_name)
-                {
-                    if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                        front_material_mappings.insert(entry.second, material_info.m_name);
-
-                    if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                        back_material_mappings.insert(entry.second, material_info.m_name);
-                }
-            }
-        }
-        else
-        {
-            // The instance does not have a material.
-
-            if (type != RenderType::MaterialPreview)
-                mtl = override_material(mtl, settings);
-
-            // Create a new default material.
-            const std::string material_name =
-                insert_default_material(
-                    parent_assembly,
-                    instance_name + "_mat",
-                    to_color3f(Color(instance_node->GetWireColor())));
-
-            // Assign it to all material slots.
-            for (const auto& entry : object_info.m_mtlid_to_slot_name)
-            {
-                front_material_mappings.insert(entry.second, material_name);
-                back_material_mappings.insert(entry.second, material_name);
-            }
-        }
+        get_material(
+            parent_assembly,
+            object_info,
+            instance_name,
+            instance_node,
+            mtl,
+            material_map,
+            type,
+            settings,
+            time,
+            front_material_mappings,
+            back_material_mappings);
 
         // Retrieve the geometrical object referenced by this node.
         Object* object = instance_node->GetObjectRef();

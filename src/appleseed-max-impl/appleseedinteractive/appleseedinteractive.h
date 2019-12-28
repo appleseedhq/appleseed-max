@@ -100,6 +100,7 @@ class AppleseedInteractiveRender
     void update_material(Mtl* material);
     void update_render_view();
     InteractiveSession* get_render_session();
+    void schedule_material_update(Mtl* mtl);
 
   private:
     std::unique_ptr<InteractiveSession>             m_render_session;

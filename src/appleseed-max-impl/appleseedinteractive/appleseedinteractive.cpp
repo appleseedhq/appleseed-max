@@ -501,24 +501,22 @@ void AppleseedInteractiveRender::assign_material(Mtl* mtl, INode* node)
 
 void AppleseedInteractiveRender::update_material(Mtl* mtl)
 {
-    // TODO: recognize multi materials
-    auto appleseed_mtl =
-        static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-
-    if (appleseed_mtl == nullptr)
+    if (mtl == nullptr)
         return;
 
-    auto it = m_material_map.find(mtl);
-    if (it == m_material_map.end())
+    const int submtlcount = mtl->NumSubMtls();
+    if (mtl->IsMultiMtl() && submtlcount > 0)
     {
-        const renderer::Assembly* assembly = m_project->get_scene()->assemblies().get_by_name("assembly");
-        const auto mat_name = make_unique_name(assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
-        auto result = m_material_map.insert(std::make_pair(mtl, mat_name));
-        if (result.second)
-            it = result.first;
+        for (int i = 0; i < submtlcount; ++i)
+        {
+            Mtl* submtl = mtl->GetSubMtl(i);
+            schedule_material_update(submtl);
+        }
     }
-
-    get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
+    else
+    {
+        schedule_material_update(mtl);
+    }
 }
 
 void AppleseedInteractiveRender::update_camera_object(INode* camera)
@@ -556,6 +554,20 @@ void AppleseedInteractiveRender::update_render_view()
 InteractiveSession* AppleseedInteractiveRender::get_render_session()
 {
     return m_render_session.get();
+}
+
+void AppleseedInteractiveRender::schedule_material_update(Mtl* mtl)
+{
+    auto appleseed_mtl =
+        static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+    if (appleseed_mtl == nullptr)
+        return;
+
+    auto it = m_material_map.find(mtl);
+    if (it == m_material_map.end())
+        return;
+
+    get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
 }
 
 void AppleseedInteractiveRender::BeginSession()
