@@ -140,11 +140,11 @@ namespace
     }
 
     std::string insert_default_material(
-        asr::Assembly&          assembly,
+        asr::Assembly*          assembly,
         std::string             name,
         const asf::Color3f&     linear_rgb)
     {
-        name = make_unique_name(assembly.materials(), name);
+        name = make_unique_name(assembly->materials(), name);
 
         asf::auto_release_ptr<asr::Material> material(
             asr::DisneyMaterialFactory().create(
@@ -158,7 +158,7 @@ namespace
                 .insert("specular", 1.0)
                 .insert("roughness", 0.625));
 
-        assembly.materials().insert(material);
+        assembly->materials().insert(material);
 
         return name;
     }
@@ -455,8 +455,7 @@ namespace
     };
 
     MaterialInfo get_or_create_material(
-        asr::Assembly&          assembly,
-        asr::Assembly*          root_assembly,
+        asr::Assembly*          parent_assembly,
         const std::string&      instance_name,
         Mtl*                    mtl,
         MaterialMap&            material_map,
@@ -464,7 +463,6 @@ namespace
         const TimeValue         time)
     {
         MaterialInfo material_info;
-        asr::Assembly* parent_assembly = root_assembly != nullptr ? root_assembly : &assembly;
 
         auto appleseed_mtl =
             static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
@@ -687,42 +685,23 @@ namespace
         }
     }
 
-    enum class RenderType
-    {
-        Default,
-        MaterialPreview
-    };
-
-    void create_object_instance(
-        asr::Assembly&          assembly,
-        asr::Assembly*          root_assembly,
-        INode*                  instance_node,
-        const asf::Transformd&  transform,
+    void get_material(
+        asr::Assembly*          parent_assembly,
         const ObjectInfo&       object_info,
+        const std::string&      instance_name,
+        INode*                  instance_node,
+        Mtl*                    mtl,
+        MaterialMap&            material_map,
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
-        InstanceMap&            instance_map,
-        MaterialMap&            material_map)
+        asf::StringDictionary&  front_material_mappings,
+        asf::StringDictionary&  back_material_mappings)
     {
-        // Compute a unique name for this instance.
-        const std::string instance_name =
-            make_unique_name(assembly.object_instances(), object_info.m_name + "_inst");
-
-        // Material mappings.
-        asf::StringDictionary front_material_mappings;
-        asf::StringDictionary back_material_mappings;
-
         // Retrieve or create an appleseed material.
-        Mtl* mtl = instance_node->GetMtl();
         if (mtl)
         {
             // The instance has a material.
-
-            // Trigger SME materials update.
-            if (type == RenderType::MaterialPreview)
-                mtl->Update(time, FOREVER);
-
             const int submtlcount = mtl->NumSubMtls();
             if (mtl->IsMultiMtl() && submtlcount > 0)
             {
@@ -738,8 +717,7 @@ namespace
                     {
                         const auto material_info =
                             get_or_create_material(
-                                assembly,
-                                root_assembly,
+                                parent_assembly,
                                 instance_name,
                                 submtl,
                                 material_map,
@@ -768,8 +746,7 @@ namespace
                 // Create the appleseed material.
                 const auto material_info =
                     get_or_create_material(
-                        assembly,
-                        root_assembly,
+                        parent_assembly,
                         instance_name,
                         mtl,
                         material_map,
@@ -797,7 +774,130 @@ namespace
             // Create a new default material.
             const std::string material_name =
                 insert_default_material(
-                    assembly,
+                    parent_assembly,
+                    instance_name + "_mat",
+                    to_color3f(Color(instance_node->GetWireColor())));
+
+            // Assign it to all material slots.
+            for (const auto& entry : object_info.m_mtlid_to_slot_name)
+            {
+                front_material_mappings.insert(entry.second, material_name);
+                back_material_mappings.insert(entry.second, material_name);
+            }
+        }
+    }
+
+    enum class RenderType
+    {
+        Default,
+        MaterialPreview
+    };
+
+    void create_object_instance(
+        asr::Assembly&          assembly,
+        asr::Assembly*          root_assembly,
+        INode*                  instance_node,
+        const asf::Transformd&  transform,
+        const ObjectInfo&       object_info,
+        const RenderType        type,
+        const RendererSettings& settings,
+        const TimeValue         time,
+        InstanceMap&            instance_map,
+        MaterialMap&            material_map)
+    {
+        // Compute a unique name for this instance.
+        const std::string instance_name =
+            make_unique_name(assembly.object_instances(), object_info.m_name + "_inst");
+
+        // Material mappings.
+        asf::StringDictionary front_material_mappings;
+        asf::StringDictionary back_material_mappings;
+
+        asr::Assembly* parent_assembly = root_assembly != nullptr ? root_assembly : &assembly;
+
+        // Retrieve or create an appleseed material.
+        Mtl* mtl = instance_node->GetMtl();
+        if (mtl)
+        {
+            // The instance has a material.
+
+            // Trigger SME materials update.
+            if (type == RenderType::MaterialPreview)
+                mtl->Update(time, FOREVER);
+
+            const int submtlcount = mtl->NumSubMtls();
+            if (mtl->IsMultiMtl() && submtlcount > 0)
+            {
+                // It's a multi/sub-object material.
+                for (int i = 0; i < submtlcount; ++i)
+                {
+                    Mtl* submtl = mtl->GetSubMtl(i);
+
+                    if (type != RenderType::MaterialPreview)
+                        submtl = override_material(submtl, settings);
+
+                    if (submtl != nullptr)
+                    {
+                        const auto material_info =
+                            get_or_create_material(
+                                parent_assembly,
+                                instance_name,
+                                submtl,
+                                material_map,
+                                settings.m_use_max_procedural_maps,
+                                time);
+
+                        const auto entry = object_info.m_mtlid_to_slot_name.find(i);
+                        if (entry != object_info.m_mtlid_to_slot_name.end())
+                        {
+                            if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                                front_material_mappings.insert(entry->second, material_info.m_name);
+
+                            if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                                back_material_mappings.insert(entry->second, material_info.m_name);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // It's a single material.
+
+                if (type != RenderType::MaterialPreview)
+                    mtl = override_material(mtl, settings);
+
+                // Create the appleseed material.
+                const auto material_info =
+                    get_or_create_material(
+                        parent_assembly,
+                        instance_name,
+                        mtl,
+                        material_map,
+                        settings.m_use_max_procedural_maps,
+                        time);
+
+                // Assign it to all material slots.
+                for (const auto& entry : object_info.m_mtlid_to_slot_name)
+                {
+                    if (material_info.m_sides & asr::ObjectInstance::FrontSide)
+                        front_material_mappings.insert(entry.second, material_info.m_name);
+
+                    if (material_info.m_sides & asr::ObjectInstance::BackSide)
+                        back_material_mappings.insert(entry.second, material_info.m_name);
+                }
+            }
+        }
+        else
+        {
+            // The instance does not have a material.
+
+            if (type != RenderType::MaterialPreview)
+                mtl = override_material(mtl, settings);
+
+            // Create a new default material.
+            const std::string material_name =
+                insert_default_material(
+                    parent_assembly,
                     instance_name + "_mat",
                     to_color3f(Color(instance_node->GetWireColor())));
 
