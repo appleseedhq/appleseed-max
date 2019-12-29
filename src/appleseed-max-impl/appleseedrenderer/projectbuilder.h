@@ -49,6 +49,7 @@ namespace renderer { class Camera; }
 namespace renderer { class ObjectInstance; }
 namespace renderer { class ParamArray; }
 namespace renderer { class Project; }
+class IAppleseedMtl;
 class Bitmap;
 class FrameRendParams;
 class MaxSceneEntities;
@@ -67,6 +68,7 @@ typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
 typedef std::map<renderer::ObjectInstance*, ObjectInfo> InstanceMap;
 typedef std::map<Object*, InstanceMap> ObjectInstanceMap;
 typedef std::map<Mtl*, std::string> MaterialMap;
+typedef std::map<IAppleseedMtl*, std::string> IAppleseedMtlMap;
 
 // Build an appleseed project from the current 3ds Max scene.
 foundation::auto_release_ptr<renderer::Project> build_project(

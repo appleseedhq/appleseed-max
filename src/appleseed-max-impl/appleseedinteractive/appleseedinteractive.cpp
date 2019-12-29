@@ -469,34 +469,41 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
 
 void AppleseedInteractiveRender::assign_material(Mtl* mtl, INode* node)
 {
-    auto appleseed_mtl =
-        static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-
-    if (appleseed_mtl == nullptr)
+    if (mtl == nullptr)
         return;
 
-    ObjectInstanceMap::iterator instance_map = m_object_instance_map.find(node->GetObjectRef());
-    auto object_instances = instance_map->first;
-
-    // unassign all instance materials
-    // assign new material
-
-    //if (obj_info != m_object_map.end())
-    //{
-    //    auto obj_info_ = m_object_map[node->GetObjectRef()];
-    //    obj_info_.
-    //}
-    auto it = m_material_map.find(mtl);
-    if (it == m_material_map.end())
+    std::vector<Mtl*> materials;
+    const int submtlcount = mtl->NumSubMtls();
+    if (mtl->IsMultiMtl() && submtlcount > 0)
     {
-        const renderer::Assembly* assembly = m_project->get_scene()->assemblies().get_by_name("assembly");
-        const auto mat_name = make_unique_name(assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
-        auto result = m_material_map.insert(std::make_pair(mtl, mat_name));
-        if (result.second)
-            it = result.first;
+        for (int i = 0; i < submtlcount; ++i)
+        {
+            Mtl* submtl = mtl->GetSubMtl(i);
+            materials.push_back(submtl);
+        }
+    }
+    else
+    {
+        materials.push_back(mtl);
     }
 
-    get_render_session()->schedule_assign_material(appleseed_mtl, it->second.c_str(), instance_map->second);
+    IAppleseedMtlMap updated_materials;
+    for (const auto& mtl : materials)
+    {
+        IAppleseedMtl* appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl == nullptr)
+            continue;
+
+        auto it = m_material_map.find(mtl);
+        if (it == m_material_map.end())
+            continue;
+
+        updated_materials[appleseed_mtl] = it->second;
+    }
+    
+    ObjectInstanceMap::iterator instance_map = m_object_instance_map.find(node->GetObjectRef());
+    get_render_session()->schedule_assign_material(updated_materials, instance_map->second);
 }
 
 void AppleseedInteractiveRender::update_material(Mtl* mtl)
@@ -504,19 +511,37 @@ void AppleseedInteractiveRender::update_material(Mtl* mtl)
     if (mtl == nullptr)
         return;
 
+    std::vector<Mtl*> materials;
     const int submtlcount = mtl->NumSubMtls();
     if (mtl->IsMultiMtl() && submtlcount > 0)
     {
         for (int i = 0; i < submtlcount; ++i)
         {
             Mtl* submtl = mtl->GetSubMtl(i);
-            schedule_material_update(submtl);
+            materials.push_back(submtl);
         }
     }
     else
     {
-        schedule_material_update(mtl);
+        materials.push_back(mtl);
     }
+
+    IAppleseedMtlMap updated_materials;
+    for (const auto& mtl : materials)
+    {
+        IAppleseedMtl* appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl == nullptr)
+            continue;
+
+        auto it = m_material_map.find(mtl);
+        if (it == m_material_map.end())
+            continue;
+
+        updated_materials[appleseed_mtl] = it->second;
+    }
+
+    get_render_session()->schedule_material_update(updated_materials);
 }
 
 void AppleseedInteractiveRender::update_camera_object(INode* camera)
@@ -554,20 +579,6 @@ void AppleseedInteractiveRender::update_render_view()
 InteractiveSession* AppleseedInteractiveRender::get_render_session()
 {
     return m_render_session.get();
-}
-
-void AppleseedInteractiveRender::schedule_material_update(Mtl* mtl)
-{
-    auto appleseed_mtl =
-        static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
-    if (appleseed_mtl == nullptr)
-        return;
-
-    auto it = m_material_map.find(mtl);
-    if (it == m_material_map.end())
-        return;
-
-    get_render_session()->schedule_material_update(appleseed_mtl, it->second.c_str());
 }
 
 void AppleseedInteractiveRender::BeginSession()

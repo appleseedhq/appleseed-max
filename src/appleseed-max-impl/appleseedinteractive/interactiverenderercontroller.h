@@ -90,33 +90,33 @@ class MaterialUpdateAction
   public:
     MaterialUpdateAction(
         renderer::Project&      project,
-        IAppleseedMtl*          material,
-        const char*             mtl_name)
-      : m_project(project)
-      , m_material(material)
-      , m_mtl_name(mtl_name)
+        const IAppleseedMtlMap& material_map)
+      : m_material_map(material_map)
+      , m_project(project)
     {
     }
 
     void update() override
     {
         renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
-        renderer::Material* material = assembly->materials().get_by_name(m_mtl_name.c_str());
-        
-        if (material)
-            assembly->materials().remove(material);
+        for (const auto& mtl : m_material_map)
+        {
+            renderer::Material* material = assembly->materials().get_by_name(mtl.second.c_str());
 
-        assembly->materials().insert(
-            m_material->create_material(
+            if (material)
+                assembly->materials().remove(material);
+
+            assembly->materials().insert(
+                mtl.first->create_material(
                 *assembly,
-                m_mtl_name.c_str(),
+                mtl.second.c_str(),
                 false,
                 GetCOREInterface()->GetTime()));
+        }
     }
 
   private:
-    IAppleseedMtl*          m_material;
-    std::string             m_mtl_name;
+    const IAppleseedMtlMap& m_material_map;
     renderer::Project&      m_project;
 };
 
@@ -125,13 +125,11 @@ class AssignMaterialAction
 {
   public:
     AssignMaterialAction(
-        renderer::Project&  project,
-        IAppleseedMtl*      material,
-        const char*         mtl_name,
-        const InstanceMap&  instances)
-      : m_project(project)
-      , m_material(material)
-      , m_mtl_name(mtl_name)
+        renderer::Project&      project,
+        const IAppleseedMtlMap& material_map,
+        const InstanceMap&      instances)
+      : m_material_map(material_map)
+      , m_project(project)
       , m_instances(instances)
     {
     }
@@ -139,39 +137,41 @@ class AssignMaterialAction
     void update() override
     {
         renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
-        renderer::Material* material = assembly->materials().get_by_name(m_mtl_name.c_str());
-        
-        if (material == nullptr)
+        for (const auto& mtl : m_material_map)
         {
-            const size_t index = assembly->materials().insert(
-                m_material->create_material(
+            renderer::Material* material = assembly->materials().get_by_name(mtl.second.c_str());
+
+            if (material == nullptr)
+            {
+                const size_t index = assembly->materials().insert(
+                    mtl.first->create_material(
                     *assembly,
-                    m_mtl_name.c_str(),
+                    mtl.second.c_str(),
                     false,
                     GetCOREInterface()->GetTime()));
-            material = assembly->materials().get_by_index(index);
-        }
+                material = assembly->materials().get_by_index(index);
+            }
 
-        for (const auto& obj_instance : m_instances)
-        {
-            auto* instance = obj_instance.first;
-            auto& obj_info = obj_instance.second;
-
-            auto front_mapping = instance->get_front_material_mappings();
-            for (const auto& mat_mapping : front_mapping)
+            for (const auto& obj_instance : m_instances)
             {
-                // TODO: recognize multi materials
-                auto test1 = mat_mapping.key();
-                auto test2 = mat_mapping.value();
-                instance->assign_material(mat_mapping.key(), renderer::ObjectInstance::FrontSide, m_mtl_name.c_str());
-                //front_material_mappings.insert(entry.second, material_info.m_name);
+                auto* instance = obj_instance.first;
+                auto& obj_info = obj_instance.second;
+
+                auto front_mapping = instance->get_front_material_mappings();
+                for (const auto& mat_mapping : front_mapping)
+                {
+                    // TODO: recognize multi materials
+                    auto test1 = mat_mapping.key();
+                    auto test2 = mat_mapping.value();
+                    instance->assign_material(mat_mapping.key(), renderer::ObjectInstance::FrontSide, mtl.second.c_str());
+                    //front_material_mappings.insert(entry.second, material_info.m_name);
+                }
             }
         }
     }
 
   private:
-    IAppleseedMtl*          m_material;
-    std::string             m_mtl_name;
+    const IAppleseedMtlMap& m_material_map;
     renderer::Project&      m_project;
     const InstanceMap&      m_instances;
 };

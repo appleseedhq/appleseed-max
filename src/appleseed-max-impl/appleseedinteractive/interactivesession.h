@@ -69,9 +69,9 @@ class InteractiveSession
     void schedule_camera_update(
         foundation::auto_release_ptr<renderer::Camera>  camera);
     void schedule_material_update(
-        IAppleseedMtl* material, const char* material_name);
+        const IAppleseedMtlMap& material_map);
     void schedule_assign_material(
-        IAppleseedMtl* material, const char* material_name, const InstanceMap& instances);
+        const IAppleseedMtlMap& material_map, const InstanceMap& instances);
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;
