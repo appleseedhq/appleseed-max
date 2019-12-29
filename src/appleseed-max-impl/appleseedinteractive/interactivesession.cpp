@@ -116,7 +116,7 @@ void InteractiveSession::schedule_material_update(const IAppleseedMtlMap& materi
 }
 
 void InteractiveSession::schedule_assign_material(
-    const IAppleseedMtlMap& material_map, const InstanceMap& instances)
+    const MaterialMap& material_map, const InstanceMap& instances)
 {
     m_renderer_controller->schedule_update(
         std::unique_ptr<ScheduledAction>(new AssignMaterialAction(*m_project, material_map, instances)));

@@ -31,6 +31,7 @@
 // appleseed-max headers.
 #include "appleseedinteractive/appleseedinteractive.h"
 #include "appleseedrenderer/projectbuilder.h"
+#include "utilities.h"
 
 // appleseed-max-common headers.
 #include "appleseed-max-common/iappleseedmtl.h"
@@ -116,7 +117,7 @@ class MaterialUpdateAction
     }
 
   private:
-    const IAppleseedMtlMap& m_material_map;
+    IAppleseedMtlMap        m_material_map;
     renderer::Project&      m_project;
 };
 
@@ -126,7 +127,7 @@ class AssignMaterialAction
   public:
     AssignMaterialAction(
         renderer::Project&      project,
-        const IAppleseedMtlMap& material_map,
+        const MaterialMap&      material_map,
         const InstanceMap&      instances)
       : m_material_map(material_map)
       , m_project(project)
@@ -143,10 +144,18 @@ class AssignMaterialAction
 
             if (material == nullptr)
             {
+                const auto mtl_name =
+                    make_unique_name(assembly->materials(), wide_to_utf8(mtl.first->GetName()) + "_mat");
+
+                IAppleseedMtl* appleseed_mtl =
+                    static_cast<IAppleseedMtl*>(mtl.first->GetInterface(IAppleseedMtl::interface_id()));
+                if (appleseed_mtl == nullptr)
+                    continue;
+
                 const size_t index = assembly->materials().insert(
-                    mtl.first->create_material(
+                    appleseed_mtl->create_material(
                     *assembly,
-                    mtl.second.c_str(),
+                    mtl_name.c_str(),
                     false,
                     GetCOREInterface()->GetTime()));
                 material = assembly->materials().get_by_index(index);
@@ -163,7 +172,7 @@ class AssignMaterialAction
                     // TODO: recognize multi materials
                     auto test1 = mat_mapping.key();
                     auto test2 = mat_mapping.value();
-                    instance->assign_material(mat_mapping.key(), renderer::ObjectInstance::FrontSide, mtl.second.c_str());
+                    instance->assign_material(mat_mapping.key(), renderer::ObjectInstance::FrontSide, material->get_name());
                     //front_material_mappings.insert(entry.second, material_info.m_name);
                 }
             }
@@ -171,7 +180,7 @@ class AssignMaterialAction
     }
 
   private:
-    const IAppleseedMtlMap& m_material_map;
+    MaterialMap             m_material_map;
     renderer::Project&      m_project;
     const InstanceMap&      m_instances;
 };

@@ -71,7 +71,7 @@ class InteractiveSession
     void schedule_material_update(
         const IAppleseedMtlMap& material_map);
     void schedule_assign_material(
-        const IAppleseedMtlMap& material_map, const InstanceMap& instances);
+        const MaterialMap& material_map, const InstanceMap& instances);
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;

@@ -487,23 +487,20 @@ void AppleseedInteractiveRender::assign_material(Mtl* mtl, INode* node)
         materials.push_back(mtl);
     }
 
-    IAppleseedMtlMap updated_materials;
+    MaterialMap assigned_materials;
     for (const auto& mtl : materials)
     {
         IAppleseedMtl* appleseed_mtl =
             static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
         if (appleseed_mtl == nullptr)
             continue;
-
-        auto it = m_material_map.find(mtl);
-        if (it == m_material_map.end())
-            continue;
-
-        updated_materials[appleseed_mtl] = it->second;
+        
+        assigned_materials[mtl] = "";
     }
     
-    ObjectInstanceMap::iterator instance_map = m_object_instance_map.find(node->GetObjectRef());
-    get_render_session()->schedule_assign_material(updated_materials, instance_map->second);
+    auto instance_map = m_object_instance_map.find(node->GetObjectRef());
+    if (instance_map != m_object_instance_map.end())
+        get_render_session()->schedule_assign_material(assigned_materials, instance_map->second);
 }
 
 void AppleseedInteractiveRender::update_material(Mtl* mtl)
