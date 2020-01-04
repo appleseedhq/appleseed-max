@@ -67,7 +67,11 @@ class TileCallback
         const size_t                    tile_y) override;
 
     void on_progressive_frame_update(
-        const renderer::Frame*          frame) override;
+        const renderer::Frame&          frame,
+        const double                    time,
+        const std::uint64_t             samples,
+        const double                    samples_per_pixel,
+        const std::uint64_t             samples_per_second) override;
 
   private:
     Bitmap*                             m_bitmap;

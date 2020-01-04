@@ -205,9 +205,13 @@ void TileCallback::on_tile_end(
 }
 
 void TileCallback::on_progressive_frame_update(
-    const asr::Frame*       frame)
+    const asr::Frame&       frame,
+    const double            time,
+    const std::uint64_t     samples,
+    const double            samples_per_pixel,
+    const std::uint64_t     samples_per_second)
 {
-    const asf::CanvasProperties& props = frame->image().properties();
+    const asf::CanvasProperties& props = frame.image().properties();
 
     DbgAssert(props.m_canvas_width == m_bitmap->Width());
     DbgAssert(props.m_canvas_height == m_bitmap->Height());
@@ -217,7 +221,7 @@ void TileCallback::on_progressive_frame_update(
     for (size_t y = 0; y < props.m_tile_count_y; ++y)
     {
         for (size_t x = 0; x < props.m_tile_count_x; ++x)
-            blit_tile(*frame, x, y);
+            blit_tile(frame, x, y);
     }
 
     // Refresh the entire display window.
