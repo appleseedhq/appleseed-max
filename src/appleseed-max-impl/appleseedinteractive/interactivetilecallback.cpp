@@ -66,7 +66,12 @@ void InteractiveTileCallback::on_progressive_frame_update(
     const double                samples_per_pixel,
     const std::uint64_t         samples_per_second)
 {
-    TileCallback::on_progressive_frame_update(frame, time, samples, samples_per_pixel, samples_per_second);
+    TileCallback::on_progressive_frame_update(
+        frame,
+        time,
+        samples,
+        samples_per_pixel,
+        samples_per_second);
 
     // Wait until UI proc gets handled to ensure class object is valid.
     m_ui_promise = std::promise<void>();
