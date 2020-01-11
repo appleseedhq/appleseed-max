@@ -50,11 +50,11 @@ namespace
 
 InteractiveTileCallback::InteractiveTileCallback(
     Bitmap*                     bitmap,
-    IIRenderMgr*                iimanager,
+    IIRenderMgr*                irender_manager,
     asr::IRendererController*   renderer_controller)
   : TileCallback(bitmap, nullptr)
   , m_bitmap(bitmap)
-  , m_iimanager(iimanager)
+  , m_irender_manager(irender_manager)
   , m_renderer_controller(renderer_controller)
 {
 }
@@ -90,8 +90,8 @@ void InteractiveTileCallback::update_caller(UINT_PTR param_ptr)
 {
     auto tile_callback = reinterpret_cast<InteractiveTileCallback*>(param_ptr);
     
-    if (tile_callback->m_iimanager->IsRendering())
-        tile_callback->m_iimanager->UpdateDisplay();
+    if (tile_callback->m_irender_manager->IsRendering())
+        tile_callback->m_irender_manager->UpdateDisplay();
 
     tile_callback->m_ui_promise.set_value();
 }
