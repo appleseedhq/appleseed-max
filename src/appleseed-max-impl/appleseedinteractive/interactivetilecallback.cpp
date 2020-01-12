@@ -50,19 +50,28 @@ namespace
 
 InteractiveTileCallback::InteractiveTileCallback(
     Bitmap*                     bitmap,
-    IIRenderMgr*                iimanager,
+    IIRenderMgr*                irender_manager,
     asr::IRendererController*   renderer_controller)
   : TileCallback(bitmap, nullptr)
   , m_bitmap(bitmap)
-  , m_iimanager(iimanager)
+  , m_irender_manager(irender_manager)
   , m_renderer_controller(renderer_controller)
 {
 }
 
 void InteractiveTileCallback::on_progressive_frame_update(
-    const asr::Frame*           frame)
+    const asr::Frame&           frame,
+    const double                time,
+    const std::uint64_t         samples,
+    const double                samples_per_pixel,
+    const std::uint64_t         samples_per_second)
 {
-    TileCallback::on_progressive_frame_update(frame);
+    TileCallback::on_progressive_frame_update(
+        frame,
+        time,
+        samples,
+        samples_per_pixel,
+        samples_per_second);
 
     // Wait until UI proc gets handled to ensure class object is valid.
     m_ui_promise = std::promise<void>();
@@ -81,8 +90,8 @@ void InteractiveTileCallback::update_caller(UINT_PTR param_ptr)
 {
     auto tile_callback = reinterpret_cast<InteractiveTileCallback*>(param_ptr);
     
-    if (tile_callback->m_iimanager->IsRendering())
-        tile_callback->m_iimanager->UpdateDisplay();
+    if (tile_callback->m_irender_manager->IsRendering())
+        tile_callback->m_irender_manager->UpdateDisplay();
 
     tile_callback->m_ui_promise.set_value();
 }

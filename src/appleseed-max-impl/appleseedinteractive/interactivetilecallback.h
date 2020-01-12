@@ -39,6 +39,7 @@
 #include "foundation/platform/windows.h"
 
 // Standard headers.
+#include <cstdint>
 #include <future>
 
 // Forward declarations.
@@ -53,14 +54,19 @@ class InteractiveTileCallback
   public:
     InteractiveTileCallback(
         Bitmap*                         bitmap,
-        IIRenderMgr*                    iimanager,
+        IIRenderMgr*                    irender_manager,
         renderer::IRendererController*  renderer_controller);
 
-    void on_progressive_frame_update(const renderer::Frame* frame) override;
+    void on_progressive_frame_update(
+        const renderer::Frame&          frame,
+        const double                    time,
+        const std::uint64_t             samples,
+        const double                    samples_per_pixel,
+        const std::uint64_t             samples_per_second) override;
 
   private:
     Bitmap*                             m_bitmap;
-    IIRenderMgr*                        m_iimanager;
+    IIRenderMgr*                        m_irender_manager;
     renderer::IRendererController*      m_renderer_controller;
     std::promise<void>                  m_ui_promise;
 
