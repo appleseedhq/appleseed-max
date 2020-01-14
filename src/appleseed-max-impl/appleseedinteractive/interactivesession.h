@@ -69,9 +69,9 @@ class InteractiveSession
         foundation::auto_release_ptr<renderer::Camera>  camera);
     void schedule_material_update(
         const IAppleseedMtlMap& material_map);
-    void schedule_remove_object_instance(INode* node);
-    void schedule_add_object_instance(INode* node);
-    void schedule_udpate_object_instance(INode* node);
+    void schedule_remove_object_instance(const std::vector<INode*>&);
+    void schedule_add_object_instance(const std::vector<INode*>&);
+    void schedule_udpate_object_instance(const std::vector<INode*>&);
 
     renderer::Project*                              m_project;
     ObjectMap                                       m_object_map;

@@ -96,10 +96,10 @@ class AppleseedInteractiveRender
     void AbortRender() override;
 
     void update_camera_object(INode* camera);
-    void add_object_instance(INode* node);
-    void remove_object_instance(INode* node);
-    void update_object_instance(INode* node);
-    void update_material(Mtl* material);
+    void add_object_instance(const std::vector<INode*>&);
+    void remove_object_instance(const std::vector<INode*>&);
+    void update_object_instance(const std::vector<INode*>&);
+    void update_material(const std::vector<INode*>& nodes);
     void update_render_view();
     InteractiveSession* get_render_session();
 

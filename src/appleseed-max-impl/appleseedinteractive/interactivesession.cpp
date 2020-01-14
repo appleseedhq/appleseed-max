@@ -115,23 +115,23 @@ void InteractiveSession::schedule_material_update(const IAppleseedMtlMap& materi
             new MaterialUpdateAction(*m_project, material_map)));
 }
 
-void InteractiveSession::schedule_add_object_instance(INode* node)
+void InteractiveSession::schedule_add_object_instance(const std::vector<INode*>& nodes)
 {
     m_renderer_controller->schedule_update(
         std::unique_ptr<ScheduledAction>(
-            new AddObjectInstanceAction(node, this)));
+            new AddObjectInstanceAction(nodes, this)));
 }
 
-void InteractiveSession::schedule_remove_object_instance(INode* node)
+void InteractiveSession::schedule_remove_object_instance(const std::vector<INode*>& nodes)
 {
     m_renderer_controller->schedule_update(
         std::unique_ptr<ScheduledAction>(
-            new RemoveObjectInstanceAction(node, this)));
+            new RemoveObjectInstanceAction(nodes, this)));
 }
 
-void InteractiveSession::schedule_udpate_object_instance(INode* node)
+void InteractiveSession::schedule_udpate_object_instance(const std::vector<INode*>& nodes)
 {
     m_renderer_controller->schedule_update(
         std::unique_ptr<ScheduledAction>(
-            new UpdateObjectInstanceAction(node, this)));
+            new UpdateObjectInstanceAction(nodes, this)));
 }

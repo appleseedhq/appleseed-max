@@ -129,9 +129,9 @@ class RemoveObjectInstanceAction
 {
   public:
       RemoveObjectInstanceAction(
-          INode* node,
-          InteractiveSession* session)
-      : m_node(node)
+          const std::vector<INode*>&    nodes,
+          InteractiveSession*           session)
+      : m_nodes(nodes)
       , m_session(session)
     {
     }
@@ -139,8 +139,8 @@ class RemoveObjectInstanceAction
     void update() override;
 
   private:
-    INode*                          m_node;
-    InteractiveSession*             m_session;
+    std::vector<INode*>     m_nodes;
+    InteractiveSession*     m_session;
 };
 
 class AddObjectInstanceAction
@@ -148,9 +148,9 @@ class AddObjectInstanceAction
 {
   public:
       AddObjectInstanceAction(
-          INode* node,
-          InteractiveSession* session)
-      : m_node(node)
+          const std::vector<INode*>&    nodes,
+          InteractiveSession*           session)
+      : m_nodes(nodes)
       , m_session(session)
     {
     }
@@ -158,8 +158,8 @@ class AddObjectInstanceAction
     void update() override;
 
   private:
-    INode*                          m_node;
-    InteractiveSession*             m_session;
+    std::vector<INode*>     m_nodes;
+    InteractiveSession*     m_session;
 };
 
 class UpdateObjectInstanceAction
@@ -167,9 +167,9 @@ class UpdateObjectInstanceAction
 {
   public:
       UpdateObjectInstanceAction(
-          INode* node,
-          InteractiveSession* session)
-      : m_node(node)
+          const std::vector<INode*>&    nodes,
+          InteractiveSession*           session)
+      : m_nodes(nodes)
       , m_session(session)
     {
     }
@@ -177,8 +177,8 @@ class UpdateObjectInstanceAction
     void update() override;
 
   private:
-    INode*                          m_node;
-    InteractiveSession*             m_session;
+    std::vector<INode*>     m_nodes;
+    InteractiveSession*     m_session;
 };
 
 class InteractiveRendererController

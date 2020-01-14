@@ -213,6 +213,7 @@ namespace
             if (m_renderer == nullptr)
                 return;
 
+            std::vector<INode*> updated_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
                 INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
@@ -222,14 +223,12 @@ namespace
                     if (node == m_active_camera)
                     {
                         m_renderer->update_camera_object(m_active_camera);
-                        m_renderer->get_render_session()->reininitialize_render();
                     }
                 }
 
                 if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
                 {
-                    m_renderer->update_object_instance(node);
-                    m_renderer->get_render_session()->reininitialize_render();
+                    updated_nodes.push_back(node);
                 }
 
                 if (os.obj && os.obj->SuperClassID() == LIGHT_CLASS_ID)
@@ -238,6 +237,9 @@ namespace
                 }
             }
 
+            m_renderer->update_object_instance(updated_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
+
         }
         
         void MaterialStructured(NodeKeyTab& nodes)
@@ -245,15 +247,15 @@ namespace
             if (m_renderer == nullptr)
                 return;
 
+            std::vector<INode*> updated_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
                 INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
-                Mtl* mtl = node->GetMtl();
-                if (mtl == nullptr)
-                    continue;
-                m_renderer->update_object_instance(node);
-                m_renderer->get_render_session()->reininitialize_render();
+                updated_nodes.push_back(node);
             }
+
+            m_renderer->update_object_instance(updated_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
         }
 
         void MaterialOtherEvent(NodeKeyTab& nodes) override
@@ -261,69 +263,58 @@ namespace
             if (m_renderer == nullptr)
                 return;
 
+            std::vector<INode*> updated_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
                 INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
-                Mtl* mtl = node->GetMtl();
-                if (mtl == nullptr)
-                    continue;
-                m_renderer->update_material(mtl);
-                m_renderer->get_render_session()->reininitialize_render();
+                updated_nodes.push_back(node);
             }
+
+            m_renderer->update_material(updated_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
         }
 
         void ControllerOtherEvent(NodeKeyTab& nodes) override 
         {
+            std::vector<INode*> transformed_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
                 INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
                 ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
                 if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
                 {
-                    m_renderer->update_object_instance(node);
-                    m_renderer->get_render_session()->reininitialize_render();
+                    transformed_nodes.push_back(node);
                 }
             }
+            m_renderer->update_object_instance(transformed_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
         }
 
         void Added(NodeKeyTab& nodes) override 
         {
+            std::vector<INode*> added_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
                 INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
                 ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
                 if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
                 {
-                    m_renderer->add_object_instance(node);
-                    m_renderer->get_render_session()->reininitialize_render();
+                    added_nodes.push_back(node);
                 }
             }
+            m_renderer->add_object_instance(added_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
         }
 
         void Deleted(NodeKeyTab& nodes) override 
         {
+            std::vector<INode*> removed_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
-                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
-                m_renderer->remove_object_instance(node);
-                m_renderer->get_render_session()->reininitialize_render();
+                removed_nodes.push_back(NodeEventNamespace::GetNodeByKey(nodes[i]));
             }
-        }
-
-        void DisplayPropertiesChanged(NodeKeyTab& nodes) override 
-        {
-            for (int i = 0, e = nodes.Count(); i < e; ++i)
-            {
-                auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
-            }
-        }
-
-        void HideChanged(NodeKeyTab& nodes) override 
-        {
-            for (int i = 0, e = nodes.Count(); i < e; ++i)
-            {
-                auto test = NodeEventNamespace::GetNodeByKey(nodes[i]);
-            }
+            m_renderer->remove_object_instance(removed_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
         }
 
       private:
@@ -489,44 +480,43 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
     return project;
 }
 
-void AppleseedInteractiveRender::remove_object_instance(INode* node)
+void AppleseedInteractiveRender::remove_object_instance(const std::vector<INode*>& nodes)
 {
-    get_render_session()->schedule_remove_object_instance(node);
+    get_render_session()->schedule_remove_object_instance(nodes);
 }
 
-void AppleseedInteractiveRender::add_object_instance(INode* node)
+void AppleseedInteractiveRender::add_object_instance(const std::vector<INode*>& nodes)
 {
-    if (node == nullptr)
-        return;
-
-    get_render_session()->schedule_add_object_instance(node);
+    get_render_session()->schedule_add_object_instance(nodes);
 }
 
-void AppleseedInteractiveRender::update_object_instance(INode* node)
+void AppleseedInteractiveRender::update_object_instance(const std::vector<INode*>& nodes)
 {
-    if (node == nullptr)
-        return;
-
-    get_render_session()->schedule_udpate_object_instance(node);
+    get_render_session()->schedule_udpate_object_instance(nodes);
 }
 
-void AppleseedInteractiveRender::update_material(Mtl* mtl)
+void AppleseedInteractiveRender::update_material(const std::vector<INode*>& nodes)
 {
-    DbgAssert(mtl);
-
     std::vector<Mtl*> materials;
-    const int submtlcount = mtl->NumSubMtls();
-    if (mtl->IsMultiMtl() && submtlcount > 0)
+    for (INode* node : nodes)
     {
-        for (int i = 0; i < submtlcount; ++i)
+        Mtl* mtl = node->GetMtl();
+        if (mtl == nullptr)
+            continue;
+
+        const int submtlcount = mtl->NumSubMtls();
+        if (mtl->IsMultiMtl() && submtlcount > 0)
         {
-            Mtl* submtl = mtl->GetSubMtl(i);
-            materials.push_back(submtl);
+            for (int i = 0; i < submtlcount; ++i)
+            {
+                Mtl* submtl = mtl->GetSubMtl(i);
+                materials.push_back(submtl);
+            }
         }
-    }
-    else
-    {
-        materials.push_back(mtl);
+        else
+        {
+            materials.push_back(mtl);
+        }
     }
 
     IAppleseedMtlMap updated_materials;
