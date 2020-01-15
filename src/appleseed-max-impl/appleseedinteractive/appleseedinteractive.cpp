@@ -639,13 +639,16 @@ void AppleseedInteractiveRender::EndSession()
         m_render_session->end_render();
 
         m_render_session.reset(nullptr);
+
+        const IImageViewer::DisplayStyle display_style = m_iirender_mgr->GetDisplayStyle();
+        if (display_style == IImageViewer::DisplayStyle::IV_FLOATING)
+        {
+            if (m_progress_cb)
+                m_progress_cb->SetTitle(L"Done.");
+        }
     }
     
     render_end(m_entities.m_objects, m_time);
-
-    // todo: fix crash when rendering in the viewport
-    if (m_progress_cb)
-        m_progress_cb->SetTitle(L"Done.");
 }
 
 void AppleseedInteractiveRender::SetOwnerWnd(HWND owner_wnd)
