@@ -74,7 +74,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Moving output files...</Message>
-      <Command>post-build.cmd "$(SolutionDir)" "$(Configuration)" "$(TargetPath)" "$(TargetName)" "$(PlatformToolsetVersion)" "2020"</Command>
+      <Command>post-build.cmd "$(SolutionDir)" "$(Configuration)" "$(TargetDir)" "$(TargetName)" "$(PlatformToolsetVersion)" "2020"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
