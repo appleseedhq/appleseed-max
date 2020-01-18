@@ -29,9 +29,7 @@
 #pragma once
 
 // appleseed-max headers.
-#include "appleseedinteractive/appleseedinteractive.h"
 #include "appleseedrenderer/projectbuilder.h"
-#include "utilities.h"
 
 // appleseed-max-common headers.
 #include "appleseed-max-common/iappleseedmtl.h"
@@ -54,7 +52,6 @@
 // Forward declarations.
 class InteractiveSession;
 namespace renderer { class Camera; }
-namespace renderer { class Project; }
 
 class ScheduledAction
 {
@@ -75,11 +72,7 @@ class CameraObjectUpdateAction
     {
     }
 
-    void update() override
-    {
-        m_project.get_scene()->cameras().clear();
-        m_project.get_scene()->cameras().insert(m_camera);
-    }
+    void update() override;
 
   public:
     foundation::auto_release_ptr<renderer::Camera>    m_camera;
@@ -98,26 +91,7 @@ class MaterialUpdateAction
     {
     }
 
-    void update() override
-    {
-        renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
-        DbgAssert(assembly);
-
-        for (const auto& mtl : m_material_map)
-        {
-            renderer::Material* material = assembly->materials().get_by_name(mtl.second.c_str());
-
-            if (material)
-                assembly->materials().remove(material);
-
-            assembly->materials().insert(
-                mtl.first->create_material(
-                    *assembly,
-                    mtl.second.c_str(),
-                    false,
-                    GetCOREInterface()->GetTime()));
-        }
-    }
+    void update() override;
 
   private:
     IAppleseedMtlMap        m_material_map;

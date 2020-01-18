@@ -31,6 +31,7 @@
 
 // appleseed-max headers.
 #include "appleseedinteractive/interactivesession.h"
+#include "utilities.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
@@ -42,6 +43,32 @@
 
 namespace asr = renderer;
 
+void CameraObjectUpdateAction::update()
+{
+    m_project.get_scene()->cameras().clear();
+    m_project.get_scene()->cameras().insert(m_camera);
+}
+
+void MaterialUpdateAction::update()
+{
+    renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
+    DbgAssert(assembly);
+
+    for (const auto& mtl : m_material_map)
+    {
+        renderer::Material* material = assembly->materials().get_by_name(mtl.second.c_str());
+
+        if (material)
+            assembly->materials().remove(material);
+
+        assembly->materials().insert(
+            mtl.first->create_material(
+                *assembly,
+                mtl.second.c_str(),
+                false,
+                GetCOREInterface()->GetTime()));
+    }
+}
 
 void UpdateObjectInstanceAction::update()
 {

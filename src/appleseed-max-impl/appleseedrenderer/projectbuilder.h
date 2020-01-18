@@ -93,7 +93,7 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const TimeValue                     time,
     RendProgressCallback*               progress_cb,
     ObjectMap&                          object_map,
-    InstanceMap&                        instance_map,
+    InstanceMap&                        object_inst_map,
     MaterialMap&                        material_map,
     AssemblyMap&                        assembly_map,
     InstanceMap&                        assembly_inst_map);
