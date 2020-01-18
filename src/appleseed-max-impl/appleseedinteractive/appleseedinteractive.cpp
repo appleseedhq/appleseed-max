@@ -404,7 +404,7 @@ namespace
 AppleseedInteractiveRender::AppleseedInteractiveRender()
   : m_owner_wnd(nullptr)
   , m_bitmap(nullptr)
-  , m_iirender_mgr(nullptr)
+  , m_irender_manager(nullptr)
   , m_scene_inode(nullptr)
   , m_use_view_inode(false)
   , m_view_inode(nullptr)
@@ -594,7 +594,7 @@ void AppleseedInteractiveRender::BeginSession()
     renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
     
     m_render_session.reset(new InteractiveSession(
-        m_iirender_mgr,
+        m_irender_manager,
         renderer_settings,
         m_bitmap));
 
@@ -639,7 +639,7 @@ void AppleseedInteractiveRender::EndSession()
 
         m_render_session.reset(nullptr);
 
-        const IImageViewer::DisplayStyle display_style = m_iirender_mgr->GetDisplayStyle();
+        const IImageViewer::DisplayStyle display_style = m_irender_manager->GetDisplayStyle();
         if (display_style == IImageViewer::DisplayStyle::IV_FLOATING)
         {
             if (m_progress_cb)
@@ -660,14 +660,14 @@ HWND AppleseedInteractiveRender::GetOwnerWnd() const
     return m_owner_wnd;
 }
 
-void AppleseedInteractiveRender::SetIIRenderMgr(IIRenderMgr* iirender_mgr)
+void AppleseedInteractiveRender::SetIIRenderMgr(IIRenderMgr* irender_manager)
 {
-    m_iirender_mgr = iirender_mgr;
+    m_irender_manager = irender_manager;
 }
 
-IIRenderMgr* AppleseedInteractiveRender::GetIIRenderMgr(IIRenderMgr* iirender_mgr) const
+IIRenderMgr* AppleseedInteractiveRender::GetIIRenderMgr(IIRenderMgr* irender_manager) const
 {
-    return m_iirender_mgr;
+    return m_irender_manager;
 }
 
 void AppleseedInteractiveRender::SetBitmap(Bitmap* bitmap)

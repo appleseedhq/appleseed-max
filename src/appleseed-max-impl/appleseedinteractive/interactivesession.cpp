@@ -46,10 +46,10 @@ namespace asf = foundation;
 namespace asr = renderer;
 
 InteractiveSession::InteractiveSession(
-    IIRenderMgr*                iirender_mgr,
+    IIRenderMgr*                irender_manager,
     const RendererSettings&     settings,
     Bitmap*                     bitmap)
-  : m_iirender_mgr(iirender_mgr)
+  : m_irender_manager(irender_manager)
   , m_renderer_settings(settings)
   , m_bitmap(bitmap)
   , m_renderer_controller(nullptr)
@@ -64,7 +64,7 @@ void InteractiveSession::render_thread()
     // Create the tile callback.
     InteractiveTileCallback m_tile_callback(
         m_bitmap,
-        m_iirender_mgr,
+        m_irender_manager,
         m_renderer_controller.get());
 
     // Create the master renderer.

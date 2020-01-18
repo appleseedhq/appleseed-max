@@ -67,8 +67,8 @@ class AppleseedInteractiveRender
     void EndSession() override;
     void SetOwnerWnd(HWND owner_wnd) override;
     HWND GetOwnerWnd() const override;
-    void SetIIRenderMgr(IIRenderMgr* iirender_mgr) override;
-    IIRenderMgr* GetIIRenderMgr(IIRenderMgr* iirender_mgr) const override;
+    void SetIIRenderMgr(IIRenderMgr* irender_manager) override;
+    IIRenderMgr* GetIIRenderMgr(IIRenderMgr* irender_manager) const override;
     void SetBitmap(Bitmap* bitmap) override;
     Bitmap* GetBitmap(Bitmap* bitmap) const override;
     void SetSceneINode(INode* scene_inode) override;
@@ -110,7 +110,7 @@ class AppleseedInteractiveRender
     foundation::auto_release_ptr<renderer::Project> m_project;
     Bitmap*                                         m_bitmap;
     std::vector<DefaultLight>                       m_default_lights;
-    IIRenderMgr*                                    m_iirender_mgr;
+    IIRenderMgr*                                    m_irender_manager;
     HWND                                            m_owner_wnd;
     IRenderProgressCallback*                        m_progress_cb;
     MaxSceneEntities                                m_entities;

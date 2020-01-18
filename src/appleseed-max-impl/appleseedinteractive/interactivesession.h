@@ -55,7 +55,7 @@ class InteractiveSession
 {
   public:
     InteractiveSession(
-        IIRenderMgr*                iirender_mgr,
+        IIRenderMgr*                irender_manager,
         const RendererSettings&     settings,
         Bitmap*                     bitmap);
 
@@ -64,8 +64,8 @@ class InteractiveSession
     void reininitialize_render();
     void end_render();
 
-    void schedule_camera_update(foundation::auto_release_ptr<renderer::Camera>  camera);
-    void schedule_material_update(const IAppleseedMtlMap& material_map);
+    void schedule_camera_update(foundation::auto_release_ptr<renderer::Camera>);
+    void schedule_material_update(const IAppleseedMtlMap&);
     void schedule_remove_object_instance(const std::vector<INode*>&);
     void schedule_add_object_instance(const std::vector<INode*>&);
     void schedule_udpate_object_instance(const std::vector<INode*>&);
@@ -82,7 +82,7 @@ class InteractiveSession
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
-    IIRenderMgr*                                    m_iirender_mgr;
+    IIRenderMgr*                                    m_irender_manager;
     foundation::SearchPaths                         m_search_paths;
 
     void render_thread();
