@@ -30,8 +30,8 @@
 
 // appleseed-max headers.
 #include "appleseedinteractive/interactiverenderercontroller.h"
-#include "appleseedrenderer/renderersettings.h"
 #include "appleseedrenderer/projectbuilder.h"
+#include "appleseedrenderer/renderersettings.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -50,7 +50,6 @@ namespace renderer   { class Project; }
 
 class Bitmap;
 class IIRenderMgr;
-class IAppleseedMtl;
 
 class InteractiveSession
 {
@@ -65,10 +64,8 @@ class InteractiveSession
     void reininitialize_render();
     void end_render();
 
-    void schedule_camera_update(
-        foundation::auto_release_ptr<renderer::Camera>  camera);
-    void schedule_material_update(
-        const IAppleseedMtlMap& material_map);
+    void schedule_camera_update(foundation::auto_release_ptr<renderer::Camera>  camera);
+    void schedule_material_update(const IAppleseedMtlMap& material_map);
     void schedule_remove_object_instance(const std::vector<INode*>&);
     void schedule_add_object_instance(const std::vector<INode*>&);
     void schedule_udpate_object_instance(const std::vector<INode*>&);

@@ -1838,7 +1838,6 @@ asf::auto_release_ptr<asr::Project> build_project(
     return project;
 }
 
-
 void add_object(
     asr::Project&           project,
     asr::Assembly&          assembly,

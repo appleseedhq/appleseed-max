@@ -67,7 +67,6 @@ void UpdateObjectInstanceAction::update()
                 m_session->m_material_map,
                 m_session->m_assembly_map,
                 m_session->m_assembly_inst_map);
-            
             continue;
         }
         

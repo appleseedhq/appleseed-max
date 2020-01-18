@@ -48,12 +48,12 @@
 #include <vector>
 
 // Forward declarations.
-namespace renderer { class Camera; }
-namespace renderer { class ParamArray; }
-namespace renderer { class ObjectInstance; }
-namespace renderer { class Entity; }
-namespace renderer { class Project; }
 namespace renderer { class Assembly; }
+namespace renderer { class Camera; }
+namespace renderer { class Entity; }
+namespace renderer { class ObjectInstance; }
+namespace renderer { class ParamArray; }
+namespace renderer { class Project; }
 class Bitmap;
 class IAppleseedMtl;
 class FrameRendParams;

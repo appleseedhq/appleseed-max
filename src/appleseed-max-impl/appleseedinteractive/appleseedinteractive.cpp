@@ -233,13 +233,12 @@ namespace
 
                 if (os.obj && os.obj->SuperClassID() == LIGHT_CLASS_ID)
                 {
-                    //TODO: update lights here
+                    // TODO: update lights here
                 }
             }
 
             m_renderer->update_object_instance(updated_nodes);
             m_renderer->get_render_session()->reininitialize_render();
-
         }
         
         void MaterialStructured(NodeKeyTab& nodes)
