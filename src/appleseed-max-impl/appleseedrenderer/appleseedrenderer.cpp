@@ -2191,9 +2191,9 @@ int AppleseedRenderer::Render(
 
     MaterialMap material_map;
     ObjectMap object_map;
-    InstanceMap object_inst_map;
+    ObjInstanceMap object_inst_map;
     AssemblyMap assembly_map;
-    InstanceMap assembly_inst_map;
+    AssemblyInstanceMap assembly_inst_map;
     asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,

@@ -52,6 +52,7 @@ namespace renderer { class Assembly; }
 namespace renderer { class Camera; }
 namespace renderer { class Entity; }
 namespace renderer { class ObjectInstance; }
+namespace renderer { class AssemblyInstance; }
 namespace renderer { class ParamArray; }
 namespace renderer { class Project; }
 class Bitmap;
@@ -75,7 +76,8 @@ struct ObjectInfo
 };
 
 typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
-typedef std::map<std::string, renderer::Entity*> InstanceMap;
+typedef std::map<std::string, renderer::ObjectInstance*> ObjInstanceMap;
+typedef std::map<std::string, renderer::AssemblyInstance*> AssemblyInstanceMap;
 typedef std::map<Mtl*, std::string> MaterialMap;
 typedef std::map<IAppleseedMtl*, std::string> IAppleseedMtlMap;
 typedef std::map<Object*, std::string> AssemblyMap;
@@ -93,10 +95,10 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const TimeValue                     time,
     RendProgressCallback*               progress_cb,
     ObjectMap&                          object_map,
-    InstanceMap&                        object_inst_map,
+    ObjInstanceMap&                     object_inst_map,
     MaterialMap&                        material_map,
     AssemblyMap&                        assembly_map,
-    InstanceMap&                        assembly_inst_map);
+    AssemblyInstanceMap&                assembly_inst_map);
 
 foundation::auto_release_ptr<renderer::Camera> build_camera(
     INode*                              view_node,
@@ -113,7 +115,7 @@ void add_object(
     const RendererSettings&             settings,
     const TimeValue                     time,
     ObjectMap&                          object_map,
-    InstanceMap&                        instance_map,
+    ObjInstanceMap&                     instance_map,
     MaterialMap&                        material_map,
     AssemblyMap&                        assembly_map,
-    InstanceMap&                        assembly_inst_map);
+    AssemblyInstanceMap&                assembly_inst_map);

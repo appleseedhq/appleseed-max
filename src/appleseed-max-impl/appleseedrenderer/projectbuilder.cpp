@@ -693,7 +693,7 @@ namespace
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
-        InstanceMap&            instance_map,
+        ObjInstanceMap&         obj_instance_map,
         MaterialMap&            material_map)
     {
         // Compute a unique name for this instance.
@@ -823,7 +823,7 @@ namespace
                 front_material_mappings,
                 back_material_mappings));
 
-        instance_map[wide_to_utf8(instance_node->GetName())] = static_cast<asr::Entity*>(assembly.object_instances().get_by_index(instance_index));
+        obj_instance_map[wide_to_utf8(instance_node->GetName())] = assembly.object_instances().get_by_index(instance_index);
     }
 
     void add_objects(
@@ -834,10 +834,10 @@ namespace
         const RendererSettings& settings,
         const TimeValue         time,
         ObjectMap&              object_map,
-        InstanceMap&            object_inst_map,
+        ObjInstanceMap&         object_inst_map,
         MaterialMap&            material_map,
         AssemblyMap&            assembly_map,
-        InstanceMap&            assembly_inst_map,
+        AssemblyInstanceMap&    assembly_inst_map,
         RendProgressCallback*   progress_cb)
     {
         for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
@@ -1165,10 +1165,10 @@ namespace
         const TimeValue                     time,
         RendProgressCallback*               progress_cb,
         ObjectMap&                          object_map,
-        InstanceMap&                        object_inst_map,
+        ObjInstanceMap&                     object_inst_map,
         MaterialMap&                        material_map,
         AssemblyMap&                        assembly_map,
-        InstanceMap&                        assembly_inst_map)
+        AssemblyInstanceMap&                assembly_inst_map)
     {
         // Add objects, object instances and materials to the assembly.
         add_objects(
@@ -1743,10 +1743,10 @@ asf::auto_release_ptr<asr::Project> build_project(
     const TimeValue                         time,
     RendProgressCallback*                   progress_cb,
     ObjectMap&                              object_map,
-    InstanceMap&                            object_inst_map,
+    ObjInstanceMap&                         object_inst_map,
     MaterialMap&                            material_map,
     AssemblyMap&                            assembly_map,
-    InstanceMap&                            assembly_inst_map)
+    AssemblyInstanceMap&                    assembly_inst_map)
 {
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
@@ -1846,10 +1846,10 @@ void add_object(
     const RendererSettings& settings,
     const TimeValue         time,
     ObjectMap&              object_map,
-    InstanceMap&            object_inst_map,
+    ObjInstanceMap&         object_inst_map,
     MaterialMap&            material_map,
     AssemblyMap&            assembly_map,
-    InstanceMap&            assembly_inst_map)
+    AssemblyInstanceMap&    assembly_inst_map)
 {
     // Retrieve the geometrical object referenced by this node.
     Object* object = node->GetObjectRef();
@@ -1872,7 +1872,7 @@ void add_object(
                 asr::AssemblyFactory().create(assembly_name.c_str()));
 
             // Add objects and object instances to that assembly.
-            InstanceMap fake_instance_map;
+            ObjInstanceMap fake_instance_map;
             auto object_infos = create_objects(project, object_assembly.ref(), node, time);
             for (auto& object_info : object_infos)
             {
@@ -1920,7 +1920,7 @@ void add_object(
 
         // Insert the assembly instance into the parent assembly.
         assembly.assembly_instances().insert(object_assembly_instance);
-        assembly_inst_map[wide_to_utf8(node->GetName())] = static_cast<asr::Entity*>(assembly.assembly_instances().get_by_name(object_assembly_instance_name.c_str()));
+        assembly_inst_map[wide_to_utf8(node->GetName())] = assembly.assembly_instances().get_by_name(object_assembly_instance_name.c_str());
     }
     else
     {

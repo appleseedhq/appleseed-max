@@ -72,11 +72,11 @@ class InteractiveSession
 
     renderer::Project*                              m_project;
     ObjectMap                                       m_object_map;
-    InstanceMap                                     m_object_inst_map;
+    ObjInstanceMap                                  m_object_inst_map;
     MaterialMap                                     m_material_map;
     RendererSettings                                m_renderer_settings;
     AssemblyMap                                     m_assembly_map;
-    InstanceMap                                     m_assembly_inst_map;
+    AssemblyInstanceMap                             m_assembly_inst_map;
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;

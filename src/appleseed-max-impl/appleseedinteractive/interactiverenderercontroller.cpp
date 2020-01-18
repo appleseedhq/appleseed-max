@@ -79,7 +79,7 @@ void UpdateObjectInstanceAction::update()
         if (m_session->m_object_inst_map.count(wide_to_utf8(node->GetName())) > 0)
         {
             m_session->m_object_map.erase(node->GetObjectRef());
-            asr::ObjectInstance* object_instance = static_cast<asr::ObjectInstance*>(m_session->m_object_inst_map[wide_to_utf8(node->GetName())]);
+            asr::ObjectInstance* object_instance = m_session->m_object_inst_map[wide_to_utf8(node->GetName())];
             assembly->object_instances().remove(object_instance);
 
             add_object(
@@ -100,7 +100,7 @@ void UpdateObjectInstanceAction::update()
         if (m_session->m_assembly_inst_map.count(wide_to_utf8(node->GetName())) > 0)
         {
             m_session->m_assembly_map.erase(node->GetObjectRef());
-            asr::AssemblyInstance* assembly_instance = static_cast<asr::AssemblyInstance*>(m_session->m_assembly_inst_map[wide_to_utf8(node->GetName())]);
+            asr::AssemblyInstance* assembly_instance = m_session->m_assembly_inst_map[wide_to_utf8(node->GetName())];
             assembly->assembly_instances().remove(assembly_instance);
 
             add_object(
@@ -131,7 +131,7 @@ void RemoveObjectInstanceAction::update()
         if (m_session->m_object_inst_map.count(wide_to_utf8(node->GetName())) > 0)
         {
             m_session->m_object_map.erase(node->GetObjectRef());
-            asr::ObjectInstance* object_instance = static_cast<asr::ObjectInstance*>(m_session->m_object_inst_map[wide_to_utf8(node->GetName())]);
+            asr::ObjectInstance* object_instance = m_session->m_object_inst_map[wide_to_utf8(node->GetName())];
             assembly->object_instances().remove(object_instance);
 
             continue;
@@ -140,7 +140,7 @@ void RemoveObjectInstanceAction::update()
         if (m_session->m_assembly_inst_map.count(wide_to_utf8(node->GetName())) > 0)
         {
             m_session->m_assembly_map.erase(node->GetObjectRef());
-            asr::AssemblyInstance* assembly_instance = static_cast<asr::AssemblyInstance*>(m_session->m_assembly_inst_map[wide_to_utf8(node->GetName())]);
+            asr::AssemblyInstance* assembly_instance = m_session->m_assembly_inst_map[wide_to_utf8(node->GetName())];
             assembly->assembly_instances().remove(assembly_instance);
         }
     }
