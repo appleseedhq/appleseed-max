@@ -64,15 +64,15 @@ class InteractiveSession
     void reininitialize_render();
     void end_render();
 
-    void schedule_camera_update(foundation::auto_release_ptr<renderer::Camera>);
-    void schedule_material_update(const IAppleseedMtlMap&);
+    void schedule_camera_update(foundation::auto_release_ptr<renderer::Camera> camera);
+    void schedule_material_update(const IAppleseedMtlMap& material_map);
     void schedule_remove_object_instance(const std::vector<INode*>&);
     void schedule_add_object_instance(const std::vector<INode*>&);
     void schedule_udpate_object_instance(const std::vector<INode*>&);
 
     renderer::Project*                              m_project;
     ObjectMap                                       m_object_map;
-    ObjInstanceMap                                  m_object_inst_map;
+    ObjectInstanceMap                               m_object_inst_map;
     MaterialMap                                     m_material_map;
     RendererSettings                                m_renderer_settings;
     AssemblyMap                                     m_assembly_map;

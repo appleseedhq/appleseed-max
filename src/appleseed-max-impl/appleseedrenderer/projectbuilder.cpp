@@ -693,7 +693,7 @@ namespace
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
-        ObjInstanceMap&         obj_instance_map,
+        ObjectInstanceMap&      obj_instance_map,
         MaterialMap&            material_map)
     {
         // Compute a unique name for this instance.
@@ -834,7 +834,7 @@ namespace
         const RendererSettings& settings,
         const TimeValue         time,
         ObjectMap&              object_map,
-        ObjInstanceMap&         object_inst_map,
+        ObjectInstanceMap&      object_inst_map,
         MaterialMap&            material_map,
         AssemblyMap&            assembly_map,
         AssemblyInstanceMap&    assembly_inst_map,
@@ -1165,7 +1165,7 @@ namespace
         const TimeValue                     time,
         RendProgressCallback*               progress_cb,
         ObjectMap&                          object_map,
-        ObjInstanceMap&                     object_inst_map,
+        ObjectInstanceMap&                  object_inst_map,
         MaterialMap&                        material_map,
         AssemblyMap&                        assembly_map,
         AssemblyInstanceMap&                assembly_inst_map)
@@ -1743,7 +1743,7 @@ asf::auto_release_ptr<asr::Project> build_project(
     const TimeValue                         time,
     RendProgressCallback*                   progress_cb,
     ObjectMap&                              object_map,
-    ObjInstanceMap&                         object_inst_map,
+    ObjectInstanceMap&                      object_inst_map,
     MaterialMap&                            material_map,
     AssemblyMap&                            assembly_map,
     AssemblyInstanceMap&                    assembly_inst_map)
@@ -1846,7 +1846,7 @@ void add_object(
     const RendererSettings& settings,
     const TimeValue         time,
     ObjectMap&              object_map,
-    ObjInstanceMap&         object_inst_map,
+    ObjectInstanceMap&      object_inst_map,
     MaterialMap&            material_map,
     AssemblyMap&            assembly_map,
     AssemblyInstanceMap&    assembly_inst_map)
@@ -1872,7 +1872,7 @@ void add_object(
                 asr::AssemblyFactory().create(assembly_name.c_str()));
 
             // Add objects and object instances to that assembly.
-            ObjInstanceMap fake_instance_map;
+            ObjectInstanceMap fake_instance_map;
             auto object_infos = create_objects(project, object_assembly.ref(), node, time);
             for (auto& object_info : object_infos)
             {

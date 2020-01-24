@@ -76,7 +76,7 @@ struct ObjectInfo
 };
 
 typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
-typedef std::map<std::string, renderer::ObjectInstance*> ObjInstanceMap;
+typedef std::map<std::string, renderer::ObjectInstance*> ObjectInstanceMap;
 typedef std::map<std::string, renderer::AssemblyInstance*> AssemblyInstanceMap;
 typedef std::map<Mtl*, std::string> MaterialMap;
 typedef std::map<IAppleseedMtl*, std::string> IAppleseedMtlMap;
@@ -95,7 +95,7 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const TimeValue                     time,
     RendProgressCallback*               progress_cb,
     ObjectMap&                          object_map,
-    ObjInstanceMap&                     object_inst_map,
+    ObjectInstanceMap&                  object_inst_map,
     MaterialMap&                        material_map,
     AssemblyMap&                        assembly_map,
     AssemblyInstanceMap&                assembly_inst_map);
@@ -115,7 +115,7 @@ void add_object(
     const RendererSettings&             settings,
     const TimeValue                     time,
     ObjectMap&                          object_map,
-    ObjInstanceMap&                     instance_map,
+    ObjectInstanceMap&                  instance_map,
     MaterialMap&                        material_map,
     AssemblyMap&                        assembly_map,
     AssemblyInstanceMap&                assembly_inst_map);
