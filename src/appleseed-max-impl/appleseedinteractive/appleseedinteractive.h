@@ -30,6 +30,7 @@
 
 // appleseed-max headers.
 #include "appleseedrenderer/maxsceneentities.h"
+#include "appleseedrenderer/projectbuilder.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -66,8 +67,8 @@ class AppleseedInteractiveRender
     void EndSession() override;
     void SetOwnerWnd(HWND owner_wnd) override;
     HWND GetOwnerWnd() const override;
-    void SetIIRenderMgr(IIRenderMgr* iirender_mgr) override;
-    IIRenderMgr* GetIIRenderMgr(IIRenderMgr* iirender_mgr) const override;
+    void SetIIRenderMgr(IIRenderMgr* irender_manager) override;
+    IIRenderMgr* GetIIRenderMgr(IIRenderMgr* irender_manager) const override;
     void SetBitmap(Bitmap* bitmap) override;
     Bitmap* GetBitmap(Bitmap* bitmap) const override;
     void SetSceneINode(INode* scene_inode) override;
@@ -95,6 +96,10 @@ class AppleseedInteractiveRender
     void AbortRender() override;
 
     void update_camera_object(INode* camera);
+    void add_object_instance(const std::vector<INode*>&);
+    void remove_object_instance(const std::vector<INode*>&);
+    void update_object_instance(const std::vector<INode*>&);
+    void update_material(const std::vector<INode*>& nodes);
     void update_render_view();
     InteractiveSession* get_render_session();
 
@@ -105,7 +110,7 @@ class AppleseedInteractiveRender
     foundation::auto_release_ptr<renderer::Project> m_project;
     Bitmap*                                         m_bitmap;
     std::vector<DefaultLight>                       m_default_lights;
-    IIRenderMgr*                                    m_iirender_mgr;
+    IIRenderMgr*                                    m_irender_manager;
     HWND                                            m_owner_wnd;
     IRenderProgressCallback*                        m_progress_cb;
     MaxSceneEntities                                m_entities;

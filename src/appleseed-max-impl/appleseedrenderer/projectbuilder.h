@@ -31,6 +31,9 @@
 // Build options header.
 #include "foundation/core/buildoptions.h"
 
+// appleseed-max headers.
+#include "appleseedrenderer/renderersettings.h"
+
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 
@@ -41,18 +44,43 @@
 #include "appleseed-max-common/_endmaxheaders.h"
 
 // Standard headers.
+#include <map>
 #include <vector>
 
 // Forward declarations.
+namespace renderer { class Assembly; }
 namespace renderer { class Camera; }
+namespace renderer { class Entity; }
+namespace renderer { class ObjectInstance; }
+namespace renderer { class AssemblyInstance; }
 namespace renderer { class ParamArray; }
 namespace renderer { class Project; }
 class Bitmap;
+class IAppleseedMtl;
 class FrameRendParams;
 class MaxSceneEntities;
-class RendererSettings;
 class RendParams;
 class ViewParams;
+
+enum class RenderType
+{
+    Default,
+    MaterialPreview
+};
+
+struct ObjectInfo
+{
+    std::string                                 m_name;                 // name of the appleseed object
+    std::map<MtlID, std::string>                m_mtlid_to_slot_name;   // map a Max's material ID to appleseed's material slot name
+    std::map<MtlID, std::uint32_t>              m_mtlid_to_slot_index;  // map a Max's material ID to appleseed's material slot index
+};
+
+typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
+typedef std::map<std::string, renderer::ObjectInstance*> ObjectInstanceMap;
+typedef std::map<std::string, renderer::AssemblyInstance*> AssemblyInstanceMap;
+typedef std::map<Mtl*, std::string> MaterialMap;
+typedef std::map<IAppleseedMtl*, std::string> IAppleseedMtlMap;
+typedef std::map<Object*, std::string> AssemblyMap;
 
 // Build an appleseed project from the current 3ds Max scene.
 foundation::auto_release_ptr<renderer::Project> build_project(
@@ -65,7 +93,12 @@ foundation::auto_release_ptr<renderer::Project> build_project(
     const RendererSettings&             settings,
     Bitmap*                             bitmap,
     const TimeValue                     time,
-    RendProgressCallback*               progress_cb);
+    RendProgressCallback*               progress_cb,
+    ObjectMap&                          object_map,
+    ObjectInstanceMap&                  object_inst_map,
+    MaterialMap&                        material_map,
+    AssemblyMap&                        assembly_map,
+    AssemblyInstanceMap&                assembly_inst_map);
 
 foundation::auto_release_ptr<renderer::Camera> build_camera(
     INode*                              view_node,
@@ -73,3 +106,16 @@ foundation::auto_release_ptr<renderer::Camera> build_camera(
     Bitmap*                             bitmap,
     const RendererSettings&             settings,
     const TimeValue                     time);
+
+void add_object(
+    renderer::Project&                  project,
+    renderer::Assembly&                 assembly,
+    INode*                              node,
+    const RenderType                    type,
+    const RendererSettings&             settings,
+    const TimeValue                     time,
+    ObjectMap&                          object_map,
+    ObjectInstanceMap&                  instance_map,
+    MaterialMap&                        material_map,
+    AssemblyMap&                        assembly_map,
+    AssemblyInstanceMap&                assembly_inst_map);

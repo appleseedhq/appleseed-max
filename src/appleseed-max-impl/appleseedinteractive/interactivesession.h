@@ -30,6 +30,7 @@
 
 // appleseed-max headers.
 #include "appleseedinteractive/interactiverenderercontroller.h"
+#include "appleseedrenderer/projectbuilder.h"
 #include "appleseedrenderer/renderersettings.h"
 
 // Build options header.
@@ -54,8 +55,7 @@ class InteractiveSession
 {
   public:
     InteractiveSession(
-        IIRenderMgr*                iirender_mgr,
-        renderer::Project*          project,
+        IIRenderMgr*                irender_manager,
         const RendererSettings&     settings,
         Bitmap*                     bitmap);
 
@@ -64,17 +64,26 @@ class InteractiveSession
     void reininitialize_render();
     void end_render();
 
-    void schedule_camera_update(
-        foundation::auto_release_ptr<renderer::Camera>  camera);
+    void schedule_camera_update(foundation::auto_release_ptr<renderer::Camera> camera);
+    void schedule_material_update(const IAppleseedMtlMap& material_map);
+    void schedule_remove_object_instance(const std::vector<INode*>&);
+    void schedule_add_object_instance(const std::vector<INode*>&);
+    void schedule_udpate_object_instance(const std::vector<INode*>&);
+
+    renderer::Project*                              m_project;
+    ObjectMap                                       m_object_map;
+    ObjectInstanceMap                               m_object_inst_map;
+    MaterialMap                                     m_material_map;
+    RendererSettings                                m_renderer_settings;
+    AssemblyMap                                     m_assembly_map;
+    AssemblyInstanceMap                             m_assembly_inst_map;
 
   private:
     std::unique_ptr<InteractiveRendererController>  m_renderer_controller;
     std::thread                                     m_render_thread;
     Bitmap*                                         m_bitmap;
-    IIRenderMgr*                                    m_iirender_mgr;
-    renderer::Project*                              m_project;
+    IIRenderMgr*                                    m_irender_manager;
     foundation::SearchPaths                         m_search_paths;
-    RendererSettings                                m_renderer_settings;
 
     void render_thread();
 };

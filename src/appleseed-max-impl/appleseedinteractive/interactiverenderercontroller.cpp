@@ -29,6 +29,10 @@
 // Interface header.
 #include "interactiverenderercontroller.h"
 
+// appleseed-max headers.
+#include "appleseedinteractive/interactivesession.h"
+#include "utilities.h"
+
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
 #include <interactiverender.h>
@@ -38,6 +42,134 @@
 #include <utility>
 
 namespace asr = renderer;
+
+void CameraObjectUpdateAction::update()
+{
+    m_project.get_scene()->cameras().clear();
+    m_project.get_scene()->cameras().insert(m_camera);
+}
+
+void MaterialUpdateAction::update()
+{
+    renderer::Assembly* assembly = m_project.get_scene()->assemblies().get_by_name("assembly");
+    DbgAssert(assembly);
+
+    for (const auto& mtl : m_material_map)
+    {
+        renderer::Material* material = assembly->materials().get_by_name(mtl.second.c_str());
+
+        if (material)
+            assembly->materials().remove(material);
+
+        assembly->materials().insert(
+            mtl.first->create_material(
+                *assembly,
+                mtl.second.c_str(),
+                false,
+                GetCOREInterface()->GetTime()));
+    }
+}
+
+void UpdateObjectInstanceAction::update()
+{
+    renderer::Assembly* assembly = m_session->m_project->get_scene()->assemblies().get_by_name("assembly");
+
+    for (INode* node : m_nodes)
+    {
+        if (m_session->m_object_inst_map.count(wide_to_utf8(node->GetName())) > 0)
+        {
+            m_session->m_object_map.erase(node->GetObjectRef());
+            asr::ObjectInstance* object_instance = m_session->m_object_inst_map[wide_to_utf8(node->GetName())];
+            assembly->object_instances().remove(object_instance);
+
+            add_object(
+                *m_session->m_project,
+                *assembly,
+                node,
+                RenderType::Default,
+                m_session->m_renderer_settings,
+                GetCOREInterface()->GetTime(),
+                m_session->m_object_map,
+                m_session->m_object_inst_map,
+                m_session->m_material_map,
+                m_session->m_assembly_map,
+                m_session->m_assembly_inst_map);
+            continue;
+        }
+        
+        if (m_session->m_assembly_inst_map.count(wide_to_utf8(node->GetName())) > 0)
+        {
+            m_session->m_assembly_map.erase(node->GetObjectRef());
+            asr::AssemblyInstance* assembly_instance = m_session->m_assembly_inst_map[wide_to_utf8(node->GetName())];
+            assembly->assembly_instances().remove(assembly_instance);
+
+            add_object(
+                *m_session->m_project,
+                *assembly,
+                node,
+                RenderType::Default,
+                m_session->m_renderer_settings,
+                GetCOREInterface()->GetTime(),
+                m_session->m_object_map,
+                m_session->m_object_inst_map,
+                m_session->m_material_map,
+                m_session->m_assembly_map,
+                m_session->m_assembly_inst_map);
+        }
+    }
+
+    assembly->bump_version_id();
+}
+
+
+void RemoveObjectInstanceAction::update()
+{
+    renderer::Assembly* assembly = m_session->m_project->get_scene()->assemblies().get_by_name("assembly");
+
+    for (INode* node : m_nodes)
+    {
+        if (m_session->m_object_inst_map.count(wide_to_utf8(node->GetName())) > 0)
+        {
+            m_session->m_object_map.erase(node->GetObjectRef());
+            asr::ObjectInstance* object_instance = m_session->m_object_inst_map[wide_to_utf8(node->GetName())];
+            assembly->object_instances().remove(object_instance);
+
+            continue;
+        }
+
+        if (m_session->m_assembly_inst_map.count(wide_to_utf8(node->GetName())) > 0)
+        {
+            m_session->m_assembly_map.erase(node->GetObjectRef());
+            asr::AssemblyInstance* assembly_instance = m_session->m_assembly_inst_map[wide_to_utf8(node->GetName())];
+            assembly->assembly_instances().remove(assembly_instance);
+        }
+    }
+    
+    assembly->bump_version_id();
+}
+
+void AddObjectInstanceAction::update()
+{
+    renderer::Assembly* assembly = m_session->m_project->get_scene()->assemblies().get_by_name("assembly");
+
+    for (INode* node : m_nodes)
+    {
+        add_object(
+            *m_session->m_project,
+            *assembly,
+            node,
+            RenderType::Default,
+            m_session->m_renderer_settings,
+            GetCOREInterface()->GetTime(),
+            m_session->m_object_map,
+            m_session->m_object_inst_map,
+            m_session->m_material_map,
+            m_session->m_assembly_map,
+            m_session->m_assembly_inst_map);
+    }
+
+    assembly->bump_version_id();
+}
 
 InteractiveRendererController::InteractiveRendererController()
   : m_status(ContinueRendering)

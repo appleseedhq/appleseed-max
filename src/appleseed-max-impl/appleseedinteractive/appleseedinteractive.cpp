@@ -33,8 +33,10 @@
 #include "appleseedinteractive/interactivesession.h"
 #include "appleseedinteractive/interactivetilecallback.h"
 #include "appleseedrenderer/appleseedrenderer.h"
-#include "appleseedrenderer/projectbuilder.h"
 #include "utilities.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Boost headers.
 #include "boost/thread/locks.hpp"
@@ -208,18 +210,110 @@ namespace
 
         void ModelOtherEvent(NodeKeyTab& nodes) override
         {
-            if (m_active_camera == nullptr || m_renderer == nullptr)
+            if (m_renderer == nullptr)
                 return;
 
+            std::vector<INode*> updated_nodes;
             for (int i = 0, e = nodes.Count(); i < e; ++i)
             {
-                if (NodeEventNamespace::GetNodeByKey(nodes[i]) == m_active_camera)
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
+                if (os.obj && os.obj->SuperClassID() == CAMERA_CLASS_ID)
                 {
-                    m_renderer->update_camera_object(m_active_camera);
-                    m_renderer->get_render_session()->reininitialize_render();
-                    break;
+                    if (node == m_active_camera)
+                    {
+                        m_renderer->update_camera_object(m_active_camera);
+                    }
+                }
+
+                if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+                {
+                    updated_nodes.push_back(node);
+                }
+
+                if (os.obj && os.obj->SuperClassID() == LIGHT_CLASS_ID)
+                {
+                    // TODO: update lights here
                 }
             }
+
+            m_renderer->update_object_instance(updated_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
+        }
+        
+        void MaterialStructured(NodeKeyTab& nodes)
+        {
+            if (m_renderer == nullptr)
+                return;
+
+            std::vector<INode*> updated_nodes;
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                updated_nodes.push_back(node);
+            }
+
+            m_renderer->update_object_instance(updated_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
+        }
+
+        void MaterialOtherEvent(NodeKeyTab& nodes) override
+        {
+            if (m_renderer == nullptr)
+                return;
+
+            std::vector<INode*> updated_nodes;
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                updated_nodes.push_back(node);
+            }
+
+            m_renderer->update_material(updated_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
+        }
+
+        void ControllerOtherEvent(NodeKeyTab& nodes) override 
+        {
+            std::vector<INode*> transformed_nodes;
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
+                if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+                {
+                    transformed_nodes.push_back(node);
+                }
+            }
+            m_renderer->update_object_instance(transformed_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
+        }
+
+        void Added(NodeKeyTab& nodes) override 
+        {
+            std::vector<INode*> added_nodes;
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                INode* node = NodeEventNamespace::GetNodeByKey(nodes[i]);
+                ObjectState os = node->EvalWorldState(GetCOREInterface()->GetTime());
+                if (os.obj && os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+                {
+                    added_nodes.push_back(node);
+                }
+            }
+            m_renderer->add_object_instance(added_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
+        }
+
+        void Deleted(NodeKeyTab& nodes) override 
+        {
+            std::vector<INode*> removed_nodes;
+            for (int i = 0, e = nodes.Count(); i < e; ++i)
+            {
+                removed_nodes.push_back(NodeEventNamespace::GetNodeByKey(nodes[i]));
+            }
+            m_renderer->remove_object_instance(removed_nodes);
+            m_renderer->get_render_session()->reininitialize_render();
         }
 
       private:
@@ -310,7 +404,7 @@ namespace
 AppleseedInteractiveRender::AppleseedInteractiveRender()
   : m_owner_wnd(nullptr)
   , m_bitmap(nullptr)
-  , m_iirender_mgr(nullptr)
+  , m_irender_manager(nullptr)
   , m_scene_inode(nullptr)
   , m_use_view_inode(false)
   , m_view_inode(nullptr)
@@ -371,11 +465,73 @@ asf::auto_release_ptr<asr::Project> AppleseedInteractiveRender::prepare_project(
             renderer_settings,
             m_bitmap,
             time,
-            m_progress_cb));
+            m_progress_cb,
+            get_render_session()->m_object_map,
+            get_render_session()->m_object_inst_map,
+            get_render_session()->m_material_map,
+            get_render_session()->m_assembly_map,
+            get_render_session()->m_assembly_inst_map));
 
     std::setlocale(LC_ALL, previous_locale.c_str());
 
+    get_render_session()->m_project = project.get();
+
     return project;
+}
+
+void AppleseedInteractiveRender::remove_object_instance(const std::vector<INode*>& nodes)
+{
+    get_render_session()->schedule_remove_object_instance(nodes);
+}
+
+void AppleseedInteractiveRender::add_object_instance(const std::vector<INode*>& nodes)
+{
+    get_render_session()->schedule_add_object_instance(nodes);
+}
+
+void AppleseedInteractiveRender::update_object_instance(const std::vector<INode*>& nodes)
+{
+    get_render_session()->schedule_udpate_object_instance(nodes);
+}
+
+void AppleseedInteractiveRender::update_material(const std::vector<INode*>& nodes)
+{
+    std::vector<Mtl*> materials;
+    for (INode* node : nodes)
+    {
+        Mtl* mtl = node->GetMtl();
+        if (mtl == nullptr)
+            continue;
+
+        const int submtlcount = mtl->NumSubMtls();
+        if (mtl->IsMultiMtl() && submtlcount > 0)
+        {
+            for (int i = 0; i < submtlcount; ++i)
+            {
+                Mtl* submtl = mtl->GetSubMtl(i);
+                materials.push_back(submtl);
+            }
+        }
+        else
+        {
+            materials.push_back(mtl);
+        }
+    }
+
+    IAppleseedMtlMap updated_materials;
+    for (const auto& mtl : materials)
+    {
+        IAppleseedMtl* appleseed_mtl =
+            static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
+        if (appleseed_mtl == nullptr)
+            continue;
+
+        if (get_render_session()->m_material_map.count(mtl) > 0)
+            continue;
+        updated_materials[appleseed_mtl] = get_render_session()->m_material_map[mtl];
+    }
+
+    get_render_session()->schedule_material_update(updated_materials);
 }
 
 void AppleseedInteractiveRender::update_camera_object(INode* camera)
@@ -437,13 +593,12 @@ void AppleseedInteractiveRender::BeginSession()
     RendererSettings renderer_settings = appleseed_renderer->get_renderer_settings();
     renderer_settings.m_output_mode = RendererSettings::OutputMode::RenderOnly;
     
-    m_project = prepare_project(renderer_settings, view_params, active_cam, m_time);
-
     m_render_session.reset(new InteractiveSession(
-        m_iirender_mgr,
-        m_project.get(),
+        m_irender_manager,
         renderer_settings,
         m_bitmap));
+
+    m_project = prepare_project(renderer_settings, view_params, active_cam, m_time);
 
     if (m_progress_cb)
         m_progress_cb->SetTitle(L"Rendering...");
@@ -453,8 +608,7 @@ void AppleseedInteractiveRender::BeginSession()
         g_current_interactive = this;
     }
 
-    if (active_cam != nullptr)
-        m_node_callback.reset(new SceneChangeCallback(this, active_cam));
+    m_node_callback.reset(new SceneChangeCallback(this, active_cam));
     m_view_callback.reset(new ViewportCallback());
 
     m_render_session->start_render();
@@ -484,12 +638,16 @@ void AppleseedInteractiveRender::EndSession()
         m_render_session->end_render();
 
         m_render_session.reset(nullptr);
+
+        const IImageViewer::DisplayStyle display_style = m_irender_manager->GetDisplayStyle();
+        if (display_style == IImageViewer::DisplayStyle::IV_FLOATING)
+        {
+            if (m_progress_cb)
+                m_progress_cb->SetTitle(L"Done.");
+        }
     }
     
     render_end(m_entities.m_objects, m_time);
-
-    if (m_progress_cb)
-        m_progress_cb->SetTitle(L"Done.");
 }
 
 void AppleseedInteractiveRender::SetOwnerWnd(HWND owner_wnd)
@@ -502,14 +660,14 @@ HWND AppleseedInteractiveRender::GetOwnerWnd() const
     return m_owner_wnd;
 }
 
-void AppleseedInteractiveRender::SetIIRenderMgr(IIRenderMgr* iirender_mgr)
+void AppleseedInteractiveRender::SetIIRenderMgr(IIRenderMgr* irender_manager)
 {
-    m_iirender_mgr = iirender_mgr;
+    m_irender_manager = irender_manager;
 }
 
-IIRenderMgr* AppleseedInteractiveRender::GetIIRenderMgr(IIRenderMgr* iirender_mgr) const
+IIRenderMgr* AppleseedInteractiveRender::GetIIRenderMgr(IIRenderMgr* irender_manager) const
 {
-    return m_iirender_mgr;
+    return m_irender_manager;
 }
 
 void AppleseedInteractiveRender::SetBitmap(Bitmap* bitmap)

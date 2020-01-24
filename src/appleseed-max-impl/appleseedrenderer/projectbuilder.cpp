@@ -35,7 +35,6 @@
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
 #include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/maxsceneentities.h"
-#include "appleseedrenderer/renderersettings.h"
 #include "seexprutils.h"
 #include "utilities.h"
 
@@ -98,7 +97,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
-#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -179,13 +177,6 @@ namespace
         {
             return Point2(p.x, p.y);
         }
-    };
-
-    struct ObjectInfo
-    {
-        std::string                     m_name;                 // name of the appleseed object
-        std::map<MtlID, std::string>    m_mtlid_to_slot_name;   // map a Max's material ID to an appleseed's material slot name
-        std::map<MtlID, std::uint32_t>  m_mtlid_to_slot_index;  // map a Max's material ID to an appleseed's material slot index
     };
 
     asf::auto_release_ptr<asr::MeshObject> convert_mesh_object(
@@ -346,8 +337,6 @@ namespace
             object->push_triangle(triangle);
         }
 
-        compute_smooth_vertex_tangents(object.ref());
-
         // todo: optimize the object.
 
         return object;
@@ -458,8 +447,6 @@ namespace
         }
     }
 
-    typedef std::map<Mtl*, std::string> MaterialMap;
-
     struct MaterialInfo
     {
         std::string m_name;     // name of the appleseed material
@@ -467,8 +454,7 @@ namespace
     };
 
     MaterialInfo get_or_create_material(
-        asr::Assembly&          assembly,
-        asr::Assembly*          root_assembly,
+        asr::Assembly&          parent_assembly,
         const std::string&      instance_name,
         Mtl*                    mtl,
         MaterialMap&            material_map,
@@ -476,7 +462,6 @@ namespace
         const TimeValue         time)
     {
         MaterialInfo material_info;
-        asr::Assembly* parent_assembly = root_assembly != nullptr ? root_assembly : &assembly;
 
         auto appleseed_mtl =
             static_cast<IAppleseedMtl*>(mtl->GetInterface(IAppleseedMtl::interface_id()));
@@ -488,15 +473,15 @@ namespace
             {
                 // The appleseed material does not exist yet, let the material plugin create it.
                 material_info.m_name =
-                    make_unique_name(parent_assembly->materials(), wide_to_utf8(mtl->GetName()) + "_mat");
+                    make_unique_name(parent_assembly.materials(), wide_to_utf8(mtl->GetName()) + "_mat");
                 asf::auto_release_ptr<asr::Material> material =
                     appleseed_mtl->create_material(
-                        *parent_assembly,
+                        parent_assembly,
                         material_info.m_name.c_str(),
                         use_max_procedural_maps,
                         time);
                 // todo: handle material creation errors.
-                parent_assembly->materials().insert(material);
+                parent_assembly.materials().insert(material);
                 material_map.insert(std::make_pair(mtl, material_info.m_name));
             }
             else
@@ -509,7 +494,7 @@ namespace
         else
         {
             // It isn't an appleseed material: return an empty material that will appear black.
-            material_info.m_name = insert_empty_material(*parent_assembly, instance_name + "_mat");
+            material_info.m_name = insert_empty_material(parent_assembly, instance_name + "_mat");
             material_info.m_sides = asr::ObjectInstance::FrontSide | asr::ObjectInstance::BackSide;
         }
 
@@ -699,12 +684,6 @@ namespace
         }
     }
 
-    enum class RenderType
-    {
-        Default,
-        MaterialPreview
-    };
-
     void create_object_instance(
         asr::Assembly&          assembly,
         asr::Assembly*          root_assembly,
@@ -714,6 +693,7 @@ namespace
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
+        ObjectInstanceMap&      obj_instance_map,
         MaterialMap&            material_map)
     {
         // Compute a unique name for this instance.
@@ -723,6 +703,8 @@ namespace
         // Material mappings.
         asf::StringDictionary front_material_mappings;
         asf::StringDictionary back_material_mappings;
+
+        asr::Assembly* parent_assembly = root_assembly != nullptr ? root_assembly : &assembly;
 
         // Retrieve or create an appleseed material.
         Mtl* mtl = instance_node->GetMtl();
@@ -749,8 +731,7 @@ namespace
                     {
                         const auto material_info =
                             get_or_create_material(
-                                assembly,
-                                root_assembly,
+                                *parent_assembly,
                                 instance_name,
                                 submtl,
                                 material_map,
@@ -779,8 +760,7 @@ namespace
                 // Create the appleseed material.
                 const auto material_info =
                     get_or_create_material(
-                        assembly,
-                        root_assembly,
+                        *parent_assembly,
                         instance_name,
                         mtl,
                         material_map,
@@ -808,7 +788,7 @@ namespace
             // Create a new default material.
             const std::string material_name =
                 insert_default_material(
-                    assembly,
+                    *parent_assembly,
                     instance_name + "_mat",
                     to_color3f(Color(instance_node->GetWireColor())));
 
@@ -834,7 +814,7 @@ namespace
             params.insert_path("visibility.shadow", false);
 
         // Create the instance and insert it into the assembly.
-        assembly.object_instances().insert(
+        const size_t instance_index = assembly.object_instances().insert(
             asr::ObjectInstanceFactory::create(
                 instance_name.c_str(),
                 params,
@@ -842,130 +822,22 @@ namespace
                 transform,
                 front_material_mappings,
                 back_material_mappings));
-    }
 
-    typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;
-    typedef std::map<Object*, std::string> AssemblyMap;
-
-    void add_object(
-        asr::Project&           project,
-        asr::Assembly&          assembly,
-        INode*                  node,
-        INode*                  view_node,
-        const RenderType        type,
-        const RendererSettings& settings,
-        const TimeValue         time,
-        ObjectMap&              object_map,
-        MaterialMap&            material_map,
-        AssemblyMap&            assembly_map)
-    {
-        // Retrieve the geometrical object referenced by this node.
-        Object* object = node->GetObjectRef();
-
-        // Compute the transform of this instance.
-        const asf::Transformd transform =
-            asf::Transformd::from_local_to_parent(
-                to_matrix4d(node->GetObjTMAfterWSM(time)));
-
-        if (is_motion_blur_enabled(node, time) || should_optimize_for_instancing(object, time))
-        {
-            // Look for an existing assembly for that object, or create one if none could be found.
-            std::string assembly_name;
-            const AssemblyMap::const_iterator it = assembly_map.find(object);
-            if (it == assembly_map.end())
-            {
-                // Create an assembly for that object.
-                assembly_name = make_unique_name(assembly.assemblies(), wide_to_utf8(node->GetName()) + "_assembly");
-                asf::auto_release_ptr<asr::Assembly> object_assembly(
-                    asr::AssemblyFactory().create(assembly_name.c_str()));
-
-                // Add objects and object instances to that assembly.
-                const auto object_infos = create_objects(project, object_assembly.ref(), node, time);
-                for (const auto& object_info : object_infos)
-                {
-                    create_object_instance(
-                        object_assembly.ref(),
-                        &assembly,
-                        node,
-                        asf::Transformd::identity(),
-                        object_info,
-                        type,
-                        settings,
-                        time,
-                        material_map);
-                }
-
-                // Remember the name of the assembly corresponding to that object.
-                assembly_map.insert(std::make_pair(object, assembly_name));
-                    
-                // Insert the assembly into the scene.
-                assembly.assemblies().insert(object_assembly);
-            }
-            else
-            {
-                assembly_name = it->second;
-            }
-
-            // Create an instance of the assembly corresponding to that object.
-            const std::string object_assembly_instance_name =
-                make_unique_name(assembly.assembly_instances(), assembly_name + "_instance");
-            asf::auto_release_ptr<asr::AssemblyInstance> object_assembly_instance(
-                asr::AssemblyInstanceFactory::create(
-                    object_assembly_instance_name.c_str(),
-                    asr::ParamArray(),
-                    assembly_name.c_str()));
-            object_assembly_instance->transform_sequence().set_transform(0.0, transform);
-
-            // Apply transformation motion blur if enabled on that object.
-            if (is_motion_blur_enabled(node, time))
-            {
-                object_assembly_instance->transform_sequence()
-                    .set_transform(1.0, asf::Transformd::from_local_to_parent(
-                        to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame()))));
-            }
-
-            // Insert the assembly instance into the parent assembly.
-            assembly.assembly_instances().insert(object_assembly_instance);
-        }
-        else
-        {
-            // Check if we already generated the corresponding appleseed objects.
-            ObjectMap::const_iterator it = object_map.find(object);
-            if (it == object_map.end())
-            {
-                // Create appleseed objects.
-                const auto object_infos = create_objects(project, assembly, node, time);
-                it = object_map.insert(std::make_pair(object, object_infos)).first;
-            }
-
-            // Create object instances.
-            for (const auto& object_info : it->second)
-            {
-                create_object_instance(
-                    assembly,
-                    nullptr,
-                    node,
-                    transform,
-                    object_info,
-                    type,
-                    settings,
-                    time,
-                    material_map);
-            }
-        }
+        obj_instance_map[wide_to_utf8(instance_node->GetName())] = assembly.object_instances().get_by_index(instance_index);
     }
 
     void add_objects(
         asr::Project&           project,
         asr::Assembly&          assembly,
-        INode*                  view_node,
         const MaxSceneEntities& entities,
         const RenderType        type,
         const RendererSettings& settings,
         const TimeValue         time,
         ObjectMap&              object_map,
+        ObjectInstanceMap&      object_inst_map,
         MaterialMap&            material_map,
         AssemblyMap&            assembly_map,
+        AssemblyInstanceMap&    assembly_inst_map,
         RendProgressCallback*   progress_cb)
     {
         for (size_t i = 0, e = entities.m_objects.size(); i < e; ++i)
@@ -975,13 +847,14 @@ namespace
                 project,
                 assembly,
                 object,
-                view_node,
                 type,
                 settings,
                 time,
                 object_map,
+                object_inst_map,
                 material_map,
-                assembly_map);
+                assembly_map,
+                assembly_inst_map);
 
             const int done = static_cast<int>(i);
             const int total = static_cast<int>(e);
@@ -1290,23 +1163,26 @@ namespace
         const RenderType                    type,
         const RendererSettings&             settings,
         const TimeValue                     time,
-        RendProgressCallback*               progress_cb)
+        RendProgressCallback*               progress_cb,
+        ObjectMap&                          object_map,
+        ObjectInstanceMap&                  object_inst_map,
+        MaterialMap&                        material_map,
+        AssemblyMap&                        assembly_map,
+        AssemblyInstanceMap&                assembly_inst_map)
     {
         // Add objects, object instances and materials to the assembly.
-        ObjectMap object_map;
-        MaterialMap material_map;
-        AssemblyMap assembly_map;
         add_objects(
             project,
             assembly,
-            view_node,
             entities,
             type,
             settings,
             time,
             object_map,
+            object_inst_map,
             material_map,
             assembly_map,
+            assembly_inst_map,
             progress_cb);
 
         // Only add non-physical lights. Light-emitting materials were added by material plugins.
@@ -1865,11 +1741,19 @@ asf::auto_release_ptr<asr::Project> build_project(
     const RendererSettings&                 settings,
     Bitmap*                                 bitmap,
     const TimeValue                         time,
-    RendProgressCallback*                   progress_cb)
+    RendProgressCallback*                   progress_cb,
+    ObjectMap&                              object_map,
+    ObjectInstanceMap&                      object_inst_map,
+    MaterialMap&                            material_map,
+    AssemblyMap&                            assembly_map,
+    AssemblyInstanceMap&                    assembly_inst_map)
 {
     // Create an empty project.
     asf::auto_release_ptr<asr::Project> project(
         asr::ProjectFactory::create("project"));
+
+    object_map.clear();
+    material_map.clear();
 
     // Initialize search paths.
     project->search_paths().set_root_path(get_root_path());
@@ -1912,7 +1796,12 @@ asf::auto_release_ptr<asr::Project> build_project(
         type,
         settings,
         time,
-        progress_cb);
+        progress_cb,
+        object_map,
+        object_inst_map,
+        material_map,
+        assembly_map,
+        assembly_inst_map);
 
     // Create an instance of the assembly and insert it into the scene.
     asf::auto_release_ptr<asr::AssemblyInstance> assembly_instance(
@@ -1947,4 +1836,117 @@ asf::auto_release_ptr<asr::Project> build_project(
     settings.apply(project.ref());
 
     return project;
+}
+
+void add_object(
+    asr::Project&           project,
+    asr::Assembly&          assembly,
+    INode*                  node,
+    const RenderType        type,
+    const RendererSettings& settings,
+    const TimeValue         time,
+    ObjectMap&              object_map,
+    ObjectInstanceMap&      object_inst_map,
+    MaterialMap&            material_map,
+    AssemblyMap&            assembly_map,
+    AssemblyInstanceMap&    assembly_inst_map)
+{
+    // Retrieve the geometrical object referenced by this node.
+    Object* object = node->GetObjectRef();
+
+    // Compute the transform of this instance.
+    const asf::Transformd transform =
+        asf::Transformd::from_local_to_parent(
+            to_matrix4d(node->GetObjTMAfterWSM(time)));
+
+    if (is_motion_blur_enabled(node, time) || should_optimize_for_instancing(object, time))
+    {
+        // Look for an existing assembly for that object, or create one if none could be found.
+        std::string assembly_name;
+        const AssemblyMap::const_iterator it = assembly_map.find(object);
+        if (it == assembly_map.end())
+        {
+            // Create an assembly for that object.
+            assembly_name = make_unique_name(assembly.assemblies(), wide_to_utf8(node->GetName()) + "_assembly");
+            asf::auto_release_ptr<asr::Assembly> object_assembly(
+                asr::AssemblyFactory().create(assembly_name.c_str()));
+
+            // Add objects and object instances to that assembly.
+            ObjectInstanceMap fake_instance_map;
+            auto object_infos = create_objects(project, object_assembly.ref(), node, time);
+            for (auto& object_info : object_infos)
+            {
+                create_object_instance(
+                    object_assembly.ref(),
+                    &assembly,
+                    node,
+                    asf::Transformd::identity(),
+                    object_info,
+                    type,
+                    settings,
+                    time,
+                    fake_instance_map,
+                    material_map);
+            }
+
+            // Remember the name of the assembly corresponding to that object.
+            assembly_map.insert(std::make_pair(object, assembly_name));
+
+            // Insert the assembly into the scene.
+            assembly.assemblies().insert(object_assembly);
+        }
+        else
+        {
+            assembly_name = it->second;
+        }
+
+        // Create an instance of the assembly corresponding to that object.
+        const std::string object_assembly_instance_name =
+            make_unique_name(assembly.assembly_instances(), assembly_name + "_instance");
+        asf::auto_release_ptr<asr::AssemblyInstance> object_assembly_instance(
+            asr::AssemblyInstanceFactory::create(
+                object_assembly_instance_name.c_str(),
+                asr::ParamArray(),
+                assembly_name.c_str()));
+        object_assembly_instance->transform_sequence().set_transform(0.0, transform);
+
+        // Apply transformation motion blur if enabled on that object.
+        if (is_motion_blur_enabled(node, time))
+        {
+            object_assembly_instance->transform_sequence()
+                .set_transform(1.0, asf::Transformd::from_local_to_parent(
+                    to_matrix4d(node->GetObjTMAfterWSM(time + GetTicksPerFrame()))));
+        }
+
+        // Insert the assembly instance into the parent assembly.
+        assembly.assembly_instances().insert(object_assembly_instance);
+        assembly_inst_map[wide_to_utf8(node->GetName())] = assembly.assembly_instances().get_by_name(object_assembly_instance_name.c_str());
+    }
+    else
+    {
+        // Check if we already generated the corresponding appleseed objects.
+        ObjectMap::iterator it = object_map.find(object);
+        if (it == object_map.end())
+        {
+            // Create appleseed objects.
+            std::vector<ObjectInfo> object_infos = create_objects(project, assembly, node, time);
+            it = object_map.insert(std::make_pair(object, object_infos)).first;
+        }
+
+        // Create object instances.
+        for (auto& object_info : it->second)
+        {
+            create_object_instance(
+                assembly,
+                nullptr,
+                node,
+                transform,
+                object_info,
+                type,
+                settings,
+                time,
+                object_inst_map,
+                material_map);
+        }
+    }
 }

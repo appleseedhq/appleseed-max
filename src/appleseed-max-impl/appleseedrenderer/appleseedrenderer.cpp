@@ -2188,6 +2188,12 @@ int AppleseedRenderer::Render(
     // Build the project.
     if (progress_cb)
         progress_cb->SetTitle(L"Building Project...");
+
+    MaterialMap material_map;
+    ObjectMap object_map;
+    ObjectInstanceMap object_inst_map;
+    AssemblyMap assembly_map;
+    AssemblyInstanceMap assembly_inst_map;
     asf::auto_release_ptr<asr::Project> project(
         build_project(
             m_entities,
@@ -2199,7 +2205,12 @@ int AppleseedRenderer::Render(
             renderer_settings,
             bitmap,
             time,
-            progress_cb));
+            progress_cb,
+            object_map,
+            object_inst_map,
+            material_map,
+            assembly_map,
+            assembly_inst_map));
 
     if (m_rend_params.inMtlEdit)
     {

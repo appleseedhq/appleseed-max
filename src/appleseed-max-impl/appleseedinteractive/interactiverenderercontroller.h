@@ -29,7 +29,10 @@
 #pragma once
 
 // appleseed-max headers.
-#include "appleseedinteractive/appleseedinteractive.h"
+#include "appleseedrenderer/projectbuilder.h"
+
+// appleseed-max-common headers.
+#include "appleseed-max-common/iappleseedmtl.h"
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -47,8 +50,8 @@
 #include <vector>
 
 // Forward declarations.
+class InteractiveSession;
 namespace renderer { class Camera; }
-namespace renderer { class Project; }
 
 class ScheduledAction
 {
@@ -69,15 +72,87 @@ class CameraObjectUpdateAction
     {
     }
 
-    void update() override
-    {
-        m_project.get_scene()->cameras().clear();
-        m_project.get_scene()->cameras().insert(m_camera);
-    }
+    void update() override;
 
   public:
     foundation::auto_release_ptr<renderer::Camera>    m_camera;
     renderer::Project&                                m_project;
+};
+
+class MaterialUpdateAction
+  : public ScheduledAction
+{
+  public:
+    MaterialUpdateAction(
+        renderer::Project&      project,
+        const IAppleseedMtlMap& material_map)
+      : m_material_map(material_map)
+      , m_project(project)
+    {
+    }
+
+    void update() override;
+
+  private:
+    IAppleseedMtlMap        m_material_map;
+    renderer::Project&      m_project;
+};
+
+class RemoveObjectInstanceAction
+  : public ScheduledAction
+{
+  public:
+      RemoveObjectInstanceAction(
+          const std::vector<INode*>&    nodes,
+          InteractiveSession*           session)
+      : m_nodes(nodes)
+      , m_session(session)
+    {
+    }
+
+    void update() override;
+
+  private:
+    std::vector<INode*>     m_nodes;
+    InteractiveSession*     m_session;
+};
+
+class AddObjectInstanceAction
+  : public ScheduledAction
+{
+  public:
+      AddObjectInstanceAction(
+          const std::vector<INode*>&    nodes,
+          InteractiveSession*           session)
+      : m_nodes(nodes)
+      , m_session(session)
+    {
+    }
+
+    void update() override;
+
+  private:
+    std::vector<INode*>     m_nodes;
+    InteractiveSession*     m_session;
+};
+
+class UpdateObjectInstanceAction
+  : public ScheduledAction
+{
+  public:
+      UpdateObjectInstanceAction(
+          const std::vector<INode*>&    nodes,
+          InteractiveSession*           session)
+      : m_nodes(nodes)
+      , m_session(session)
+    {
+    }
+
+    void update() override;
+
+  private:
+    std::vector<INode*>     m_nodes;
+    InteractiveSession*     m_session;
 };
 
 class InteractiveRendererController
