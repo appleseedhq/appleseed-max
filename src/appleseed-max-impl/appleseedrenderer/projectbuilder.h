@@ -49,15 +49,14 @@
 
 // Forward declarations.
 namespace renderer { class Assembly; }
-namespace renderer { class Camera; }
-namespace renderer { class Entity; }
-namespace renderer { class ObjectInstance; }
 namespace renderer { class AssemblyInstance; }
-namespace renderer { class ParamArray; }
+namespace renderer { class Camera; }
+namespace renderer { class ObjectInstance; }
 namespace renderer { class Project; }
 class Bitmap;
-class IAppleseedMtl;
 class FrameRendParams;
+class IAppleseedGeometricObject;
+class IAppleseedMtl;
 class MaxSceneEntities;
 class RendParams;
 class ViewParams;
@@ -70,9 +69,10 @@ enum class RenderType
 
 struct ObjectInfo
 {
-    std::string                                 m_name;                 // name of the appleseed object
-    std::map<MtlID, std::string>                m_mtlid_to_slot_name;   // map a Max's material ID to appleseed's material slot name
-    std::map<MtlID, std::uint32_t>              m_mtlid_to_slot_index;  // map a Max's material ID to appleseed's material slot index
+    IAppleseedGeometricObject*          m_appleseed_geo_object = {};    // appleseed-max geometric object interface implemented by the 3ds Max object
+    std::string                         m_name;                         // name of the appleseed object
+    std::map<MtlID, std::string>        m_mtlid_to_slot_name;           // map a Max's material ID to an appleseed's material slot name
+    std::map<MtlID, std::uint32_t>      m_mtlid_to_slot_index;          // map a Max's material ID to an appleseed's material slot index
 };
 
 typedef std::map<Object*, std::vector<ObjectInfo>> ObjectMap;

@@ -162,6 +162,27 @@ namespace
         return name;
     }
 
+    // Return the IAppleseedGeometricObject interface of an object, even if this object has modifiers applied to it.
+    static IAppleseedGeometricObject* get_appleseed_geometric_object(Object* object)
+    {
+        IAppleseedGeometricObject* result = nullptr;
+
+        while (object != nullptr)
+        {
+            result = static_cast<IAppleseedGeometricObject*>(object->GetInterface(IAppleseedGeometricObject::interface_id()));
+
+            if (result != nullptr)
+                break;
+
+            if (object->SuperClassID() != GEN_DERIVOB_CLASS_ID)
+                break;
+
+            object = static_cast<IDerivedObject*>(object)->GetObjRef();
+        }
+
+        return result;
+    }
+
     class NullView
       : public View
     {
@@ -418,12 +439,14 @@ namespace
         Object* object = object_node->GetObjectRef();
 
         // Check if this object is defined by an appleseed-max plugin.
-        auto appleseed_geo_object =
-            static_cast<IAppleseedGeometricObject*>(object->GetInterface(IAppleseedGeometricObject::interface_id()));
+        IAppleseedGeometricObject* appleseed_geo_object = get_appleseed_geometric_object(object);
 
-        if (appleseed_geo_object)
+        if (appleseed_geo_object != nullptr)
         {
+            // This object is an appleseed-max object plugin: create the appleseed object and insert it into the assembly.
+
             ObjectInfo object_info;
+            object_info.m_appleseed_geo_object = appleseed_geo_object;
             object_info.m_name = wide_to_utf8(object_node->GetName());
             object_info.m_name = make_unique_name(assembly.objects(), object_info.m_name);
 
@@ -443,6 +466,7 @@ namespace
         }
         else
         {
+            // This object is not an appleseed-max object plugin: export the object as one or multiple mesh objects.
             return create_mesh_objects(assembly, object_node, time);
         }
     }
@@ -813,15 +837,23 @@ namespace
         if (type == RenderType::MaterialPreview)
             params.insert_path("visibility.shadow", false);
 
+        // Instance of helper objects always have an identity transform.
+        const asf::Transformd effective_transform =
+            object_info.m_appleseed_geo_object != nullptr &&
+            (object_info.m_appleseed_geo_object->get_flags() & IAppleseedGeometricObject::IgnoreTransform)
+                ? asf::Transformd::identity()
+                : transform;
+
         // Create the instance and insert it into the assembly.
-        const size_t instance_index = assembly.object_instances().insert(
-            asr::ObjectInstanceFactory::create(
-                instance_name.c_str(),
-                params,
-                object_info.m_name.c_str(),
-                transform,
-                front_material_mappings,
-                back_material_mappings));
+        const size_t instance_index =
+            assembly.object_instances().insert(
+                asr::ObjectInstanceFactory::create(
+                    instance_name.c_str(),
+                    params,
+                    object_info.m_name.c_str(),
+                    effective_transform,
+                    front_material_mappings,
+                    back_material_mappings));
 
         obj_instance_map[wide_to_utf8(instance_node->GetName())] = assembly.object_instances().get_by_index(instance_index);
     }
