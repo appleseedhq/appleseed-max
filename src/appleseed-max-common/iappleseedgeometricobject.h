@@ -58,6 +58,17 @@ class IAppleseedGeometricObject
     // BaseInterface methods.
     Interface_ID GetID() override;
 
+    enum Flags
+    {
+        // When the IgnoreTransform flag is set, the object will always be exported with an identity transform.
+        // This is useful for "linked objects", i.e. objects that define themselves in relation to an instance
+        // of another object, in which case they naturally inherit the transform of that other object instance.
+        IgnoreTransform = 1UL << 0
+    };
+
+    // Retrieve the flags of this object.
+    virtual int get_flags() const = 0;
+
     // Create an appleseed geometric object.
     virtual foundation::auto_release_ptr<renderer::Object> create_object(
         renderer::Project&  project,
