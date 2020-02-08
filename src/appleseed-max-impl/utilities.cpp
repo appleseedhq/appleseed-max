@@ -742,18 +742,11 @@ namespace
             return new MaxProceduralTextureSource(m_texmap, m_time);
         }
 
-        asf::Tile* load_tile(
+        asr::TilePtr load_tile(
             const size_t                tile_x,
             const size_t                tile_y) override
         {
-            return nullptr;
-        }
-
-        void unload_tile(
-            const size_t                tile_x,
-            const size_t                tile_y,
-            const asf::Tile*            tile) override
-        {
+            return asr::TilePtr::make_nullptr();
         }
 
       private:
