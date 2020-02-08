@@ -174,7 +174,8 @@ namespace
                     MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_ABOUT),
                     &dialog_proc_entry,
                     L"About",
-                    reinterpret_cast<LPARAM>(this));
+                    reinterpret_cast<LPARAM>(this),
+                    APPENDROLL_CLOSED);
         }
 
         ~AboutPanel() override
@@ -565,7 +566,7 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_OUTPUT),
             L"Output",
-            0,
+            APPENDROLL_CLOSED,
             new OutputParamMapDlgProc(renderer->GetParamBlock(0)));
 
         m_pmap_image_sampling = CreateRParamMap2(
@@ -584,7 +585,7 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_LIGHTING),
             L"Lighting",
-            0);
+            APPENDROLL_CLOSED);
 
         m_pmap_pathtracer = CreateRParamMap2(
             3,
@@ -593,7 +594,7 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_PATH_TRACING),
             L"Path Tracing",
-            0);
+            APPENDROLL_CLOSED);
 
         m_pmap_sppm = CreateRParamMap2(
             4,
@@ -602,7 +603,7 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SPPM),
             L"Stochastic Progressive Photon Mapping",
-            0);
+            APPENDROLL_CLOSED);
 
         m_pmap_postprocessing = CreateRParamMap2(
             5,
@@ -611,7 +612,7 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_POSTPROCESSING),
             L"Post-Processing",
-            0);
+            APPENDROLL_CLOSED);
 
         m_pmap_system = CreateRParamMap2(
             6,
@@ -620,7 +621,7 @@ struct AppleseedRendererParamDlg::Impl
             g_module,
             MAKEINTRESOURCE(IDD_FORMVIEW_RENDERERPARAMS_SYSTEM),
             L"System",
-            0,
+            APPENDROLL_CLOSED,
             new SystemParamMapDlgProc(renderer));
     }
 
