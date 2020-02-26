@@ -167,6 +167,7 @@ namespace
         ParamIdSPPMViewPhotonsRadius                    = 73,
         ParamIdSPPMEnableMaxRayIntensity                = 74,
         ParamIdSPPMMaxRayIntensity                      = 75,
+        ParamIdSPPMEnableImportons                      = 84,
 
         ParamIdEnableRenderStamp                        = 21,
         ParamIdRenderStampFormat                        = 22,
@@ -609,6 +610,10 @@ void AppleseedRendererPBlockAccessor::Get(
         v.f = settings.m_sppm_max_ray_intensity;
         break;
 
+      case ParamIdSPPMEnableImportons:
+        v.i = static_cast<int>(settings.m_sppm_enable_importons);
+        break;
+
       //
       // Post-Processing.
       //
@@ -994,6 +999,10 @@ void AppleseedRendererPBlockAccessor::Set(
         settings.m_sppm_max_ray_intensity = v.f;
         break;
 
+      case ParamIdSPPMEnableImportons:
+        settings.m_sppm_enable_importons = v.i > 0;
+        break;
+
       //
       // Postprocessing.
       //
@@ -1082,7 +1091,7 @@ ParamBlockDesc2 g_param_block_desc(
     0,                                          // ID of the localized name string
     &g_appleseed_renderer_classdesc,            // class descriptor
     P_AUTO_CONSTRUCT + 
-    P_AUTO_UI + 
+    P_AUTO_UI +
     P_MULTIMAP + 
     P_VERSION + 
     P_CALLSETS_ON_LOAD,                         // block flags
@@ -1579,7 +1588,7 @@ ParamBlockDesc2 g_param_block_desc(
     ParamIdSPPMRadianceEstimationMaxPhotons, L"max_photons_per_estimate", TYPE_INT, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_TEXT_SPPM_RADIANCE_MAX_PHOTONS, IDC_SPINNER_SPPM_RADIANCE_MAX_PHOTONS, SPIN_AUTOSCALE,
         p_default, 100,
-        p_range, 8, 1000000000,
+        p_range, 8, 10000,
         p_accessor, &g_pblock_accessor,
     p_end,
 
@@ -1616,6 +1625,12 @@ ParamBlockDesc2 g_param_block_desc(
         p_default, 1.0f,
         p_range, 0.0f, 10000.0f,
         p_accessor, &g_pblock_accessor,
+    p_end,
+
+    ParamIdSPPMEnableImportons, L"enable_importons", TYPE_BOOL, P_TRANSIENT, 0,
+        p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_ENABLE_IMPORTONS,
+        p_default, TRUE,
+        p_accessor, & g_pblock_accessor,
     p_end,
 
      // --- Parameters specifications for Post-Processing rollup ---

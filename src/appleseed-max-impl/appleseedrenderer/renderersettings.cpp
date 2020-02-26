@@ -119,6 +119,7 @@ namespace
             m_sppm_view_photons_radius = 0.05f;
             m_sppm_max_ray_intensity_set = false;
             m_sppm_max_ray_intensity = 1.0f;
+            m_sppm_enable_importons = true;
 
             m_output_mode = OutputMode::RenderOnly;
             m_scale_multiplier = 1.0f;
@@ -322,6 +323,7 @@ void RendererSettings::apply_common_settings(asr::Project& project, const char* 
     params.insert_path("sppm.alpha", m_sppm_radiance_estimation_alpha);
     params.insert_path("sppm.view_photons", m_sppm_view_photons);
     params.insert_path("sppm.view_photons_radius", m_sppm_view_photons_radius);
+    params.insert_path("sppm.enable_importons", m_sppm_enable_importons);
 
     params.insert_path("use_embree", m_enable_embree);
     params.insert_path("texture_store.max_size", m_texture_cache_size * 1024 * 1024);
