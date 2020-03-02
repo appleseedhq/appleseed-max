@@ -1630,7 +1630,7 @@ ParamBlockDesc2 g_param_block_desc(
     ParamIdSPPMEnableImportons, L"enable_importons", TYPE_BOOL, P_TRANSIENT, 0,
         p_ui, ParamMapIdSPPM, TYPE_SINGLECHEKBOX, IDC_CHECK_SPPM_ENABLE_IMPORTONS,
         p_default, TRUE,
-        p_accessor, & g_pblock_accessor,
+        p_accessor, &g_pblock_accessor,
     p_end,
 
      // --- Parameters specifications for Post-Processing rollup ---
