@@ -128,6 +128,12 @@
 #define IDC_TEXT_MATERIAL_PREVIEW_QUALITY               450
 #define IDC_SPINNER_MATERIAL_PREVIEW_QUALITY            451
 #define IDC_STATIC_MATERIAL_PREVIEW_QUALITY             452
+#define IDC_STATIC_LIGHTING                             453
+#define IDC_STATIC_OVERRIDE_MATERIAL                    454
+#define IDC_BUTTON_OVERRIDE_MATERIAL                    455
+#define IDC_CHECK_OVERRIDE_MATERIAL                     456
+#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS         457
+#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS          458
 #define IDD_FORMVIEW_RENDERERPARAMS_SYSTEM              500
 #define IDC_TEXT_RENDERINGTHREADS                       501
 #define IDC_SPINNER_RENDERINGTHREADS                    502
@@ -220,13 +226,7 @@
 #define IDC_SPINNER_SPPM_MAX_RAY_INTENSITY              944
 #define IDC_TEXT_SPPM_MAX_RAY_INTENSITY                 945
 #define IDC_STATIC_SPPM_MAX_RAY_INTENSITY               946
-
-#define IDC_STATIC_LIGHTING                             453
-#define IDC_STATIC_OVERRIDE_MATERIAL                    454
-#define IDC_BUTTON_OVERRIDE_MATERIAL                    455
-#define IDC_CHECK_OVERRIDE_MATERIAL                     456
-#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_LIGHTS         457
-#define IDC_CHECK_OVERRIDE_MATERIAL_SKIP_GLASS          458
+#define IDC_CHECK_SPPM_ENABLE_IMPORTONS                 947
 
 // Next default values for new objects
 // 
@@ -234,7 +234,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        111
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1043
+#define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
