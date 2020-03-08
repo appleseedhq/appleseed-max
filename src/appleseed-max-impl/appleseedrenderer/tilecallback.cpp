@@ -48,9 +48,6 @@
 #include <bitmap.h>
 #include "appleseed-max-common/_endmaxheaders.h"
 
-// Standard headers.
-#include <algorithm>
-
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -145,7 +142,9 @@ void TileCallback::release()
 void TileCallback::on_tile_begin(
     const asr::Frame*       frame,
     const size_t            tile_x,
-    const size_t            tile_y)
+    const size_t            tile_y,
+    const size_t            thread_index,
+    const size_t            thread_count)
 {
     const asf::Image& image = frame->image();
     const asf::CanvasProperties& props = image.properties();
@@ -158,9 +157,19 @@ void TileCallback::on_tile_begin(
     const size_t x = tile_x * props.m_tile_width;
     const size_t y = tile_y * props.m_tile_height;
 
+    // Choose one color per thread (see https://www.shadertoy.com/view/wlKXDm).
+    float bc[4];
+    float t = 2 * 3.14159265359f * (thread_index / static_cast<float>(thread_count));
+    float cos_t = std::cos(t);
+    float sin_t = std::sin(t);
+    bc[0] = 0.5f + (0.5f * cos_t);
+    bc[1] = 0.5f + (0.5f * (-0.5f * cos_t - 0.866f * sin_t));
+    bc[2] = 0.5f + (0.5f * (-0.5f * cos_t + 0.866f * sin_t));
+    bc[3] = 1.0f;
+
     // Draw a bracket around the tile.
     const int BracketExtent = 5;
-    BMM_Color_fl BracketColor(1.0f, 1.0f, 1.0f, 1.0f);
+    BMM_Color_fl BracketColor(bc[0], bc[1], bc[2], bc[3]);
     draw_bracket(
         m_bitmap,
         static_cast<int>(x),
