@@ -46,7 +46,7 @@
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/tile.h"
 #include "foundation/utility/searchpaths.h"
-#include "foundation/utility/siphash.h"
+#include "foundation/hash/siphash.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"

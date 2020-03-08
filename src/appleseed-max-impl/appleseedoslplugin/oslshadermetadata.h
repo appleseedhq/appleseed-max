@@ -33,7 +33,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
-#include "foundation/utility/containers/dictionary.h"
+#include "foundation/containers/dictionary.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"

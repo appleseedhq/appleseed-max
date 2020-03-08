@@ -33,7 +33,7 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/memory.h"
+#include "foundation/memory/memory.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
