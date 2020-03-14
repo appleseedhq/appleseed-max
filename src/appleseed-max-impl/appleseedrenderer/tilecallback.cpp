@@ -38,6 +38,7 @@
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/color.h"
+#include "foundation/image/colormap.h"
 #include "foundation/image/image.h"
 #include "foundation/image/pixel.h"
 #include "foundation/platform/atomic.h"
@@ -47,6 +48,9 @@
 #include <assert1.h>
 #include <bitmap.h>
 #include "appleseed-max-common/_endmaxheaders.h"
+
+// Standard headers.
+#include <array>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -157,17 +161,11 @@ void TileCallback::on_tile_begin(
     const size_t x = tile_x * props.m_tile_width;
     const size_t y = tile_y * props.m_tile_height;
 
-    // Choose one color per thread (see https://www.shadertoy.com/view/wlKXDm).
-    float bc[4];
-    float t = 2 * 3.14159265359f * (thread_index / static_cast<float>(thread_count));
-    float cos_t = std::cos(t);
-    float sin_t = std::sin(t);
-    bc[0] = 0.5f + (0.5f * cos_t);
-    bc[1] = 0.5f + (0.5f * (-0.5f * cos_t - 0.866f * sin_t));
-    bc[2] = 0.5f + (0.5f * (-0.5f * cos_t + 0.866f * sin_t));
-    bc[3] = 1.0f;
+    // Get one color per thread (see https://www.shadertoy.com/view/wlKXDm).
+    asf::ColorMap ColorMap;
+    std::array<float, 4>  bc = ColorMap.compute_tile_highlight_color(thread_index, thread_count);
 
-    // Draw a bracket around the tile.
+    // Draw a colored bracket around the tile.
     const int BracketExtent = 5;
     BMM_Color_fl BracketColor(bc[0], bc[1], bc[2], bc[3]);
     draw_bracket(
