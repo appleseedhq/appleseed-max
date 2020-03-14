@@ -41,9 +41,9 @@
 // appleseed.foundation headers.
 #include "foundation/containers/dictionary.h"
 #include "foundation/memory/autoreleaseptr.h"
+#include "foundation/string/string.h"
 #include "foundation/utility/iostreamop.h"
 #include "foundation/utility/searchpaths.h"
-#include "foundation/string/string.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"

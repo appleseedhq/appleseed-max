@@ -32,8 +32,8 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/core/concepts/noncopyable.h"
 #include "foundation/containers/dictionary.h"
+#include "foundation/core/concepts/noncopyable.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
