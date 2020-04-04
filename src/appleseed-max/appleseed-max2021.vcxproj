@@ -22,7 +22,7 @@
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\appleseed-max-common\appleseed-max2017-common.vcxproj">
+    <ProjectReference Include="..\appleseed-max-common\appleseed-max2021-common.vcxproj">
       <Project>{44361726-ecbc-451e-8bb4-b49960bc9eb9}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -30,26 +30,26 @@
     <ProjectGuid>{F43B3C0E-2A72-4B30-9016-DEC6B022D135}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>appleseedmax</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -88,66 +88,66 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2017\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2017\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2021\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2021\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\Current\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2021\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2021\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2017\Current\"</Command>
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2021\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2021\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2017\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2017\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2021\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2021\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\Current\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2021\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2021\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2017\Current\"</Command>
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2021\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2021\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc140\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc140;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\sandbox\max2017\$(Configuration)" 2&gt;nul
-mkdir "$(SolutionDir)..\sandbox\max2017\Current" 2&gt;nul
+      <Command>mkdir "$(SolutionDir)..\sandbox\max2021\$(Configuration)" 2&gt;nul
+mkdir "$(SolutionDir)..\sandbox\max2021\Current" 2&gt;nul
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\"
-copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2017\Current\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2021\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)..\sandbox\max2021\Current\"
 
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2017\$(Configuration)\"
-if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2017\Current\"</Command>
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2021\$(Configuration)\"
+if not "$(Configuration)" == "Ship" copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)..\sandbox\max2021\Current\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
