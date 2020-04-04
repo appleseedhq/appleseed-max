@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017-impl", "appleseed-max-impl\appleseed-max2017-impl.vcxproj", "{62C41566-DBCB-49D3-943A-4DD53222269E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2021-impl", "appleseed-max-impl\appleseed-max2021-impl.vcxproj", "{62C41566-DBCB-49D3-943A-4DD53222269E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017", "appleseed-max\appleseed-max2017.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2021", "appleseed-max\appleseed-max2021.vcxproj", "{F43B3C0E-2A72-4B30-9016-DEC6B022D135}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2017-common", "appleseed-max-common\appleseed-max2017-common.vcxproj", "{44361726-ECBC-451E-8BB4-B49960BC9EB9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appleseed-max2021-common", "appleseed-max-common\appleseed-max2021-common.vcxproj", "{44361726-ECBC-451E-8BB4-B49960BC9EB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +39,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1729EF54-9270-4E96-8B40-5F0A72751ADC}
+		SolutionGuid = {8BD79DA4-2EAB-4E4E-91B8-B6488B524797}
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -30,26 +30,26 @@
     <ProjectGuid>{44361726-ECBC-451E-8BB4-B49960BC9EB9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>appleseedmaxcommon</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Ship|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,7 +90,7 @@
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-debug\include;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-debug\include;C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,7 +101,7 @@
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -114,7 +114,7 @@
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc140\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc140\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
