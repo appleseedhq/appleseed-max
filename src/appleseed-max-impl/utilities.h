@@ -40,9 +40,9 @@
 
 // appleseed.foundation headers.
 #include "foundation/image/image.h"
+#include "foundation/memory/autoreleaseptr.h"
 #include "foundation/platform/windows.h"
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/string.h"
+#include "foundation/string/string.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"

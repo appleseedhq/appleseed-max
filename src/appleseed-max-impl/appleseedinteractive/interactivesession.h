@@ -37,7 +37,7 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/memory/autoreleaseptr.h"
 #include "foundation/utility/searchpaths.h"
 
 // Standard headers.

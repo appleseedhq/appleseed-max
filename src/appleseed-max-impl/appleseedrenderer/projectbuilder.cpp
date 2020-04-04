@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2015-2019 Francois Beaune, The appleseedhq Organization
+// Copyright (c) 2015-2020 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,6 +64,7 @@
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
+#include "foundation/containers/dictionary.h"
 #include "foundation/image/colorspace.h"
 #include "foundation/image/genericimagefilewriter.h"
 #include "foundation/image/image.h"
@@ -71,7 +72,6 @@
 #include "foundation/math/scalar.h"
 #include "foundation/math/transform.h"
 #include "foundation/math/vector.h"
-#include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/iostreamop.h"
 #include "foundation/utility/searchpaths.h"
 
@@ -766,10 +766,10 @@ namespace
                         if (entry != object_info.m_mtlid_to_slot_name.end())
                         {
                             if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                                front_material_mappings.insert(entry->second, material_info.m_name);
+                                front_material_mappings.insert(entry->second.c_str(), material_info.m_name);
 
                             if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                                back_material_mappings.insert(entry->second, material_info.m_name);
+                                back_material_mappings.insert(entry->second.c_str(), material_info.m_name);
                         }
                     }
                 }
@@ -795,10 +795,10 @@ namespace
                 for (const auto& entry : object_info.m_mtlid_to_slot_name)
                 {
                     if (material_info.m_sides & asr::ObjectInstance::FrontSide)
-                        front_material_mappings.insert(entry.second, material_info.m_name);
+                        front_material_mappings.insert(entry.second.c_str(), material_info.m_name);
 
                     if (material_info.m_sides & asr::ObjectInstance::BackSide)
-                        back_material_mappings.insert(entry.second, material_info.m_name);
+                        back_material_mappings.insert(entry.second.c_str(), material_info.m_name);
                 }
             }
         }
@@ -819,8 +819,8 @@ namespace
             // Assign it to all material slots.
             for (const auto& entry : object_info.m_mtlid_to_slot_name)
             {
-                front_material_mappings.insert(entry.second, material_name);
-                back_material_mappings.insert(entry.second, material_name);
+                front_material_mappings.insert(entry.second.c_str(), material_name);
+                back_material_mappings.insert(entry.second.c_str(), material_name);
             }
         }
 
