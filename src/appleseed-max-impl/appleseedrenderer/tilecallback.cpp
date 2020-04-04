@@ -48,8 +48,6 @@
 #include <bitmap.h>
 #include "appleseed-max-common/_endmaxheaders.h"
 
-// Standard headers.
-#include <algorithm>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -145,7 +143,9 @@ void TileCallback::release()
 void TileCallback::on_tile_begin(
     const asr::Frame*       frame,
     const size_t            tile_x,
-    const size_t            tile_y)
+    const size_t            tile_y,
+    const size_t            thread_index,
+    const size_t            thread_count)
 {
     const asf::Image& image = frame->image();
     const asf::CanvasProperties& props = image.properties();

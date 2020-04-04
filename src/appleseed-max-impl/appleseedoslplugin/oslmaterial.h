@@ -38,7 +38,7 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/memory/autoreleaseptr.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"

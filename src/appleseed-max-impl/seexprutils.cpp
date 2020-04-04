@@ -36,7 +36,7 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/string.h"
+#include "foundation/string/string.h"
 
 // 3ds Max headers.
 #include "appleseed-max-common/_beginmaxheaders.h"
