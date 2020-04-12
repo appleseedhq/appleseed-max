@@ -902,7 +902,8 @@ namespace
         const std::string&      color_name,
         const float             intensity,
         const float             decay_start,
-        const int               decay_exponent)
+        const int               decay_exponent,
+        const bool              cast_shadows)
     {
         asf::auto_release_ptr<asr::Light> light(
             asr::MaxOmniLightFactory().create(
@@ -911,7 +912,8 @@ namespace
                     .insert("intensity", color_name)
                     .insert("intensity_multiplier", intensity * asf::Pi<float>())
                     .insert("decay_start", decay_start)
-                    .insert("decay_exponent", decay_exponent)));
+                    .insert("decay_exponent", decay_exponent)
+                    .insert("cast_shadows", cast_shadows)));
         light->set_transform(transform);
         assembly.lights().insert(light);
     }
@@ -925,7 +927,8 @@ namespace
         const float             inner_angle,
         const float             outer_angle,
         const float             decay_start,
-        const int               decay_exponent)
+        const int               decay_exponent,
+        const bool              cast_shadows)
     {
         asf::auto_release_ptr<asr::Light> light(
             asr::MaxSpotLightFactory().create(
@@ -936,7 +939,8 @@ namespace
                     .insert("inner_angle", inner_angle)
                     .insert("outer_angle", outer_angle)
                     .insert("decay_start", decay_start)
-                    .insert("decay_exponent", decay_exponent)));
+                    .insert("decay_exponent", decay_exponent)
+                    .insert("cast_shadows", cast_shadows)));
         light->set_transform(transform);
         assembly.lights().insert(light);
     }
@@ -946,14 +950,16 @@ namespace
         const std::string&      light_name,
         const asf::Transformd&  transform,
         const std::string&      color_name,
-        const float             intensity)
+        const float             intensity,
+        const bool              cast_shadows)
     {
         asf::auto_release_ptr<asr::Light> light(
             asr::DirectionalLightFactory().create(
                 light_name.c_str(),
                 asr::ParamArray()
                     .insert("irradiance", color_name)
-                    .insert("irradiance_multiplier", intensity * asf::Pi<float>())));
+                    .insert("irradiance_multiplier", intensity * asf::Pi<float>())
+                    .insert("cast_shadows", cast_shadows)));
         light->set_transform(transform);
         assembly.lights().insert(light);
     }
@@ -1006,6 +1012,7 @@ namespace
         const float intensity = light_object->GetIntensity(time);
         const float decay_start = light_object->GetDecayRadius(time);
         const int decay_exponent = light_object->GetDecayType();
+        const bool cast_shadows = light_object->GetShadow() > 0;
 
         // Skip exporting lights with zero intensity
         if (!asf::is_zero(color) && intensity > 0.0f)
@@ -1047,7 +1054,8 @@ namespace
                     color_name,
                     intensity,
                     decay_start,
-                    decay_exponent);
+                    decay_exponent,
+                    cast_shadows);
             }
             else if (light_object->ClassID() == Class_ID(SPOT_LIGHT_CLASS_ID, 0) ||
                      light_object->ClassID() == Class_ID(FSPOT_LIGHT_CLASS_ID, 0))
@@ -1061,7 +1069,8 @@ namespace
                     light_object->GetHotspot(time),
                     light_object->GetFallsize(time),
                     decay_start,
-                    decay_exponent);
+                    decay_exponent,
+                    cast_shadows);
             }
             else if (light_object->ClassID() == Class_ID(DIR_LIGHT_CLASS_ID, 0) ||
                      light_object->ClassID() == Class_ID(TDIR_LIGHT_CLASS_ID, 0))
@@ -1071,7 +1080,8 @@ namespace
                     light_name,
                     transform,
                     color_name,
-                    intensity);
+                    intensity,
+                    cast_shadows);
             }
             else
             {
@@ -1139,7 +1149,8 @@ namespace
                     color_name,
                     light.ls.intens,
                     0.0f,   // decay start
-                    0);     // decay exponent
+                    0,      // decay exponent
+                    true);  // cast shadows
                 break;
 
               case SPOT_LGT:
@@ -1152,7 +1163,8 @@ namespace
                     light.ls.hotsize,
                     light.ls.fallsize,
                     0.0f,   // decay start
-                    0);     // decay exponent
+                    0,      // decay exponent
+                    true);  // cast shadows
                 break;
 
               case DIRECT_LGT:
@@ -1161,7 +1173,8 @@ namespace
                     light_name,
                     transform,
                     color_name,
-                    light.ls.intens);
+                    light.ls.intens,
+                    true);  // cast shadows
                 break;
 
               case AMBIENT_LGT:
