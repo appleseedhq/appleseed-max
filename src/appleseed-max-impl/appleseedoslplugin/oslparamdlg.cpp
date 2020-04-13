@@ -260,7 +260,7 @@ void OSLParamDlg::add_ui_parameter(
     const MaxParam&         max_param,
     PageGroupMap&           pages)
 {
-    const int Col2X = 95; 
+    const int Col2X = 95;
     const int Col3X = 132;
     const int Col4X = 169;
     const int LabelWidth = 86;
