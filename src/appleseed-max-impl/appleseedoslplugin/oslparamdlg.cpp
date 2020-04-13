@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2018 Sergo Pogosyan, The appleseedhq Organization
+// Copyright (c) 2018-2020 Sergo Pogosyan, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,6 @@
 #include "bump/bumpparammapdlgproc.h"
 #include "bump/resource.h"
 #include "main.h"
-#include "oslutils.h"
 #include "utilities.h"
 
 // 3ds Max headers.
@@ -151,7 +150,7 @@ namespace
         
         // Build root page.
         PageGroup root_page;
-        root_page.m_width = 217;
+        root_page.m_width = 247;
         for (auto& page : pages)
         {
             auto parent_name = page.first;
@@ -248,7 +247,7 @@ void OSLParamDlg::add_groupboxes(
             NULL,
             page.second.m_x,
             page.second.m_y,
-            page.second.m_width,
+            page.second.m_width - 20,
             page.second.m_height,
             0);
         
@@ -261,10 +260,10 @@ void OSLParamDlg::add_ui_parameter(
     const MaxParam&         max_param,
     PageGroupMap&           pages)
 {
-    const int Col2X = 85;
-    const int Col3X = 122;
-    const int Col4X = 159;
-    const int LabelWidth = 76;
+    const int Col2X = 95; 
+    const int Col3X = 132;
+    const int Col4X = 169;
+    const int LabelWidth = 86;
     const int EditWidth = 25;
     const int EditHeight = 10;
     const int TexButtonWidth = 84;
@@ -272,7 +271,7 @@ void OSLParamDlg::add_ui_parameter(
 
     int col1_x = 10;
     int y_pos = 5;
-    auto param_page = pages.find(max_param.m_page_name);
+    const auto param_page = pages.find(max_param.m_page_name);
     if (param_page != pages.end())
     {
         y_pos = param_page->second.m_y;
@@ -315,7 +314,7 @@ void OSLParamDlg::add_ui_parameter(
             break;
 
           case MaxParam::Color:
-            dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth, EditHeight, ctrl_id++);
+            dialog_template.AddComponent((LPCSTR)"ColorSwatch", (LPCSTR)"Color", WS_VISIBLE | WS_TABSTOP, NULL, Col2X, y_pos, EditWidth + 10, EditHeight, ctrl_id++);
             break;
 
           case MaxParam::String:
@@ -371,7 +370,7 @@ void OSLParamDlg::create_dialog()
         DS_SETFONT | WS_CHILD | WS_VISIBLE,
         0,
         0,
-        217,
+        227,
         dlg_height,
         (LPCSTR)"MS Sans Serif",
         8);
@@ -387,7 +386,7 @@ void OSLParamDlg::create_dialog()
             add_ui_parameter(dialogTemplate, osl_param.m_max_param, pages);
     }
 
-    std::wstring rollout_header(m_shader_info->m_max_shader_name + L" Parameters");
+    const std::wstring rollout_header(m_shader_info->m_max_shader_name + L" Parameters");
     
     m_pmap = CreateMParamMap2(
         m_osl_plugin->GetParamBlock(0),
@@ -401,8 +400,8 @@ void OSLParamDlg::create_dialog()
         0,
         new OSLParamMapDlgProc());
 
-    auto tn_vec = m_shader_info->find_param("Tn");
-    auto bump_normal = m_shader_info->find_maya_attribute("normalCamera");
+    const OSLParamInfo* tn_vec = m_shader_info->find_param("Tn");
+    const OSLParamInfo* bump_normal = m_shader_info->find_maya_attribute("normalCamera");
 
     if (!m_shader_info->m_is_texture &&
         (tn_vec != nullptr || bump_normal != nullptr))

@@ -61,8 +61,8 @@ struct PageGroup
     PageGroup*                  m_parent;
 
     PageGroup()
-      : m_y(0)
-      , m_x(0)
+      : m_x(0)
+      , m_y(0)
       , m_width(0)
       , m_height(0)
       , m_parent(nullptr)
