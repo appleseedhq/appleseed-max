@@ -10,7 +10,7 @@ class DialogTemplate
   public:
 
     DialogTemplate(LPCSTR caption, DWORD style, int x, int y, int w, int h, 
-        LPCSTR font = NULL, WORD fontSize = 8)
+        LPCSTR font = nullptr, WORD fontSize = 8)
     {
         usedBufferLength = sizeof(DLGTEMPLATE);
         totalBufferLength = usedBufferLength;
@@ -19,7 +19,7 @@ class DialogTemplate
 
         dialogTemplate->style = style;
 
-        if (font != NULL)
+        if (font != nullptr)
         {
             dialogTemplate->style |= DS_SETFONT;
         }
@@ -39,7 +39,7 @@ class DialogTemplate
         // Add the dialog's caption to the template.
         AppendString(caption);
 
-        if (font != NULL)
+        if (font != nullptr)
         {
             AppendData(&fontSize, sizeof(WORD));
             AppendString(font);
@@ -176,7 +176,7 @@ class DialogTemplate
 
     void AlignData(int size)
     {
-        int paddingSize = usedBufferLength % size;
+        const int paddingSize = usedBufferLength % size;
 
         if (paddingSize != 0)
         {
@@ -187,7 +187,7 @@ class DialogTemplate
 
     void AppendString(LPCSTR string)
     {
-        int length = MultiByteToWideChar(CP_ACP, 0, string, -1, NULL, 0);
+        const int length = MultiByteToWideChar(CP_ACP, 0, string, -1, nullptr, 0);
 
         WCHAR* wideString = (WCHAR*)malloc(sizeof(WCHAR) * length);
         MultiByteToWideChar(CP_ACP, 0, string, -1, wideString, length);

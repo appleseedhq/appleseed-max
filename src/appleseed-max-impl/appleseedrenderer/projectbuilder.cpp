@@ -89,15 +89,12 @@
 #include <renderelements.h>
 #include <RendType.h>
 #include <Scene/IPhysicalCamera.h>
-#include <trig.h>
 #include <triobj.h>
 #include "appleseed-max-common/_endmaxheaders.h"
 
 // Standard headers.
 #include <cstddef>
 #include <cstdint>
-#include <limits>
-#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
