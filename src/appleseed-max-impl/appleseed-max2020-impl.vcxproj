@@ -73,7 +73,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-debug\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-debug\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-debug\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -119,7 +119,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -165,7 +165,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2020 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -244,7 +244,6 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile Include="appleseedrenderer\tilecallback.cpp" />
     <ClCompile Include="appleseedrenderer\updatechecker.cpp" />
     <ClCompile Include="appleseedsssmtl\appleseedsssmtl.cpp" />
-    <ClCompile Include="seexprutils.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
@@ -311,7 +310,6 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="osloutputselectormap\osloutputselector.h" />
     <ClInclude Include="osloutputselectormap\resource.h" />
     <ClInclude Include="oslutils.h" />
-    <ClInclude Include="seexprutils.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
