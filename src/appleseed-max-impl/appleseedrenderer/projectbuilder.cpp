@@ -33,9 +33,9 @@
 #include "appleseedenvmap/appleseedenvmap.h"
 #include "appleseedglassmtl/appleseedglassmtl.h"
 #include "appleseedobjpropsmod/appleseedobjpropsmod.h"
+#include "appleseedoslplugin/oslmaterial.h"
 #include "appleseedrenderelement/appleseedrenderelement.h"
 #include "appleseedrenderer/maxsceneentities.h"
-#include "seexprutils.h"
 #include "utilities.h"
 
 // appleseed-max-common headers.
@@ -47,9 +47,9 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/aov.h"
+#include "renderer/api/bsdf.h"
 #include "renderer/api/camera.h"
 #include "renderer/api/color.h"
-#include "renderer/api/edf.h"
 #include "renderer/api/environment.h"
 #include "renderer/api/environmentedf.h"
 #include "renderer/api/environmentshader.h"
@@ -65,7 +65,6 @@
 
 // appleseed.foundation headers.
 #include "foundation/containers/dictionary.h"
-#include "foundation/image/colorspace.h"
 #include "foundation/image/genericimagefilewriter.h"
 #include "foundation/image/image.h"
 #include "foundation/math/aabb.h"
@@ -143,16 +142,19 @@ namespace
         name = make_unique_name(assembly.materials(), name);
 
         asf::auto_release_ptr<asr::Material> material(
-            asr::DisneyMaterialFactory().create(
+            asr::GenericMaterialFactory().create(
                 name.c_str(),
-                asr::ParamArray()));
+                asr::ParamArray()
+                    .insert("surface_shader", "physical_surface_shader")
+                    .insert("bsdf", "disney_brdf")));
 
-        // The Disney material expects sRGB colors, so we have to convert the input color to sRGB.
-        static_cast<asr::DisneyMaterial*>(material.get())->add_layer(
-            asr::DisneyMaterialLayer::get_default_values()
-                .insert("base_color", fmt_se_expr(asf::linear_rgb_to_srgb(linear_rgb)))
-                .insert("specular", 1.0)
-                .insert("roughness", 0.625));
+        assembly.bsdfs().insert(
+            asr::DisneyBRDFFactory().create(
+                "disney_brdf",
+                asr::ParamArray()
+                    .insert("base_color", linear_rgb)
+                    .insert("roughness",0.5f)
+                    .insert("specular", 0.5f)));
 
         assembly.materials().insert(material);
 

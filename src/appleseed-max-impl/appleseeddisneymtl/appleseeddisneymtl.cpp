@@ -44,6 +44,7 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/bsdf.h"
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
 #include "renderer/api/shadergroup.h"
