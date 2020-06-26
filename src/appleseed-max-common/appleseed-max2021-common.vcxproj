@@ -101,7 +101,7 @@
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\SeExpr-release\include;C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\appleseed-dep\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\openexr-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\oiio-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\osl-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\SeExpr-release\include;F:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

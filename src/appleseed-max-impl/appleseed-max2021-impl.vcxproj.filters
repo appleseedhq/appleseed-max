@@ -101,6 +101,9 @@
     <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp">
       <Filter>appleseedvolumemtl</Filter>
     </ClCompile>
+    <ClCompile Include="applessedsunpositioner\appleseedsunpositioner.cpp">
+      <Filter>applessedsunpositioner</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appleseedrenderer\appleseedrenderer.h">
@@ -281,6 +284,12 @@
     <ClInclude Include="appleseedvolumemtl\resource.h">
       <Filter>appleseedvolumemtl</Filter>
     </ClInclude>
+    <ClInclude Include="applessedsunpositioner\appleseedsunpositioner.h">
+      <Filter>applessedsunpositioner</Filter>
+    </ClInclude>
+    <ClInclude Include="applessedsunpositioner\resource.h">
+      <Filter>applessedsunpositioner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="appleseedrenderer\appleseedrenderer.rc">
@@ -324,6 +333,9 @@
     </ResourceCompile>
     <ResourceCompile Include="appleseedvolumemtl\appleseedvolumemtl.rc">
       <Filter>appleseedvolumemtl</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="applessedsunpositioner\appleseedsunpositioner.rc">
+      <Filter>applessedsunpositioner</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -374,6 +386,9 @@
     </Filter>
     <Filter Include="appleseedvolumemtl">
       <UniqueIdentifier>{d40f57d8-69cf-46e7-9c2b-34744338b501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="applessedsunpositioner">
+      <UniqueIdentifier>{2213b6f2-cd5f-4448-ac4f-8265acabf09c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

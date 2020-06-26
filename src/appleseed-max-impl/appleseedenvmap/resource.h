@@ -26,6 +26,9 @@
 #define IDC_TURB_TEX_ON                 8026
 #define IDC_SUN_NODE_ON                 8027
 #define IDD_ENVMAP_PANEL                8101
+#define IDS_SUN_POS_SYSTEM              8131
+#define IDS_SUN_POS_SYSTEM_ANALYTICAL   8132
+#define IDS_SUN_POS_SYSTEM_TIME_LOC     8133
 #define IDC_COLOR                       8456
 #define IDC_EDIT_THETA                  8490
 #define IDC_EDIT_PHI                    8491
@@ -47,6 +50,8 @@
 #define IDC_SPIN_GROUND_ALBEDO          8507
 #define IDC_EDIT_SIZE_MULTIPLIER        8508
 #define IDC_SPIN_SIZE_MULTIPLIER        8509
+#define IDC_COMBO_SUN_POS_SYSTEM        8530
+#define IDC_LABEL_SUN_POS_SYSTEM        8531
 
 // Next default values for new objects
 // 

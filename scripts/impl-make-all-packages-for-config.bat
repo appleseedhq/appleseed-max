@@ -35,6 +35,8 @@ call impl-make-single-package.bat %config% 2017
 call impl-make-single-package.bat %config% 2018
 call impl-make-single-package.bat %config% 2019
 call impl-make-single-package.bat %config% 2020
+call impl-make-single-package.bat %config% 2021
+
 
 popd
 
