@@ -1,0 +1,167 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+#define IDC_STATIC -1
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""windows.h""\r\n"
+    "#define IDC_STATIC -1\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW_SUNPOSITIONER_PARAMS DIALOGEX 0, 0, 230, 103
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Time",IDC_STATIC,7,3,217,24
+    LTEXT           "Hour:",IDC_STATIC,13,14,21,8
+    CONTROL         "Hour Edit",IDC_EDIT_HOUR,"CustEdit",WS_TABSTOP,43,13,30,10
+    CONTROL         "Hour Spinner",IDC_SPIN_HOUR,"SpinnerControl",0x0,75,13,7,10
+    LTEXT           "Minute:",IDC_STATIC,85,15,24,8
+    CONTROL         "Minute Edit",IDC_EDIT_MINUTE,"CustEdit",WS_TABSTOP,110,13,30,10
+    CONTROL         "Minute Spinner",IDC_SPIN_MINUTE,"SpinnerControl",0x0,141,13,7,10
+    LTEXT           "Second:",IDC_STATIC,151,14,28,8
+    CONTROL         "Second Edit",IDC_EDIT_SECOND,"CustEdit",WS_TABSTOP,183,13,30,10
+    CONTROL         "Second Spinner",IDC_SPIN_SECOND,"SpinnerControl",0x0,215,13,7,10
+    GROUPBOX        "Date",IDC_STATIC,7,28,217,24
+    LTEXT           "Month:",IDC_STATIC,13,37,22,8
+    CONTROL         "Month Edit",IDC_EDIT_MONTH,"CustEdit",WS_TABSTOP,43,36,30,10
+    CONTROL         "Month Spinner",IDC_SPIN_MONTH,"SpinnerControl",0x0,75,36,7,10
+    LTEXT           "Day:",IDC_STATIC,87,37,16,8,SS_CENTERIMAGE
+    CONTROL         "Day Edit",IDC_EDIT_DAY,"CustEdit",WS_TABSTOP,110,36,30,10
+    CONTROL         "Day Spinner",IDC_SPIN_DAY,"SpinnerControl",0x0,141,36,7,10
+    LTEXT           "Year:",IDC_STATIC,151,37,17,8
+    CONTROL         "Year Edit",IDC_EDIT_YEAR,"CustEdit",WS_TABSTOP,184,37,30,10
+    CONTROL         "Year Spinner",IDC_SPIN_YEAR,"SpinnerControl",0x0,215,37,7,10
+    GROUPBOX        "Location",IDC_STATIC,6,56,218,40
+    LTEXT           "North:",IDC_STATIC,13,65,20,8
+    CONTROL         "North Edit",IDC_EDIT_NORTH,"CustEdit",WS_TABSTOP,43,65,30,10
+    CONTROL         "North Spinner",IDC_SPIN_NORTH,"SpinnerControl",0x0,74,65,7,10
+    LTEXT           "Latitude:",IDC_STATIC,13,79,29,8
+    CONTROL         "Latitude Edit",IDC_EDIT_LATITUDE,"CustEdit",WS_TABSTOP,43,78,30,10
+    CONTROL         "Latitude Spinner",IDC_SPIN_LATITUDE,"SpinnerControl",0x0,74,78,7,10
+    LTEXT           "Longitude:",IDC_STATIC,107,79,34,8
+    CONTROL         "Longitude Edit",IDC_EDIT_LONGITUDE,"CustEdit",WS_TABSTOP,143,79,30,10
+    CONTROL         "Longitude Spinner",IDC_SPIN_LONGITUDE,"SpinnerControl",0x0,173,79,7,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW_SUNPOSITIONER_PARAMS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW_SUNPOSITIONER_PARAMS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 100
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United Kingdom) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_FORMVIEW_SUNPOSITIONER_PARAMS_TITLE "Sun Positioner"
+    IDS_HOUR                "Hour"
+    IDS_MINUTE              "Minute"
+    IDS_SECOND              "Second"
+    IDS_MONTH               "Month"
+    IDS_DAY                 "Day"
+    IDS_YEAR                "Year"
+    IDS_TIMEZONE            "Timezone"
+    IDS_NORTH               "North"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_LATITUDE            "Latitude"
+    IDS_LONGITUDE           "Longitude"
+END
+
+#endif    // English (United Kingdom) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

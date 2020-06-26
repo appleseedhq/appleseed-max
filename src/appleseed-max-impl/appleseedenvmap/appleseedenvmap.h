@@ -48,11 +48,20 @@
 #include <maxtypes.h>
 #include <stdmat.h>
 #include "appleseed-max-common/_endmaxheaders.h"
+#include "applessedsunpositioner/appleseedsunpositioner.h"
+
+typedef int SunPositioningSystem;
+enum
+{
+    Analytical = 0,
+    TimeLocation
+};
 
 class AppleseedEnvMap
   : public Texmap
 {
   public:
+
     static Class_ID get_class_id();
 
     // Constructor.
@@ -109,22 +118,26 @@ class AppleseedEnvMap
     void SetReference(int i, RefTargetHandle rtarg) override;
 
   private:
-    IParamBlock2*   m_pblock;          // ref 0
-    float           m_sun_theta;
-    float           m_sun_phi;
-    float           m_sun_size_multiplier;
-    INode*          m_sun_node;
-    BOOL            m_sun_node_on;
-    Interval        m_params_validity;
-    float           m_turbidity;
-    Texmap*         m_turbidity_map;
-    BOOL            m_turbidity_map_on;
-    float           m_turb_multiplier;
-    float           m_lumin_multiplier;
-    float           m_lumin_gamma;
-    float           m_sat_multiplier;
-    float           m_horizon_shift;
-    float           m_ground_albedo;
+
+    IParamBlock2*           m_pblock;          // ref 0
+    float                   m_sun_theta;
+    float                   m_sun_phi;
+    float                   m_sun_size_multiplier;
+    INode*                  m_sun_node;
+    BOOL                    m_sun_node_on;
+    Interval                m_params_validity;
+    float                   m_turbidity;
+    Texmap*                 m_turbidity_map;
+    BOOL                    m_turbidity_map_on;
+    float                   m_turb_multiplier;
+    float                   m_lumin_multiplier;
+    float                   m_lumin_gamma;
+    float                   m_sat_multiplier;
+    float                   m_horizon_shift;
+    float                   m_ground_albedo;
+    SunPositioningSystem    m_sun_positioning_system;
+    SunPositionerWrapper    m_sun_positioner;
+
 };
 
 

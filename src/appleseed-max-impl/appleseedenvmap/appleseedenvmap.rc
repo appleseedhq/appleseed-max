@@ -25,11 +25,11 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ENVMAP_PANEL DIALOGEX 0, 0, 217, 171
+IDD_ENVMAP_PANEL DIALOGEX 0, 0, 230, 195
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Sun",IDC_STATIC,7,3,203,49
+    GROUPBOX        "Sun",IDC_STATIC,7,3,216,49
     LTEXT           "Vertical Angle:",IDC_STATIC,13,14,67,8
     CONTROL         "Vertical Angle Edit",IDC_EDIT_THETA,"CustEdit",WS_TABSTOP,82,12,30,10
     CONTROL         "Vertical Angle Spinner",IDC_SPIN_THETA,"SpinnerControl",0x0,113,12,7,10
@@ -41,7 +41,7 @@ BEGIN
     CONTROL         "Size Multiplier Spinner",IDC_SPIN_SIZE_MULTIPLIER,
                     "SpinnerControl",0x0,113,36,7,10
     CONTROL         "Pick Directional Light",IDC_PICK_SUN_NODE,"CustButton",WS_TABSTOP,124,12,71,10
-    GROUPBOX        "Sky",IDC_STATIC,7,55,203,76
+    GROUPBOX        "Sky",IDC_STATIC,7,55,216,76
     LTEXT           "Turbidity:",IDC_STATIC,13,66,67,8
     CONTROL         "Turbidity Edit",IDC_EDIT_TURBIDITY,"CustEdit",WS_TABSTOP,82,64,30,10
     CONTROL         "Turbidity Spinner",IDC_SPIN_TURBIDITY,"SpinnerControl",0x0,113,64,7,10
@@ -66,7 +66,7 @@ BEGIN
                     "CustEdit",WS_TABSTOP,82,116,30,10
     CONTROL         "Saturation Multiplier Spinner",IDC_SPIN_SATUR_MULTIPLIER,
                     "SpinnerControl",0x0,113,116,7,10
-    GROUPBOX        "Ground",IDC_STATIC,7,132,203,36
+    GROUPBOX        "Ground",IDC_STATIC,7,131,216,39
     LTEXT           "Horizon Shift:",IDC_STATIC,13,143,67,8
     CONTROL         "Horizon Shift Edit",IDC_EDIT_HORIZON_SHIFT,"CustEdit",WS_TABSTOP,82,142,30,10
     CONTROL         "Horizon Shift Spinner",IDC_SPIN_HORIZON_SHIFT,
@@ -75,6 +75,8 @@ BEGIN
     CONTROL         "Ground Albedo Edit",IDC_EDIT_GROUND_ALBEDO,"CustEdit",WS_TABSTOP,82,154,30,10
     CONTROL         "Ground Albedo Spinner",IDC_SPIN_GROUND_ALBEDO,
                     "SpinnerControl",0x0,113,154,7,10
+    LTEXT           "Sun Positioner:",IDC_LABEL_SUN_POS_SYSTEM,13,174,53,8
+    COMBOBOX        IDC_COMBO_SUN_POS_SYSTEM,82,173,113,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Sun Node On",IDC_SUN_NODE_ON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,198,13,8,10
 END
 
@@ -90,10 +92,11 @@ BEGIN
     IDD_ENVMAP_PANEL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 210
+        RIGHTMARGIN, 223
         VERTGUIDE, 124
         VERTGUIDE, 195
         TOPMARGIN, 7
+        BOTTOMMARGIN, 190
         HORZGUIDE, 12
     END
 END
@@ -160,11 +163,14 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_SAT_MULITPLIER      "Saturation Multiplier"
-    IDS_HORIZON_SHIFT       "Horizon Shift"
-    IDS_GROUND_ALBEDO       "Ground Albedo"
-    IDS_SUN_NODE_ON         "Sun Node On"
-    IDS_SIZE_MULTIPLIER     "Sun Size Multiplier"
+    IDS_SAT_MULITPLIER              "Saturation Multiplier"
+    IDS_HORIZON_SHIFT               "Horizon Shift"
+    IDS_GROUND_ALBEDO               "Ground Albedo"
+    IDS_SUN_NODE_ON                 "Sun Node On"
+    IDS_SIZE_MULTIPLIER             "Sun Size Multiplier"
+    IDS_SUN_POS_SYSTEM              "Sun Positioner System"
+    IDS_SUN_POS_SYSTEM_ANALYTICAL   "Analytical"
+    IDS_SUN_POS_SYSTEM_TIME_LOC     "Date, Time and Location"
 END
 
 #endif    // English (United States) resources

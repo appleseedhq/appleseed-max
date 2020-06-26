@@ -119,10 +119,10 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\windows-deps\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\openexr-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\oiio-release\include;$(SolutionDir)..\..\windows-deps\stage\vc141\osl-release\include;C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\appleseed-dep\stage\vc141\ilmbase-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\openexr-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\oiio-release\include;$(SolutionDir)..\..\appleseed-dep\stage\vc141\osl-release\include;F:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\windows-deps\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Program Files\Autodesk\3ds Max 2021 SDK\maxsdk\lib\x64\Release;$(SolutionDir)..\..\appleseed\sandbox\lib\vc141\$(ConfigurationName);$(SolutionDir)..\..\appleseed-dep\stage\vc141;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -228,6 +228,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClCompile Include="appleseedrenderelement\appleseedrenderelement.cpp" />
     <ClCompile Include="appleseedrenderer\dialoglogtarget.cpp" />
     <ClCompile Include="appleseedvolumemtl\appleseedvolumemtl.cpp" />
+    <ClCompile Include="applessedsunpositioner\appleseedsunpositioner.cpp" />
     <ClCompile Include="builtinmapsupport.cpp" />
     <ClCompile Include="appleseedlightmtl\appleseedlightmtl.cpp" />
     <ClCompile Include="logtarget.cpp" />
@@ -279,6 +280,8 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ClInclude Include="appleseedvolumemtl\appleseedvolumemtl.h" />
     <ClInclude Include="appleseedvolumemtl\datachunks.h" />
     <ClInclude Include="appleseedvolumemtl\resource.h" />
+    <ClInclude Include="applessedsunpositioner\appleseedsunpositioner.h" />
+    <ClInclude Include="applessedsunpositioner\resource.h" />
     <ClInclude Include="builtinmapsupport.h" />
     <ClInclude Include="bump\bumpparammapdlgproc.h" />
     <ClInclude Include="bump\resource.h" />
@@ -321,6 +324,7 @@ copy /Y "$(SolutionDir)..\..\appleseed\sandbox\shaders\appleseed\*.oso" "$(Solut
     <ResourceCompile Include="appleseedplasticmtl\appleseedplasticmtl.rc" />
     <ResourceCompile Include="appleseedrenderelement\appleseedrenderelement.rc" />
     <ResourceCompile Include="appleseedvolumemtl\appleseedvolumemtl.rc" />
+    <ResourceCompile Include="applessedsunpositioner\appleseedsunpositioner.rc" />
     <ResourceCompile Include="bump\bump.rc" />
     <ResourceCompile Include="appleseeddisneymtl\appleseeddisneymtl.rc" />
     <ResourceCompile Include="appleseedglassmtl\appleseedglassmtl.rc" />

@@ -33,9 +33,13 @@
 #include "appleseedenvmap/datachunks.h"
 #include "appleseedenvmap/resource.h"
 #include "appleseedrenderer/appleseedrenderer.h"
+#include "applessedsunpositioner/resource.h"
 #include "main.h"
 #include "utilities.h"
 #include "version.h"
+
+// appleseed.renderer headers.
+#include "renderer/utility/solarpositionalgorithm.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -57,6 +61,12 @@ namespace
 {
     enum { ParamBlockIdEnvMap };
     enum { ParamBlockRefEnvMap };
+   
+    enum ParamMapId
+    {
+        ParamMapIdSky,
+        ParamMapIdSunPositioner
+    };
 
     enum ParamId
     {
@@ -73,7 +83,18 @@ namespace
         ParamIdGroundAlbedo         = 11,
         ParamIdSunNode              = 12,
         ParamIdSunNodeOn            = 13,
-        ParamIdSunSizeMultiplier    = 14
+        ParamIdSunSizeMultiplier    = 14,
+        ParamIdHour                 = 15,
+        ParamIdMinute               = 16,
+        ParamIdSecond               = 17,
+        ParamIdMonth                = 18,
+        ParamIdDay                  = 19,
+        ParamIdYear                 = 20,
+        ParamIdTimezone             = 21,
+        ParamIdNorth                = 22,
+        ParamIdLatitude             = 23,
+        ParamIdLongitude            = 24,
+        ParamIdSunPosSystem         = 25
     };
 
     enum TexmapId
@@ -98,39 +119,52 @@ namespace
         L"appleseedEnvironmentMapParams",           // internal parameter block's name
         0,                                          // ID of the localized name string
         &g_appleseed_envmap_classdesc,              // class descriptor
-        P_AUTO_CONSTRUCT + P_AUTO_UI,               // block flags
+        P_AUTO_CONSTRUCT + P_MULTIMAP + P_AUTO_UI,  // block flags
 
-         // --- P_AUTO_CONSTRUCT arguments ---
+        // --- P_AUTO_CONSTRUCT arguments ---
         ParamBlockRefEnvMap,                        // parameter block's reference number
 
+        // --- P_MULTIMAP arguments ---
+        2,                                          // number of rollups
+
         // --- P_AUTO_UI arguments for Parameters rollup ---
+        ParamMapIdSky,
         IDD_ENVMAP_PANEL,                           // ID of the dialog template
         IDS_ENVMAP_PARAMS,                          // ID of the dialog's title string
         0,                                          // IParamMap2 creation/deletion flag mask
         0,                                          // rollup creation flag
         nullptr,
 
+        // --- P_AUTO_UI arguments for Sun Positioner rollup ---
+        ParamMapIdSunPositioner,
+        IDD_FORMVIEW_SUNPOSITIONER_PARAMS,          // ID of the dialog template
+        IDS_FORMVIEW_SUNPOSITIONER_PARAMS_TITLE,    // ID of the dialog's title string
+        0,                                          // IParamMap2 creation/deletion flag mask
+        0,                                          // rollup creation flag
+        nullptr,
+
         // --- Parameters specifications for Parameters rollup ---
+
         ParamIdSunTheta, L"sun_theta", TYPE_FLOAT, P_ANIMATABLE, IDS_THETA,
             p_default, 45.0f,
             p_range, 0.0f, 180.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_THETA, IDC_SPIN_THETA, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_THETA, IDC_SPIN_THETA, 0.01f,
         p_end,
 
         ParamIdSunPhi, L"sun_phi", TYPE_FLOAT, P_ANIMATABLE, IDS_PHI,
             p_default, 0.0f,
             p_range, 0.0f, 360.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_PHI, IDC_SPIN_PHI, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_PHI, IDC_SPIN_PHI, 0.01f,
         p_end,
 
         ParamIdSunSizeMultiplier, L"sun_size_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_SIZE_MULTIPLIER,
             p_default, 1.0f,
             p_range, 0.0f, 1000.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SIZE_MULTIPLIER, IDC_SPIN_SIZE_MULTIPLIER, 0.1f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SIZE_MULTIPLIER, IDC_SPIN_SIZE_MULTIPLIER, 0.1f,
         p_end,
 
         ParamIdSunNode, L"sun_node", TYPE_INODE, P_NO_AUTO_LABELS, IDS_SUN_NODE,
-            p_ui, TYPE_PICKNODEBUTTON, IDC_PICK_SUN_NODE,
+            p_ui, ParamMapIdSky, TYPE_PICKNODEBUTTON, IDC_PICK_SUN_NODE,
             p_prompt, IDS_PICK_SUN_PROMPT,
             p_validator, &g_sun_node_validator,
             p_accessor, &g_sun_node_accessor,
@@ -138,60 +172,127 @@ namespace
 
         ParamIdSunNodeOn, L"sun_node_on", TYPE_BOOL, 0, IDS_SUN_NODE_ON,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
+            p_ui, ParamMapIdSky, TYPE_SINGLECHEKBOX, IDC_SUN_NODE_ON,
             p_accessor, &g_sun_node_accessor,
         p_end,
 
         ParamIdTurbidity, L"turbidity", TYPE_FLOAT, P_ANIMATABLE, IDS_TURBIDITY,
             p_default, 1.0f,
             p_range, 0.0f, 1.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_TURBIDITY, IDC_SPIN_TURBIDITY, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_TURBIDITY, IDC_SPIN_TURBIDITY, 0.01f,
         p_end,
 
         ParamIdTurbidityMap, L"turbidity_map", TYPE_TEXMAP, 0, IDS_TURB_MAP,
             p_subtexno, TexmapIdTurbidity,
-            p_ui, TYPE_TEXMAPBUTTON, IDC_PICK_TURB_TEXTURE,
+            p_ui, ParamMapIdSky, TYPE_TEXMAPBUTTON, IDC_PICK_TURB_TEXTURE,
         p_end,
 
         ParamIdTurbidityMapOn, L"turbidity_map_on", TYPE_BOOL, 0, IDS_TURB_MAP_ON,
             p_default, TRUE,
-            p_ui, TYPE_SINGLECHEKBOX, IDC_TURB_TEX_ON,
+            p_ui, ParamMapIdSky, TYPE_SINGLECHEKBOX, IDC_TURB_TEX_ON,
         p_end,
 
         ParamIdTurbMultiplier, L"turbidity_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_TURB_MULTIPLIER,
             p_default, 2.0f,
             p_range, 0.0f, 8.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_TURB_MULTIPLIER, IDC_SPIN_TURB_MULTIPLIER, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_TURB_MULTIPLIER, IDC_SPIN_TURB_MULTIPLIER, 0.01f,
         p_end,
 
         ParamIdLuminMultiplier, L"luminance_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_LUMINANCE_MULTIPLIER,
             p_default, 1.0f,
             p_range, 0.0f, 10.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LUMIN_MULTIPLIER, IDC_SPIN_LUMIN_MULTIPLIER, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LUMIN_MULTIPLIER, IDC_SPIN_LUMIN_MULTIPLIER, 0.01f,
         p_end,
 
         ParamIdLuminGamma, L"luminance_gamma", TYPE_FLOAT, P_ANIMATABLE, IDS_LUMINANCE_GAMMA,
             p_default, 1.0f,
             p_range, 0.0f, 3.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LUMIN_GAMMA, IDC_SPIN_LUMIN_GAMMA, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LUMIN_GAMMA, IDC_SPIN_LUMIN_GAMMA, 0.01f,
         p_end,
 
         ParamIdSatMultiplier, L"saturation_multiplier", TYPE_FLOAT, P_ANIMATABLE, IDS_SAT_MULITPLIER,
             p_default, 1.0f,
             p_range, 0.0f, 10.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SATUR_MULTIPLIER, IDC_SPIN_SATUR_MULTIPLIER, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_SATUR_MULTIPLIER, IDC_SPIN_SATUR_MULTIPLIER, 0.01f,
         p_end,
 
         ParamIdHorizonShift, L"horizon_shift", TYPE_FLOAT, P_ANIMATABLE, IDS_HORIZON_SHIFT,
             p_default, 0.0f,
             p_range, -10.0f, 10.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_HORIZON_SHIFT, IDC_SPIN_HORIZON_SHIFT, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_HORIZON_SHIFT, IDC_SPIN_HORIZON_SHIFT, 0.01f,
         p_end,
 
         ParamIdGroundAlbedo, L"ground_albedo", TYPE_FLOAT, P_ANIMATABLE, IDS_GROUND_ALBEDO,
             p_default, 0.3f,
             p_range, 0.0f, 1.0f,
-            p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_GROUND_ALBEDO, IDC_SPIN_GROUND_ALBEDO, 0.01f,
+            p_ui, ParamMapIdSky, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_GROUND_ALBEDO, IDC_SPIN_GROUND_ALBEDO, 0.01f,
+        p_end,
+
+        ParamIdSunPosSystem, L"sun_pos_sytem", TYPE_INT, 0, IDS_SUN_POS_SYSTEM,
+            p_ui, ParamMapIdSky, TYPE_INT_COMBOBOX, IDC_COMBO_SUN_POS_SYSTEM,
+            2, IDS_SUN_POS_SYSTEM_ANALYTICAL, IDS_SUN_POS_SYSTEM_TIME_LOC,
+            p_vals, 0, 1,
+            p_default, 0,
+        p_end,
+
+        ParamIdHour, L"hour", TYPE_INT, P_ANIMATABLE, IDS_HOUR,
+            p_default, 12,
+            p_range, 0, 24,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_HOUR, IDC_SPIN_HOUR, 1,
+        p_end,
+
+        ParamIdMinute, L"minute", TYPE_INT, P_ANIMATABLE, IDS_MINUTE,
+            p_default, 0,
+            p_range, 0, 59,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_MINUTE, IDC_SPIN_MINUTE, 1,
+        p_end,
+
+        ParamIdSecond, L"second", TYPE_INT, P_ANIMATABLE, IDS_SECOND,
+            p_default, 0,
+            p_range, 0, 59,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_SECOND, IDC_SPIN_SECOND, 1,
+        p_end,
+
+        ParamIdMonth, L"month", TYPE_INT, P_ANIMATABLE, IDS_MONTH,
+            p_default, 1,
+            p_range, 0, 12,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_MONTH, IDC_SPIN_MONTH, 1,
+        p_end,
+
+        ParamIdDay, L"day", TYPE_INT, P_ANIMATABLE, IDS_DAY,
+            p_default, 1,
+            p_range, 1, 31,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_DAY, IDC_SPIN_DAY, 1,
+        p_end,
+
+        ParamIdYear, L"year", TYPE_INT, P_ANIMATABLE, IDS_YEAR,
+            p_default, 2020,
+            p_range, -2000, 4000,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_YEAR, IDC_SPIN_YEAR, 1,
+        p_end,
+
+        ParamIdTimezone, L"timezone", TYPE_INT, P_ANIMATABLE, IDS_TIMEZONE,
+            p_default, 0,
+            p_range, -18, 18,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_INT, IDC_EDIT_TIMEZONE, IDC_SPIN_TIMEZONE, 1,
+        p_end,
+
+        ParamIdNorth, L"north", TYPE_FLOAT, P_ANIMATABLE, IDS_NORTH,
+            p_default, 0,
+            p_range, -180, 180,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_NORTH, IDC_SPIN_NORTH, 0.2f,
+        p_end,
+
+        ParamIdLatitude, L"latitude", TYPE_FLOAT, P_ANIMATABLE, IDS_LATITUDE,
+            p_default, 0,
+            p_range, -90, 90,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LATITUDE, IDC_SPIN_LATITUDE, 0.2F,
+        p_end,
+
+        ParamIdLongitude, L"longitude", TYPE_FLOAT, P_ANIMATABLE, IDS_LONGITUDE,
+            p_default, 0,
+            p_range, -180, 180,
+            p_ui, ParamMapIdSunPositioner, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_EDIT_LONGITUDE, IDC_SPIN_LONGITUDE, 1,
         p_end,
 
         p_end
@@ -218,6 +319,7 @@ AppleseedEnvMap::AppleseedEnvMap()
   , m_sat_multiplier(1.0f)
   , m_horizon_shift(0.0f)
   , m_ground_albedo(0.3f)
+  , m_sun_positioning_system(Analytical)
 {
     g_appleseed_envmap_classdesc.MakeAutoParamBlocks(this);
     Reset();
@@ -387,9 +489,8 @@ void AppleseedEnvMap::Update(TimeValue t, Interval& valid)
         NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
     }
     m_params_validity.SetInfinite();
+    //int test = m_sun_positioning_system;
 
-    m_pblock->GetValue(ParamIdSunTheta, t, m_sun_theta, m_params_validity);
-    m_pblock->GetValue(ParamIdSunPhi, t, m_sun_phi, m_params_validity);
     m_pblock->GetValue(ParamIdSunSizeMultiplier, t, m_sun_size_multiplier, m_params_validity);
     m_pblock->GetValue(ParamIdSunNode, t, m_sun_node, m_params_validity);
     m_pblock->GetValue(ParamIdSunNodeOn, t, m_sun_node_on, m_params_validity);
@@ -404,9 +505,26 @@ void AppleseedEnvMap::Update(TimeValue t, Interval& valid)
     m_pblock->GetValue(ParamIdSatMultiplier, t, m_sat_multiplier, m_params_validity);
     m_pblock->GetValue(ParamIdHorizonShift, t, m_horizon_shift, m_params_validity);
     m_pblock->GetValue(ParamIdGroundAlbedo, t, m_ground_albedo, m_params_validity);
-
+    m_pblock->GetValue(ParamIdSunPosSystem, t, m_sun_positioning_system, m_params_validity);
+    
     if (m_turbidity_map)
         m_turbidity_map->Update(t, m_params_validity);
+
+    if (m_sun_positioning_system == Analytical)
+    {
+        m_pblock->GetValue(ParamIdSunTheta, t, m_sun_theta, m_params_validity);
+        m_pblock->GetValue(ParamIdSunPhi, t, m_sun_phi, m_params_validity);
+    }
+    else
+    {
+        m_sun_positioner.update(m_pblock, t, m_params_validity);
+
+        m_sun_theta = m_sun_positioner.get_theta();
+        m_sun_phi = m_sun_positioner.get_phi();
+
+        m_pblock->SetValue(ParamIdSunTheta, t, m_sun_theta);
+        m_pblock->SetValue(ParamIdSunPhi, t, m_sun_phi);
+    }
 
     valid = m_params_validity;
 }
@@ -445,16 +563,32 @@ namespace
             switch (umsg)
             {
               case WM_INITDIALOG:
-                enable_disable_controls(hwnd, map);
+                enable_disable_controls(hwnd, map, t);
                 return TRUE;
 
+              case WM_COMMAND:
+                switch (LOWORD(wparam))
+                {
+                  case IDC_COMBO_SUN_POS_SYSTEM:
+                    switch (HIWORD(wparam))
+                    {
+                      case CBN_SELCHANGE:
+                        enable_disable_controls(hwnd, map, t);
+                        return TRUE;
+
+                      default:
+                        return FALSE;
+                    }
+                  default:
+                    return FALSE;
+                }
               default:
                 return FALSE;
             }
         }
 
       private:
-        void enable_disable_controls(HWND hwnd, IParamMap2* map)
+        void enable_disable_controls(HWND hwnd, IParamMap2* map, TimeValue t)
         {
             INode* sun_node;
             int sun_node_on;
@@ -463,6 +597,11 @@ namespace
             {
                 pblock->GetValue(ParamIdSunNode, 0, sun_node, FOREVER);
                 pblock->GetValue(ParamIdSunNodeOn, 0, sun_node_on, FOREVER);
+
+                SunPositioningSystem sun_pos;
+                pblock->GetValue(ParamIdSunPosSystem, t, sun_pos, FOREVER);
+                EnableWindow(GetDlgItem(hwnd, IDC_EDIT_HOUR), sun_pos == TimeLocation);
+                EnableWindow(GetDlgItem(hwnd, IDC_EDIT_HOUR), sun_pos == TimeLocation);
             }
             map->Enable(ParamIdSunTheta, (sun_node_on && sun_node) ? FALSE : TRUE);
             map->Enable(ParamIdSunPhi, (sun_node_on && sun_node) ? FALSE : TRUE);
@@ -630,7 +769,8 @@ void SunNodePBAccessor::TabChanged(
             IParamBlock2* pblock = p->GetParamBlock(0);
             if (pblock)
             {
-                IParamMap2* map = pblock->GetMap();
+                IParamMap2* map = pblock->GetMap(ParamMapIdSky
+                );
                 if (map)
                 {
                     map->Enable(ParamIdSunTheta, TRUE);
@@ -653,7 +793,7 @@ void SunNodePBAccessor::Set(
     if (pblock == nullptr)
         return;
 
-    IParamMap2* map = pblock->GetMap();
+    IParamMap2* map = pblock->GetMap(ParamMapIdSky);
     if (map == nullptr)
         return;
 
