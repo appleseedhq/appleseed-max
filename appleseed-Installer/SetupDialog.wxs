@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--//**********************************************************************/
+// Copyright (c) 2021 appleseed.
+// All rights reserved.
+// 
+//**************************************************************************/
+// DESCRIPTION: Contains the Dll Entry stuff
+// AUTHOR: Omid Ghotbi (TAO) omid.ghotbi@gmail.com www.3dfine.com
+//***************************************************************************/-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI Id="SetupDialogUI">
+
+      <DialogRef Id="LicenseAgreeDlg"/>
+
+      <Property Id="Next">nextbtn</Property>
+      <Binary Id="nextbtn" SourceFile="Resources/btNext.png"/>
+      <Binary Id="closebtn" SourceFile="Resources/btClose.png"/>
+      <Property Id="Close">closebtn</Property>
+
+      <TextStyle Id="TahomaHeader" FaceName="Tahoma" Size="18" Bold="yes" Red="255" Green="255" Blue="255" />
+      <TextStyle Id="TahomaNormal" FaceName="Tahoma" Size="8" Red="255" Green="255" Blue="255" />
+      <Property Id="DefaultUIFont" Value="TahomaNormal" />
+
+      <Dialog Id="SetupDialog" Width="555" Height="416" Title="appleseed" NoMinimize="yes">
+
+        <Control Id="background" Type="Bitmap" Text="bgImage" Width="555" Height="416" X="0" Y="0" TabSkip="no" FixedSize="yes"/>
+
+        <Control Id="introText"  Type="Text" X="240" Y="110" Width="300" Height="22" Transparent="yes" Text="{\TahomaHeader}Welcome to appleseed Plugin" />
+        <Control Id="explanationText" X="240" Y="150" Width="300" Height="100" NoWrap="no" RightAligned="no" Transparent="yes" Type="Text" Text="{\TahomaNormal}appleseed is integrated internal 3dsmax plugin base on appleseed engine. Both appleseed and appleseed plugin are open sources application. for more information please check appleseed website https://appleseedhq.net" />
+
+        <Control Id="nextButton" Type="PushButton" Text="[Next]" X="375" Y="380" Width="75" Height="18" Bitmap="yes" FixedSize="yes">
+         <Publish Event="EndDialog" Value="Return" />
+        </Control>
+
+        <Control Id="cancelButton" Type="PushButton" Text="[Cancel]" X="460" Y="380" Width="75" Height="18" Cancel="yes" FixedSize="yes" Bitmap="yes">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+
+      </Dialog>
+
+    </UI>
+
+    <InstallUISequence>
+      <Show Dialog="SetupDialog" Before="ExecuteAction" />
+    </InstallUISequence>
+  </Fragment>
+</Wix>

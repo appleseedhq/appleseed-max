@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--//**********************************************************************/
+// Copyright (c) 2021 appleseed.
+// All rights reserved.
+// 
+//**************************************************************************/
+// DESCRIPTION: Contains the Dll Entry stuff
+// AUTHOR: Omid Ghotbi (TAO) omid.ghotbi@gmail.com www.3dfine.com
+//***************************************************************************/-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI Id="ErrorDialogUI">
+
+      <Dialog Id="ErrorDialog" Width="555" Height="416" NoMinimize="yes" Title="appleseed : Setup Error">
+
+        <Control Id="background" Type="Bitmap" Text="bgImage" Width="555" Height="416" X="0" Y="0" TabSkip="no" FixedSize="yes"/>
+
+        <Control Id="ErrorText"  Type="Text" X="290" Y="110" Width="350" Height="22" Transparent="yes" Text="{\TahomaHeader}Installation Faild" />
+        <Control Id="ErrorExplanationText" X="240" Y="150" Width="270" Height="100" NoWrap="no" RightAligned="no" Transparent="yes" Type="Text" Text="{\TahomaNormal}Installation has been faild, please contact our team or check for help on appleseed website https://appleseedhq.net" />
+
+        <Control Id="cancelButton" Type="PushButton" Text="[Close]" X="460" Y="380" Width="75" Height="18" Cancel="yes" FixedSize="yes" Bitmap="yes">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+
+      </Dialog>
+
+    </UI>
+
+    <InstallUISequence>
+      <Show Dialog="ErrorDialog" OnExit="error" />
+    </InstallUISequence>
+  </Fragment>
+</Wix>

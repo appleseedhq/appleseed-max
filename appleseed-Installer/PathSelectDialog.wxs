@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--//**********************************************************************/
+// Copyright (c) 2021 appleseed.
+// All rights reserved.
+// 
+//**************************************************************************/
+// DESCRIPTION: Contains the Dll Entry stuff
+// AUTHOR: Omid Ghotbi (TAO) omid.ghotbi@gmail.com www.3dfine.com
+//***************************************************************************/-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI Id="PathSelectDialogUI">
+
+      <DialogRef Id="ProgressDialog"/>
+      
+      <Property Id="Install">installbtn</Property>
+      <Binary Id="installbtn" SourceFile="Resources/btInstall.png"/>
+
+      <Dialog Id="PathSelectDialog" Width="555" Height="416" Title="appleseed : Path Selection">
+
+        <Control Id="background" Type="Bitmap" Text="bgImage" Width="555" Height="416" X="0" Y="0" TabSkip="no" />
+
+        <Control Id="explanationText" X="230" Y="100" Width="300" Height="100" NoWrap="no" RightAligned="no" Transparent="yes" Type="Text" Text="{\TahomaNormal}Setup should automatically find the path to 3dsmax, but if it did not you must point it to the root of 3dsmax folder. " />
+
+        <Control Id='BrowseText' Type='Text' X='230' Y='140' Width='30' Height='12' Text="{\TahomaNormal}Browse:" TabSkip='no' Transparent='yes' NoWrap="no"/>
+        <Control Id='FolderCombo' Type='DirectoryCombo' X='265' Y='136' Width='265' Height='12' Property='INSTALLDIR' Text='MsiDirectoryCombo' TabSkip='no' Indirect='yes' Removable='yes' Fixed='yes' Remote='yes' RAMDisk='yes' Floppy='yes' />
+        <Control Id='FolderList' Type='DirectoryList' X='265' Y='160' Width='265' Height='150' Property='INSTALLDIR' Text='MsiDirectoryList' TabSkip='no' Sunken='yes' Indirect='yes' />
+        <Control Id='FolderText' Type='Text' X='230' Y='320' Width='30' Height='12' Text="{\TahomaNormal}Folder:" TabSkip='no' Transparent='yes' NoWrap="no"/>
+        <Control Id='FolderPathEdit' Type='PathEdit' X='265' Y='318' Width='265' Height='18' Property='INSTALLDIR' Text='MsiPathEdit' TabSkip='no' Sunken='yes' Indirect='yes' />
+
+        <Control Id="installButton" Type="PushButton" Text="[Install]" X="375" Y="380" Width="75" Height="18" Bitmap="yes" FixedSize="yes">
+          <Publish Event='SetTargetPath' Value='[INSTALLDIR]'><![CDATA[1]]></Publish>
+          <Publish Event='EndDialog' Value='Return'><![CDATA[1]]></Publish>
+        </Control>
+
+        <Control Id="cancelButton" Type="PushButton" Text="[Cancel]" X="460" Y="380" Width="75" Height="18" Cancel="yes" Bitmap="yes" FixedSize="yes">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+
+      </Dialog>
+
+    </UI>
+
+    <InstallUISequence>
+        <Show Dialog="PathSelectDialog" After="VersionSelectDlg" />
+    </InstallUISequence>
+
+  </Fragment>
+
+</Wix>

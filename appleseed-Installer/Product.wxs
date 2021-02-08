@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="{EEC9E532-B45A-4B0A-B2AA-1762CFB002D8}" Name="appleseed-MAX" Language="1033" Version="1.0.0.1" Manufacturer="appleseed" UpgradeCode="{46137F8F-2BD6-499C-ADDA-EC812E8E978B}">
+		<Package InstallerVersion="300" Compressed="yes" Platform="x64" InstallScope="perMachine" />
+    <Icon Id="icon.ico" SourceFile="Resources\icon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+
+    <UIRef Id="SetupDialogUI" />
+
+    <Property Id="MAX2017" Value="{}" Secure="yes" />
+    <Property Id="MAX2018" Value="{}" Secure="yes" />
+    <Property Id="MAX2019" Value="{}" Secure="yes" />
+    <Property Id="MAX2020" Value="{}" Secure="yes" />
+    <Property Id="MAX2021" Value="{}" Secure="yes" />
+    
+    <Binary Id="bgImage" SourceFile="Resources/Bg.png" />
+    <Binary Id="cancelbtn" SourceFile="Resources/btCancel.png"/>
+    <Property Id="Cancel">cancelbtn</Property>
+    
+    <Property Id="INSTALLDIR" Value="ROOTDIR" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+    <CustomAction Id='DIRCA_TARGETDIR' Property='ROOTDIR' Value='c:\' Execute='firstSequence' />
+    <CustomAction Id='DIRCA_PLUGINDIR' Property='PLUGINDIR' Value='plugins' Execute='firstSequence' />
+    <CustomAction Id='DIRCA_MAPS' Property='MAPS' Value='maps' Execute='firstSequence' />
+    <CustomAction Id='DIRCA_LUXMAPS' Property='LUXMAPS' Value='LuxMap' Execute='firstSequence' />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <Directory Id='ROOTDIR' Name='Root Folder'>
+
+        <Directory Id='PLUGINDIR' Name='plugins'>
+          <Component Id='appleseed_max2017.dlr' Guid='{60E1F76A-F4C2-4EDA-BADd-361796E55669}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2017.dlr' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2017.dlr' Source='..\appleseed-max2017\appleseed-max2017.dlr' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2017_impl.dll' Guid='{4775E032-D135-4A42-8477-374F99870713}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2017_impl.dll' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2017-impl.dll' Source='..\appleseed-max2017\appleseed-max2017-impl.dll' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2018.dlr' Guid='{2A7587Dd-6C46-4CBd-B549-42FCEE00808A}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2018.dlr' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2018.dlr' Source='..\appleseed-max2018\appleseed-max2018.dlr' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2018_impl.dll' Guid='{8C73B2F2-7444-4072-A7DF-931C4ED623E7}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2018_impl.dll' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2018-impl.dll' Source='..\appleseed-max2018\appleseed-max2018-impl.dll' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2019.dlr' Guid='{D296C19A-E8E4-456d-BEA0-BED647BF05B0}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2019.dlr' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2019.dlr' Source='..\appleseed-max2019\appleseed-max2019.dlr' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2019_impl.dll' Guid='{59436677-09A2-40E9-BEA8-3946C8C37D42}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2019_impl.dll' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2019-impl.dll' Source='..\appleseed-max2019\appleseed-max2019-impl.dll' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2020.dlr' Guid='{22807B36-11FF-476A-982E-D215C947DD15}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2020.dlr' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2020.dlr' Source='..\appleseed-max2020\appleseed-max2020.dlr' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2020_impl.dll' Guid='{AC85B8A9-9B7A-457C-9A40-96BF6D1B3952}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2020_impl.dll' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2020-impl.dll' Source='..\appleseed-max2020\appleseed-max2020-impl.dll' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2021.dlr' Guid='{AA580367-B1B7-46F4-ACEB-CEE5E2A738CC}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2021.dlr' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2021.dlr' Source='..\appleseed-max2021\appleseed-max2021.dlr' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed_max2021_impl.dll' Guid='{D372374A-09F0-48FD-B752-FB6190C4C7E0}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed_max2021_impl.dll' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed-max2021-impl.dll' Source='..\appleseed-max2021\appleseed-max2021-impl.dll' KeyPath='yes' />
+          </Component>
+          <Component Id='appleseed.dll' Guid='{6DE34BD9-582d-4A63-8C1E-923608DE4B11}' Permanent='no' SharedDllRefCount='no' Transitive='no'>
+            <File Id='_appleseed.dll' DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='appleseed.dll' Source='..\appleseed-max2017\appleseed.dll' KeyPath='yes' />
+          </Component>
+
+          <Directory Id='SHADERS' Name='shaders'>
+            <Component Id='dirSHADERS' Guid='{6990F077-1399-4D64-BF2C-15288342CF7B}' Transitive='no'>
+              <CreateFolder Directory='SHADERS' />
+            </Component>
+            <Directory Id='APPLESEED' Name='appleseed'>
+              <Component Id='dirAPPLESEED' Guid='{7A579FBA-240C-4103-8134-8987FA51C1B3}' Transitive='no'>
+                <CreateFolder Directory='APPLESEED' />
+              </Component>
+              <Component Id="as_anisotropy_vector_field.oso" Guid="{D32C03B8-CD7A-4396-B1B3-17EB860F0710}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_anisotropy_vector_field.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_anisotropy_vector_field.oso' Source="..\appleseed-max2017\shaders\appleseed\as_anisotropy_vector_field.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_asc_cdl.oso" Guid="{736B8B3E-9182-4EA0-A295-36F316D34933}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_asc_cdl.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_asc_cdl.oso' Source="..\appleseed-max2017\shaders\appleseed\as_asc_cdl.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_attributes.oso" Guid="{CC0A9841-217E-40FB-A69A-AB8C6361DBDA}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_attributes.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_attributes.oso' Source="..\appleseed-max2017\shaders\appleseed\as_attributes.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_blackbody.oso" Guid="{BFD947D3-A063-4537-A545-159AA09C7265}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_blackbody.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_blackbody.oso' Source="..\appleseed-max2017\shaders\appleseed\as_blackbody.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_blend_color.oso" Guid="{611A81F4-DD50-4CAB-863E-8D42C2F15557}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_blend_color.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_blend_color.oso' Source="..\appleseed-max2017\shaders\appleseed\as_blend_color.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_blend_shader.oso" Guid="{1A908979-082d-452B-A22E-2C7016303807}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_blend_shader.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_blend_shader.oso' Source="..\appleseed-max2017\shaders\appleseed\as_blend_shader.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_bump.oso" Guid="{4A881942-3850-46D5-8E83-6F020756D732}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_bump.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_bump.oso' Source="..\appleseed-max2017\shaders\appleseed\as_bump.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_closure2surface.oso" Guid="{514BC7DA-2733-4FFd-A66C-E03CB94421C4}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_closure2surface.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_closure2surface.oso' Source="..\appleseed-max2017\shaders\appleseed\as_closure2surface.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_color_transform.oso" Guid="{152490EF-1972-4CE2-9DFF-1660A05E2689}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_color_transform.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_color_transform.oso' Source="..\appleseed-max2017\shaders\appleseed\as_color_transform.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_composite_color.oso" Guid="{BCC8B20C-F1B1-44A6-B31F-17463F8D4848}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_composite_color.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_composite_color.oso' Source="..\appleseed-max2017\shaders\appleseed\as_composite_color.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_create_mask.oso" Guid="{B8F62933-1760-4D9E-8AC0-3B324540A877}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_create_mask.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_create_mask.oso' Source="..\appleseed-max2017\shaders\appleseed\as_create_mask.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_disney_material.oso" Guid="{D5C49BAE-11D0-4714-BF16-F1639AB9D00A}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_disney_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_disney_material.oso' Source="..\appleseed-max2017\shaders\appleseed\as_disney_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_double_shade.oso" Guid="{7199E36F-C384-42DC-94CF-1E31FCFDB483}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_double_shade.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_double_shade.oso' Source="..\appleseed-max2017\shaders\appleseed\as_double_shade.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_falloff_angle.oso" Guid="{B3A2A4BA-E478-4DE5-AA54-50C1E5A9ECD3}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_falloff_angle.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_falloff_angle.oso' Source="..\appleseed-max2017\shaders\appleseed\as_falloff_angle.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_fresnel.oso" Guid="{7E29D1E9-DB6E-4CBA-9C2B-6E00FE3249C2}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_fresnel.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_fresnel.oso' Source="..\appleseed-max2017\shaders\appleseed\as_fresnel.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_glass.oso" Guid="{EDC9CCFd-C0A8-4101-98Ed-9E0658C836A1}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_glass.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_glass.oso' Source="..\appleseed-max2017\shaders\appleseed\as_glass.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_globals.oso" Guid="{711A96E7-3509-4753-A6D0-84469FD2559E}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_globals.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_globals.oso' Source="..\appleseed-max2017\shaders\appleseed\as_globals.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_id_manifold.oso" Guid="{66ED3F69-6D91-4298-892B-A41B2A7FFFA6}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_id_manifold.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_id_manifold.oso' Source="..\appleseed-max2017\shaders\appleseed\as_id_manifold.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_invert_color.oso" Guid="{E0511791-8951-4983-86Bd-0271BE7F1C1B}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_invert_color.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_invert_color.oso' Source="..\appleseed-max2017\shaders\appleseed\as_invert_color.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_luminance.oso" Guid="{D9D41541-77B1-4130-894d-25B23FB5B923}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_luminance.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_luminance.oso' Source="..\appleseed-max2017\shaders\appleseed\as_luminance.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_manifold2d.oso" Guid="{06CC184d-2859-4CF8-9BA6-7985C17C2B5F}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_manifold2d.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_manifold2d.oso' Source="..\appleseed-max2017\shaders\appleseed\as_manifold2d.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_matte.oso" Guid="{A688EFA2-1764-4EC0-ACB9-BD77EAE6B2DF}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_matte.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_matte.oso' Source="..\appleseed-max2017\shaders\appleseed\as_matte.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_metal.oso" Guid="{5455F940-BA87-4E47-B2BC-5B085954EE02}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_metal.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_metal.oso' Source="..\appleseed-max2017\shaders\appleseed\as_metal.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_noise2d.oso" Guid="{9CC548E3-0145-4F9A-A668-E90D5A6AF5A5}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_noise2d.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_noise2d.oso' Source="..\appleseed-max2017\shaders\appleseed\as_noise2d.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_noise3d.oso" Guid="{6C873F73-DD10-4672-B3CC-142C61DDAAA8}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_noise3d.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_noise3d.oso' Source="..\appleseed-max2017\shaders\appleseed\as_noise3d.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_plastic.oso" Guid="{C9023FD7-DF8E-4034-AD1d-CDB9922B6B6A}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_plastic.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_plastic.oso' Source="..\appleseed-max2017\shaders\appleseed\as_plastic.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_ray_switch.oso" Guid="{99136098-DDF5-4501-A336-327480DED7F1}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_ray_switch.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_ray_switch.oso' Source="..\appleseed-max2017\shaders\appleseed\as_ray_switch.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_sbs_pbrmaterial.oso" Guid="{56A403A2-05D3-4BE6-AEFd-9566EBC0835F}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_sbs_pbrmaterial.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_sbs_pbrmaterial.oso' Source="..\appleseed-max2017\shaders\appleseed\as_sbs_pbrmaterial.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_space_transform.oso" Guid="{B8F59D7C-22F8-4BC0-A42E-C69B3733B792}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_space_transform.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_space_transform.oso' Source="..\appleseed-max2017\shaders\appleseed\as_space_transform.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_standard_surface.oso" Guid="{74E59995-44DE-4E1d-A75A-85344DFBB711}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_standard_surface.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_standard_surface.oso' Source="..\appleseed-max2017\shaders\appleseed\as_standard_surface.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_subsurface.oso" Guid="{DD3DBDEE-0782-4EF7-BF76-EAEF15A08D77}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_subsurface.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_subsurface.oso' Source="..\appleseed-max2017\shaders\appleseed\as_subsurface.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_switch_surface.oso" Guid="{42C8EA17-1C90-4A0E-B87C-E50222D38402}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_switch_surface.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_switch_surface.oso' Source="..\appleseed-max2017\shaders\appleseed\as_switch_surface.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_switch_texture.oso" Guid="{C28632F3-5664-492d-8F0F-85AACAB261E7}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_switch_texture.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_switch_texture.oso' Source="..\appleseed-max2017\shaders\appleseed\as_switch_texture.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_swizzle.oso" Guid="{153B15C4-545E-4A31-AD10-847C3019CD56}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_swizzle.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_swizzle.oso' Source="..\appleseed-max2017\shaders\appleseed\as_swizzle.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_texture.oso" Guid="{46E5D582-8BAB-452C-96C2-256B996B475A}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_texture.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_texture.oso' Source="..\appleseed-max2017\shaders\appleseed\as_texture.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_texture_info.oso" Guid="{D15A3919-3E9F-46F5-9CBB-72CB67D96ED5}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_texture_info.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_texture_info.oso' Source="..\appleseed-max2017\shaders\appleseed\as_texture_info.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_texture2surface.oso" Guid="{C608C2E6-8523-47F7-BF39-1E2A715E0828}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_texture2surface.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_texture2surface.oso' Source="..\appleseed-max2017\shaders\appleseed\as_texture2surface.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_texture3d.oso" Guid="{27B2C452-F0EB-4FC6-981F-6682DC9569DD}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_texture3d.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_texture3d.oso' Source="..\appleseed-max2017\shaders\appleseed\as_texture3d.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_toon.oso" Guid="{9B639792-E51B-49B0-98C3-4CF930C7628E}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_toon.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_toon.oso' Source="..\appleseed-max2017\shaders\appleseed\as_toon.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_triplanar.oso" Guid="{CBA25220-D867-4CCd-8D37-5D10A9B54F3D}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_triplanar.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_triplanar.oso' Source="..\appleseed-max2017\shaders\appleseed\as_triplanar.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_vary_color.oso" Guid="{DB749B86-2110-40D5-AB99-AE5DB8040C30}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_vary_color.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_vary_color.oso' Source="..\appleseed-max2017\shaders\appleseed\as_vary_color.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_voronoi2d.oso" Guid="{29A40CBB-F9BE-4C61-B591-105AB4D2341D}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_voronoi2d.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_voronoi2d.oso' Source="..\appleseed-max2017\shaders\appleseed\as_voronoi2d.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_voronoi3d.oso" Guid="{28FBD5E4-CB4B-4944-8556-B5FBC5C23C7B}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_voronoi3d.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_voronoi3d.oso' Source="..\appleseed-max2017\shaders\appleseed\as_voronoi3d.oso" KeyPath="yes"/>
+              </Component>
+            </Directory>
+            
+            <Directory Id='MAX' Name='max'>
+              <Component Id='dirMAX' Guid='{6012A932-C3CB-44DB-8469-E5986CA85A2C}' Transitive='no'>
+                <CreateFolder Directory='MAX' />
+              </Component>
+              <Component Id="as_max_blend_material.oso" Guid="{8403F520-BF38-45Ed-A87B-1AC53AAED6F1}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_blend_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_blend_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_blend_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_bump_map.oso" Guid="{0BCEA899-7268-451F-968B-E66DCBF475FA}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_bump_map.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_bump_map.oso' Source="..\appleseed-max2017\shaders\max\as_max_bump_map.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_closure2surface.oso" Guid="{2FECEF3A-3459-4630-94CB-1CBCD4F850A2}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_closure2surface.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_closure2surface.oso' Source="..\appleseed-max2017\shaders\max\as_max_closure2surface.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_color_balance.oso" Guid="{EFEF8347-5F5F-42C9-BD1B-8E10183410C4}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_color_balance.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_color_balance.oso' Source="..\appleseed-max2017\shaders\max\as_max_color_balance.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_color_texture.oso" Guid="{CFC41196-9A4F-4FA8-B698-D0F0285CFBE2}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_color_texture.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_color_texture.oso' Source="..\appleseed-max2017\shaders\max\as_max_color_texture.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_disney_material.oso" Guid="{BBCACFE7-BF1C-4F65-BB0F-6A493C7A4D96}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_disney_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_disney_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_disney_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_float_texture.oso" Guid="{43521F71-4766-4A40-B357-1C1E50940732}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_float_texture.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_float_texture.oso' Source="..\appleseed-max2017\shaders\max\as_max_float_texture.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_glass_material.oso" Guid="{4E215201-26DE-444F-983d-947B32E20971}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_glass_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_glass_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_glass_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_light_material.oso" Guid="{2DE81246-EC33-4D59-978A-810CECEDBB84}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_light_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_light_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_light_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_metal_material.oso" Guid="{83D8F338-9C46-4742-912F-38A8FA0A6193}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_metal_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_metal_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_metal_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_normal_map.oso" Guid="{0A300743-0090-474B-B1F6-82297331D480}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_normal_map.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_normal_map.oso' Source="..\appleseed-max2017\shaders\max\as_max_normal_map.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_plastic_material.oso" Guid="{25EB41E9-8250-45FB-B6F2-5764A13EEF2F}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_plastic_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_plastic_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_plastic_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_srgb_to_linear_rgb.oso" Guid="{0F1CF5AB-7FBC-4656-933F-44CC54A75AAB}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_srgb_to_linear_rgb.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_srgb_to_linear_rgb.oso' Source="..\appleseed-max2017\shaders\max\as_max_srgb_to_linear_rgb.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_sss_material.oso" Guid="{B24389E1-D5B1-4B85-A00C-AD823D953454}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_sss_material.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_sss_material.oso' Source="..\appleseed-max2017\shaders\max\as_max_sss_material.oso" KeyPath="yes"/>
+              </Component>
+              <Component Id="as_max_uv_transform.oso" Guid="{21D8A2F1-5842-44BF-81B4-90DCECB91F00}" Permanent='no' SharedDllRefCount='no' Transitive='no'>
+                <File Id="_as_max_uv_transform.oso" DiskId='1' Hidden='no' ReadOnly='no' System='no' Vital='yes'  Name='as_max_uv_transform.oso' Source="..\appleseed-max2017\shaders\max\as_max_uv_transform.oso" KeyPath="yes"/>
+              </Component>
+            </Directory>
+          </Directory>
+        
+      </Directory>
+        
+      </Directory>
+        
+    </Directory>
+
+    <ComponentGroup Id='Max2017Selected'>
+      <ComponentRef Id='appleseed_max2017.dlr' />
+      <ComponentRef Id='appleseed_max2017_impl.dll' />
+      <ComponentRef Id='appleseed.dll' />
+      <ComponentRef Id='dirSHADERS' />
+      <ComponentRef Id='dirAPPLESEED' />
+      <ComponentRef Id='as_anisotropy_vector_field.oso' />
+      <ComponentRef Id='as_asc_cdl.oso' />
+      <ComponentRef Id='as_attributes.oso' />
+      <ComponentRef Id='as_blackbody.oso' />
+      <ComponentRef Id='as_blend_color.oso' />
+      <ComponentRef Id='as_blend_shader.oso' />
+      <ComponentRef Id='as_bump.oso' />
+      <ComponentRef Id='as_closure2surface.oso' />
+      <ComponentRef Id='as_color_transform.oso' />
+      <ComponentRef Id='as_composite_color.oso' />
+      <ComponentRef Id='as_create_mask.oso' />
+      <ComponentRef Id='as_disney_material.oso' />
+      <ComponentRef Id='as_double_shade.oso' />
+      <ComponentRef Id='as_falloff_angle.oso' />
+      <ComponentRef Id='as_fresnel.oso' />
+      <ComponentRef Id='as_glass.oso' />
+      <ComponentRef Id='as_globals.oso' />
+      <ComponentRef Id='as_id_manifold.oso' />
+      <ComponentRef Id='as_invert_color.oso' />
+      <ComponentRef Id='as_luminance.oso' />
+      <ComponentRef Id='as_manifold2d.oso' />
+      <ComponentRef Id='as_matte.oso' />
+      <ComponentRef Id='as_metal.oso' />
+      <ComponentRef Id='as_noise2d.oso' />
+      <ComponentRef Id='as_noise3d.oso' />
+      <ComponentRef Id='as_plastic.oso' />
+      <ComponentRef Id='as_ray_switch.oso' />
+      <ComponentRef Id='as_sbs_pbrmaterial.oso' />
+      <ComponentRef Id='as_space_transform.oso' />
+      <ComponentRef Id='as_standard_surface.oso' />
+      <ComponentRef Id='as_subsurface.oso' />
+      <ComponentRef Id='as_switch_surface.oso' />
+      <ComponentRef Id='as_switch_texture.oso' />
+      <ComponentRef Id='as_swizzle.oso' />
+      <ComponentRef Id='as_texture.oso' />
+      <ComponentRef Id='as_texture_info.oso' />
+      <ComponentRef Id='as_texture2surface.oso' />
+      <ComponentRef Id='as_texture3d.oso' />
+      <ComponentRef Id='as_toon.oso' />
+      <ComponentRef Id='as_triplanar.oso' />
+      <ComponentRef Id='as_vary_color.oso' />
+      <ComponentRef Id='as_voronoi2d.oso' />
+      <ComponentRef Id='as_voronoi3d.oso' />
+      <ComponentRef Id='dirMAX' />
+      <ComponentRef Id='as_max_blend_material.oso' />
+      <ComponentRef Id='as_max_bump_map.oso' />
+      <ComponentRef Id='as_max_closure2surface.oso' />
+      <ComponentRef Id='as_max_color_balance.oso' />
+      <ComponentRef Id='as_max_color_texture.oso' />
+      <ComponentRef Id='as_max_disney_material.oso' />
+      <ComponentRef Id='as_max_float_texture.oso' />
+      <ComponentRef Id='as_max_glass_material.oso' />
+      <ComponentRef Id='as_max_light_material.oso' />
+      <ComponentRef Id='as_max_metal_material.oso' />
+      <ComponentRef Id='as_max_normal_map.oso' />
+      <ComponentRef Id='as_max_plastic_material.oso' />
+      <ComponentRef Id='as_max_srgb_to_linear_rgb.oso' />
+      <ComponentRef Id='as_max_sss_material.oso' />
+      <ComponentRef Id='as_max_uv_transform.oso' />
+    </ComponentGroup>
+    
+    <ComponentGroup Id='Max2018Selected'>
+      <ComponentRef Id='appleseed_max2018.dlr' />
+      <ComponentRef Id='appleseed_max2018_impl.dll' />
+      <ComponentRef Id='appleseed.dll' />
+      <ComponentRef Id='dirSHADERS' />
+      <ComponentRef Id='dirAPPLESEED' />
+      <ComponentRef Id='as_anisotropy_vector_field.oso' />
+      <ComponentRef Id='as_asc_cdl.oso' />
+      <ComponentRef Id='as_attributes.oso' />
+      <ComponentRef Id='as_blackbody.oso' />
+      <ComponentRef Id='as_blend_color.oso' />
+      <ComponentRef Id='as_blend_shader.oso' />
+      <ComponentRef Id='as_bump.oso' />
+      <ComponentRef Id='as_closure2surface.oso' />
+      <ComponentRef Id='as_color_transform.oso' />
+      <ComponentRef Id='as_composite_color.oso' />
+      <ComponentRef Id='as_create_mask.oso' />
+      <ComponentRef Id='as_disney_material.oso' />
+      <ComponentRef Id='as_double_shade.oso' />
+      <ComponentRef Id='as_falloff_angle.oso' />
+      <ComponentRef Id='as_fresnel.oso' />
+      <ComponentRef Id='as_glass.oso' />
+      <ComponentRef Id='as_globals.oso' />
+      <ComponentRef Id='as_id_manifold.oso' />
+      <ComponentRef Id='as_invert_color.oso' />
+      <ComponentRef Id='as_luminance.oso' />
+      <ComponentRef Id='as_manifold2d.oso' />
+      <ComponentRef Id='as_matte.oso' />
+      <ComponentRef Id='as_metal.oso' />
+      <ComponentRef Id='as_noise2d.oso' />
+      <ComponentRef Id='as_noise3d.oso' />
+      <ComponentRef Id='as_plastic.oso' />
+      <ComponentRef Id='as_ray_switch.oso' />
+      <ComponentRef Id='as_sbs_pbrmaterial.oso' />
+      <ComponentRef Id='as_space_transform.oso' />
+      <ComponentRef Id='as_standard_surface.oso' />
+      <ComponentRef Id='as_subsurface.oso' />
+      <ComponentRef Id='as_switch_surface.oso' />
+      <ComponentRef Id='as_switch_texture.oso' />
+      <ComponentRef Id='as_swizzle.oso' />
+      <ComponentRef Id='as_texture.oso' />
+      <ComponentRef Id='as_texture_info.oso' />
+      <ComponentRef Id='as_texture2surface.oso' />
+      <ComponentRef Id='as_texture3d.oso' />
+      <ComponentRef Id='as_toon.oso' />
+      <ComponentRef Id='as_triplanar.oso' />
+      <ComponentRef Id='as_vary_color.oso' />
+      <ComponentRef Id='as_voronoi2d.oso' />
+      <ComponentRef Id='as_voronoi3d.oso' />
+      <ComponentRef Id='dirMAX' />
+      <ComponentRef Id='as_max_blend_material.oso' />
+      <ComponentRef Id='as_max_bump_map.oso' />
+      <ComponentRef Id='as_max_closure2surface.oso' />
+      <ComponentRef Id='as_max_color_balance.oso' />
+      <ComponentRef Id='as_max_color_texture.oso' />
+      <ComponentRef Id='as_max_disney_material.oso' />
+      <ComponentRef Id='as_max_float_texture.oso' />
+      <ComponentRef Id='as_max_glass_material.oso' />
+      <ComponentRef Id='as_max_light_material.oso' />
+      <ComponentRef Id='as_max_metal_material.oso' />
+      <ComponentRef Id='as_max_normal_map.oso' />
+      <ComponentRef Id='as_max_plastic_material.oso' />
+      <ComponentRef Id='as_max_srgb_to_linear_rgb.oso' />
+      <ComponentRef Id='as_max_sss_material.oso' />
+      <ComponentRef Id='as_max_uv_transform.oso' />
+    </ComponentGroup>
+
+    <ComponentGroup Id='Max2019Selected'>
+      <ComponentRef Id='appleseed_max2019.dlr' />
+      <ComponentRef Id='appleseed_max2019_impl.dll' />
+      <ComponentRef Id='appleseed.dll' />
+      <ComponentRef Id='dirSHADERS' />
+      <ComponentRef Id='dirAPPLESEED' />
+      <ComponentRef Id='as_anisotropy_vector_field.oso' />
+      <ComponentRef Id='as_asc_cdl.oso' />
+      <ComponentRef Id='as_attributes.oso' />
+      <ComponentRef Id='as_blackbody.oso' />
+      <ComponentRef Id='as_blend_color.oso' />
+      <ComponentRef Id='as_blend_shader.oso' />
+      <ComponentRef Id='as_bump.oso' />
+      <ComponentRef Id='as_closure2surface.oso' />
+      <ComponentRef Id='as_color_transform.oso' />
+      <ComponentRef Id='as_composite_color.oso' />
+      <ComponentRef Id='as_create_mask.oso' />
+      <ComponentRef Id='as_disney_material.oso' />
+      <ComponentRef Id='as_double_shade.oso' />
+      <ComponentRef Id='as_falloff_angle.oso' />
+      <ComponentRef Id='as_fresnel.oso' />
+      <ComponentRef Id='as_glass.oso' />
+      <ComponentRef Id='as_globals.oso' />
+      <ComponentRef Id='as_id_manifold.oso' />
+      <ComponentRef Id='as_invert_color.oso' />
+      <ComponentRef Id='as_luminance.oso' />
+      <ComponentRef Id='as_manifold2d.oso' />
+      <ComponentRef Id='as_matte.oso' />
+      <ComponentRef Id='as_metal.oso' />
+      <ComponentRef Id='as_noise2d.oso' />
+      <ComponentRef Id='as_noise3d.oso' />
+      <ComponentRef Id='as_plastic.oso' />
+      <ComponentRef Id='as_ray_switch.oso' />
+      <ComponentRef Id='as_sbs_pbrmaterial.oso' />
+      <ComponentRef Id='as_space_transform.oso' />
+      <ComponentRef Id='as_standard_surface.oso' />
+      <ComponentRef Id='as_subsurface.oso' />
+      <ComponentRef Id='as_switch_surface.oso' />
+      <ComponentRef Id='as_switch_texture.oso' />
+      <ComponentRef Id='as_swizzle.oso' />
+      <ComponentRef Id='as_texture.oso' />
+      <ComponentRef Id='as_texture_info.oso' />
+      <ComponentRef Id='as_texture2surface.oso' />
+      <ComponentRef Id='as_texture3d.oso' />
+      <ComponentRef Id='as_toon.oso' />
+      <ComponentRef Id='as_triplanar.oso' />
+      <ComponentRef Id='as_vary_color.oso' />
+      <ComponentRef Id='as_voronoi2d.oso' />
+      <ComponentRef Id='as_voronoi3d.oso' />
+      <ComponentRef Id='dirMAX' />
+      <ComponentRef Id='as_max_blend_material.oso' />
+      <ComponentRef Id='as_max_bump_map.oso' />
+      <ComponentRef Id='as_max_closure2surface.oso' />
+      <ComponentRef Id='as_max_color_balance.oso' />
+      <ComponentRef Id='as_max_color_texture.oso' />
+      <ComponentRef Id='as_max_disney_material.oso' />
+      <ComponentRef Id='as_max_float_texture.oso' />
+      <ComponentRef Id='as_max_glass_material.oso' />
+      <ComponentRef Id='as_max_light_material.oso' />
+      <ComponentRef Id='as_max_metal_material.oso' />
+      <ComponentRef Id='as_max_normal_map.oso' />
+      <ComponentRef Id='as_max_plastic_material.oso' />
+      <ComponentRef Id='as_max_srgb_to_linear_rgb.oso' />
+      <ComponentRef Id='as_max_sss_material.oso' />
+      <ComponentRef Id='as_max_uv_transform.oso' />
+    </ComponentGroup>
+    
+    <ComponentGroup Id='Max2020Selected'>
+      <ComponentRef Id='appleseed_max2020.dlr' />
+      <ComponentRef Id='appleseed_max2020_impl.dll' />
+      <ComponentRef Id='appleseed.dll' />
+      <ComponentRef Id='dirSHADERS' />
+      <ComponentRef Id='dirAPPLESEED' />
+      <ComponentRef Id='as_anisotropy_vector_field.oso' />
+      <ComponentRef Id='as_asc_cdl.oso' />
+      <ComponentRef Id='as_attributes.oso' />
+      <ComponentRef Id='as_blackbody.oso' />
+      <ComponentRef Id='as_blend_color.oso' />
+      <ComponentRef Id='as_blend_shader.oso' />
+      <ComponentRef Id='as_bump.oso' />
+      <ComponentRef Id='as_closure2surface.oso' />
+      <ComponentRef Id='as_color_transform.oso' />
+      <ComponentRef Id='as_composite_color.oso' />
+      <ComponentRef Id='as_create_mask.oso' />
+      <ComponentRef Id='as_disney_material.oso' />
+      <ComponentRef Id='as_double_shade.oso' />
+      <ComponentRef Id='as_falloff_angle.oso' />
+      <ComponentRef Id='as_fresnel.oso' />
+      <ComponentRef Id='as_glass.oso' />
+      <ComponentRef Id='as_globals.oso' />
+      <ComponentRef Id='as_id_manifold.oso' />
+      <ComponentRef Id='as_invert_color.oso' />
+      <ComponentRef Id='as_luminance.oso' />
+      <ComponentRef Id='as_manifold2d.oso' />
+      <ComponentRef Id='as_matte.oso' />
+      <ComponentRef Id='as_metal.oso' />
+      <ComponentRef Id='as_noise2d.oso' />
+      <ComponentRef Id='as_noise3d.oso' />
+      <ComponentRef Id='as_plastic.oso' />
+      <ComponentRef Id='as_ray_switch.oso' />
+      <ComponentRef Id='as_sbs_pbrmaterial.oso' />
+      <ComponentRef Id='as_space_transform.oso' />
+      <ComponentRef Id='as_standard_surface.oso' />
+      <ComponentRef Id='as_subsurface.oso' />
+      <ComponentRef Id='as_switch_surface.oso' />
+      <ComponentRef Id='as_switch_texture.oso' />
+      <ComponentRef Id='as_swizzle.oso' />
+      <ComponentRef Id='as_texture.oso' />
+      <ComponentRef Id='as_texture_info.oso' />
+      <ComponentRef Id='as_texture2surface.oso' />
+      <ComponentRef Id='as_texture3d.oso' />
+      <ComponentRef Id='as_toon.oso' />
+      <ComponentRef Id='as_triplanar.oso' />
+      <ComponentRef Id='as_vary_color.oso' />
+      <ComponentRef Id='as_voronoi2d.oso' />
+      <ComponentRef Id='as_voronoi3d.oso' />
+      <ComponentRef Id='dirMAX' />
+      <ComponentRef Id='as_max_blend_material.oso' />
+      <ComponentRef Id='as_max_bump_map.oso' />
+      <ComponentRef Id='as_max_closure2surface.oso' />
+      <ComponentRef Id='as_max_color_balance.oso' />
+      <ComponentRef Id='as_max_color_texture.oso' />
+      <ComponentRef Id='as_max_disney_material.oso' />
+      <ComponentRef Id='as_max_float_texture.oso' />
+      <ComponentRef Id='as_max_glass_material.oso' />
+      <ComponentRef Id='as_max_light_material.oso' />
+      <ComponentRef Id='as_max_metal_material.oso' />
+      <ComponentRef Id='as_max_normal_map.oso' />
+      <ComponentRef Id='as_max_plastic_material.oso' />
+      <ComponentRef Id='as_max_srgb_to_linear_rgb.oso' />
+      <ComponentRef Id='as_max_sss_material.oso' />
+      <ComponentRef Id='as_max_uv_transform.oso' />
+    </ComponentGroup>
+
+    <ComponentGroup Id='Max2021Selected'>
+      <ComponentRef Id='appleseed_max2021.dlr' />
+      <ComponentRef Id='appleseed_max2021_impl.dll' />
+      <ComponentRef Id='appleseed.dll' />
+      <ComponentRef Id='dirSHADERS' />
+      <ComponentRef Id='dirAPPLESEED' />
+      <ComponentRef Id='as_anisotropy_vector_field.oso' />
+      <ComponentRef Id='as_asc_cdl.oso' />
+      <ComponentRef Id='as_attributes.oso' />
+      <ComponentRef Id='as_blackbody.oso' />
+      <ComponentRef Id='as_blend_color.oso' />
+      <ComponentRef Id='as_blend_shader.oso' />
+      <ComponentRef Id='as_bump.oso' />
+      <ComponentRef Id='as_closure2surface.oso' />
+      <ComponentRef Id='as_color_transform.oso' />
+      <ComponentRef Id='as_composite_color.oso' />
+      <ComponentRef Id='as_create_mask.oso' />
+      <ComponentRef Id='as_disney_material.oso' />
+      <ComponentRef Id='as_double_shade.oso' />
+      <ComponentRef Id='as_falloff_angle.oso' />
+      <ComponentRef Id='as_fresnel.oso' />
+      <ComponentRef Id='as_glass.oso' />
+      <ComponentRef Id='as_globals.oso' />
+      <ComponentRef Id='as_id_manifold.oso' />
+      <ComponentRef Id='as_invert_color.oso' />
+      <ComponentRef Id='as_luminance.oso' />
+      <ComponentRef Id='as_manifold2d.oso' />
+      <ComponentRef Id='as_matte.oso' />
+      <ComponentRef Id='as_metal.oso' />
+      <ComponentRef Id='as_noise2d.oso' />
+      <ComponentRef Id='as_noise3d.oso' />
+      <ComponentRef Id='as_plastic.oso' />
+      <ComponentRef Id='as_ray_switch.oso' />
+      <ComponentRef Id='as_sbs_pbrmaterial.oso' />
+      <ComponentRef Id='as_space_transform.oso' />
+      <ComponentRef Id='as_standard_surface.oso' />
+      <ComponentRef Id='as_subsurface.oso' />
+      <ComponentRef Id='as_switch_surface.oso' />
+      <ComponentRef Id='as_switch_texture.oso' />
+      <ComponentRef Id='as_swizzle.oso' />
+      <ComponentRef Id='as_texture.oso' />
+      <ComponentRef Id='as_texture_info.oso' />
+      <ComponentRef Id='as_texture2surface.oso' />
+      <ComponentRef Id='as_texture3d.oso' />
+      <ComponentRef Id='as_toon.oso' />
+      <ComponentRef Id='as_triplanar.oso' />
+      <ComponentRef Id='as_vary_color.oso' />
+      <ComponentRef Id='as_voronoi2d.oso' />
+      <ComponentRef Id='as_voronoi3d.oso' />
+      <ComponentRef Id='dirMAX' />
+      <ComponentRef Id='as_max_blend_material.oso' />
+      <ComponentRef Id='as_max_bump_map.oso' />
+      <ComponentRef Id='as_max_closure2surface.oso' />
+      <ComponentRef Id='as_max_color_balance.oso' />
+      <ComponentRef Id='as_max_color_texture.oso' />
+      <ComponentRef Id='as_max_disney_material.oso' />
+      <ComponentRef Id='as_max_float_texture.oso' />
+      <ComponentRef Id='as_max_glass_material.oso' />
+      <ComponentRef Id='as_max_light_material.oso' />
+      <ComponentRef Id='as_max_metal_material.oso' />
+      <ComponentRef Id='as_max_normal_map.oso' />
+      <ComponentRef Id='as_max_plastic_material.oso' />
+      <ComponentRef Id='as_max_srgb_to_linear_rgb.oso' />
+      <ComponentRef Id='as_max_sss_material.oso' />
+      <ComponentRef Id='as_max_uv_transform.oso' />
+    </ComponentGroup>
+    
+    <Feature Id='CompleteInstall2017' Title='All Files' Level='1'>
+      <Condition Level="0">NOT MAX2017</Condition>
+      <ComponentGroupRef Id='Max2017Selected' />
+    </Feature>
+
+    <Feature Id='CompleteInstall2018' Title='All Files' Level='1'>
+      <Condition Level="0">NOT MAX2018</Condition>
+      <ComponentGroupRef Id='Max2018Selected' />
+    </Feature>
+    
+    <Feature Id='CompleteInstall2019' Title='All Files' Level='1'>
+      <Condition Level="0">NOT MAX2019</Condition>
+      <ComponentGroupRef Id='Max2019Selected' />
+    </Feature>
+
+    <Feature Id='CompleteInstall2020' Title='All Files' Level='1'>
+      <Condition Level="0">NOT MAX2020</Condition>
+      <ComponentGroupRef Id='Max2020Selected' />
+    </Feature>
+
+    <Feature Id='CompleteInstall2021' Title='All Files' Level='1'>
+      <Condition Level="0">NOT MAX2021</Condition>
+      <ComponentGroupRef Id='Max2021Selected' />
+    </Feature>
+
+    <InstallExecuteSequence>
+      <Custom Action='DIRCA_TARGETDIR' Before='CostInitialize'><![CDATA[ROOTDIR = ""]]></Custom>
+    </InstallExecuteSequence>
+	</Product>
+
+</Wix>
