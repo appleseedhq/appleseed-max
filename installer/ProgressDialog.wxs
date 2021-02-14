@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+//
+// This source file is part of appleseed.
+// Visit https://appleseedhq.net/ for additional information and resources.
+//
+// This software is released under the MIT license.
+//
+// Copyright (c) 2021 Omid Ghotbi (TAO), The appleseedhq Organization
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI Id="ProgressDialogUI">
+
+      <DialogRef Id="FinishedDialog"/>
+      <DialogRef Id="ErrorDialog"/>
+
+      <!--<Binary Id="headerPic" src="images/header.png"/>-->
+
+      <TextStyle Id="TahomaBig" FaceName="Tahoma" Size="18" Bold="yes" Red="255" Green="255" Blue="255" />
+
+      <Dialog Id="ProgressDialog" Width="555" Height="416" Title="Silly Software" Modeless="yes">
+
+        <Control Id="background" Type="Bitmap" Text="bgImage" Width="555" Height="416" X="0" Y="0" TabSkip="no" FixedSize="yes"/>
+
+        <!--<Control Id="header" Type="Bitmap" Text="headerImage" Height="50" Width="400" X="0" Y="0" TabSkip="no" />-->
+
+        <Control Id="installationText"  Type="Text" X="235" Y="110" Width="290" Height="40" Transparent="yes" Text="{\TahomaBig}appleseed Plugin Installation" />
+
+        <Control Id="waitText" X="230" Y="150" Width="290" Height="100" NoWrap="no" RightAligned="no" Transparent="yes" Type="Text" Text="{\TahomaNormal}Setup program will automatically do all necessarily steps and after it's finished you can use the plugin by start 3dsmax and go to the renderer options. Please wait while setup installs appleseed plugin on your computer. Click on the Cancel button to exit." />
+
+        <Control Id="overalProgressText" X="230" Y="275" Width="100" Height="12" NoWrap="no" RightAligned="no" Transparent="yes" Type="Text" Text="{\TahomaNormal}Overall Progress" />
+        <Control Id="installProgressBar" Type="ProgressBar" X="230" Y="290" Width="290" Height="10" >
+          <Subscribe Event="SetProgress" Attribute="Progress" />
+        </Control>
+
+        <Control Id="progressText" Type="Text" X="230" Y="310" Width="290" Height="30" NoWrap="no" Transparent="yes" >
+          <Subscribe Event="ActionData" Attribute="Text" />
+        </Control>
+
+        <Control Id="cancelButton" Type="PushButton" Text="[Cancel]" X="460" Y="380" Width="75" Height="18" Cancel="yes" TabSkip="no" Bitmap="yes" FixedSize="yes">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+
+      </Dialog>
+
+      <InstallUISequence>
+        <Show Dialog="ProgressDialog" After="PathSelectDialog" />
+      </InstallUISequence>
+
+    </UI>
+    
+  </Fragment>
+  
+</Wix>
